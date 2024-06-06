@@ -11,7 +11,7 @@ db.sqlite3
 *.log
 
 # Ignore static files (if using collectstatic)
-/static/
+# /static/
 
 # Ignore media files (if using media uploads)
 /media/
