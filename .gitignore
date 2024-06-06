@@ -1,0 +1,20 @@
+# Ignore Python bytecode files
+__pycache__/
+
+# Ignore environment configuration files
+.env-devep
+
+# Ignore SQLite database file
+db.sqlite3
+
+# Ignore log files
+*.log
+
+# Ignore static files (if using collectstatic)
+/static/
+
+# Ignore media files (if using media uploads)
+/media/
+
+
+web.config-devep
