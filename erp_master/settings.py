@@ -72,8 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'erp_master.wsgi.application'
 
 
-
-
 DB_ENGINE = os.getenv('DB_ENGINE', None)
 DB_USERNAME = os.getenv('DB_USER', None)
 DB_PASS = os.getenv('DB_PASSWORD', None)
@@ -81,32 +79,33 @@ DB_HOST = os.getenv('DB_HOST', None)
 DB_PORT = os.getenv('DB_PORT', None)
 DB_NAME = os.getenv('DB_NAME', None)
 DB_NAME_AUTH = os.getenv('DB_NAME_AUTH', None)
-DB_NAME_TEST = os.getenv('DB_NAME', None)
 
-if DB_ENGINE and DB_NAME and DB_USERNAME:
-    DATABASES = {
-    'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME_AUTH,
-        'USER': DB_USERNAME,
-        'PASSWORD': DB_PASS,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
+
+if not DEBUG:    
+    if DB_ENGINE and DB_NAME and DB_USERNAME:
+        DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': DB_NAME_AUTH,
+            'USER': DB_USERNAME,
+            'PASSWORD': DB_PASS,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
         },
-    },
-    'sarthak_kashee': {
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME,
-        'USER': DB_USERNAME,
-        'PASSWORD': DB_PASS,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
+        'sarthak_kashee': {
+            'ENGINE': DB_ENGINE,
+            'NAME': DB_NAME,
+            'USER': DB_USERNAME,
+            'PASSWORD': DB_PASS,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
         },
-    },
 }
 
 else:
@@ -126,7 +125,7 @@ else:
             'driver': 'ODBC Driver 17 for SQL Server',
         },
     },
-    }
+}
 
 
 # Password validation
