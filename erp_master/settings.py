@@ -17,8 +17,8 @@ else:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
