@@ -14551,9 +14551,10 @@ class Mpp(models.Model):
 
 
 class MppCollection(models.Model):
-    member_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
+    member_code = models.CharField(primary_key=True,max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
     collection_date = models.DateTimeField()
-    shift_code = models.IntegerField()
+    # shift_code = models.IntegerField()
+    shift_code = models.ForeignKey('Shift', on_delete=models.CASCADE, db_column='shift_code', related_name='shift_mpp_collection')
     milk_type_code = models.IntegerField()
     milk_quality_type_code = models.IntegerField(blank=True, null=True)
     sampleno = models.IntegerField(blank=True, null=True)
@@ -14580,11 +14581,16 @@ class MppCollection(models.Model):
     txfarmer_id = models.BigIntegerField(blank=True, null=True)
     mpp_collection_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_collection_references_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    
+    def __str__(self):
+        return str(self.collection_date)
 
     class Meta:
         managed = False
         db_table = 'mpp_collection'
-        unique_together = (('member_code', 'collection_date', 'shift_code', 'milk_type_code'),)
+        # unique_together = (('member_code', 'collection_date', 'shift_code', 'milk_type_code'),)
+        
+    
 
 
 class MppCollectionAggregation(models.Model):
@@ -15246,7 +15252,7 @@ class MppCollectionPaymentWiseMilkAggregation(models.Model):
 
 class MppCollectionReferences(models.Model):
     company_code = models.CharField(max_length=2, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
+    mpp_code = models.CharField(primary_key=True,max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
     collection_point_code = models.CharField(max_length=11, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     collection_date = models.DateTimeField()
     shift_code = models.IntegerField()
@@ -15384,7 +15390,7 @@ class MppCollectionReferencesParamNotAvliable(models.Model):
 
 class MppCollectionReil(models.Model):
     mpp_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    member_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    member_code = models.CharField(primary_key=True,max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True)
     collection_date = models.DateTimeField(blank=True, null=True)
     shift_code = models.IntegerField(blank=True, null=True)
     milk_type_code = models.IntegerField(blank=True, null=True)
@@ -15409,7 +15415,7 @@ class MppCollectionWrongDate(models.Model):
     bmc_code = models.CharField(max_length=5, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_tr_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    member_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
+    member_code = models.CharField(primary_key=True,max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
     member_tr_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     collection_date = models.DateTimeField()
     shift_code = models.IntegerField()
@@ -21060,7 +21066,10 @@ class Shift(models.Model):
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return str(self.shift_code)
+    
     class Meta:
         managed = False
         db_table = 'shift'
@@ -21077,7 +21086,8 @@ class ShiftHistory(models.Model):
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    shift_code = models.IntegerField(blank=True, null=True)
+    # shift_code = models.IntegerField(blank=True, null=True)
+    shift_code = models.ForeignKey(Shift, on_delete=models.CASCADE, db_column='shift_code')
     shift_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     shift_short_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     shift_at = models.TimeField(blank=True, null=True)
@@ -21092,7 +21102,8 @@ class ShiftLock(models.Model):
     shift_lock_code = models.AutoField(primary_key=True)
     shift_lock_date = models.DateTimeField(blank=True, null=True)
     bmc_code = models.CharField(max_length=5, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    shift_code = models.IntegerField(blank=True, null=True)
+    # shift_code = models.IntegerField(blank=True, null=True)
+    shift_code = models.ForeignKey(Shift, on_delete=models.CASCADE, db_column='shift_code')
     payment_cycle_code = models.IntegerField(blank=True, null=True)
     unlock_counter = models.IntegerField(blank=True, null=True)
     is_shift_lock = models.BooleanField(blank=True, null=True)

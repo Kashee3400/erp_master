@@ -1,12 +1,24 @@
 from pathlib import Path
 from django.conf import settings
 import os
+from dotenv import load_dotenv
+import logging
+
+load_dotenv()
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+KEY = os.getenv('SECRET_KEY', None)
+if KEY:
+    SECRET_KEY = KEY
+else:
+    SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
 
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -60,24 +72,61 @@ TEMPLATES = [
 WSGI_APPLICATION = 'erp_master.wsgi.application'
 
 
-DATABASES = {
+
+
+DB_ENGINE = os.getenv('DB_ENGINE', None)
+DB_USERNAME = os.getenv('DB_USER', None)
+DB_PASS = os.getenv('DB_PASSWORD', None)
+DB_HOST = os.getenv('DB_HOST', None)
+DB_PORT = os.getenv('DB_PORT', None)
+DB_NAME = os.getenv('DB_NAME', None)
+DB_NAME_AUTH = os.getenv('DB_NAME_AUTH', None)
+DB_NAME_TEST = os.getenv('DB_NAME', None)
+
+if DB_ENGINE and DB_NAME and DB_USERNAME:
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'sqlite3.db',
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME_AUTH,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     },
     'sarthak_kashee': {
-        'ENGINE': 'mssql',
-        'NAME': 'sarthak_kashee',
-        'USER': 'sarthak',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '1433',
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
     },
 }
 
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
+        },
+        'sarthak_kashee': {
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
+    },
+    }
 
 
 # Password validation
