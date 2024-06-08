@@ -8,23 +8,26 @@ load_dotenv()
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-KEY = os.getenv('SECRET_KEY', None)
-if KEY:
-    SECRET_KEY = KEY
-else:
-    SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
+# KEY = os.getenv('SECRET_KEY', None)
+# if KEY:
+#     SECRET_KEY = KEY
+# else:
+#     SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
+
+SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-DEBUG = True
-# DEBUG = False
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'erp_app',
     'member',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,8 +73,26 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'erp_master.wsgi.application'
+ASGI_APPLICATION = 'erp_master.asgi.application'
 
-
+# DATABASES = {
+#     'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
+#         },
+#     'sarthak_kashee': {
+#         'ENGINE': 'mssql',
+#         'NAME': 'sarthak_kashee',
+#         'USER': 'sarthak',
+#         'PASSWORD': '123',
+#         'HOST': '1.22.197.176',
+#         'PORT': 1433,
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 17 for SQL Server',
+#         },
+#     }
+#     }
+    
 DB_ENGINE = os.getenv('DB_ENGINE', None)
 DB_USERNAME = os.getenv('DB_USER', None)
 DB_PASS = os.getenv('DB_PASSWORD', None)
@@ -119,8 +140,8 @@ else:
         'NAME': DB_NAME,
         'USER': DB_USERNAME,
         'PASSWORD': DB_PASS,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'HOST': '10.10.10.23',
+        'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
