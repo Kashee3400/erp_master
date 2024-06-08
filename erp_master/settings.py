@@ -27,7 +27,6 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     'erp_app',
     'member',
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,7 +72,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'erp_master.wsgi.application'
-ASGI_APPLICATION = 'erp_master.asgi.application'
 
 # DATABASES = {
 #     'default': {
