@@ -19,11 +19,13 @@ SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# DEBUG = True
-DEBUG = False
-
-ALLOWED_HOSTS = ["*"]
-
+DEBUG = True
+# DEBUG = False
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = ["1.22.197.176"]
+    
 INSTALLED_APPS = [
     'erp_app',
     'member',
@@ -121,7 +123,7 @@ else:
         'NAME': DB_NAME,
         'USER': DB_USERNAME,
         'PASSWORD': DB_PASS,
-        'HOST': '10.10.10.23',
+        'HOST': '10.10.11.2',
         'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

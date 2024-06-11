@@ -621,7 +621,8 @@ class ApCreditMemoTaxHistory(models.Model):
 class ApCreditMemoTxn(models.Model):
     ap_credit_memo_txn_code = models.AutoField(primary_key=True)
     ap_credit_memo_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -654,7 +655,8 @@ class ApCreditMemoTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ap_credit_memo_txn_code = models.IntegerField(blank=True, null=True)
     ap_credit_memo_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -821,7 +823,8 @@ class ApDebitNoteTaxHistory(models.Model):
 class ApDebitNoteTxn(models.Model):
     ap_debit_note_txn_code = models.AutoField(primary_key=True)
     ap_debit_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -859,7 +862,8 @@ class ApDebitNoteTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ap_debit_note_txn_code = models.IntegerField(blank=True, null=True)
     ap_debit_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1029,7 +1033,8 @@ class ApDownPaymentInvoiceTaxHistory(models.Model):
 class ApDownPaymentInvoiceTxn(models.Model):
     ap_down_payment_invoice_txn_code = models.AutoField(primary_key=True)
     ap_down_payment_invoice_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     is_tds = models.BooleanField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1069,7 +1074,8 @@ class ApDownPaymentInvoiceTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ap_down_payment_invoice_txn_code = models.IntegerField(blank=True, null=True)
     ap_down_payment_invoice_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     is_tds = models.BooleanField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1211,6 +1217,7 @@ class ApInvoiceReference(models.Model):
     ap_invoice_code = models.IntegerField(blank=True, null=True)
     ap_invoice_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     purchase_order_code = models.IntegerField(blank=True, null=True)
     purchase_order_txn_code = models.IntegerField(blank=True, null=True)
     po_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1283,7 +1290,8 @@ class ApInvoiceTxn(models.Model):
     ap_invoice_txn_code = models.AutoField(primary_key=True)
     ap_down_payment_invoice_txn_code = models.IntegerField(blank=True, null=True)
     ap_invoice_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     is_tds = models.BooleanField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1324,7 +1332,8 @@ class ApInvoiceTxnHistory(models.Model):
     ap_invoice_txn_code = models.IntegerField(blank=True, null=True)
     ap_down_payment_invoice_txn_code = models.IntegerField(blank=True, null=True)
     ap_invoice_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     is_tds = models.BooleanField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1794,7 +1803,8 @@ class ArCreditNoteTaxHistory(models.Model):
 class ArCreditNoteTxn(models.Model):
     ar_credit_note_txn_code = models.AutoField(primary_key=True)
     ar_credit_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1834,7 +1844,8 @@ class ArCreditNoteTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ar_credit_note_txn_code = models.IntegerField(blank=True, null=True)
     ar_credit_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -1996,7 +2007,8 @@ class ArDebitMemoTaxHistory(models.Model):
 class ArDebitMemoTxn(models.Model):
     ar_debit_memo_txn_code = models.AutoField(primary_key=True)
     ar_debit_memo_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -2029,7 +2041,8 @@ class ArDebitMemoTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ar_debit_memo_txn_code = models.IntegerField(blank=True, null=True)
     ar_debit_memo_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -2157,7 +2170,8 @@ class ArInvoiceReference(models.Model):
     ar_invoice_reference_code = models.AutoField(primary_key=True)
     ar_invoice_code = models.IntegerField(blank=True, null=True)
     ar_invoice_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     sale_order_code = models.IntegerField(blank=True, null=True)
     sale_order_txn_code = models.IntegerField(blank=True, null=True)
     so_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -2225,7 +2239,8 @@ class ArInvoiceTaxHistory(models.Model):
 class ArInvoiceTxn(models.Model):
     ar_invoice_txn_code = models.AutoField(primary_key=True)
     ar_invoice_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     ledger_code = models.IntegerField(blank=True, null=True)
     is_tds = models.BooleanField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -2425,7 +2440,10 @@ class Bank(models.Model):
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.bank_name} ({self.bank_code})'
+    
     class Meta:
         managed = False
         db_table = 'bank'
@@ -3434,7 +3452,8 @@ class BillingHeadHistory(models.Model):
 
 class BillingMemberDetail(models.Model):
     billing_member_detail_code = models.AutoField(primary_key=True)
-    billing_member_master_code = models.IntegerField()
+    billing_member_master_code = models.ForeignKey('BillingMemberMaster', on_delete=models.CASCADE, related_name='billing_detail', db_column ='billing_member_master_code')
+    # billing_member_master_code = models.IntegerField()
     member_code = models.CharField(max_length=19, db_collation='SQL_Latin1_General_CP1_CI_AS')
     total_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     balance_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -3452,7 +3471,8 @@ class BillingMemberDetail(models.Model):
     adjustment = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     net_payable = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
     transaction_date = models.DateField(blank=True, null=True)
-    bank_code = models.IntegerField(blank=True, null=True)
+    # bank_code = models.IntegerField(blank=True, null=True)
+    bank_code = models.ForeignKey(Bank,on_delete=models.SET_NULL,blank=True, null=True,db_column='bank_code')
     acc_no = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ifsc = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     upi = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -3475,6 +3495,9 @@ class BillingMemberDetail(models.Model):
     payment_unique_code = models.CharField(max_length=200, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     pan_no = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     member_unique_code = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.member_code} ({self.net_payable})'
 
     class Meta:
         managed = False
@@ -3655,9 +3678,9 @@ class BillingMemberMaster(models.Model):
     billing_for = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     transaction_date = models.DateField(blank=True, null=True)
     from_date = models.DateTimeField(blank=True, null=True)
-    from_shift = models.IntegerField(blank=True, null=True)
+    from_shift = models.ForeignKey('Shift',on_delete=models.CASCADE,db_column='from_shift',related_name="from_billing_master",blank=True, null=True)
     to_date = models.DateTimeField(blank=True, null=True)
-    to_shift = models.IntegerField(blank=True, null=True)
+    to_shift = models.ForeignKey('Shift',on_delete=models.CASCADE,db_column='to_shift',related_name='to_billing_master',blank=True, null=True)
     payment_cycle = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS')
     no_of_payable = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -3675,7 +3698,10 @@ class BillingMemberMaster(models.Model):
     originating_type = models.IntegerField(blank=True, null=True)
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.billing_member_master_code}'
+    
     class Meta:
         managed = False
         db_table = 'billing_member_master'
@@ -4619,39 +4645,44 @@ class BillingTransactionReturnHistory(models.Model):
 
 class BinLocation(models.Model):
     bin_location_code = models.AutoField(primary_key=True)
-    bin_location_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    warehouse_code = models.IntegerField(blank=True, null=True)
+    bin_location_name = models.CharField(max_length=30, blank=True, null=True)
+    warehouse_code = models.ForeignKey('Warehouse',on_delete=models.CASCADE,related_name = 'bin_location',blank=True, null=True, db_column='warehouse_code')
+    # warehouse_code = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14, blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1, blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    originating_org_code = models.CharField(max_length=14, blank=True, null=True)
+    module_type = models.CharField(max_length=20, blank=True, null=True)
+    mpp_code = models.CharField(max_length=20, blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.bin_location_name} ({self.bin_location_code})'
+    
     class Meta:
         managed = False
         db_table = 'bin_location'
+        
 
 
 class BinLocationHistory(models.Model):
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    history_created_by = models.CharField(max_length=20, blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    operation_type = models.CharField(max_length=14, blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
-    bin_location_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    bin_location_name = models.CharField(max_length=30, blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14, blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1, blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    originating_org_code = models.CharField(max_length=14, blank=True, null=True)
+    module_type = models.CharField(max_length=20, blank=True, null=True)
+    mpp_code = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -4819,7 +4850,9 @@ class Brand(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.brand_name} ({self.brand_code})'
     class Meta:
         managed = False
         db_table = 'brand'
@@ -6181,7 +6214,8 @@ class CostOfGoodsHistory(models.Model):
     doc_code = models.IntegerField(blank=True, null=True)
     doc_no = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     party_master_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     total_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     balance_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     total_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -6510,7 +6544,8 @@ class DeliveryChallanHistory(models.Model):
 class DeliveryChallanInventryAmount(models.Model):
     delivery_challan_txn_code = models.IntegerField()
     delivery_challan_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     binlocation_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -6632,7 +6667,8 @@ class DeliveryChallanTaxHistory(models.Model):
 class DeliveryChallanTxn(models.Model):
     delivery_challan_txn_code = models.IntegerField(primary_key=True)
     delivery_challan_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     binlocation_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -6669,7 +6705,8 @@ class DeliveryChallanTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     delivery_challan_txn_code = models.IntegerField()
     delivery_challan_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     binlocation_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -8480,7 +8517,8 @@ class GoodsIssueTxn(models.Model):
     goods_issue_code = models.IntegerField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     inventory_transfer_txn_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_requst_code = models.IntegerField(blank=True, null=True)
@@ -8513,7 +8551,8 @@ class GoodsIssueTxnHistory(models.Model):
     goods_issue_code = models.IntegerField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     inventory_transfer_txn_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_requst_code = models.IntegerField(blank=True, null=True)
@@ -8755,7 +8794,8 @@ class GoodsReceiptNoteProductSerialNoHistory(models.Model):
 
 class GoodsReceiptNoteQa(models.Model):
     goods_receipt_note_qa_code = models.AutoField(primary_key=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     qa_type = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     qa_value = models.CharField(max_length=500, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     transaction_datetime = models.DateTimeField(blank=True, null=True)
@@ -8819,7 +8859,8 @@ class GoodsReceiptNoteTaxHistory(models.Model):
 class GoodsReceiptNoteTxn(models.Model):
     goods_receipt_note_txn_code = models.AutoField(primary_key=True)
     goods_receipt_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=3, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -8860,7 +8901,8 @@ class GoodsReceiptNoteTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     goods_receipt_note_txn_code = models.IntegerField(blank=True, null=True)
     goods_receipt_note_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=3, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -8985,7 +9027,8 @@ class GoodsReceiptTaxHistory(models.Model):
 class GoodsReceiptTxn(models.Model):
     goods_receipt_txn_code = models.AutoField(primary_key=True)
     goods_receipt_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -9016,7 +9059,8 @@ class GoodsReceiptTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     goods_receipt_txn_code = models.IntegerField(blank=True, null=True)
     goods_receipt_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -9067,7 +9111,8 @@ class GoodsReturn(models.Model):
 class GoodsReturnTxn(models.Model):
     goods_return_txn_code = models.AutoField(primary_key=True)
     goods_return_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -9541,7 +9586,8 @@ class IndentAggregation(models.Model):
     mpp_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_group_code = models.IntegerField(blank=True, null=True)
     product_group_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     product_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_category_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     member_count = models.IntegerField(blank=True, null=True)
@@ -9570,7 +9616,8 @@ class IndentApproval(models.Model):
     indent_approval_code = models.BigAutoField(primary_key=True)
     tr_indent_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     indent_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     unit_code = models.IntegerField(blank=True, null=True)
@@ -9606,7 +9653,8 @@ class IndentApprovalHistory(models.Model):
     indent_approval_code = models.BigIntegerField(blank=True, null=True)
     tr_indent_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     indent_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     unit_code = models.IntegerField(blank=True, null=True)
@@ -9664,7 +9712,8 @@ class IndentHistory(models.Model):
 class IndentTxn(models.Model):
     tr_indent_code = models.CharField(primary_key=True, max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
     indent_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     unit_code = models.IntegerField(blank=True, null=True)
@@ -9691,7 +9740,8 @@ class IndentTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     tr_indent_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     indent_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     unit_code = models.IntegerField(blank=True, null=True)
@@ -10316,7 +10366,8 @@ class InventoryTransferRequestHistory(models.Model):
 class InventoryTransferRequestTxn(models.Model):
     inventory_transfer_req_txn_code = models.AutoField(primary_key=True)
     inventory_transfer_req_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -10338,7 +10389,8 @@ class InventoryTransferRequestTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     inventory_transfer_req_txn_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_req_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -10400,7 +10452,8 @@ class InventoryTransferTaxHistory(models.Model):
 class InventoryTransferTxn(models.Model):
     inventory_transfer_txn_code = models.AutoField(primary_key=True)
     inventory_transfer_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     requested_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     aprroved_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -10430,7 +10483,8 @@ class InventoryTransferTxnHistory(models.Model):
     inventory_transfer_txn_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_request_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     requested_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     aprroved_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -10459,7 +10513,8 @@ class ItrItMapping(models.Model):
     inventory_transfer_req_txn_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_code = models.IntegerField(blank=True, null=True)
     inventory_transfer_txn_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     itr_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     it_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -11380,42 +11435,47 @@ class LedgerTypeHistory(models.Model):
 
 class LocalSale(models.Model):
     local_sale_code = models.IntegerField(primary_key=True)
-    local_sale_no = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    local_sale_no = models.CharField(max_length=30, blank=True, null=True)
     local_sale_date = models.DateField(blank=True, null=True)
-    party_master_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    tax_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_name = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    party_master_code = models.CharField(max_length=20, blank=True, null=True)
+    tax_type = models.CharField(max_length=50, blank=True, null=True)
+    module_code = models.CharField(max_length=25, blank=True, null=True)
+    module_name = models.CharField(max_length=25, blank=True, null=True)
     transaction_date = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
     levels = models.FloatField(blank=True, null=True)
-    remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
     credit_limit = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     no_of_installment = models.IntegerField(blank=True, null=True)
     installment_start_date = models.DateField(blank=True, null=True)
-    payment_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    payment_type = models.CharField(max_length=50, blank=True, null=True)
     net_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     round_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14, blank=True, null=True)
+    originating_org_code = models.CharField(max_length=14, blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1, blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     process_code = models.IntegerField(blank=True, null=True)
     approval_remarks = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     total_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     financial_year_code = models.IntegerField(blank=True, null=True)
-    bmc_code = models.CharField(max_length=5, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    local_sale_unique_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    old_party_master_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    bmc_code = models.CharField(max_length=5, blank=True, null=True)
+    mpp_code = models.CharField(max_length=9, blank=True, null=True)
+    local_sale_unique_code = models.CharField(max_length=50, blank=True, null=True)
+    old_party_master_code = models.CharField(max_length=20, blank=True, null=True)
     has_posting = models.BooleanField(blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.local_sale_code}'
 
     class Meta:
         managed = False
         db_table = 'local_sale'
+        verbose_name = 'Local Sale'
+        verbose_name_plural = 'Local Sales'
 
 
 class LocalSaleHistory(models.Model):
@@ -11507,10 +11567,10 @@ class LocalSaleProductSerialNoHistory(models.Model):
 
 class LocalSaleTxn(models.Model):
     local_sale_txn_code = models.AutoField(primary_key=True)
-    local_sale_code = models.IntegerField(blank=True, null=True)
-    warehouse_code = models.IntegerField(blank=True, null=True)
-    binlocation_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    local_sale_code = models.ForeignKey(LocalSale,on_delete=models.CASCADE,blank=True,related_name='local_sale_txn', null=True,db_column='local_sale_code')
+    warehouse_code = models.ForeignKey('Warehouse',on_delete=models.SET_NULL,related_name='ls_txn_warehouse',blank=True, null=True,db_column='warehouse_code')
+    binlocation_code = models.ForeignKey(BinLocation,on_delete=models.SET_NULL,blank=True, null=True,db_column='binlocation_code')
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True,db_column='product_code')
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -11544,7 +11604,8 @@ class LocalSaleTxnHistory(models.Model):
     local_sale_code = models.IntegerField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     binlocation_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -14637,7 +14698,10 @@ class MppCollectionAggregation(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     no_of_pouring_days = models.IntegerField(blank=True, null=True)
     no_of_pouring_shift = models.IntegerField(blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.member_code}'
+    
     class Meta:
         managed = False
         db_table = 'mpp_collection_aggregation'
@@ -15885,7 +15949,8 @@ class OpeningStock(models.Model):
     opening_stock_code = models.AutoField(primary_key=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
     bin_location_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     batch_serial_no = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     expiry_date = models.DateField(blank=True, null=True)
@@ -16681,7 +16746,8 @@ class PoGrnMapping(models.Model):
     po_grn_mapping_code = models.AutoField(primary_key=True)
     purchase_order_code = models.IntegerField(blank=True, null=True)
     purchase_order_txn_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     po_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     grn_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     goods_receipt_note_txn_code = models.IntegerField(blank=True, null=True)
@@ -16894,7 +16960,8 @@ class PriceBookApplicabitityHistory(models.Model):
 class PriceBookDetail(models.Model):
     price_book_detail_code = models.AutoField(primary_key=True)
     price_book_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=5, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -16922,7 +16989,8 @@ class PriceBookDetailHistory(models.Model):
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     price_book_detail_code = models.IntegerField(blank=True, null=True)
     price_book_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=5, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17197,35 +17265,36 @@ class ProcessTableMapping(models.Model):
 class Product(models.Model):
     product_code = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
-    product_category_code = models.IntegerField(blank=True, null=True)
-    product_sub_group_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    product_group_code = models.ForeignKey('ProductGroup', on_delete=models.SET_NULL, blank=True, null=True, db_column='product_group_code')
+    product_category_code = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, blank=True, null=True, db_column='product_category_code')
+    product_sub_group_code = models.ForeignKey('ProductSubGroup',on_delete=models.SET_NULL, blank=True, null=True, db_column='product_sub_group_code')
     product_variant = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    brand_code = models.IntegerField(blank=True, null=True)
-    sku = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    pack_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    market_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    description = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    # brand_code = models.IntegerField(blank=True, null=True)
+    brand_code = models.ForeignKey(Brand,on_delete=models.CASCADE,related_name='products',db_column='brand_code',blank=True, null=True)
+    sku = models.CharField(max_length=15, blank=True, null=True)
+    pack_type = models.CharField(max_length=50, blank=True, null=True)
+    market_name = models.CharField(max_length=255, blank=True, null=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    product_type = models.CharField(max_length=50, blank=True, null=True)
     is_purchase = models.BooleanField(blank=True, null=True)
     is_saleable = models.BooleanField(blank=True, null=True)
     is_mp_indentable = models.BooleanField(blank=True, null=True)
     unit_code = models.IntegerField(blank=True, null=True)
     standard_rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14, blank=True, null=True)
+    originating_org_code = models.CharField(max_length=14, blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    hsn_code = models.CharField(max_length=100, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1, blank=True, null=True)
+    hsn_code = models.CharField(max_length=100, blank=True, null=True)
     tax_code = models.IntegerField(blank=True, null=True)
-    invoiceno_pattern = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_manual_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    ex_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    material_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    description2 = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    invoiceno_pattern = models.CharField(max_length=255, blank=True, null=True)
+    product_manual_code = models.CharField(max_length=10, blank=True, null=True)
+    ex_code = models.CharField(max_length=10, blank=True, null=True)
+    material_type = models.CharField(max_length=50, blank=True, null=True)
+    description2 = models.TextField(blank=True, null=True)
     min_stock_qty = models.IntegerField(blank=True, null=True)
     max_stock_qty = models.IntegerField(blank=True, null=True)
     inside_state_tax_code = models.IntegerField(blank=True, null=True)
@@ -17241,11 +17310,13 @@ class Product(models.Model):
     is_tds_allow = models.BooleanField(blank=True, null=True)
     is_input_credit = models.BooleanField(blank=True, null=True)
     is_asset = models.BooleanField(blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.product_name} ({self.product_code})'
+        
     class Meta:
         managed = False
         db_table = 'product'
-
 
 class ProductCategory(models.Model):
     product_category_code = models.AutoField(primary_key=True)
@@ -17257,7 +17328,10 @@ class ProductCategory(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.product_category_name} ({self.product_category_code})'
+    
     class Meta:
         managed = False
         db_table = 'product_category'
@@ -17268,7 +17342,8 @@ class ProductCategoryHistory(models.Model):
     history_created_at = models.DateTimeField(blank=True, null=True)
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_category_code = models.IntegerField(blank=True, null=True)
+    # product_category_code = models.IntegerField(blank=True, null=True)
+    product_category_code = models.ForeignKey('ProductCategory',on_delete=models.SET_NULL,blank=True, null=True, db_column='product_category_code')
     product_category_name = models.CharField(max_length=200, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17276,10 +17351,16 @@ class ProductCategoryHistory(models.Model):
     updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.product_category_name} ({self.product_category_code})'
 
     class Meta:
         managed = False
         db_table = 'product_category_history'
+        verbose_name = 'Product Category History'
+        verbose_name_plural = 'Product CategoryHistories'
+        
 
 
 class ProductGroup(models.Model):
@@ -17294,10 +17375,17 @@ class ProductGroup(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.product_group_name} ({self.product_group_code})'
 
     class Meta:
         managed = False
         db_table = 'product_group'
+        verbose_name = 'Product Group'
+        verbose_name_plural = 'Product Groups'
+        
+
 
 
 class ProductGroupBudgetHeadMapping(models.Model):
@@ -17325,7 +17413,8 @@ class ProductGroupBudgetHeadMappingHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_group_budget_head_mapping_code = models.IntegerField(blank=True, null=True)
     budget_head_group_code = models.IntegerField(blank=True, null=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
+    # product_group_code = models.IntegerField(blank=True, null=True)
+    product_group_code = models.ForeignKey('ProductGroup',on_delete=models.SET_NULL,blank=True, null=True)
     budget_head_code = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17345,7 +17434,8 @@ class ProductGroupHistory(models.Model):
     history_created_at = models.DateTimeField(blank=True, null=True)
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
+    # product_group_code = models.IntegerField(blank=True, null=True)
+    product_group_code = models.ForeignKey('ProductGroup',on_delete=models.SET_NULL,blank=True, null=True)
     product_group_name = models.CharField(max_length=200, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     tax_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     unit_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17366,10 +17456,11 @@ class ProductHistory(models.Model):
     history_created_at = models.DateTimeField(blank=True, null=True)
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
     product_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
-    product_category_code = models.IntegerField(blank=True, null=True)
+    product_group_code = models.ForeignKey(ProductGroup,on_delete=models.SET_NULL,blank=True, null=True)
+    product_category_code = models.ForeignKey(ProductCategory,on_delete=models.SET_NULL,blank=True, null=True)
     product_sub_group_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_variant = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     brand_code = models.IntegerField(blank=True, null=True)
@@ -17505,7 +17596,8 @@ class ProductPurchaseLedgerMapping(models.Model):
 class ProductShippingDetail(models.Model):
     product_shipping_detail_code = models.AutoField(primary_key=True)
     warehouse_code = models.BigIntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
     expected_delivery_date = models.DateField(blank=True, null=True)
     address = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -17547,7 +17639,8 @@ class ProductSpecificationHead(models.Model):
 
 class ProductSpecificationHeadTxn(models.Model):
     product_specification_head_txn_code = models.AutoField(primary_key=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     product_specification_head_code = models.IntegerField(blank=True, null=True)
     product_specification_txn_value = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17568,7 +17661,8 @@ class ProductSpecificationTxn(models.Model):
     product_specification_head_code = models.IntegerField(blank=True, null=True)
     product_specification_head_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_specification_head_txn_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     product_specification_txn_value_change = models.CharField(max_length=500, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     module_code = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     module_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17594,7 +17688,8 @@ class ProductSpecificationTxnHistory(models.Model):
     product_specification_head_code = models.IntegerField(blank=True, null=True)
     product_specification_head_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_specification_head_txn_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True,db_column='product_code')
+    # product_code = models.IntegerField(blank=True, null=True)
     product_specification_txn_value_change = models.CharField(max_length=500, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     module_code = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     module_name = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17614,7 +17709,8 @@ class ProductSpecificationTxnHistory(models.Model):
 class ProductStockOpening(models.Model):
     product_stock_opening_code = models.AutoField(primary_key=True)
     financial_year_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     as_on_date = models.DateTimeField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
@@ -17638,7 +17734,8 @@ class ProductStockOpeningHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_stock_opening_code = models.IntegerField(blank=True, null=True)
     financial_year_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     as_on_date = models.DateTimeField(blank=True, null=True)
     warehouse_code = models.IntegerField(blank=True, null=True)
@@ -17676,7 +17773,7 @@ class ProductStockOpeningSerialNo(models.Model):
 
 class ProductSubGroup(models.Model):
     product_sub_group_code = models.AutoField(primary_key=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
+    product_group_code = models.ForeignKey('ProductGroup', on_delete=models.SET_NULL, blank=True, null=True, db_column='product_group_code')
     product_sub_group_name = models.CharField(max_length=100, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17685,10 +17782,15 @@ class ProductSubGroup(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f'{self.product_sub_group_name} ({self.product_sub_group_code})'
+        
     class Meta:
         managed = False
         db_table = 'product_sub_group'
+        verbose_name = 'Product Sub Group'
+        verbose_name_plural = 'Product Sub Groups'
 
 
 class ProductSubGroupHistory(models.Model):
@@ -17697,7 +17799,8 @@ class ProductSubGroupHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_sub_group_code = models.IntegerField(blank=True, null=True)
-    product_group_code = models.IntegerField(blank=True, null=True)
+    # product_group_code = models.IntegerField(blank=True, null=True)
+    product_group_code = models.ForeignKey('ProductGroup', on_delete=models.SET_NULL, blank=True, null=True, db_column='product_group_code')
     product_sub_group_name = models.CharField(max_length=100, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -17713,7 +17816,8 @@ class ProductSubGroupHistory(models.Model):
 
 class ProductTaxMapping(models.Model):
     product_tax_mapping_code = models.AutoField(primary_key=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
     tax_code = models.IntegerField(blank=True, null=True)
     within_state_tax = models.BooleanField(blank=True, null=True)
     is_active = models.BooleanField(blank=True, null=True)
@@ -17736,7 +17840,8 @@ class ProductTaxMappingHistory(models.Model):
     history_created_at = models.DateTimeField(blank=True, null=True)
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     product_tax_mapping_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     tax_code = models.IntegerField(blank=True, null=True)
     within_state_tax = models.BooleanField(blank=True, null=True)
     is_active = models.BooleanField(blank=True, null=True)
@@ -17755,7 +17860,8 @@ class ProductTaxMappingHistory(models.Model):
 
 class ProductWiseManufacturer(models.Model):
     product_wise_manufacturer_code = models.AutoField(primary_key=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     manufacturer_code = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -18003,7 +18109,8 @@ class PurchaseOrderTaxHistory(models.Model):
 class PurchaseOrderTxn(models.Model):
     purchase_order_txn_code = models.AutoField(primary_key=True)
     purchase_order_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -18039,7 +18146,8 @@ class PurchaseOrderTxnHistory(models.Model):
     operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     purchase_order_txn_code = models.IntegerField(blank=True, null=True)
     purchase_order_code = models.IntegerField(blank=True, null=True)
-    product_code = models.IntegerField(blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -23306,21 +23414,24 @@ class VoucherTypeMappingHistory(models.Model):
 
 class Warehouse(models.Model):
     warehouse_code = models.BigAutoField(primary_key=True)
-    warehouse_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    warehouse_name = models.CharField(max_length=255,  blank=True, null=True)
+    module_type = models.CharField(max_length=255,  blank=True, null=True)
+    module_code = models.CharField(max_length=50,  blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14,  blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14,  blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1,  blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    address = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    state_code = models.CharField(max_length=2, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    pincode = models.CharField(max_length=6, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    originating_org_code = models.CharField(max_length=14,  blank=True, null=True)
+    address = models.TextField( blank=True, null=True)
+    state_code = models.CharField(max_length=2,  blank=True, null=True)
+    pincode = models.CharField(max_length=6,  blank=True, null=True)
     within_company = models.BooleanField(blank=True, null=True)
-    tag = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    tag = models.TextField( blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.warehouse_name} ({self.warehouse_code})'
 
     class Meta:
         managed = False
@@ -23328,25 +23439,26 @@ class Warehouse(models.Model):
 
 
 class WarehouseHistory(models.Model):
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    history_created_by = models.CharField(max_length=20,  blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    warehouse_code = models.BigIntegerField(blank=True, null=True)
-    warehouse_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    operation_type = models.CharField(max_length=14,  blank=True, null=True)
+    warehouse_code = models.ForeignKey(Warehouse,on_delete=models.CASCADE,blank=True, null=True,db_column='warehouse_code')
+    # warehouse_code = models.BigIntegerField(blank=True, null=True)
+    warehouse_name = models.CharField(max_length=255,  blank=True, null=True)
+    module_type = models.CharField(max_length=255,  blank=True, null=True)
+    module_code = models.CharField(max_length=50,  blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    created_by = models.CharField(max_length=14,  blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    updated_by = models.CharField(max_length=14,  blank=True, null=True)
+    flg_sentbox_entry = models.CharField(max_length=1,  blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    address = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    state_code = models.CharField(max_length=2, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    pincode = models.CharField(max_length=6, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    originating_org_code = models.CharField(max_length=14,  blank=True, null=True)
+    address = models.TextField( blank=True, null=True)
+    state_code = models.CharField(max_length=2,  blank=True, null=True)
+    pincode = models.CharField(max_length=6,  blank=True, null=True)
     within_company = models.BooleanField(blank=True, null=True)
-    tag = models.TextField(db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    tag = models.TextField( blank=True, null=True)
 
     class Meta:
         managed = False
