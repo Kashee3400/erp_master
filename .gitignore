@@ -5,7 +5,6 @@ __pycache__/
 .env-devep
 
 # Ignore SQLite database file
-db.sqlite3
 sqlite3.db
 
 # Ignore log files
@@ -17,5 +16,5 @@ sqlite3.db
 # Ignore media files (if using media uploads)
 /media/
 
-
+# Ignore web configuration for development
 web.config-devep

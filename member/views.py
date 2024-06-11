@@ -82,15 +82,14 @@ def send_sms_api(mobile,otp):
     else:
         return False
 
-
 class VerifySession(APIView):
+    authentication_classes =[JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         user = request.user
         device_id = request.data.get('device_id')
-
-        if UserDevice.objects.filter(cuser=user, device_code=device_id).exists():
+        if UserDevice.objects.filter(user=user, device=device_id).exists():
             return Response({'is_valid': True}, status=status.HTTP_200_OK)
         else:
             return Response({'is_valid': False}, status=status.HTTP_401_UNAUTHORIZED)
