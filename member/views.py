@@ -16,16 +16,14 @@ class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number')
-        try:
-            otp = OTP.objects.get(phone_number=phone_number)
-            send_sms_api(mobile=phone_number, otp=otp.otp)
-            return Response({'status': 200, 'message': 'OTP sent'}, status=status.HTTP_200_OK)
-        
-        except OTP.DoesNotExist:
-            otp = OTP.objects.create(phone_number=phone_number)
-            send_sms_api(mobile=phone_number, otp=otp)
-            return Response({'status': 200, 'message': 'OTP sent'}, status=status.HTTP_200_OK)
-
+        otp = OTP.objects.filter(phone_number=phone_number)
+        if otp:
+            otp.delete()
+            
+        notp = OTP.objects.create(phone_number=phone_number)
+        send_sms_api(mobile=phone_number, otp=notp)
+        return Response({'status': 200, 'message': 'OTP sent'}, status=status.HTTP_200_OK)
+            
 
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
