@@ -102,9 +102,6 @@ if not DEBUG:
             'PASSWORD': '12345@Kashee',
             'HOST': 'localhost',
             'PORT': '3306',
-            'OPTIONS': {
-                'driver': 'ODBC Driver 17 for SQL Server',
-            },
         },
         'sarthak_kashee': {
             'ENGINE': DB_ENGINE,
