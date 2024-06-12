@@ -14614,10 +14614,9 @@ class Mpp(models.Model):
 class MppCollection(models.Model):
     member_code = models.CharField(primary_key=True,max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS')
     collection_date = models.DateTimeField()
-    # shift_code = models.IntegerField()
     shift_code = models.ForeignKey('Shift', on_delete=models.CASCADE, db_column='shift_code', related_name='shift_mpp_collection')
-    milk_type_code = models.IntegerField()
-    milk_quality_type_code = models.IntegerField(blank=True, null=True)
+    milk_type_code = models.ForeignKey('MilkType', on_delete=models.SET_NULL,null=True,db_column='milk_type_code')
+    milk_quality_type_code = models.ForeignKey('MilkQualityType',on_delete=models.SET_NULL,db_column='milk_quality_type_code',blank=True, null=True)
     sampleno = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     fat = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
