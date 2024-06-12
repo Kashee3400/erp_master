@@ -9,6 +9,7 @@ class MemberMasterSerializer(serializers.ModelSerializer):
 
 
 class ShiftSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Shift
         fields = ['shift_code','shift_name','shift_short_name']
@@ -38,11 +39,28 @@ class MppCollectionAggregationSerializer(serializers.ModelSerializer):
                   'milk_type_name','milk_quality_type_name','qty','fat','snf','amount','no_of_pouring_days','no_of_pouring_shift']
 
 
-class MppCollectionSerializer(serializers.ModelSerializer):
+class MilkTypeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=MilkType
+        fields = ['milk_type_code','milk_type_name','milk_type_short_name','is_active','is_milch']
 
+class MilkQualityTypeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=MilkQualityType
+        fields = ['milk_quality_type_code','milk_quality_type_name','is_active']
+       
+
+class MppCollectionSerializer(serializers.ModelSerializer):
+    shift = ShiftSerializer(source='shift_code',read_only=True)
+    milk_type = MilkTypeSerializer(source='milk_type_code',read_only=True)
+    milk_quality_type = MilkQualityTypeSerializer(source='milk_quality_type_code',read_only=True)
     class Meta:
         model = MppCollection
-        fields = '__all__'
+        fields = ['member_code','collection_date','shift','milk_type','milk_quality_type','sampleno','qty','fat','snf','rate',
+                  'amount','mpp_collection_code','mpp_collection_references_code']
+
         depth = 1
 
 
