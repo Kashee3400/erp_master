@@ -96,12 +96,12 @@ if not DEBUG:
     if DB_ENGINE:
         DATABASES = {
         'default': {
-            'ENGINE': DB_ENGINE,
-            'NAME': DB_NAME_MEMBER,
-            'USER': DB_MEMBER_USER,
-            'PASSWORD': DB_MEMBER_PASS,
-            'HOST': DB_HOST,
-            'PORT': DB_PORT,
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'member',
+            'USER': 'root',
+            'PASSWORD': '12345@Kashee',
+            'HOST': 'localhost',
+            'PORT': '3306',
             'OPTIONS': {
                 'driver': 'ODBC Driver 17 for SQL Server',
             },
