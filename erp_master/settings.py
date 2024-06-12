@@ -2,7 +2,6 @@ from pathlib import Path
 from django.conf import settings
 import os
 from dotenv import load_dotenv
-import logging
 
 load_dotenv()
 
@@ -78,22 +77,29 @@ WSGI_APPLICATION = 'erp_master.wsgi.application'
 
 
 DB_ENGINE = os.getenv('DB_ENGINE', None)
-DB_USERNAME = os.getenv('DB_USER', None)
-DB_PASS = os.getenv('DB_PASSWORD', None)
+
+# cred for connecting sarthak db
+DB_USER_SARTHAK = os.getenv('DB_USER_SARTHAK', None)
+DB_PASSWORD_SARTHAK = os.getenv('DB_PASSWORD_SARTHAK', None)
+DB_NAME_SARTHAK = os.getenv('DB_NAME_SARTHAK', None)
+
+#cred for connecting member db
+
+DB_NAME_MEMBER = os.getenv('DB_NAME_MEMBER', None)
+DB_MEMBER_USER = os.getenv('DB_MEMBER_USER', None)
+DB_MEMBER_PASS = os.getenv('DB_MEMBER_PASS', None)
+
 DB_HOST = os.getenv('DB_HOST', None)
 DB_PORT = os.getenv('DB_PORT', None)
-DB_NAME = os.getenv('DB_NAME', None)
-DB_NAME_AUTH = os.getenv('DB_NAME_AUTH', None)
-
 
 if not DEBUG:    
-    if DB_ENGINE and DB_NAME and DB_USERNAME:
+    if DB_ENGINE:
         DATABASES = {
         'default': {
             'ENGINE': DB_ENGINE,
-            'NAME': DB_NAME_AUTH,
-            'USER': DB_USERNAME,
-            'PASSWORD': DB_PASS,
+            'NAME': DB_NAME_MEMBER,
+            'USER': DB_MEMBER_USER,
+            'PASSWORD': DB_MEMBER_PASS,
             'HOST': DB_HOST,
             'PORT': DB_PORT,
             'OPTIONS': {
@@ -102,9 +108,9 @@ if not DEBUG:
         },
         'sarthak_kashee': {
             'ENGINE': DB_ENGINE,
-            'NAME': DB_NAME,
-            'USER': DB_USERNAME,
-            'PASSWORD': DB_PASS,
+            'NAME': DB_NAME_SARTHAK,
+            'USER': DB_USER_SARTHAK,
+            'PASSWORD': DB_PASSWORD_SARTHAK,
             'HOST': DB_HOST,
             'PORT': DB_PORT,
             'OPTIONS': {
@@ -121,9 +127,9 @@ else:
         },
         'sarthak_kashee': {
         'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME,
-        'USER': DB_USERNAME,
-        'PASSWORD': DB_PASS,
+        'NAME': DB_NAME_SARTHAK,
+        'USER': DB_USER_SARTHAK,
+        'PASSWORD': DB_PASSWORD_SARTHAK,
         'HOST': '10.10.11.2',
         'PORT': 1433,
         'OPTIONS': {
