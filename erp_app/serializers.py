@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 
 class MemberMasterSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = MemberMaster
         fields = '__all__'
@@ -29,13 +30,13 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
         model = BillingMemberDetail
         fields = ['billing_member_detail_code','billing_member_master','member_code','total_qty','balance_qty','qty','avg_fat','avg_snf','amount','share_amount','earning',
                   'deduction','previous_hold','previous_due','hold','due','adjustment','net_payable','transaction_date','bank_code','acc_no','ifsc','upi','payment_mode','status',
-                  'receiver','remark']
+                  ]
 
 
 class MppCollectionAggregationSerializer(serializers.ModelSerializer):
     class Meta:
         model = MppCollectionAggregation
-        fields = ['mpp_code','mpp_tr_code','mpp_name','payment_cycle_code','from_date','from_shift','to_date','to_shift','mpp_code','mpp_code',
+        fields = ['mpp_tr_code','mpp_name','payment_cycle_code','from_date','from_shift','to_date','to_shift','mpp_code',
                   'milk_type_name','milk_quality_type_name','qty','fat','snf','amount','no_of_pouring_days','no_of_pouring_shift']
 
 
