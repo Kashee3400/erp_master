@@ -24,7 +24,6 @@ class GenerateOTPView(APIView):
         send_sms_api(mobile=phone_number, otp=notp)
         return Response({'status': 200, 'message': 'OTP sent'}, status=status.HTTP_200_OK)
             
-
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -39,11 +38,11 @@ class VerifyOTPView(generics.GenericAPIView):
         try:
             otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
         except OTP.DoesNotExist:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status':status.HTTP_400_BAD_REQUEST,'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
         
         if not otp.is_valid():
             otp.delete()
-            return Response({'error': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status':status.HTTP_400_BAD_REQUEST,'message': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
         user, created = User.objects.get_or_create(username=phone_number)
         UserDevice.objects.filter(user=user).delete()
         UserDevice.objects.create(user=user, device=device_id)    
@@ -91,7 +90,6 @@ class VerifySession(APIView):
             return Response({'is_valid': True}, status=status.HTTP_200_OK)
         else:
             return Response({'is_valid': False}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]

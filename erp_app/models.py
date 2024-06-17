@@ -3453,7 +3453,6 @@ class BillingHeadHistory(models.Model):
 class BillingMemberDetail(models.Model):
     billing_member_detail_code = models.AutoField(primary_key=True)
     billing_member_master_code = models.ForeignKey('BillingMemberMaster', on_delete=models.CASCADE, related_name='billing_detail', db_column ='billing_member_master_code')
-    # billing_member_master_code = models.IntegerField()
     member_code = models.CharField(max_length=19, db_collation='SQL_Latin1_General_CP1_CI_AS')
     total_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     balance_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -3471,7 +3470,6 @@ class BillingMemberDetail(models.Model):
     adjustment = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     net_payable = models.DecimalField(max_digits=38, decimal_places=2, blank=True, null=True)
     transaction_date = models.DateField(blank=True, null=True)
-    # bank_code = models.IntegerField(blank=True, null=True)
     bank_code = models.ForeignKey(Bank,on_delete=models.SET_NULL,blank=True, null=True,db_column='bank_code')
     acc_no = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ifsc = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)

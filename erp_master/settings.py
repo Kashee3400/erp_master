@@ -18,8 +18,8 @@ SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
@@ -222,11 +222,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
+
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": False,
     'BLACKLIST_AFTER_ROTATION': True,
     "UPDATE_LAST_LOGIN": True,
