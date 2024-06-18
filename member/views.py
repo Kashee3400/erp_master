@@ -9,20 +9,24 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 from .serialzers import *
+from erp_app.models import MemberMaster
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils.translation import gettext_lazy as _
 from .models import UserDevice
 
 class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number')
+        if not MemberMaster.objects.filter(mobile_no=phone_number).exists():
+            return Response({'status': 400, 'message': _('Mobile no doest not exists')}, status=status.HTTP_400_BAD_REQUEST)
         otp = OTP.objects.filter(phone_number=phone_number)
         if otp:
             otp.delete()
             
         notp = OTP.objects.create(phone_number=phone_number)
         send_sms_api(mobile=phone_number, otp=notp)
-        return Response({'status': 200, 'message': 'OTP sent'}, status=status.HTTP_200_OK)
+        return Response({'status': 200, 'message': _('OTP sent')}, status=status.HTTP_200_OK)
             
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
@@ -51,7 +55,7 @@ class VerifyOTPView(generics.GenericAPIView):
         response = {
                 "status": status.HTTP_200_OK,
                 "phone_number": user.username,
-                'message': "Authentication successful",
+                'message': _("Authentication successful"),
                 'access_token': str(refresh.access_token),
                 'refresh_token':str(refresh),
                 'device_id': device_id 
@@ -101,7 +105,7 @@ class LogoutView(APIView):
             token.blacklist()
             return Response({
                 "status":status.HTTP_205_RESET_CONTENT,
-                "message": "Logout successful"
+                "message": _("Logout successful")
                 }, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({
