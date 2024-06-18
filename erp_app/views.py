@@ -90,12 +90,16 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
 
         response_data['mpp_name'] = mpp.mpp_name
         response_data['mpp_code'] = mpp.mpp_ex_code
-        response_data['mpp_tr_code'] = mpp.mpp_code
+        response_data['mpp_tr_code'] = mpp.mpp_code.mpp_tr_code
 
         response_data['company_code'] = mpp_aggregations.company_code
         response_data['company_name'] = mpp_aggregations.company_name
         response_data['member_tr_code'] = mpp_aggregations.member_tr_code
 
+        response_data['bank'] =''
+        response_data['bank_branch'] = ''
+        response_data['account_no'] = ''
+        response_data['ifsc'] =''
 
         response = {
             'status': status.HTTP_200_OK,
