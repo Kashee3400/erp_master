@@ -45,6 +45,7 @@ class VerifyOTPView(generics.GenericAPIView):
             return Response({'status':status.HTTP_400_BAD_REQUEST,'message': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
         user, created = User.objects.get_or_create(username=phone_number)
         UserDevice.objects.filter(user=user).delete()
+        UserDevice.objects.filter(device=device_id).delete()
         UserDevice.objects.create(user=user, device=device_id)    
         refresh = RefreshToken.for_user(user)
         response = {
