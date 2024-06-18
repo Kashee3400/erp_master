@@ -12005,7 +12005,7 @@ class MemberFeeInfo(models.Model):
     member_fee_info_code = models.AutoField(primary_key=True)
     admission_fee = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     # bank_code = models.IntegerField(blank=True, null=True)
-    bank_code = models.ForeignKey(Bank, on_delete=models.SET_NULL,blank=True, null=True)
+    bank_code = models.ForeignKey('Bank', on_delete=models.SET_NULL,blank=True, null=True)
     branch_code = models.IntegerField(blank=True, null=True)
     ifsc = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     payment_mode = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
