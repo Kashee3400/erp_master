@@ -345,7 +345,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
                 )
         
         fy_aggregated_data = fy_queryset.aggregate(
-            total_days=Count('no_of_pouring_days', distinct=True),
+            total_days=Sum('no_of_pouring_days', distinct=True),
             total_qty=Sum('qty'),
             total_payment=Sum('amount')
         )
