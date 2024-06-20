@@ -95,11 +95,13 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         response_data['company_code'] = mpp_aggregations.company_code
         response_data['company_name'] = mpp_aggregations.company_name
         response_data['member_tr_code'] = mpp_aggregations.member_tr_code
+        
+        member_fee_info = MemberFeeInfo.objects.filter(member_code=instance.member_code).first()
 
-        response_data['bank'] =''
-        response_data['bank_branch'] = ''
-        response_data['account_no'] = ''
-        response_data['ifsc'] =''
+        response_data['bank'] = member_fee_info.bank_ref_no
+        response_data['bank_branch'] = member_fee_info.branch_code
+        response_data['account_no'] = member_fee_info.payment_mode
+        response_data['ifsc'] = member_fee_info.ifsc
 
         response = {
             'status': status.HTTP_200_OK,
@@ -332,14 +334,18 @@ class MppCollectionDetailView(generics.GenericAPIView):
             collection_date__date=provided_date,
             member_code=member.member_code
         )
-
-        # Aggregated data for financial year
-        fy_queryset = MppCollection.objects.filter(
-            collection_date__range=(start_date, end_date),
+        
+        mpp_agg_queryset = MppCollectionAggregation.objects.filter(
             member_code=member.member_code
         )
+        fy_queryset = mpp_agg_queryset.filter(
+                    Q(from_date__gte=start_date, from_date__lte=end_date) |
+                    Q(to_date__gte=start_date, to_date__lte=end_date) |
+                    Q(from_date__lte=start_date, to_date__gte=end_date)
+                )
+        
         fy_aggregated_data = fy_queryset.aggregate(
-            total_days=Count('collection_date', distinct=True),
+            total_days=Count('no_of_pouring_days', distinct=True),
             total_qty=Sum('qty'),
             total_payment=Sum('amount')
         )

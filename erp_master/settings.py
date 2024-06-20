@@ -124,10 +124,10 @@ else:
         },
         'sarthak_kashee': {
         'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME_SARTHAK,
-        'USER': DB_USER_SARTHAK,
-        'PASSWORD': DB_PASSWORD_SARTHAK,
-        'HOST': '10.10.11.2',
+        'NAME': 'erp_kashee',
+        'USER': 'sarthak',
+        'PASSWORD': '123',
+        'HOST': '10.10.10.23',
         'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
