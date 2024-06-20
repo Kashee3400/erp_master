@@ -280,14 +280,17 @@ class MppCollectionAggregationListView(generics.ListAPIView):
                 "data": []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+from django.db.models import Subquery, OuterRef, Count, Sum
+from rest_framework.permissions import AllowAny
+from django.db.models.functions import TruncDate
 
 class MppCollectionDetailView(generics.GenericAPIView):
     """
-    This class provides the data for dashboard
+    This class provides the data for the dashboard
     """
     serializer_class = MppCollectionSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
@@ -302,7 +305,6 @@ class MppCollectionDetailView(generics.GenericAPIView):
         member = MemberMaster.objects.get(mobile_no=request.user.username)
         
         date_str = request.query_params.get('date')
-        # Parse the date parameter if provided
         if date_str:
             try:
                 provided_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -318,7 +320,6 @@ class MppCollectionDetailView(generics.GenericAPIView):
         current_year = provided_date.year
         current_month = provided_date.month
 
-        # Determine the start year of the financial year based on the provided date
         if current_month < 4:
             start_year = current_year - 1
         else:
@@ -327,24 +328,30 @@ class MppCollectionDetailView(generics.GenericAPIView):
         start_date = make_aware(timezone.datetime(start_year, 4, 1))
         end_date = make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
 
-        # Filter for the provided date
         date_queryset = MppCollection.objects.filter(
             collection_date__date=provided_date,
             member_code=member.member_code
         )
 
-        # Aggregated data for financial year
-        fy_queryset = MppCollection.objects.filter(
+        # Filter and annotate for unique dates within the date range and member code
+        annotated_queryset = MppCollection.objects.filter(
             collection_date__range=(start_date, end_date),
             member_code=member.member_code
-        ).values('collection_date').distinct()
-        
-        fy_aggregated_data = fy_queryset.aggregate(
-            total_days=Count('collection_date', distinct=True),
+        ).annotate(
+            date_only=TruncDate('collection_date')
+        ).values(
+            'date_only'
+        ).annotate(
             total_qty=Sum('qty'),
             total_payment=Sum('amount')
         )
 
+        # Aggregate the results
+        final_aggregated_data = {
+            'total_days': annotated_queryset.count(),
+            'total_qty': sum(item['total_qty'] for item in annotated_queryset),
+            'total_payment': sum(item['total_payment'] for item in annotated_queryset)
+        }
 
         date_serializer = self.get_serializer(date_queryset, many=True)
 
@@ -353,7 +360,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
             "message": "success",
             "data": {
                 "dashboard_data": date_serializer.data,
-                "dashboard_fy_data": fy_aggregated_data
+                "dashboard_fy_data": final_aggregated_data
             }
         }
         return Response(response_data, status=status.HTTP_200_OK)
