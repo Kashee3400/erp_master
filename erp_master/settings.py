@@ -6,17 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# KEY = os.getenv('SECRET_KEY', None)
-# if KEY:
-#     SECRET_KEY = KEY
-# else:
-#     SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
-
 SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 # DEBUG = True
 DEBUG = False
@@ -61,7 +54,7 @@ API_URL_PREFIX = ['/api/']
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,10 +118,10 @@ else:
         },
         'sarthak_kashee': {
         'ENGINE': DB_ENGINE,
-        'NAME': 'erp_kashee',
+        'NAME': 'sarthak_kashee',
         'USER': 'sarthak',
         'PASSWORD': '123',
-        'HOST': '10.10.10.23',
+        'HOST': '10.10.11.2',
         'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
