@@ -4849,8 +4849,7 @@ class Brand(models.Model):
     originating_type = models.IntegerField(blank=True, null=True)
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     
-    def __str__(self):
-        return f'{self.brand_name} ({self.brand_code})'
+
     class Meta:
         managed = False
         db_table = 'brand'
@@ -17267,8 +17266,7 @@ class Product(models.Model):
     product_category_code = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, blank=True, null=True, db_column='product_category_code')
     product_sub_group_code = models.ForeignKey('ProductSubGroup',on_delete=models.SET_NULL, blank=True, null=True, db_column='product_sub_group_code')
     product_variant = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    # brand_code = models.IntegerField(blank=True, null=True)
-    brand_code = models.ForeignKey(Brand,on_delete=models.CASCADE,related_name='products',db_column='brand_code',blank=True, null=True)
+    brand_code = models.ForeignKey('Brand',on_delete=models.CASCADE,related_name='products',db_column='brand_code',blank=True, null=True)
     sku = models.CharField(max_length=15, blank=True, null=True)
     pack_type = models.CharField(max_length=50, blank=True, null=True)
     market_name = models.CharField(max_length=255, blank=True, null=True)
@@ -17309,12 +17307,10 @@ class Product(models.Model):
     is_input_credit = models.BooleanField(blank=True, null=True)
     is_asset = models.BooleanField(blank=True, null=True)
     
-    def __str__(self):
-        return f'{self.product_name} ({self.product_code})'
-        
     class Meta:
         managed = False
         db_table = 'product'
+
 
 class ProductCategory(models.Model):
     product_category_code = models.AutoField(primary_key=True)
@@ -17707,7 +17703,7 @@ class ProductSpecificationTxnHistory(models.Model):
 class ProductStockOpening(models.Model):
     product_stock_opening_code = models.AutoField(primary_key=True)
     financial_year_code = models.IntegerField(blank=True, null=True)
-    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True)
+    product_code = models.ForeignKey(Product,on_delete=models.SET_NULL,blank=True, null=True, db_column='product_stock')
     # product_code = models.IntegerField(blank=True, null=True)
     qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     as_on_date = models.DateTimeField(blank=True, null=True)
