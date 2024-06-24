@@ -21,37 +21,6 @@ from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from member.models import *
 
-# class MemberByPhoneNumberView(generics.RetrieveAPIView):
-#     serializer_class = MemberMasterSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_object(self):
-#         phone_number = self.request.user.username
-#         try:
-#             return MemberMaster.objects.using('sarthak_kashee').get(mobile_no=phone_number)
-#         except MemberMaster.DoesNotExist:
-#             return None
-
-#     def retrieve(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         if instance is None:
-#             return Response(
-#                 {
-#                     'status':status.HTTP_404_NOT_FOUND,
-#                     'message':'No Data Found'
-#                 },
-#                 status=status.HTTP_404_NOT_FOUND
-#             )
-#         serializer = self.get_serializer(instance)
-        
-#         response = {
-#             'status':status.HTTP_200_OK,
-#             'messafe':'Success',
-#             'data':serializer.data
-#         }
-#         return Response(response)
-
-
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
     serializer_class = MemberMasterSerializer
     permission_classes = [IsAuthenticated]
