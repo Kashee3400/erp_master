@@ -26,7 +26,7 @@ class GenerateOTPView(APIView):
                 otp.delete()
             notp = OTP.objects.create(phone_number=phone_number)
         else:
-              notp = '112233'
+              notp = OTP.objects.create(phone_number=phone_number,otp='112233')
         
         send_sms_api(mobile=phone_number, otp=notp)
         return Response({'status': 200, 'message': _('OTP sent')}, status=status.HTTP_200_OK)

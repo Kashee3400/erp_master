@@ -14,8 +14,9 @@ class OTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created AT'))
 
     def save(self, *args, **kwargs):
-        self.otp = ''.join(random.choices(string.digits, k=6))
-        super().save(*args, **kwargs)
+        if not self.otp:            
+            self.otp = ''.join(random.choices(string.digits, k=6))
+            super().save(*args, **kwargs)
 
     def is_valid(self):
         return (timezone.now() - self.created_at).seconds < 300
