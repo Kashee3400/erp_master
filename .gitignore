@@ -14,7 +14,7 @@ sqlite3.db
 # /static/
 
 # Ignore media files (if using media uploads)
-# /media/
+/media/
 
 # Ignore web configuration for development
 web.config-devep
