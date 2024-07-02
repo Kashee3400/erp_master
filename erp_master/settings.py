@@ -370,5 +370,7 @@ OSCAR_ORDER_STATUS_CASCADE = {
 
 OSCAR_DEFAULT_CURRENCY = 'INR'
 
+OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images')
+
 # Useful in production websites where you want to make sure that the admin api is not exposed at all.
 OSCARAPI_BLOCK_ADMIN_API_ACCESS =True
