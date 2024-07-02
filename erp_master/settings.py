@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from oscar.defaults import *
 load_dotenv()
-
+from django.utils.translation import gettext_lazy as _
 
 SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j'
 
@@ -19,6 +19,8 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ["1.22.197.176"]
 
+OSCAR_SHOP_NAME = _('Kashee Mall')
+OSCAR_SHOP_TAGLINE = _('Har Ghar Kashee')
 
 INSTALLED_APPS = [
     'erp_app',
@@ -32,11 +34,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
-
-
+    'oscarapi',
     'django.contrib.sites',
     'django.contrib.flatpages',
-
     'oscar.config.Shop',
     'oscar.apps.analytics.apps.AnalyticsConfig',
     'oscar.apps.checkout.apps.CheckoutConfig',
@@ -67,16 +67,15 @@ INSTALLED_APPS = [
     'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
     'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
     'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
-
-    # 3rd-party apps that oscar depends on
     'widget_tweaks',
     'haystack',
     'treebeard',
-    # 'sorl.thumbnail',   # Default thumbnail backend, can be replaced
+    'sorl.thumbnail',
     'django_tables2',
 ]
 SITE_ID = 1
-
+THUMBNAIL_DEBUG = True
+THUMBNAIL_FORMAT = 'JPEG'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -88,7 +87,6 @@ MIDDLEWARE = [
     'erp_app.login_middleware.LoginRequiredMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    
 ]
 
 DATABASE_ROUTERS = ['erp_app.dbrouters.SarthakKasheeRouter']
@@ -112,6 +110,7 @@ TEMPLATES = [
                 'oscar.apps.checkout.context_processors.checkout',
                 'oscar.apps.communication.notifications.context_processors.notifications',
                 'oscar.core.context_processors.metadata',
+                # 'oscarapi.middleware.ApiBasketMiddleWare',
             ],
         },
     },
@@ -266,12 +265,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100
-
 }
 
 SIMPLE_JWT = {
@@ -331,7 +329,8 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr',
+        'URL': 'http://127.0.0.1:8983/solr/sandbox',
+        'ADMIN_URL': 'http://127.0.0.1:8983/solr/admin/cores',
         'INCLUDE_SPELLING': True,
     },
 }
@@ -343,3 +342,33 @@ OSCAR_ORDER_STATUS_PIPELINE = {
     'Being processed': ('Processed', 'Cancelled',),
     'Cancelled': (),
 }
+
+OSCAR_SEARCH_FACETS = {
+    'fields': {
+        'product_class': {'name': _('Type'), 'field': 'product_class'},
+        'rating': {'name': _('Rating'), 'field': 'rating'},
+    },
+    'queries': {
+        'price_range': {
+             'name': _('Price range'),
+             'field': 'price',
+             'queries': [
+                 # This is a list of (name, query) tuples where the name will
+                 # be displayed on the front-end.
+                 (_('0 to 20'), '[0 TO 20]'),
+                 (_('20 to 40'), '[20 TO 40]'),
+                 (_('40 to 60'), '[40 TO 60]'),
+                 (_('60+'), '[60 TO *]'),
+             ]
+         },
+    },
+}
+
+OSCAR_ORDER_STATUS_CASCADE = {
+    'Being processed': 'In progress'
+}
+
+OSCAR_DEFAULT_CURRENCY = 'INR'
+
+# Useful in production websites where you want to make sure that the admin api is not exposed at all.
+OSCARAPI_BLOCK_ADMIN_API_ACCESS =True

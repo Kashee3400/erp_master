@@ -12081,7 +12081,6 @@ class MemberMaster(models.Model):
         return f'{self.member_code} {self.member_name}'
     
 
-
 class MemberMasterHistory(models.Model):
     history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)
