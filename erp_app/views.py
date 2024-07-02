@@ -10,7 +10,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q,Sum, Count,Avg,Max
@@ -23,7 +23,10 @@ from member.models import *
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
     serializer_class = MemberMasterSerializer
+    
     permission_classes = [IsAuthenticated]
+    
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self):
         phone_number = self.request.user.username
