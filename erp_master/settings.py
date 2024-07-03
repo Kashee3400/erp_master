@@ -73,9 +73,11 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'django_tables2',
 ]
+
 SITE_ID = 1
 THUMBNAIL_DEBUG = True
 THUMBNAIL_FORMAT = 'JPEG'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -99,7 +101,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [TEMPLATE_DIR],
-        'APP_DIRS': True,
+        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -111,6 +113,16 @@ TEMPLATES = [
                 'oscar.apps.communication.notifications.context_processors.notifications',
                 'oscar.core.context_processors.metadata',
                 # 'oscarapi.middleware.ApiBasketMiddleWare',
+            ],
+            
+            "loaders": [
+                (
+                    "django.template.loaders.cached.Loader",
+                    [
+                        "django.template.loaders.filesystem.Loader",
+                        "django.template.loaders.app_directories.Loader",
+                    ],
+                ),
             ],
         },
     },
@@ -139,12 +151,12 @@ if not DEBUG:
     if DB_ENGINE:
         DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'member',
-            'USER': 'root',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'erp_default_db',
+            'USER': 'postgres',
             'PASSWORD': '12345@Kashee',
             'HOST': 'localhost',
-            'PORT': '3306',
+            'PORT': '5432',
         },
         'sarthak_kashee': {
             'ENGINE': DB_ENGINE,
@@ -180,25 +192,67 @@ else:
 
 if not DEBUG:
     LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'file': {
-                'level': 'ERROR',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': os.path.join(BASE_DIR, 'error.log'),  # Path to your error log file
-                'maxBytes': 1024 * 1024 * 10,  # 10 MB
-                'backupCount': 5,  # Keep up to 5 previous log files
-            },
+    'version': 1,
+    'disable_existing_loggers': True,
+    'root': {
+        'level': 'DEBUG' if DEBUG else 'INFO',
+        'handlers': ['console', ],
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
         },
-        'loggers': {
-            'django': {
-                'handlers': ['file'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
+        'simple': {
+            'format': '[%(asctime)s] %(message)s'
         },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+        },
+    },
+    'loggers': {
+        # Django loggers
+        'django': {
+            'propagate': True,
+        },
+        'django.db': {
+            'level': 'WARNING'
+        },
+        'django.request': {
+            'handlers': ['mail_admins', ],
+            'level': 'ERROR',
+            'propagate': False
+        },
+        'oscar': {
+            'level': 'WARNING'
+        },
+        'sorl.thumbnail': {
+            'level': 'ERROR',
+        },
+        # Suppress output of this debug toolbar panel
+        'template_timings_panel': {
+            'handlers': ['null'],
+        }
     }
+}
+
 
 
 # Password validation
@@ -374,3 +428,5 @@ OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images')
 
 # Useful in production websites where you want to make sure that the admin api is not exposed at all.
 OSCARAPI_BLOCK_ADMIN_API_ACCESS =True
+
+OSCARAPI_OVERRIDE_MODULES = ["erp_master.mycustomapi"]

@@ -14,7 +14,6 @@ urlpatterns = [
     path('api/mpp-collection-detail/', MppCollectionDetailView.as_view(), name='mpp-collection-detail'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
+
     # urls for ecommerce application
-    path('brand/list/' , BrandListAPIView.as_view(), name='brand_list'),
-    path('product/list/' , ProductListAPIView.as_view(), name='product_list')
 ]
