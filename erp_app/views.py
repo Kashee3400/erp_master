@@ -67,11 +67,11 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         response_data['company_code'] = mpp_aggregations.company_code
         response_data['company_name'] = mpp_aggregations.company_name
         response_data['member_tr_code'] = mpp_aggregations.member_tr_code
-
-        response_data['bank'] =''
-        response_data['bank_branch'] = ''
-        response_data['account_no'] = ''
-        response_data['ifsc'] =''
+        billing_member_detail = BillingMemberDetail.objects.filter(member_code=instance.member_code).first()
+        response_data['bank'] = billing_member_detail.bank_code.bank_name
+        response_data['bank_branch'] = ""
+        response_data['account_no'] = billing_member_detail.acc_no
+        response_data['ifsc'] = billing_member_detail.ifsc
 
         response = {
             'status': status.HTTP_200_OK,
@@ -336,86 +336,3 @@ class MppCollectionDetailView(generics.GenericAPIView):
             }
         }
         return Response(response_data, status=status.HTTP_200_OK)
-
-"""
-APIs for ecommerce By Divyanshu Kumar Kushwaha on 21-June-2024 
-"""
-
-class BrandListAPIView(APIView):
-    permission_classes = [AllowAny]
-    
-    def get(self, request):
-        brands = Brand.objects.all()
-        serializer = BrandSerializer(brands, many=True)
-        
-        # Fetching brand images based on brand_code
-        brand_images = {}
-        for brand in brands:
-            image = BrandImage.objects.filter(brand_code=brand.brand_code).first()
-            if image and image.image:
-                brand_images[brand.brand_code] = request.build_absolute_uri(image.image.url)
-            else:
-                brand_images[brand.brand_code] = None
-        
-        # Adding brand_image data to serializer data
-        for data in serializer.data:
-            brand_code = data['brand_code']
-            data['brand_image'] = brand_images.get(brand_code, None)
-        
-        response_data = {
-            "status": 200,
-            "message": "success",
-            "data": serializer.data
-        }
-        return Response(response_data)
-
-
-class ProductListAPIView(APIView):
-    permission_classes = [AllowAny]
-    pagination_class = CustomPageNumberPagination
-
-    def get_queryset(self, filters):
-        queryset = Product.objects.filter(is_saleable=True)
-        
-        if filters.get('product_group_code'):
-            queryset = queryset.filter(product_group_code=filters['product_group_code'])
-        if filters.get('product_category_code'):
-            queryset = queryset.filter(product_category_code=filters['product_category_code'])
-        if filters.get('product_sub_group_code'):
-            queryset = queryset.filter(product_sub_group_code=filters['product_sub_group_code'])
-        if filters.get('brand_code'):
-            queryset = queryset.filter(brand_code=filters['brand_code'])
-        
-        return queryset
-
-    def get(self, request):
-        try:
-            filters = {
-                'product_group_code': request.query_params.get('product_group_code'),
-                'product_category_code': request.query_params.get('product_category_code'),
-                'product_sub_group_code': request.query_params.get('product_sub_group_code'),
-                'brand_code': request.query_params.get('brand_code')
-            }
-
-            queryset = self.get_queryset(filters)
-            
-            # Perform pagination
-            paginator = self.pagination_class()
-            paginated_queryset = paginator.paginate_queryset(queryset, request)
-
-            # Serialize data for the current page
-            serializer = ProductSerializer(paginated_queryset, many=True)
-            
-            # Prepare paginated response
-            paginated_response = paginator.get_paginated_response(serializer.data)
-            paginated_response.data['status'] = status.HTTP_200_OK
-            paginated_response.data['message'] = "success"
-
-            return paginated_response
-
-        except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": f"An unexpected error occurred: {str(e)}",
-                "data": []
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

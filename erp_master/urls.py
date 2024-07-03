@@ -4,6 +4,7 @@ from django.apps import apps
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 admin.site.site_title = 'ERP Admin'
 admin.site.index_title = 'Site administration'
 admin.site.site_header = 'ERP Administration'
