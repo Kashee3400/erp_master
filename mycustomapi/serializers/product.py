@@ -2,6 +2,8 @@ from oscar.core.loading import get_class
 
 from rest_framework import serializers
 from oscarapi.serializers import checkout, product
+from rest_framework import viewsets
+from oscar.core.loading import get_model
 
 
 Selector = get_class("partner.strategy", "Selector")
