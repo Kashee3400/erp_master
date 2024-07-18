@@ -112,3 +112,6 @@ class LogoutView(APIView):
                 'status':status.HTTP_400_BAD_REQUEST,
                 "message": str(e)
                 }, status=status.HTTP_400_BAD_REQUEST)
+
+
+

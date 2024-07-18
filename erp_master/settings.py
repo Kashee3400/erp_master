@@ -83,10 +83,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'erp_app.login_middleware.LoginRequiredMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
@@ -189,7 +189,23 @@ else:
         },
     },
 }
-
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
+    #     },
+    #     'sarthak_kashee': {
+    #     'ENGINE': DB_ENGINE,
+    #     'NAME': 'kashee_e_dairy',
+    #     'USER': 'erp',
+    #     'PASSWORD': '123',
+    #     'HOST': '180.179.208.10',
+    #     'PORT': 1433,
+    #     'OPTIONS': {
+    #         'driver': 'ODBC Driver 17 for SQL Server',
+    #         },
+    #     },
+    # }
 if not DEBUG:
     LOGGING = {
     'version': 1,
@@ -409,10 +425,8 @@ OSCAR_SEARCH_FACETS = {
              'queries': [
                  # This is a list of (name, query) tuples where the name will
                  # be displayed on the front-end.
-                 (_('0 to 20'), '[0 TO 20]'),
-                 (_('20 to 40'), '[20 TO 40]'),
-                 (_('40 to 60'), '[40 TO 60]'),
-                 (_('60+'), '[60 TO *]'),
+                 (_('0 to 500'), '[501 TO 1000]'),
+                 (_('1001 to 2000'), '[2001 TO 5000]'),
              ]
          },
     },
@@ -424,9 +438,10 @@ OSCAR_ORDER_STATUS_CASCADE = {
 
 OSCAR_DEFAULT_CURRENCY = 'INR'
 
-OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images')
+OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images','categories')
 
 # Useful in production websites where you want to make sure that the admin api is not exposed at all.
 OSCARAPI_BLOCK_ADMIN_API_ACCESS =True
 
 OSCARAPI_OVERRIDE_MODULES = ["erp_master.mycustomapi"]
+
