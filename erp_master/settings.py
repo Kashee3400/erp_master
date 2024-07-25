@@ -11,8 +11,9 @@ SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
-# DEBUG = True
 DEBUG = False
+# DEBUG = True
+
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
@@ -444,4 +445,25 @@ OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images','categories')
 OSCARAPI_BLOCK_ADMIN_API_ACCESS =True
 
 OSCARAPI_OVERRIDE_MODULES = ["erp_master.mycustomapi"]
-
+import requests
+# def send_fcm_notification():
+#         data_payload = {
+#             "data": {
+#                 "title": "New Notification",
+#                 "body": {
+#                     "message":"Hello There",
+#                     "date": ""
+#                 },
+#             },
+#             "to": "d5W0JSvrQE6vBrBC_k06GV:APA91bHcVCJ3fr7PXqCAGxl_Pai1_b4_4mHawWVAcqBUKkEsikiJRPF9KV3mKPRKQtxfqLnK9JlxJMgbhCYbhUws33DirIJ8wkxumERN_SdfJo66CkbS0f1Pc98EPVjvnqcFEXBmOgaC"
+#         }
+#         url = "https://fcm.googleapis.com/fcm/send"
+#         headers = {
+#                 "Authorization": "key=AAAAI-hZouk:APA91bFOo-4zAELDwxbaZme6pt0wYrN3rp8fy98EGRntKbZoqEqupj8tpsWKSAGRToVEZkB5OK6tH7zmz4gEfMY1joi4weSupGPV9V4PPvAbDwV7ry68jq07c3OThWR8zsHHsk5XVQ3x",
+#                 "Content-Type": "application/json"
+#         }
+#         response = requests.post(url, headers=headers, json=data_payload)
+#         print(response)
+#         return response
+    
+# send_fcm_notification()
