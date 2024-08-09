@@ -25,6 +25,7 @@ OSCAR_SHOP_TAGLINE = _('Har Ghar Kashee')
 
 INSTALLED_APPS = [
     'erp_app',
+    'mpms',
     'member',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -92,7 +93,7 @@ MIDDLEWARE = [
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
-DATABASE_ROUTERS = ['erp_app.dbrouters.SarthakKasheeRouter']
+DATABASE_ROUTERS = ['erp_app.dbrouters.SarthakKasheeRouter','mpms.db_routers.MPMSDBRouter']
 
 ROOT_URLCONF = 'erp_master.urls'
 
@@ -138,6 +139,7 @@ DB_ENGINE = os.getenv('DB_ENGINE', None)
 DB_USER_SARTHAK = os.getenv('DB_USER_SARTHAK', None)
 DB_PASSWORD_SARTHAK = os.getenv('DB_PASSWORD_SARTHAK', None)
 DB_NAME_SARTHAK = os.getenv('DB_NAME_SARTHAK', None)
+DB_NAME_MPMS = os.getenv('DB_NAME_MPMS', None)
 
 #cred for connecting member db
 
@@ -148,9 +150,8 @@ DB_MEMBER_PASS = os.getenv('DB_MEMBER_PASS', None)
 DB_HOST = os.getenv('DB_HOST', None)
 DB_PORT = os.getenv('DB_PORT', None)
 
-if not DEBUG:    
-    if DB_ENGINE:
-        DATABASES = {
+if not DEBUG:
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'erp_default_db',
@@ -170,8 +171,18 @@ if not DEBUG:
                 'driver': 'ODBC Driver 17 for SQL Server',
             },
         },
-}
-
+        'mpms_db': {
+            'ENGINE': DB_ENGINE,
+            'NAME': DB_NAME_MPMS,
+            'USER': DB_USER_SARTHAK,
+            'PASSWORD': DB_PASSWORD_SARTHAK,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
+        },
+    }
 else:
     DATABASES = {
         'default': {
@@ -179,34 +190,29 @@ else:
             'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
         },
         'sarthak_kashee': {
-        'ENGINE': DB_ENGINE,
-        'NAME': 'sarthak_kashee',
-        'USER': 'sarthak',
-        'PASSWORD': '123',
-        'HOST': '10.10.11.2',
-        'PORT': 1433,
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
+            'ENGINE': 'mssql',
+            'NAME': 'sarthak_kashee',
+            'USER': 'sarthak',
+            'PASSWORD': '123',
+            'HOST': '10.10.11.2',
+            'PORT': 1433,
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
         },
-    },
-}
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.sqlite3',
-    #         'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
-    #     },
-    #     'sarthak_kashee': {
-    #     'ENGINE': DB_ENGINE,
-    #     'NAME': 'kashee_e_dairy',
-    #     'USER': 'erp',
-    #     'PASSWORD': '123',
-    #     'HOST': '180.179.208.10',
-    #     'PORT': 1433,
-    #     'OPTIONS': {
-    #         'driver': 'ODBC Driver 17 for SQL Server',
-    #         },
-    #     },
-    # }
+        'mpms_db': {
+            'ENGINE': 'mssql',
+            'NAME': 'kanha_Procurement',
+            'USER': 'sarthak',
+            'PASSWORD': '123',
+            'HOST': '10.10.11.2',
+            'PORT': 1433,
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
+        },
+    }
+
 if not DEBUG:
     LOGGING = {
     'version': 1,
@@ -344,7 +350,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=120),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=365 * 10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=150),
     "ROTATE_REFRESH_TOKENS": False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -408,6 +414,7 @@ HAYSTACK_CONNECTIONS = {
 
 OSCAR_INITIAL_ORDER_STATUS = 'Pending'
 OSCAR_INITIAL_LINE_STATUS = 'Pending'
+
 OSCAR_ORDER_STATUS_PIPELINE = {
     'Pending': ('Being processed', 'Cancelled',),
     'Being processed': ('Processed', 'Cancelled',),

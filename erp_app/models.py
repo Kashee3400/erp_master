@@ -13000,7 +13000,7 @@ class MemberWiseShare(models.Model):
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     total_qty = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
     previous_year_value = models.IntegerField(blank=True, null=True)
-    updated_by_parth = models.CharField(max_length=200, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    # updated_by_parth = models.CharField(max_length=200, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     opening_share = models.IntegerField(blank=True, null=True)
 
     class Meta:
