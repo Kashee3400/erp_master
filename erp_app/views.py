@@ -1,31 +1,23 @@
-from datetime import timedelta
-from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import *
 from .serializers import *
 from rest_framework import generics, status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from django.db.models import Q,Sum, Count,Avg,Max
-from datetime import datetime
+from django.db.models import Q,Sum, Count,Avg,Max,Count
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
-from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
-from member.models import *
+from mpms.serializers import TblfarmercollectionSerializer
+from django.db.models.functions import TruncDate,Cast
+from datetime import datetime, date
+from rest_framework.pagination import PageNumberPagination
+from django.utils.dateparse import parse_datetime
+
+
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
     serializer_class = MemberMasterSerializer
-    
     permission_classes = [IsAuthenticated]
-    
     authentication_classes = [JWTAuthentication]
 
     def get_object(self):
@@ -72,7 +64,6 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         response_data['bank_branch'] = ""
         response_data['account_no'] = billing_member_detail.acc_no
         response_data['ifsc'] = billing_member_detail.ifsc
-
         response = {
             'status': status.HTTP_200_OK,
             'message': 'Success',
@@ -80,8 +71,6 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         }
         return Response(response)
 
-
-from django.utils.dateparse import parse_datetime
 
 class BillingMemberDetailView(generics.RetrieveAPIView):
     """
@@ -164,15 +153,13 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         return Response(response)
 
 
-# API to fetch the member latest milk pour and ther amount 
-from django.db.models.functions import Cast
-from rest_framework.pagination import PageNumberPagination
-
 class CustomPageNumberPagination(PageNumberPagination):
     page_size = 20  # Default page size
-    page_size_query_param = 'page_size'  # Query parameter to dynamically set page size
-    max_page_size = 100  # Maximum page size
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
+
+from mpms.models import Tblfarmercollection,Tblfarmer
 
 class MppCollectionAggregationListView(generics.ListAPIView):
     '''
@@ -252,9 +239,6 @@ class MppCollectionAggregationListView(generics.ListAPIView):
                 "data": []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-from django.db.models import Subquery, OuterRef, Count, Sum
-from rest_framework.permissions import AllowAny
-from django.db.models.functions import TruncDate
 
 class MppCollectionDetailView(generics.GenericAPIView):
     """
@@ -262,7 +246,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
     """
     serializer_class = MppCollectionSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
@@ -275,8 +259,32 @@ class MppCollectionDetailView(generics.GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         member = MemberMaster.objects.get(mobile_no=request.user.username)
-        
+        from datetime import datetime,date
+        mpms_member = Tblfarmer.objects.filter(phonenumber = self.request.user.username).first()
+        mpp_aggregations = MppCollectionAggregation.objects.filter(member_tr_code=mpms_member.farmercode).first()
         date_str = request.query_params.get('date')
+        if datetime.now().year == 2024:
+            day = 1
+            end_day = 1
+            month = 4
+            if int(mpp_aggregations.mcc_tr_code) == 4:
+                end_day = 10
+                month = 6
+            elif int(mpp_aggregations.mcc_tr_code) == 2:
+                end_day = 10
+            elif int(mpp_aggregations.mcc_tr_code) in [1,3,5]:
+                end_day = 20
+            start_date = date(year=datetime.now().year, month=month, day=day)
+            end_date = date(year= datetime.now().year, month=month, day=end_day)
+
+            mpms_farmerCollection = Tblfarmercollection.objects.filter(
+                dumpdate__range=(start_date, end_date),
+                isapproved = True,
+                isdelete = False,
+                member_other_code = f'{mpms_member.farmercode}',
+                )
+        else:
+            mpms_farmerCollection = None
         if date_str:
             try:
                 provided_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -297,8 +305,8 @@ class MppCollectionDetailView(generics.GenericAPIView):
         else:
             start_year = current_year
 
-        start_date = make_aware(timezone.datetime(start_year, 4, 1))
-        end_date = make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
+        start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
+        end_date = timezone.make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
 
         date_queryset = MppCollection.objects.filter(
             collection_date__date=provided_date,
@@ -309,15 +317,10 @@ class MppCollectionDetailView(generics.GenericAPIView):
         annotated_queryset = MppCollection.objects.filter(
             collection_date__range=(start_date, end_date),
             member_code=member.member_code
-        ).annotate(
-            date_only=TruncDate('collection_date')
-        ).values(
-            'date_only'
-        ).annotate(
-            total_qty=Sum('qty'),
-            total_payment=Sum('amount')
-        )
-
+        ).annotate(date_only=TruncDate('collection_date')).values('date_only').annotate(total_qty=Sum('qty'),total_payment=Sum('amount'))
+        
+        mpms_farmerCollection_data = mpms_farmerCollection.filter(dumpdate = provided_date)
+        
         # Aggregate the results
         final_aggregated_data = {
             'total_days': annotated_queryset.count(),
@@ -326,13 +329,31 @@ class MppCollectionDetailView(generics.GenericAPIView):
         }
 
         date_serializer = self.get_serializer(date_queryset, many=True)
-
+        # Calculate the averages and total
+        aggregates = mpms_farmerCollection.aggregate(
+            total_lr=Sum('weightliter'),
+            total_amount = Sum('totalamount')
+        )
+        
+        unique_dumpdate_count = mpms_farmerCollection.values('dumpdate').distinct().count()
+        total_amount = aggregates['total_amount']
+        total_lr = aggregates['total_lr']
+        old_final_aggregated_data = {
+            'total_days': unique_dumpdate_count,
+            'total_qty': total_lr,
+            'total_payment': total_amount
+        }
         response_data = {
-            "status": 200,
+            "status": status.HTTP_200_OK,
             "message": "success",
             "data": {
                 "dashboard_data": date_serializer.data,
-                "dashboard_fy_data": final_aggregated_data
+                "dashboard_fy_data": final_aggregated_data,
+                'old_data':{
+                "old_dashboard_data": TblfarmercollectionSerializer(mpms_farmerCollection_data, many=True).data,
+                "old_dashboard_fy_data": old_final_aggregated_data,
+                }
             }
         }
+            
         return Response(response_data, status=status.HTTP_200_OK)

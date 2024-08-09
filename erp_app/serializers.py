@@ -1,4 +1,5 @@
 from .models import *
+
 from rest_framework import serializers
 
 
@@ -117,6 +118,16 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['product_code','product_name','product_category','brand','sku','pack_type',
                   'description','product_type']
+
+
+class LocalSaleTxnSerializer(serializers.ModelSerializer):
+    binlocation = BinLocationSerializer(source='binlocation_code',read_only=True)
+    product = ProductSerializer(source='product_code',read_only=True)
+
+    class Meta:
+        model = LocalSaleTxn
+        fields = '__all__'
+
 
 
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
