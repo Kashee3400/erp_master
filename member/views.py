@@ -19,7 +19,7 @@ class GenerateOTPView(APIView):
     
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number')
-        if not MemberMaster.objects.filter(mobile_no=phone_number).exists():
+        if not MemberMaster.objects.using('sarthak_kashee').filter(mobile_no=phone_number).exists():
             return Response({'status': 400, 'message': _('Mobile no doest not exists')}, status=status.HTTP_400_BAD_REQUEST)
         otp = OTP.objects.filter(phone_number=phone_number)
         if otp:

@@ -11,8 +11,8 @@ SECRET_KEY = 'django-insecure-+q&lga%@fxkh0q8q7l89f0y+!w9rd5ytfxz5z(^+*!thf))73j
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
-DEBUG = False
-# DEBUG = True
+# DEBUG = False
+DEBUG = True
 
 
 if DEBUG:
@@ -208,7 +208,7 @@ else:
             },
         },
         'mpms_db': {
-            'ENGINE': DB_ENGINE,
+            'ENGINE': 'mssql',
             'NAME': 'kanha_Procurement',
             'USER': 'sarthak',
             'PASSWORD': '123',
