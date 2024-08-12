@@ -1675,6 +1675,16 @@ class Tblfarmercollection(models.Model):
     class Meta:
         managed = False
         db_table = 'tblFarmerCollection'
+        
+        indexes = [
+            models.Index(fields=['dumpdate']),
+            models.Index(fields=['isapproved']),
+            models.Index(fields=['isdelete']),
+            models.Index(fields=['member_other_code']),
+            models.Index(fields=['mccid']),
+            models.Index(fields=['dumpdate', 'isapproved']),
+            models.Index(fields=['member_other_code', 'isdelete']),
+        ]
 
 
 class Tblfarmercollection2(models.Model):

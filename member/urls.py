@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/members/billing-history/', BillingMemberDetailView.as_view(), name='member-billing-history'),
     path('api/mpp-collection/', MppCollectionAggregationListView.as_view(), name='mpp-collection-list'),
     path('api/mpp-collection-detail/', MppCollectionDetailView.as_view(), name='mpp-collection-detail'),
+    path('api/member-share-final-info/', MemberShareFinalInfoView.as_view(), name='member-share-final-info'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
 ]
