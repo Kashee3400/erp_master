@@ -14647,6 +14647,12 @@ class MppCollection(models.Model):
         db_table = 'mpp_collection'
         # unique_together = (('member_code', 'collection_date', 'shift_code', 'milk_type_code'),)
         
+        indexes = [
+            models.Index(fields=['member_code']),
+            models.Index(fields=['collection_date']),
+            models.Index(fields=['shift_code']),
+        ]
+        
     
 
 

@@ -242,7 +242,7 @@ class MppCollectionAggregationListView(generics.ListAPIView):
 
 class MppCollectionDetailView(generics.GenericAPIView):
     """
-    This class provides the data for the dashboard
+    API endpoint for fetching other dashboard data.
     """
     serializer_class = MppCollectionSerializer
     authentication_classes = [JWTAuthentication]
@@ -251,52 +251,62 @@ class MppCollectionDetailView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
         
-        if not MemberMaster.objects.filter(mobile_no=request.user.username).exists():
+        member = MemberMaster.objects.filter(mobile_no=request.user.username).first()
+        if not member:
             return Response({
                 "status": 400,
-                "message": "No member found on this mobile no",
+                "message": "No member found on this mobile number",
                 "data": {}
             }, status=status.HTTP_400_BAD_REQUEST)
-        
-        member = MemberMaster.objects.get(mobile_no=request.user.username)
-        from datetime import datetime,date
-        mpms_member = Tblfarmer.objects.filter(phonenumber = self.request.user.username).first()
-        mpp_aggregations = MppCollectionAggregation.objects.filter(member_tr_code=mpms_member.farmercode).first()
-        date_str = request.query_params.get('date')
-        if datetime.now().year == 2024:
-            day = 1
-            end_day = 1
-            month = 4
-            if int(mpp_aggregations.mcc_tr_code) == 4:
-                end_day = 10
-                month = 6
-            elif int(mpp_aggregations.mcc_tr_code) == 2:
-                end_day = 10
-            elif int(mpp_aggregations.mcc_tr_code) in [1,3,5]:
-                end_day = 20
-            start_date = date(year=datetime.now().year, month=month, day=day)
-            end_date = date(year= datetime.now().year, month=month, day=end_day)
 
-            mpms_farmerCollection = Tblfarmercollection.objects.filter(
-                dumpdate__range=(start_date, end_date),
-                isapproved = True,
-                isdelete = False,
-                member_other_code = f'{mpms_member.farmercode}',
-                )
-        else:
-            mpms_farmerCollection = None
+        date_str = request.query_params.get('date')
         if date_str:
             try:
                 provided_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
             except ValueError:
                 return Response({
                     "status": 400,
-                    "message": "date must be in YYYY-MM-DD format",
+                    "message": "Date must be in YYYY-MM-DD format",
                     "data": {}
                 }, status=status.HTTP_400_BAD_REQUEST)
         else:
             provided_date = today
 
+        start_date, end_date = self.get_fiscal_year_range(provided_date)
+
+        date_queryset = MppCollection.objects.filter(
+            collection_date__date=provided_date,
+            member_code=member.member_code
+        )
+
+        annotated_queryset = MppCollection.objects.filter(
+            collection_date__range=(start_date, end_date),
+            member_code=member.member_code
+        ).annotate(date_only=TruncDate('collection_date')).values('date_only').annotate(
+            total_qty=Sum('qty'),
+            total_payment=Sum('amount')
+        )
+        
+        final_aggregated_data = {
+            'total_days': annotated_queryset.count(),
+            'total_qty': sum(item['total_qty'] for item in annotated_queryset),
+            'total_payment': sum(item['total_payment'] for item in annotated_queryset)
+        }
+
+        date_serializer = self.get_serializer(date_queryset, many=True)
+
+        response_data = {
+            "status": status.HTTP_200_OK,
+            "message": "success",
+            "data": {
+                "dashboard_data": date_serializer.data,
+                "dashboard_fy_data": final_aggregated_data,
+            }
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def get_fiscal_year_range(self, provided_date):
         current_year = provided_date.year
         current_month = provided_date.month
 
@@ -307,53 +317,34 @@ class MppCollectionDetailView(generics.GenericAPIView):
 
         start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
         end_date = timezone.make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
+        return start_date, end_date
 
-        date_queryset = MppCollection.objects.filter(
-            collection_date__date=provided_date,
-            member_code=member.member_code
-        )
 
-        # Filter and annotate for unique dates within the date range and member code
-        annotated_queryset = MppCollection.objects.filter(
-            collection_date__range=(start_date, end_date),
-            member_code=member.member_code
-        ).annotate(date_only=TruncDate('collection_date')).values('date_only').annotate(total_qty=Sum('qty'),total_payment=Sum('amount'))
-        
-        mpms_farmerCollection_data = mpms_farmerCollection.filter(dumpdate = provided_date)
-        
-        # Aggregate the results
-        final_aggregated_data = {
-            'total_days': annotated_queryset.count(),
-            'total_qty': sum(item['total_qty'] for item in annotated_queryset),
-            'total_payment': sum(item['total_payment'] for item in annotated_queryset)
-        }
+from rest_framework.views import APIView
 
-        date_serializer = self.get_serializer(date_queryset, many=True)
-        # Calculate the averages and total
-        aggregates = mpms_farmerCollection.aggregate(
-            total_lr=Sum('weightliter'),
-            total_amount = Sum('totalamount')
-        )
+class MemberShareFinalInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    
+    def get(self, request):
+        member = MemberMaster.objects.filter(mobile_no=self.request.user.username)
+        if not member.exists():
+            return Response({'status': status.HTTP_400_BAD_REQUEST,"message": "Member does not exists"}, status=status.HTTP_400_BAD_REQUEST)        
+        # Filter records by to_code
+        first_member = member.first()
+        records = MemberShareFinalInfo.objects.filter(to_code=first_member.member_code)     
+        print(first_member.member_code)   
+        total_sum = records.aggregate(total_no_of_share=Sum('no_of_share'))['total_no_of_share'] or 0
+        # Serialize the data
+        serializer = MemberShareFinalInfoSerializer(records, many=True)
         
-        unique_dumpdate_count = mpms_farmerCollection.values('dumpdate').distinct().count()
-        total_amount = aggregates['total_amount']
-        total_lr = aggregates['total_lr']
-        old_final_aggregated_data = {
-            'total_days': unique_dumpdate_count,
-            'total_qty': total_lr,
-            'total_payment': total_amount
-        }
         response_data = {
-            "status": status.HTTP_200_OK,
-            "message": "success",
-            "data": {
-                "dashboard_data": date_serializer.data,
-                "dashboard_fy_data": final_aggregated_data,
-                'old_data':{
-                "old_dashboard_data": TblfarmercollectionSerializer(mpms_farmerCollection_data, many=True).data,
-                "old_dashboard_fy_data": old_final_aggregated_data,
-                }
+            'status':status.HTTP_200_OK,
+            'message':"Success",
+            'data':{
+                'total_no_of_share': total_sum,
+                'records': serializer.data
             }
         }
-            
+        
         return Response(response_data, status=status.HTTP_200_OK)

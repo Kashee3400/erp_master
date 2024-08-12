@@ -137,3 +137,9 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSaleTxn
         fields = '__all__'
+
+
+class MemberShareFinalInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberShareFinalInfo
+        fields = ['no_of_share','issue_date','certificate_no']
