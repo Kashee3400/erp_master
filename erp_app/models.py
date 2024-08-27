@@ -5205,13 +5205,13 @@ class CdaAggregation(models.Model):
     plant_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     plant_tr_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     plant_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mcc_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    mcc_code = models.ForeignKey("Mcc",on_delete=models.SET_NULL, blank=True, null=True,db_column='mcc_code')
     mcc_tr_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mcc_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     bmc_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     bmc_tr_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     bmc_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    mpp_code = models.ForeignKey("Mpp",on_delete=models.SET_NULL,blank=True, null=True,db_column='mpp_code')
     mpp_tr_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     collection_date = models.DateTimeField(blank=True, null=True)
@@ -11679,6 +11679,9 @@ class Mcc(models.Model):
     flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     originating_type = models.IntegerField(blank=True, null=True)
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    
+    def __str__(self):
+        return self.mcc_name
 
     class Meta:
         managed = False
@@ -14602,6 +14605,10 @@ class Mpp(models.Model):
     mid = models.CharField(db_column='MID', max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)  # Field name made lowercase.
     mpp_opening_date = models.DateTimeField(blank=True, null=True)
     force_stop_new_share_impect = models.BooleanField(blank=True, null=True)
+    
+    
+    def __str__(self):
+        return self.mpp_name
 
     class Meta:
         managed = False

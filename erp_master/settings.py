@@ -2,7 +2,6 @@ from pathlib import Path
 from django.conf import settings
 import os
 from dotenv import load_dotenv
-from oscar.defaults import *
 load_dotenv()
 from django.utils.translation import gettext_lazy as _
 
@@ -20,14 +19,10 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ["1.22.197.176"]
 
-OSCAR_SHOP_NAME = _('Kashee Mall')
-OSCAR_SHOP_TAGLINE = _('Har Ghar Kashee')
 
 INSTALLED_APPS = [
-    'erp_app',
-    'mpms',
-    'member',
-    'django.contrib.admin',
+    "unfold.apps.BasicAppConfig", 
+    "django.contrib.admin",
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -36,41 +31,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
-    'oscarapi',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'oscar.config.Shop',
-    'oscar.apps.analytics.apps.AnalyticsConfig',
-    'oscar.apps.checkout.apps.CheckoutConfig',
-    'oscar.apps.address.apps.AddressConfig',
-    'oscar.apps.shipping.apps.ShippingConfig',
-    'oscar.apps.catalogue.apps.CatalogueConfig',
-    'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
-    'oscar.apps.communication.apps.CommunicationConfig',
-    'oscar.apps.partner.apps.PartnerConfig',
-    'oscar.apps.basket.apps.BasketConfig',
-    'oscar.apps.payment.apps.PaymentConfig',
-    'oscar.apps.offer.apps.OfferConfig',
-    'oscar.apps.order.apps.OrderConfig',
-    'oscar.apps.customer.apps.CustomerConfig',
-    'oscar.apps.search.apps.SearchConfig',
-    'oscar.apps.voucher.apps.VoucherConfig',
-    'oscar.apps.wishlists.apps.WishlistsConfig',
-    'oscar.apps.dashboard.apps.DashboardConfig',
-    'oscar.apps.dashboard.reports.apps.ReportsDashboardConfig',
-    'oscar.apps.dashboard.users.apps.UsersDashboardConfig',
-    'oscar.apps.dashboard.orders.apps.OrdersDashboardConfig',
-    'oscar.apps.dashboard.catalogue.apps.CatalogueDashboardConfig',
-    'oscar.apps.dashboard.offers.apps.OffersDashboardConfig',
-    'oscar.apps.dashboard.partners.apps.PartnersDashboardConfig',
-    'oscar.apps.dashboard.pages.apps.PagesDashboardConfig',
-    'oscar.apps.dashboard.ranges.apps.RangesDashboardConfig',
-    'oscar.apps.dashboard.reviews.apps.ReviewsDashboardConfig',
-    'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
-    'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
-    'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
     'widget_tweaks',
-    'haystack',
+    'erp_app',
+    'mpms',
+    'member',
     'treebeard',
     'sorl.thumbnail',
     'django_tables2',
@@ -89,8 +55,8 @@ MIDDLEWARE = [
     'erp_app.login_middleware.LoginRequiredMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'oscar.apps.basket.middleware.BasketMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    "member.middleware.CurrentRequestMiddleware",
 ]
 
 DATABASE_ROUTERS = ['erp_app.dbrouters.SarthakKasheeRouter','mpms.db_routers.MPMSDBRouter']
@@ -110,21 +76,18 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'oscar.apps.search.context_processors.search_form',
-                'oscar.apps.checkout.context_processors.checkout',
-                'oscar.apps.communication.notifications.context_processors.notifications',
-                'oscar.core.context_processors.metadata',
-                # 'oscarapi.middleware.ApiBasketMiddleWare',
-            ],
+                ],
             
             "loaders": [
                 (
                     "django.template.loaders.cached.Loader",
                     [
+                        
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
                     ],
                 ),
+                "member.loaders.UnfoldAdminLoader",
             ],
         },
     },
@@ -270,9 +233,7 @@ if not DEBUG:
             'level': 'ERROR',
             'propagate': False
         },
-        'oscar': {
-            'level': 'WARNING'
-        },
+    
         'sorl.thumbnail': {
             'level': 'ERROR',
         },
@@ -349,9 +310,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100
 }
@@ -383,82 +341,14 @@ SIMPLE_JWT = {
 
     "JTI_CLAIM": "jti",
 
-    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-
-    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
-    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
-    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
-    "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
-    "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
 
 
 
 AUTHENTICATION_BACKENDS = (
-    'oscar.apps.customer.auth_backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr/sandbox',
-        'ADMIN_URL': 'http://127.0.0.1:8983/solr/admin/cores',
-        'INCLUDE_SPELLING': True,
-    },
-}
-
-OSCAR_INITIAL_ORDER_STATUS = 'Pending'
-OSCAR_INITIAL_LINE_STATUS = 'Pending'
-
-OSCAR_ORDER_STATUS_PIPELINE = {
-    'Pending': ('Being processed', 'Cancelled',),
-    'Being processed': ('Processed', 'Cancelled',),
-    'Cancelled': (),
-}
-
-OSCAR_SEARCH_FACETS = {
-    'fields': {
-        'product_class': {'name': _('Type'), 'field': 'product_class'},
-        'rating': {'name': _('Rating'), 'field': 'rating'},
-    },
-    'queries': {
-        'price_range': {
-             'name': _('Price range'),
-             'field': 'price',
-             'queries': [
-                 # This is a list of (name, query) tuples where the name will
-                 # be displayed on the front-end.
-                 (_('0 to 500'), '[501 TO 1000]'),
-                 (_('1001 to 2000'), '[2001 TO 5000]'),
-             ]
-         },
-    },
-}
-
-OSCAR_ORDER_STATUS_CASCADE = {
-    'Being processed': 'In progress'
-}
-
-OSCAR_DEFAULT_CURRENCY = 'INR'
-
-OSCARAPI_PRODUCT_FIELDS = ("url", "id", "upc", "title",'images','categories')
-
-# Useful in production websites where you want to make sure that the admin api is not exposed at all.
-OSCARAPI_BLOCK_ADMIN_API_ACCESS =True
-
-OSCARAPI_OVERRIDE_MODULES = ["erp_master.mycustomapi"]
 import requests
 # def send_fcm_notification():
 #         data_payload = {

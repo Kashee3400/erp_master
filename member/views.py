@@ -1,10 +1,5 @@
-from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
@@ -13,6 +8,8 @@ from erp_app.models import MemberMaster
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 from .models import UserDevice
+from rest_framework.response import Response
+
 
 class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
@@ -113,3 +110,87 @@ class LogoutView(APIView):
                 "message": str(e)
                 }, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+
+class UserAPiView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": 200,
+            "message": "Success",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response({
+            "status": 200,
+            "message": "Success",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({
+            "status": 201,
+            "message": "Created successfully",
+            "data": serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({
+            "status": 200,
+            "message": "Updated successfully",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({
+            "status": 204,
+            "message": "Deleted successfully",
+            "data": {}
+        }, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['get'])
+    def user_details(self, request):
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response({
+            "status": 200,
+            "message": "Success",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+
+from django.http import HttpResponse
+import os
+
+def app_ads_txt(request):
+    # Specify the path to the app-ads.txt file
+    file_path = os.path.join(os.path.dirname(__file__), 'static\\app-ads.txt')
+    
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        content = file.read()
+    
+    # Return the content as a plain text response
+    return HttpResponse(content, content_type='text/plain')
