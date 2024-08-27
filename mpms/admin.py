@@ -4,23 +4,13 @@ from django.utils.translation import gettext_lazy
 from django.contrib.auth.admin import UserAdmin
 from .models import *
 
-# app_name = 'mpms'
-# app_models = apps.get_app_config(app_name).get_models()
+from unfold.admin import ModelAdmin
+
+from member.models import *
+from erp_app.mysites import new_admin_site
 
 
-# for model in app_models:
-#     search_fields = [field.name for field in model._meta.fields if isinstance(field, (models.CharField, models.TextField))]
-#     admin_class_attrs = {
-#         '__module__': model.__module__,
-#         'list_display': [field.name for field in model._meta.fields],
-#         'search_fields': search_fields,
-#     }
-#     admin_class = type(f'{model.__name__}Admin', (admin.ModelAdmin,), admin_class_attrs)
-    
-#     admin.site.register(model, admin_class)
-
-
-class TblFarmerAdmin(admin.ModelAdmin):
+class TblFarmerAdmin(ModelAdmin):
     list_display = [
         'farmerid',
         'farmercode',
@@ -47,7 +37,7 @@ class TblFarmerAdmin(admin.ModelAdmin):
 admin.site.register(Tblfarmer,TblFarmerAdmin)
 
 from datetime import date
-class TblFarmerCollectionAdmin(admin.ModelAdmin):
+class TblFarmerCollectionAdmin(ModelAdmin):
     list_display = ['rowid', 'dumpdate', 'dumptime', 'shift', 'farmerid','soccode','member_other_code',
                     'weight', 'fat', 'lr', 'snf', 'totalamount']
     
@@ -61,7 +51,7 @@ admin.site.register(Tblfarmercollection, TblFarmerCollectionAdmin)
 
 
 
-class TblmccAdmin(admin.ModelAdmin):
+class TblmccAdmin(ModelAdmin):
     list_display = ['mccid','mccname','validfrom','districtid','stateid',
                     'countryid','contactperson','mcccode','isactive']
     
@@ -72,7 +62,7 @@ class TblmccAdmin(admin.ModelAdmin):
 admin.site.register(Tblmcc,TblmccAdmin)
 
 
-class TblmmilkAdmin(admin.ModelAdmin):
+class TblmmilkAdmin(ModelAdmin):
     list_display = [field.name for field in Tblmmilk._meta.fields]
 
 admin.site.register(Tblmmilk, TblmmilkAdmin)

@@ -4,9 +4,6 @@ import string
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from oscar.apps.catalogue.abstract_models import AbstractProduct
-from oscar.apps.catalogue.models import Product as OscarProduct
-from oscar.core.loading import get_model
 
 
 

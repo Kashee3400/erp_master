@@ -12,6 +12,9 @@ from django.db.models.functions import TruncDate,Cast
 from datetime import datetime, date
 from rest_framework.pagination import PageNumberPagination
 from django.utils.dateparse import parse_datetime
+from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import DatabaseError
 
 
 
@@ -348,3 +351,58 @@ class MemberShareFinalInfoView(APIView):
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class CdaAggregationPagination(PageNumberPagination):
+    page_size = 10
+
+
+class CdaAggregationView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        try:
+            paginator = CdaAggregationPagination()
+            sahayak = MemberSahayakContactDetail.objects.get(mob_no=self.request.user.username)
+            mpp = Mpp.objects.get()
+            queryset = CdaAggregation.objects.all()
+            
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = CdaAggregationSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+            serializer = CdaAggregationSerializer(queryset, many=True)
+            return Response({
+                "status": "success",
+                "message": "Data retrieved successfully",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except ValidationError as e:
+            return Response({
+                "status": "error",
+                "message": "Validation Error",
+                "errors": e.detail
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        except ObjectDoesNotExist:
+            return Response({
+                "status": "error",
+                "message": "Object does not exist",
+                "errors": "The requested data was not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as e:
+            return Response({
+                "status": "error",
+                "message": "Database Error",
+                "errors": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "message": "An unexpected error occurred",
+                "errors": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -143,3 +143,12 @@ class MemberShareFinalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberShareFinalInfo
         fields = ['no_of_share','issue_date','certificate_no']
+
+class CdaAggregationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CdaAggregation
+        fields = '__all__'
+
+    def validate(self, data):
+        # Add custom validations if necessary
+        return data
