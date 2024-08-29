@@ -4,13 +4,10 @@ from django.utils.translation import gettext_lazy
 from django.contrib.auth.admin import UserAdmin
 from .models import *
 
-from unfold.admin import ModelAdmin
-
 from member.models import *
-from erp_app.mysites import new_admin_site
 
 
-class TblFarmerAdmin(ModelAdmin):
+class TblFarmerAdmin(admin.ModelAdmin):
     list_display = [
         'farmerid',
         'farmercode',
@@ -37,7 +34,7 @@ class TblFarmerAdmin(ModelAdmin):
 admin.site.register(Tblfarmer,TblFarmerAdmin)
 
 from datetime import date
-class TblFarmerCollectionAdmin(ModelAdmin):
+class TblFarmerCollectionAdmin(admin.ModelAdmin):
     list_display = ['rowid', 'dumpdate', 'dumptime', 'shift', 'farmerid','soccode','member_other_code',
                     'weight', 'fat', 'lr', 'snf', 'totalamount']
     
@@ -51,7 +48,7 @@ admin.site.register(Tblfarmercollection, TblFarmerCollectionAdmin)
 
 
 
-class TblmccAdmin(ModelAdmin):
+class TblmccAdmin(admin.ModelAdmin):
     list_display = ['mccid','mccname','validfrom','districtid','stateid',
                     'countryid','contactperson','mcccode','isactive']
     
@@ -62,7 +59,7 @@ class TblmccAdmin(ModelAdmin):
 admin.site.register(Tblmcc,TblmccAdmin)
 
 
-class TblmmilkAdmin(ModelAdmin):
+class TblmmilkAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Tblmmilk._meta.fields]
 
 admin.site.register(Tblmmilk, TblmmilkAdmin)

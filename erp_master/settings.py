@@ -21,9 +21,13 @@ else:
 
 
 INSTALLED_APPS = [
-    "unfold.apps.BasicAppConfig", 
+    'member',
+    'mpms',
+    'erp_app',
+    'django_filters',
     "django.contrib.admin",
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -31,14 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
-    'django.contrib.sites',
-    'django.contrib.flatpages',
     'widget_tweaks',
-    'erp_app',
-    'mpms',
-    'member',
-    'treebeard',
-    'sorl.thumbnail',
     'django_tables2',
 ]
 
@@ -55,7 +52,6 @@ MIDDLEWARE = [
     'erp_app.login_middleware.LoginRequiredMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     "member.middleware.CurrentRequestMiddleware",
 ]
 
@@ -87,7 +83,7 @@ TEMPLATES = [
                         "django.template.loaders.app_directories.Loader",
                     ],
                 ),
-                "member.loaders.UnfoldAdminLoader",
+                
             ],
         },
     },
@@ -311,7 +307,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
+    
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 SIMPLE_JWT = {

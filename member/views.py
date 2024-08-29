@@ -194,3 +194,39 @@ def app_ads_txt(request):
     
     # Return the content as a plain text response
     return HttpResponse(content, content_type='text/plain')
+
+
+from rest_framework.response import Response
+
+def custom_response(status="success", message="Success", data=None, status_code=200):
+    return Response({
+        "status": status,
+        "message": message,
+        "data": data if data is not None else {}
+    }, status=status_code)
+
+
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
+from django_filters import rest_framework as filters
+
+class ProductRateListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = ProductSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('locale',)
+
+    def get_queryset(self):
+        locale = self.request.query_params.get('locale', 'en')
+        return ProductRate.objects.filter(locale=locale)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            if queryset.exists():
+                return custom_response(status="success", data=serializer.data)
+            else:
+                return custom_response(status="error", message="No products found", status_code=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return custom_response(status="error", message=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
