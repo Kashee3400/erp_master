@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import OTP
+from .models import OTP,ProductRate
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,13 +32,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'access': data['access'],
         }
 
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-
-class CustomTokenRefreshSerializer(TokenRefreshSerializer):
-    @classmethod
-    def validate(cls, attrs):
-        data = super().validate(attrs)
-        return {
-            'refresh': data.get('refresh', attrs.get('refresh')),
-            'access': data['access'],
-        }
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductRate
+        fields = ['name', 'price', 'image','locale','name_translation', 'created_at', 'updated_at', 'created_by', 'updated_by']
