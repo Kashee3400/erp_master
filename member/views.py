@@ -196,15 +196,15 @@ def app_ads_txt(request):
     return HttpResponse(content, content_type='text/plain')
 
 
-from rest_framework.response import Response
+from django.http import JsonResponse
 
-def custom_response(status="success", message="Success", data=None, status_code=200):
-    return Response({
-        "status": status,
-        "message": message,
-        "data": data if data is not None else {}
-    }, status=status_code)
-
+def custom_response(status, data=None, message=None, status_code=200):
+    response_data = {
+        'status': status,
+        'message': message or 'Success',
+        'data': data
+    }
+    return JsonResponse(response_data, status=status_code, json_dumps_params={'ensure_ascii': False})
 
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
