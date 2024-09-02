@@ -92,6 +92,9 @@ class ProductRate(models.Model):
     
     name_translation = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Translated Product Name'),
                                         help_text=_('Translated name of the product in the selected locale'))
+    price_description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Price Description'),
+                                         help_text=_('Description of the product price, e.g., price of 1 bag or 1 pill'))
+
 
     created_at = models.DateTimeField(auto_now_add=True,verbose_name=_('Created At'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated At'))

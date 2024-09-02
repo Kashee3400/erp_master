@@ -35,4 +35,4 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductRate
-        fields = ['name', 'price', 'image','locale','name_translation', 'created_at', 'updated_at', 'created_by', 'updated_by']
+        fields = ['name', 'price', 'price_description','image','locale','name_translation', 'created_at', 'updated_at', 'created_by', 'updated_by']
