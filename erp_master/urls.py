@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from member.views import MyHomePage
+from member.views import MyHomePage,MyAppLists
 
 from django.conf.urls.static import static
 admin.site.site_title = 'ERP Admin'
@@ -11,6 +11,7 @@ from member.views import app_ads_txt
 
 urlpatterns = [    
     path('',MyHomePage.as_view(),name='home'),
+    path('list',MyAppLists.as_view(),name='list'),
     path('admin/', admin.site.urls),
     path('member/', include('member.urls')),
     path('mpms/', include('mpms.urls')),

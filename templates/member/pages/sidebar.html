@@ -29,52 +29,20 @@
           </div>
           <span class="nav-link-text ms-1">Dashboards</span>
         </a>
+        {% url 'home' as home %}
+        {% url 'list' as list %}
         <div class="collapse show" id="dashboardsExamples">
           <ul class="nav ms-4 ps-3">
-            <li class="nav-item active">
-              <a class="nav-link active" href="default.html">
+            <li class="nav-item {% if request.path == home %}active{% endif %}">
+              <a class="nav-link {% if request.path == home %}active{% endif %}" href="{% url 'home' %}">
                 <span class="sidenav-mini-icon">D</span>
-                <span class="sidenav-normal">Default</span>
+                <span class="sidenav-normal">Dashboard</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="automotive.html">
-                <span class="sidenav-mini-icon">A</span>
-                <span class="sidenav-normal">Automotive</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="smart-home.html">
-                <span class="sidenav-mini-icon">S</span>
-                <span class="sidenav-normal">Smart Home</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" aria-expanded="false" href="#vrExamples">
-                <span class="sidenav-mini-icon">V</span>
-                <span class="sidenav-normal">Virtual Reality <b class="caret"></b></span>
-              </a>
-              <div class="collapse" id="vrExamples">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link" href="vr/vr-default.html">
-                      <span class="sidenav-mini-icon text-xs">V</span>
-                      <span class="sidenav-normal">VR Default</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="vr/vr-info.html">
-                      <span class="sidenav-mini-icon text-xs">V</span>
-                      <span class="sidenav-normal">VR Info</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="crm.html">
-                <span class="sidenav-mini-icon">C</span>
-                <span class="sidenav-normal">CRM</span>
+            <li class="nav-item {% if request.path == list %}active{% endif %}">
+              <a class="nav-link {% if request.path == list %}active{% endif %}" href="{% url 'list' %}">
+                <span class="sidenav-mini-icon">M</span>
+                <span class="sidenav-normal">Member List</span>
               </a>
             </li>
           </ul>

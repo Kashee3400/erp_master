@@ -1,0 +1,50 @@
+{% extends 'member/pages/base.html' %}
+{% load static %}
+{% block title %}
+  ERP :: App List
+{% endblock %}
+
+{% block content %}
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="card-header">
+          <h5 class="mb-0">Application Installed</h5>
+          <p class="text-sm mb-0">Users list with installed application on their mobile phone.</p>
+        </div>
+        <div class="table-responsive">
+          <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
+            <table id="example" class="table table-striped" style="width:100%">
+              <thead>
+                <tr>
+                  <th>MCC</th>
+                  <th>MCC Code</th>
+                  <th>MPP</th>
+                  <th>MPP Code</th>
+                  <th>Member Name</th>
+                  <th>Member Code</th>
+                  <th>Mobile No</th>
+                  <th>OTP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for object in objects %}
+                  <tr>
+                    <td>{{ object.mpp_collection_agg.mcc_name }}</td>
+                    <td>{{ object.mpp_collection_agg.mcc_tr_code }}</td>
+                    <td>{{ object.mpp_collection_agg.mpp_name }}</td>
+                    <td>{{ object.mpp_collection_agg.mpp_tr_code }}</td>
+                    <td>{{ object.member_data.member_name }}</td>
+                    <td>{{ object.member_data.member_code }}</td>
+                    <td>{{ object.member_data.mobile_no }}</td>
+                    <td>{{ object.otp.otp }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
