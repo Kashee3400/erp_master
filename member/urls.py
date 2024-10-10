@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import GenerateOTPView, VerifyOTPView,VerifySession,LogoutView,UserAPiView,ProductRateListView
+from .views import GenerateOTPView, VerifyOTPView,VerifySession,LogoutView,UserAPiView,ProductRateListView,MyHomePage
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 from rest_framework.routers import DefaultRouter
@@ -23,4 +23,4 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/product-rates/', ProductRateListView.as_view(), name='product_rate_list'),
     path('api/sahayak-cda/', CdaAggregationView.as_view(), name='cda-aggregation'),
-]
+    ]

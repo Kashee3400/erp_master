@@ -86,14 +86,14 @@ class ProductRate(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Product Price'),
                                 help_text=_('Rate of the product'))
     image = models.ImageField(upload_to='products/', null=True, blank=True,verbose_name=_('Product Image'),
-                              help_text=_('Image of the product to display as icon, size should be 100x100'))
+                            help_text=_('Image of the product to display as icon, size should be 100x100'))
     locale = models.CharField(max_length=10, choices=LOCALE_CHOICES, default='en', verbose_name=_('Locale'),
-                              help_text=_('Locale of the product data (e.g., en for English, hi for Hindi)'))
+                            help_text=_('Locale of the product data (e.g., en for English, hi for Hindi)'))
     
     name_translation = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Translated Product Name'),
                                         help_text=_('Translated name of the product in the selected locale'))
     price_description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Price Description'),
-                                         help_text=_('Description of the product price, e.g., price of 1 bag or 1 pill'))
+                                        help_text=_('Description of the product price, e.g., price of 1 bag or 1 pill'))
 
 
     created_at = models.DateTimeField(auto_now_add=True,verbose_name=_('Created At'))
