@@ -274,6 +274,30 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     # Custom behavior for GET request
     def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    # Custom behavior for POST request
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        context = {
+            "message": "This is a POST request!",
+            "submitted_data": data,
+        }
+        # Optionally render a different template after POST, or just return JSON response
+        return JsonResponse(context)
+
+    def handle_no_permission(self):
+        return HttpResponseForbidden(
+            "You don't have permission to perform this action."
+        )
+
+
+class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
+    template_name = "member/pages/dashboards/app_list.html"  # Define the template path
+    permission_required = "member_app.can_view_otp"
+
+    # Custom behavior for GET request
+    def get(self, request, *args, **kwargs):
 
         users = User.objects.all()
         member_master_list = []
