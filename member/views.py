@@ -323,8 +323,8 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
                 member_master_list.append(member_data_dict)
         
         # Pagination
-        page_number = request.GET.get('page', 1)  # Get the current page number, default to 1
-        paginator = Paginator(member_master_list, 10)  # Show 10 members per page
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(member_master_list, 100)
         page_obj = paginator.get_page(page_number)
 
         context = {
