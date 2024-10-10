@@ -11,25 +11,37 @@
         <div class="card-header">
           <h5 class="mb-0">Application Installed</h5>
           <p class="text-sm mb-0">Users list with installed application on their mobile phone.</p>
+          <!-- Buttons for Export and Delete -->
+          <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> Export Selected</button>
+          {% comment %} <button id="deleteBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button> {% endcomment %}
         </div>
         <div class="table-responsive">
           <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
-            <table id="example" class="table table-striped" style="width:100%">
-              <thead>
-                <tr>
-                  <th>MCC</th>
-                  <th>MCC Code</th>
-                  <th>MPP</th>
-                  <th>MPP Code</th>
-                  <th>Member Name</th>
-                  <th>Member Code</th>
-                  <th>Mobile No</th>
-                  <th>OTP</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for object in objects %}
+            <form id="selectedForm" method="POST" action="{% url 'list' %}">
+              {% csrf_token %}
+              <input type="hidden" name="action" id="formAction" value="" /> <!-- Hidden input for action -->
+              <table class="table table-striped" style="width:100%">
+                <thead>
                   <tr>
+                    <th>
+                      <input type="checkbox" id="selectAll" />
+                    </th>
+                    <th>MCC</th>
+                    <th>MCC Code</th>
+                    <th>MPP</th>
+                    <th>MPP Code</th>
+                    <th>Member Name</th>
+                    <th>Member Code</th>
+                    <th>Mobile No</th>
+                    <th>OTP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in objects %}
+                    <tr>
+                    <td>
+                        <input type="checkbox" class="selectMember" name="selected_members" value="{{ object.member_data.member_code }}" />
+                    </td>
                     <td>{{ object.mpp_collection_agg.mcc_name }}</td>
                     <td>{{ object.mpp_collection_agg.mcc_tr_code }}</td>
                     <td>{{ object.mpp_collection_agg.mpp_name }}</td>
@@ -38,13 +50,50 @@
                     <td>{{ object.member_data.member_code }}</td>
                     <td>{{ object.member_data.mobile_no }}</td>
                     <td>{{ object.otp.otp }}</td>
-                  </tr>
+                    </tr>
                 {% endfor %}
-              </tbody>
+                </tbody>
             </table>
-          </div>
+            </form>
         </div>
-      </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+        </div>
     </div>
-  </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('exportBtn').onclick = function () {
+    document.getElementById('formAction').value = 'export' // Set action for export
+    document.getElementById('selectedForm').submit()
+}
+    
+    document.getElementById('deleteBtn').onclick = function () {
+    if (confirm('Are you sure you want to delete the selected members?')) {
+        document.getElementById('formAction').value = 'delete' // Set action for delete
+        document.getElementById('selectedForm').submit()
+    }
+    }
+    
+    document.getElementById('selectAll').onclick = function () {
+    var checkboxes = document.getElementsByClassName('selectMember')
+    for (var checkbox of checkboxes) {
+        checkbox.checked = this.checked
+    }
+    }
+</script>
 {% endblock %}

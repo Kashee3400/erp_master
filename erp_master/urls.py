@@ -12,6 +12,8 @@ from member.views import app_ads_txt
 urlpatterns = [    
     path('',MyHomePage.as_view(),name='home'),
     path('list',MyAppLists.as_view(),name='list'),
+    path('export_selected/', MyAppLists.export_selected, name='export_selected'),
+    path('delete_selected/', MyAppLists.delete_selected, name='delete_selected'),
     path('admin/', admin.site.urls),
     path('member/', include('member.urls')),
     path('mpms/', include('mpms.urls')),

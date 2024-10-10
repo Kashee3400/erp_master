@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="apple-touch-icon" sizes="76x76" href="{% static 'member/assets/img/apple-icon.png' %}" />
     <link rel="icon" type="image/png" href="{% static 'member/assets/img/favicon.png' %}" />
-    <title>{% block title %}{% endblock title %}</title>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
 
     <link rel="canonical" href="https://www.creative-tim.com/product/soft-ui-dashboard-pro" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -30,7 +33,21 @@
       {% include 'member/pages/navbar.html' %}
       {% comment %}Navbar Ends{% endcomment %}
       <div class="container-fluid py-4">
-        {% block content %}{% endblock content %}
+        {% if messages %}
+        <div class="container mt-4">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+        {% block content %}
+        {% endblock %}
         {% include 'member/pages/footer.html' %}
       </div>
     </main>

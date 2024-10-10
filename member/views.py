@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from .models import UserDevice
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect, HttpResponse
+import pandas as pd
 
 User = get_user_model()
 
@@ -291,14 +293,17 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
             "You don't have permission to perform this action."
         )
 
+from django.core.paginator import Paginator
+import pandas as pd
+import csv
+from django.contrib import messages
+from django.shortcuts import redirect
 
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "member/pages/dashboards/app_list.html"  # Define the template path
     permission_required = "member_app.can_view_otp"
 
-    # Custom behavior for GET request
     def get(self, request, *args, **kwargs):
-
         users = User.objects.all()
         member_master_list = []
         
@@ -308,28 +313,113 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             )
             if member_master.exists():
                 data = member_master.first()
-                mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code = data.member_code).first()
+                mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=data.member_code).first()
                 member_data_dict = {
-                    "member_data":data,
-                    "user":user,
-                    "mpp_collection_agg":mpp_collection_agg,
-                    "otp":OTP.objects.filter(phone_number=user.username).first()
+                    "member_data": data,
+                    "user": user,
+                    "mpp_collection_agg": mpp_collection_agg,
+                    "otp": OTP.objects.filter(phone_number=user.username).first()
                 }
                 member_master_list.append(member_data_dict)
-                context = {"message": "This is a GET request!",'objects':member_master_list,}
+        
+        # Pagination
+        page_number = request.GET.get('page', 1)  # Get the current page number, default to 1
+        paginator = Paginator(member_master_list, 10)  # Show 10 members per page
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            "message": "This is a GET request!",
+            "objects": page_obj,
+            "paginator": paginator,
+            "page_obj": page_obj,
+        }
         return render(request, self.template_name, context)
 
-    # Custom behavior for POST request
-    def post(self, request, *args, **kwargs):
-        data = request.POST
-        context = {
-            "message": "This is a POST request!",
-            "submitted_data": data,
-        }
-        # Optionally render a different template after POST, or just return JSON response
-        return JsonResponse(context)
 
+    # Handle POST request (for Export or Delete)
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get('action')  # Use a hidden input for action
+        selected_members = request.POST.getlist('selected_members')
+
+        if action == "export":
+            return self.export_selected(request, selected_members)
+        elif action == "delete":
+            return self.delete_selected(request, selected_members)
+
+    def export_selected(self, request, selected_members):
+        # Check if any members were selected
+        if not selected_members:
+            messages.error(request, "No members were selected for export.")
+            return redirect('list')
+
+        # Query for members that exist in the database
+        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
+
+        # Check if any of the selected members exist
+        if not existing_members.exists():
+            messages.error(request, "No valid members found for export.")
+            return redirect('list')
+
+        # Prepare CSV response
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="selected_members.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['MCC', 'MCC Code', 'MPP', 'MPP Code', 'Member Name', 'Member Code', 'Mobile No', 'OTP'])
+
+        # Find the non-existent members (if any)
+        existing_member_codes = existing_members.values_list('member_code', flat=True)
+        non_existent_members = set(selected_members) - set(existing_member_codes)
+
+        # Iterate over existing members and write data to the CSV file
+        for member_master in existing_members:
+            mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
+            otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
+
+            writer.writerow([
+                mpp_collection_agg.mcc_name if mpp_collection_agg else '',
+                mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
+                mpp_collection_agg.mpp_name if mpp_collection_agg else '',
+                mpp_collection_agg.mpp_tr_code if mpp_collection_agg else '',
+                member_master.member_name if member_master else '',
+                f"'{member_master.member_code}" if member_master else '',
+                member_master.mobile_no if member_master else '',
+                otp.otp if otp else '',
+            ])
+
+        # If there are non-existent members, show a warning message
+        if non_existent_members:
+            messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
+
+        return response
+
+    def delete_selected(self, request, selected_members):
+        # Query for members that exist in the database
+        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
+
+        # Check if any selected members were found in the database
+        if not existing_members.exists():
+            messages.error(request, "No valid members found for deletion.")
+            return redirect('list')  # Redirect to the app list view
+
+        # List the codes of members that were found and will be deleted
+        existing_member_codes = existing_members.values_list('member_code', flat=True)
+
+        # Perform the deletion of the existing members
+        existing_members.delete()
+
+        # Find the non-existent members (if any)
+        non_existent_members = set(selected_members) - set(existing_member_codes)
+
+        # Add success message for deleted members
+        messages.success(request, f"Successfully deleted {len(existing_member_codes)} members.")
+
+        # If there are non-existent members, show a warning message
+        if non_existent_members:
+            messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
+
+        # Redirect back to the app list view
+        return redirect('list')
+    
     def handle_no_permission(self):
-        return HttpResponseForbidden(
-            "You don't have permission to perform this action."
-        )
+        return HttpResponseForbidden("You don't have permission to perform this action.")
