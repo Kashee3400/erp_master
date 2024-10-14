@@ -382,7 +382,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
                 mpp_collection_agg.mpp_name if mpp_collection_agg else '',
                 mpp_collection_agg.mpp_tr_code if mpp_collection_agg else '',
                 member_master.member_name if member_master else '',
-                f"'{member_master.member_code}" if member_master else '',
+                f"'{member_master.member_tr_code}" if member_master else '',
                 member_master.mobile_no if member_master else '',
                 otp.otp if otp else '',
             ])
