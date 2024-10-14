@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 from .serialzers import *
-from erp_app.models import MemberMaster,MppCollectionAggregation
+from erp_app.models import MemberMaster,MppCollectionAggregation,Mpp,Mcc
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 from .models import UserDevice
@@ -300,10 +300,13 @@ from django.contrib import messages
 from django.shortcuts import redirect
 
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
-    template_name = "member/pages/dashboards/app_list.html"  # Define the template path
+    template_name = "member/pages/dashboards/app_list.html"
     permission_required = "member_app.can_view_otp"
 
     def get(self, request, *args, **kwargs):
+        # Get the search query
+        search_query = request.GET.get('search', '')
+
         users = User.objects.all()
         member_master_list = []
         
@@ -311,16 +314,36 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             member_master = MemberMaster.objects.using("sarthak_kashee").filter(
                 mobile_no=user.username
             )
+            
             if member_master.exists():
                 data = member_master.first()
                 mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=data.member_code).first()
+                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
+                otp = OTP.objects.filter(phone_number=user.username).first()
+                
+                # Build a dictionary to store member data
                 member_data_dict = {
                     "member_data": data,
                     "user": user,
+                    "mpp": mpp_data,
                     "mpp_collection_agg": mpp_collection_agg,
-                    "otp": OTP.objects.filter(phone_number=user.username).first()
+                    "otp": otp,
                 }
-                member_master_list.append(member_data_dict)
+
+                # If there's a search query, filter results based on it
+                if search_query:
+                    # Filter on multiple fields using Q objects
+                    if (
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_name.lower()) or
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_tr_code.lower()) or
+                        (mpp_data and search_query.lower() in mpp_data.mpp_name.lower()) or
+                        (mpp_data and search_query.lower() in mpp_data.mpp_ex_code.lower()) or
+                        (data and search_query.lower() in data.member_name.lower()) or
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.member_tr_code.lower())
+                    ):
+                        member_master_list.append(member_data_dict)
+                else:
+                    member_master_list.append(member_data_dict)
         
         # Pagination
         page_number = request.GET.get('page', 1)
@@ -334,7 +357,6 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             "page_obj": page_obj,
         }
         return render(request, self.template_name, context)
-
 
     # Handle POST request (for Export or Delete)
     def post(self, request, *args, **kwargs):
@@ -375,14 +397,14 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         for member_master in existing_members:
             mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
             otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
-
+            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
             writer.writerow([
                 mpp_collection_agg.mcc_name if mpp_collection_agg else '',
                 mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
-                mpp_collection_agg.mpp_name if mpp_collection_agg else '',
-                mpp_collection_agg.mpp_tr_code if mpp_collection_agg else '',
+                mpp_data.mpp_name if mpp_data else '',
+                mpp_data.mpp_ex_code if mpp_data else '',
                 member_master.member_name if member_master else '',
-                f"'{member_master.member_tr_code}" if member_master else '',
+                f"'{mpp_collection_agg.member_tr_code}" if mpp_collection_agg else '',
                 member_master.mobile_no if member_master else '',
                 otp.otp if otp else '',
             ])
