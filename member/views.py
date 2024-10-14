@@ -318,7 +318,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             if member_master.exists():
                 data = member_master.first()
                 mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=data.member_code).first()
-                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
+                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg is not None else None
                 otp = OTP.objects.filter(phone_number=user.username).first()
                 
                 # Build a dictionary to store member data
@@ -397,7 +397,8 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         for member_master in existing_members:
             mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
             otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
-            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
+            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg is not None else None
+            
             writer.writerow([
                 mpp_collection_agg.mcc_name if mpp_collection_agg else '',
                 mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
