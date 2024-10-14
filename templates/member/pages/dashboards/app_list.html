@@ -11,7 +11,19 @@
         <div class="card-header">
           <h5 class="mb-0">Application Installed</h5>
           <p class="text-sm mb-0">Users list with installed application on their mobile phone.</p>
-          <!-- Buttons for Export and Delete -->
+          <!-- Search form -->
+          <form method="GET" action="">
+            <div class="row">
+              <div class="col-9">
+                <div class="input-group mb-3">
+                  <input type="text" name="search" class="form-control" placeholder="Search by MCC, MPP, Member Name, etc." value="{{ request.GET.search }}" />
+                </div>
+              </div>
+              <div class="col-3">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+              </div>
+            </div>
+          </form>
           <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> Export Selected</button>
           {% comment %} <button id="deleteBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button> {% endcomment %}
         </div>
@@ -44,10 +56,10 @@
                       </td>
                       <td>{{ object.mpp_collection_agg.mcc_name }}</td>
                       <td>{{ object.mpp_collection_agg.mcc_tr_code }}</td>
-                      <td>{{ object.mpp_collection_agg.mpp_name }}</td>
-                      <td>{{ object.mpp_collection_agg.mpp_tr_code }}</td>
+                      <td>{{ object.mpp.mpp_name }}</td>
+                      <td>{{ object.mpp.mpp_ex_code }}</td>
                       <td>{{ object.member_data.member_name }}</td>
-                      <td>{{ object.member_data.member_tr_code }}</td>
+                      <td>{{ object.mpp_collection_agg.member_tr_code }}</td>
                       <td>{{ object.member_data.mobile_no }}</td>
                       <td>{{ object.otp.otp }}</td>
                     </tr>
@@ -82,12 +94,12 @@
       document.getElementById('selectedForm').submit()
     }
     
-//    document.getElementById('deleteBtn').onclick = function () {
-//      if (confirm('Are you sure you want to delete the selected members?')) {
-//        document.getElementById('formAction').value = 'delete' // Set action for delete
-//        document.getElementById('selectedForm').submit()
-//      }
-//    }
+    //    document.getElementById('deleteBtn').onclick = function () {
+    //      if (confirm('Are you sure you want to delete the selected members?')) {
+    //        document.getElementById('formAction').value = 'delete' // Set action for delete
+    //        document.getElementById('selectedForm').submit()
+    //      }
+    //    }
     
     document.getElementById('selectAll').onclick = function () {
       var checkboxes = document.getElementsByClassName('selectMember')
