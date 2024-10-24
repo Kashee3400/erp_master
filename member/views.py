@@ -298,7 +298,6 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
             "You don't have permission to perform this action."
         )
 
-from django.core.paginator import Paginator
 import openpyxl
 
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -309,54 +308,66 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         # Get the search query
         search_query = request.GET.get('search', '')
 
-        # Get the page number from request
-        page_number = request.GET.get('page', 1)
-        page_size = 100  # or get from settings, e.g., settings.PAGE_SIZE
+        # Fetch all users at once
+        users = User.objects.all()
+        user_mobile_numbers = list(users.values_list('username', flat=True))
 
-        # Filter users based on search query
-        user_queryset = User.objects.all()
-        if search_query:
-            user_queryset = user_queryset.filter(username__icontains=search_query)
-
-        # Create a paginator and get the page of users
-        paginator = Paginator(user_queryset, page_size)
-        page_obj = paginator.get_page(page_number)
-
-        # Fetch mobile numbers for the paginated users
-        user_mobile_numbers = list(page_obj.object_list.values_list('username', flat=True))
-
-        # Fetch member masters based on the paginated mobile numbers
+        # Optimize querying by fetching all member masters at once
         member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers)
 
         # Prepare a dictionary for fast lookups
         member_master_dict = {member.mobile_no: member for member in member_masters}
 
         member_master_list = []
-
-        for user in page_obj.object_list:
+        
+        for user in users:
             mobile_no = user.username
             member_master = member_master_dict.get(mobile_no)
 
             if member_master:
                 mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
+                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None
                 otp = OTP.objects.filter(phone_number=mobile_no).first()
 
-                # Append member data to the list
-                member_master_list.append({
+                # Build a dictionary to store member data
+                member_data_dict = {
                     "member_data": member_master,
                     "user": user,
+                    "mpp": mpp_data,
                     "mpp_collection_agg": mpp_collection_agg,
                     "otp": otp,
-                })
+                }
+
+                # If there's a search query, filter results based on it
+                if search_query:
+                    # Filter on multiple fields using Q objects
+                    if (
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_name.lower()) or
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_tr_code.lower()) or
+                        (mpp_data and search_query.lower() in mpp_data.mpp_name.lower()) or
+                        (mpp_data and search_query.lower() in mpp_data.mpp_ex_code.lower()) or
+                        (member_master and search_query.lower() in member_master.member_name.lower()) or
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.member_tr_code.lower())
+                    ):
+                        member_master_list.append(member_data_dict)
+                else:
+                    member_master_list.append(member_data_dict)
+
+        # Pagination
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(member_master_list, 300)
+        page_obj = paginator.get_page(page_number)
 
         context = {
             "message": "This is a GET request!",
             "objects": page_obj,
             "paginator": paginator,
-            "member_master_list": member_master_list,
+            "page_obj": page_obj,
         }
         return render(request, self.template_name, context)
 
+
+    # Handle POST request (for Export or Delete)
     def post(self, request, *args, **kwargs):
         action = request.POST.get('action')
         selected_members = request.POST.getlist('selected_members')
@@ -367,13 +378,15 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             return self.delete_selected(request, selected_members)
 
     def export_selected(self, request, selected_members):
+        # Check if any members were selected
         if not selected_members:
             messages.error(request, "No members were selected for export.")
             return redirect('list')
 
-        # Query for existing members
+        # Query for members that exist in the database
         existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
 
+        # Check if any of the selected members exist
         if not existing_members.exists():
             messages.error(request, "No valid members found for export.")
             return redirect('list')
@@ -391,51 +404,63 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         headers = ['MCC', 'MCC Code', 'MPP', 'MPP Code', 'Member Name', 'Member Code', 'Mobile No', 'OTP']
         worksheet.append(headers)
 
-        # Pre-fetch related data for optimization
-        mpp_collection_aggs = MppCollectionAggregation.objects.filter(member_code__in=existing_members.values_list('member_code', flat=True)).select_related('mpp')
-        otps = OTP.objects.filter(phone_number__in=existing_members.values_list('mobile_no', flat=True))
+        # Find the non-existent members (if any)
+        existing_member_codes = existing_members.values_list('member_code', flat=True)
+        non_existent_members = set(selected_members) - set(existing_member_codes)
 
-        # Prepare dictionaries for fast lookups
-        mpp_collection_dict = {agg.member_code: agg for agg in mpp_collection_aggs}
-        otp_dict = {otp.phone_number: otp for otp in otps}
-
-        # Write data to the Excel file
+        # Iterate over existing members and write data to the Excel file
         for member_master in existing_members:
-            mpp_collection_agg = mpp_collection_dict.get(member_master.member_code)
-            otp = otp_dict.get(member_master.mobile_no)
-
+            mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
+            otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
+            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None
+            
             worksheet.append([
                 mpp_collection_agg.mcc_name if mpp_collection_agg else '',
                 mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
-                mpp_collection_agg.mpp.mpp_name if mpp_collection_agg and mpp_collection_agg.mpp else '',
-                mpp_collection_agg.mpp.mpp_ex_code if mpp_collection_agg and mpp_collection_agg.mpp else '',
+                mpp_data.mpp_name if mpp_data else '',
+                mpp_data.mpp_ex_code if mpp_data else '',
                 member_master.member_name if member_master else '',
                 f"'{mpp_collection_agg.member_tr_code}" if mpp_collection_agg else '',
                 member_master.mobile_no if member_master else '',
                 otp.otp if otp else '',
             ])
 
-        messages.success(request, "Export completed successfully.")
-        workbook.save(response)
-        return response
-
-    def delete_selected(self, request, selected_members):
-        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
-
-        if not existing_members.exists():
-            messages.error(request, "No valid members found for deletion.")
-            return redirect('list')
-
-        existing_member_codes = existing_members.values_list('member_code', flat=True)
-        existing_members.delete()
-
-        non_existent_members = set(selected_members) - set(existing_member_codes)
-
-        messages.success(request, f"Successfully deleted {len(existing_member_codes)} members.")
+        # If there are non-existent members, show a warning message
         if non_existent_members:
             messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
 
-        return redirect('list')
+        # Save the workbook to the response
+        workbook.save(response)
 
+        return response
+
+    def delete_selected(self, request, selected_members):
+        # Query for members that exist in the database
+        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
+
+        # Check if any selected members were found in the database
+        if not existing_members.exists():
+            messages.error(request, "No valid members found for deletion.")
+            return redirect('list')  # Redirect to the app list view
+
+        # List the codes of members that were found and will be deleted
+        existing_member_codes = existing_members.values_list('member_code', flat=True)
+
+        # Perform the deletion of the existing members
+        existing_members.delete()
+
+        # Find the non-existent members (if any)
+        non_existent_members = set(selected_members) - set(existing_member_codes)
+
+        # Add success message for deleted members
+        messages.success(request, f"Successfully deleted {len(existing_member_codes)} members.")
+
+        # If there are non-existent members, show a warning message
+        if non_existent_members:
+            messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
+
+        # Redirect back to the app list view
+        return redirect('list')
+    
     def handle_no_permission(self):
         return HttpResponseForbidden("You don't have permission to perform this action.")
