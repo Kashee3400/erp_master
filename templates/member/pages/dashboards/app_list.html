@@ -25,13 +25,12 @@
             </div>
           </form>
           <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> Export Selected</button>
-          {% comment %} <button id="deleteBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button> {% endcomment %}
         </div>
         <div class="table-responsive">
           <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
             <form id="selectedForm" method="POST" action="{% url 'list' %}">
               {% csrf_token %}
-              <input type="hidden" name="action" id="formAction" value="" /> <!-- Hidden input for action -->
+              <input type="hidden" name="action" id="formAction" value="" />
               <table class="table table-striped" style="width:100%">
                 <thead>
                   <tr>

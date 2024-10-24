@@ -12,6 +12,16 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, HttpResponse
 import pandas as pd
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponseForbidden
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .models import OTP
+from django.core.paginator import Paginator
+import pandas as pd
+import csv
+from django.contrib import messages
+from django.shortcuts import redirect
 
 User = get_user_model()
 
@@ -263,11 +273,6 @@ class ProductRateListView(generics.ListAPIView):
             )
 
 
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseForbidden
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import OTP
 
 
 class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -293,11 +298,7 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
             "You don't have permission to perform this action."
         )
 
-from django.core.paginator import Paginator
-import pandas as pd
-import csv
-from django.contrib import messages
-from django.shortcuts import redirect
+import openpyxl
 
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "member/pages/dashboards/app_list.html"
@@ -307,47 +308,66 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         # Get the search query
         search_query = request.GET.get('search', '')
 
+        # Fetch all users at once
         users = User.objects.all()
-        member_master_list = []
-        
-        for user in users:
-            member_master = MemberMaster.objects.using("sarthak_kashee").filter(
-                mobile_no=user.username
-            )
-            
-            if member_master.exists():
-                data = member_master.first()
-                mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=data.member_code).first()
-                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg is not None else None
-                otp = OTP.objects.filter(phone_number=user.username).first()
-                
-                # Build a dictionary to store member data
-                member_data_dict = {
-                    "member_data": data,
-                    "user": user,
-                    "mpp": mpp_data,
-                    "mpp_collection_agg": mpp_collection_agg,
-                    "otp": otp,
-                }
+        user_mobile_numbers = users.values_list('username', flat=True)
 
-                # If there's a search query, filter results based on it
+        # Optimize querying with select_related and only
+        member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers).only('mobile_no', 'member_code', 'member_name')
+        member_codes = member_masters.values_list('member_code', flat=True)
+        
+        # Use select_related for MppCollectionAggregation if it has foreign key relationships
+        mpp_collection_aggs = MppCollectionAggregation.objects.filter(member_code__in=member_codes).select_related('related_field').only('member_code', 'mcc_name', 'mcc_tr_code')
+        mpp_codes = mpp_collection_aggs.values_list('mpp_code', flat=True)
+
+        # Fetch MPP data with select_related or only
+        mpp_data = Mpp.objects.filter(mpp_code__in=mpp_codes).only('mpp_code', 'mpp_name', 'mpp_ex_code')
+        otp_data = OTP.objects.filter(phone_number__in=user_mobile_numbers).only('phone_number', 'otp')
+
+        # Create dictionaries for faster lookup
+        member_master_dict = {m.mobile_no: m for m in member_masters}
+        mpp_collection_dict = {m.member_code: m for m in mpp_collection_aggs}
+        mpp_dict = {m.mpp_code: m for m in mpp_data}
+        otp_dict = {o.phone_number: o for o in otp_data}
+
+        # Build the member master list with data aggregation
+        member_master_list = []
+        for user in users:
+            mobile_no = user.username
+            if mobile_no in member_master_dict:
+                member_master = member_master_dict[mobile_no]
+                mpp_collection_agg = mpp_collection_dict.get(member_master.member_code)
+                mpp = mpp_dict.get(mpp_collection_agg.mpp_code) if mpp_collection_agg else None
+                otp = otp_dict.get(mobile_no)
+
+                # Filtering on search query
                 if search_query:
-                    # Filter on multiple fields using Q objects
                     if (
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_name.lower()) or
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_tr_code.lower()) or
-                        (mpp_data and search_query.lower() in mpp_data.mpp_name.lower()) or
-                        (mpp_data and search_query.lower() in mpp_data.mpp_ex_code.lower()) or
-                        (data and search_query.lower() in data.member_name.lower()) or
-                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.member_tr_code.lower())
+                        (mpp and search_query.lower() in mpp.mpp_name.lower()) or
+                        (mpp and search_query.lower() in mpp.mpp_ex_code.lower()) or
+                        (search_query.lower() in member_master.member_name.lower())
                     ):
-                        member_master_list.append(member_data_dict)
+                        member_master_list.append({
+                            "member_data": member_master,
+                            "user": user,
+                            "mpp": mpp,
+                            "mpp_collection_agg": mpp_collection_agg,
+                            "otp": otp,
+                        })
                 else:
-                    member_master_list.append(member_data_dict)
-        
+                    member_master_list.append({
+                        "member_data": member_master,
+                        "user": user,
+                        "mpp": mpp,
+                        "mpp_collection_agg": mpp_collection_agg,
+                        "otp": otp,
+                    })
+
         # Pagination
         page_number = request.GET.get('page', 1)
-        paginator = Paginator(member_master_list, 100)
+        paginator = Paginator(member_master_list, 100)  # Show 100 records per page
         page_obj = paginator.get_page(page_number)
 
         context = {
@@ -360,7 +380,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     # Handle POST request (for Export or Delete)
     def post(self, request, *args, **kwargs):
-        action = request.POST.get('action')  # Use a hidden input for action
+        action = request.POST.get('action')
         selected_members = request.POST.getlist('selected_members')
 
         if action == "export":
@@ -382,24 +402,30 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             messages.error(request, "No valid members found for export.")
             return redirect('list')
 
-        # Prepare CSV response
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="selected_members.csv"'
+        # Prepare Excel response
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="application_installation_list.xlsx"'
 
-        writer = csv.writer(response)
-        writer.writerow(['MCC', 'MCC Code', 'MPP', 'MPP Code', 'Member Name', 'Member Code', 'Mobile No', 'OTP'])
+        # Create a workbook and add a worksheet
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Selected Members'
+
+        # Write header row
+        headers = ['MCC', 'MCC Code', 'MPP', 'MPP Code', 'Member Name', 'Member Code', 'Mobile No', 'OTP']
+        worksheet.append(headers)
 
         # Find the non-existent members (if any)
         existing_member_codes = existing_members.values_list('member_code', flat=True)
         non_existent_members = set(selected_members) - set(existing_member_codes)
 
-        # Iterate over existing members and write data to the CSV file
+        # Iterate over existing members and write data to the Excel file
         for member_master in existing_members:
             mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
             otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
-            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg is not None else None
+            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None
             
-            writer.writerow([
+            worksheet.append([
                 mpp_collection_agg.mcc_name if mpp_collection_agg else '',
                 mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
                 mpp_data.mpp_name if mpp_data else '',
@@ -413,6 +439,9 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         # If there are non-existent members, show a warning message
         if non_existent_members:
             messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
+
+        # Save the workbook to the response
+        workbook.save(response)
 
         return response
 
