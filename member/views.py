@@ -310,64 +310,52 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         # Fetch all users at once
         users = User.objects.all()
-        user_mobile_numbers = users.values_list('username', flat=True)
+        user_mobile_numbers = list(users.values_list('username', flat=True))
 
-        # Optimize querying with select_related and only
-        member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers).only('mobile_no', 'member_code', 'member_name')
-        member_codes = member_masters.values_list('member_code', flat=True)
-        
-        # Use select_related for MppCollectionAggregation if it has foreign key relationships
-        mpp_collection_aggs = MppCollectionAggregation.objects.filter(member_code__in=member_codes).select_related('related_field').only('member_code', 'mcc_name', 'mcc_tr_code')
-        mpp_codes = mpp_collection_aggs.values_list('mpp_code', flat=True)
+        # Optimize querying by fetching all member masters at once
+        member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers)
 
-        # Fetch MPP data with select_related or only
-        mpp_data = Mpp.objects.filter(mpp_code__in=mpp_codes).only('mpp_code', 'mpp_name', 'mpp_ex_code')
-        otp_data = OTP.objects.filter(phone_number__in=user_mobile_numbers).only('phone_number', 'otp')
+        # Prepare a dictionary for fast lookups
+        member_master_dict = {member.mobile_no: member for member in member_masters}
 
-        # Create dictionaries for faster lookup
-        member_master_dict = {m.mobile_no: m for m in member_masters}
-        mpp_collection_dict = {m.member_code: m for m in mpp_collection_aggs}
-        mpp_dict = {m.mpp_code: m for m in mpp_data}
-        otp_dict = {o.phone_number: o for o in otp_data}
-
-        # Build the member master list with data aggregation
         member_master_list = []
+        
         for user in users:
             mobile_no = user.username
-            if mobile_no in member_master_dict:
-                member_master = member_master_dict[mobile_no]
-                mpp_collection_agg = mpp_collection_dict.get(member_master.member_code)
-                mpp = mpp_dict.get(mpp_collection_agg.mpp_code) if mpp_collection_agg else None
-                otp = otp_dict.get(mobile_no)
+            member_master = member_master_dict.get(mobile_no)
 
-                # Filtering on search query
+            if member_master:
+                mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
+                mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None
+                otp = OTP.objects.filter(phone_number=mobile_no).first()
+
+                # Build a dictionary to store member data
+                member_data_dict = {
+                    "member_data": member_master,
+                    "user": user,
+                    "mpp": mpp_data,
+                    "mpp_collection_agg": mpp_collection_agg,
+                    "otp": otp,
+                }
+
+                # If there's a search query, filter results based on it
                 if search_query:
+                    # Filter on multiple fields using Q objects
                     if (
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_name.lower()) or
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_tr_code.lower()) or
-                        (mpp and search_query.lower() in mpp.mpp_name.lower()) or
-                        (mpp and search_query.lower() in mpp.mpp_ex_code.lower()) or
-                        (search_query.lower() in member_master.member_name.lower())
+                        (mpp_data and search_query.lower() in mpp_data.mpp_name.lower()) or
+                        (mpp_data and search_query.lower() in mpp_data.mpp_ex_code.lower()) or
+                        (member_master and search_query.lower() in member_master.member_name.lower()) or
+                        (mpp_collection_agg and search_query.lower() in mpp_collection_agg.member_tr_code.lower())
                     ):
-                        member_master_list.append({
-                            "member_data": member_master,
-                            "user": user,
-                            "mpp": mpp,
-                            "mpp_collection_agg": mpp_collection_agg,
-                            "otp": otp,
-                        })
+                        member_master_list.append(member_data_dict)
                 else:
-                    member_master_list.append({
-                        "member_data": member_master,
-                        "user": user,
-                        "mpp": mpp,
-                        "mpp_collection_agg": mpp_collection_agg,
-                        "otp": otp,
-                    })
+                    member_master_list.append(member_data_dict)
 
         # Pagination
         page_number = request.GET.get('page', 1)
-        paginator = Paginator(member_master_list, 100)  # Show 100 records per page
+        paginator = Paginator(member_master_list, 100)
         page_obj = paginator.get_page(page_number)
 
         context = {
@@ -377,6 +365,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             "page_obj": page_obj,
         }
         return render(request, self.template_name, context)
+
 
     # Handle POST request (for Export or Delete)
     def post(self, request, *args, **kwargs):
