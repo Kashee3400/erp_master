@@ -298,14 +298,7 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
             "You don't have permission to perform this action."
         )
 
-import openpyxl
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import HttpResponse
-from django.views import View
 from django.core.paginator import Paginator
-from django.db.models import Q
-from django.contrib import messages
 import openpyxl
 
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -330,7 +323,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         page_obj = paginator.get_page(page_number)
 
         # Fetch mobile numbers for the paginated users
-        user_mobile_numbers = list(page_obj.values_list('username', flat=True))
+        user_mobile_numbers = list(page_obj.object_list.values_list('username', flat=True))
 
         # Fetch member masters based on the paginated mobile numbers
         member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers)
