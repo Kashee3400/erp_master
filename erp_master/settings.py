@@ -188,67 +188,76 @@ else:
         },
     }
 
+import os
+
+LOG_DIR = os.path.join(BASE_DIR, 'logs')  # Adjust this path if necessary
+os.makedirs(LOG_DIR, exist_ok=True)
+
 if not DEBUG:
     LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'root': {
-        'level': 'DEBUG' if DEBUG else 'INFO',
-        'handlers': ['console', ],
-    },
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
+        'version': 1,
+        'disable_existing_loggers': True,
+        'root': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'handlers': ['console', 'file'],  # Added 'file' handler
         },
-        'simple': {
-            'format': '[%(asctime)s] %(message)s'
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
+            },
+            'simple': {
+                'format': '[%(asctime)s] %(message)s'
+            },
         },
-    },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
         },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+        'handlers': {
+            'null': {
+                'level': 'DEBUG',
+                'class': 'logging.NullHandler',
+            },
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose'
+            },
+            'file': {  # Added file handler for error logging
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(LOG_DIR, 'error.log'),
+                'formatter': 'verbose',
+            },
+            'mail_admins': {
+                'level': 'ERROR',
+                'class': 'django.utils.log.AdminEmailHandler',
+                'filters': ['require_debug_false'],
+            },
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
-        },
-    },
-    'loggers': {
-        # Django loggers
-        'django': {
-            'propagate': True,
-        },
-        'django.db': {
-            'level': 'WARNING'
-        },
-        'django.request': {
-            'handlers': ['mail_admins', ],
-            'level': 'ERROR',
-            'propagate': False
-        },
-    
-        'sorl.thumbnail': {
-            'level': 'ERROR',
-        },
-        # Suppress output of this debug toolbar panel
-        'template_timings_panel': {
-            'handlers': ['null'],
+        'loggers': {
+            # Django loggers
+            'django': {
+                'propagate': True,
+            },
+            'django.db': {
+                'level': 'WARNING'
+            },
+            'django.request': {
+                'handlers': ['mail_admins', 'file'],  # Log errors to file as well
+                'level': 'ERROR',
+                'propagate': False
+            },
+            'sorl.thumbnail': {
+                'level': 'ERROR',
+            },
+            # Suppress output of this debug toolbar panel
+            'template_timings_panel': {
+                'handlers': ['null'],
+            }
         }
     }
-}
-
 
 
 # Password validation
