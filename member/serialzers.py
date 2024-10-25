@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import OTP,ProductRate
+from erp_app.models import  CdaAggregationDaywiseMilktype
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,3 +37,34 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductRate
         fields = ['name', 'price', 'price_description','image','locale','name_translation', 'created_at', 'updated_at', 'created_by', 'updated_by']
+
+class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CdaAggregationDaywiseMilktype
+        fields = [
+            'id',
+            'mcc_code',
+            'mcc_tr_code',
+            'mcc_name',
+            'mpp_code',
+            'mpp_tr_code',
+            'mpp_name',
+            'collection_date',
+            'milk_type_code',
+            'milk_type_name',
+            'milk_quality_type_code',
+            'milk_quality_type_name',
+            'composite_qty',
+            'composite_fat',
+            'composite_snf',
+            'dispatch_qty',
+            'dispatch_fat',
+            'dispatch_snf',
+            'dispatch_kg_fat',
+            'dispatch_kg_snf',
+            'dispatch_amount',
+            'actual_qty',
+            'actual_fat',
+            'actual_snf',
+            'actual_amount',
+        ]

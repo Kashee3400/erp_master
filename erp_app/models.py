@@ -5855,7 +5855,6 @@ class Cluster(models.Model):
         managed = False
         db_table = 'cluster'
 
-
 class ClusterHistory(models.Model):
     history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)
@@ -5874,7 +5873,6 @@ class ClusterHistory(models.Model):
     class Meta:
         managed = False
         db_table = 'cluster_history'
-
 
 class Collection32BitFile(models.Model):
     collection_32bit_file_id = models.AutoField(primary_key=True)
@@ -5897,7 +5895,6 @@ class Collection32BitFile(models.Model):
     class Meta:
         managed = False
         db_table = 'collection_32bit_file'
-
 
 class Collection32BitFileTxn(models.Model):
     collection_32bit_file_txn_id = models.AutoField(primary_key=True)
@@ -15483,7 +15480,6 @@ class MppCollectionReil(models.Model):
         managed = False
         db_table = 'mpp_collection_reil'
 
-
 class MppCollectionWrongDate(models.Model):
     bmc_code = models.CharField(max_length=5, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -15503,7 +15499,6 @@ class MppCollectionWrongDate(models.Model):
     class Meta:
         managed = False
         db_table = 'mpp_collection_wrong_date'
-
 
 class MppCommonConfiguration(models.Model):
     mpp_common_config_code = models.AutoField(primary_key=True)
@@ -15573,7 +15568,6 @@ class MppCommonConfigurationHistory(models.Model):
         managed = False
         db_table = 'mpp_common_configuration_history'
 
-
 class MppDeactive(models.Model):
     mpp_deactive_code = models.AutoField(primary_key=True)
     mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -15592,7 +15586,6 @@ class MppDeactive(models.Model):
     class Meta:
         managed = False
         db_table = 'mpp_deactive'
-
 
 class MppDeactiveHistory(models.Model):
     mpp_deactive_history_code = models.AutoField(primary_key=True)
@@ -15616,7 +15609,6 @@ class MppDeactiveHistory(models.Model):
     class Meta:
         managed = False
         db_table = 'mpp_deactive_history'
-
 
 class MppDispatch(models.Model):
     mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
@@ -15896,7 +15888,6 @@ class MppVendorMappingHistory(models.Model):
     class Meta:
         managed = False
         db_table = 'mpp_vendor_mapping_history'
-
 
 class NewPartyLedgerMapping(models.Model):
     party_group_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -19174,7 +19165,7 @@ class RmrdCollectionVehicleDetailHistory(models.Model):
 
 
 class RmrdMilkCollection(models.Model):
-    rmrd_milk_collection_code = models.CharField(max_length=150, db_collation='SQL_Latin1_General_CP1_CI_AS')
+    rmrd_milk_collection_code = models.CharField(primary_key=True,max_length=150, db_collation='SQL_Latin1_General_CP1_CI_AS')
     rmrd_milk_collection_references_code = models.CharField(max_length=150, db_collation='SQL_Latin1_General_CP1_CI_AS')
     route_code = models.IntegerField(blank=True, null=True)
     collection_date = models.DateTimeField()

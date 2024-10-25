@@ -1,27 +1,33 @@
-from rest_framework import generics, status
+from rest_framework import generics, status,viewsets,exceptions,decorators
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import APIView
 import requests
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serialzers import *
 from erp_app.models import MemberMaster,MppCollectionAggregation,Mpp,Mcc
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 from .models import UserDevice
-from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect, HttpResponse
-import pandas as pd
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden,HttpResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import OTP
 from django.core.paginator import Paginator
-import pandas as pd
-import csv
 from django.contrib import messages
 from django.shortcuts import redirect
+from django_filters import rest_framework as filters
+import os
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import DatabaseError
+
 
 User = get_user_model()
 
@@ -149,9 +155,6 @@ class LogoutView(APIView):
             )
 
 
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-
 
 class UserAPiView(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -202,7 +205,7 @@ class UserAPiView(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
-    @action(detail=False, methods=["get"])
+    @decorators.action(detail=False, methods=["get"])
     def user_details(self, request):
         user = request.user
         serializer = self.get_serializer(user)
@@ -210,10 +213,6 @@ class UserAPiView(viewsets.ModelViewSet):
             {"status": 200, "message": "Success", "data": serializer.data},
             status=status.HTTP_200_OK,
         )
-
-
-from django.http import HttpResponse
-import os
 
 
 def app_ads_txt(request):
@@ -236,11 +235,6 @@ def custom_response(status, data=None, message=None, status_code=200):
     return JsonResponse(
         response_data, status=status_code, json_dumps_params={"ensure_ascii": False}
     )
-
-
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
-from django_filters import rest_framework as filters
 
 
 class ProductRateListView(generics.ListAPIView):
@@ -279,18 +273,15 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"  # Define the template path
     permission_required = "member_app.can_view_otp"
 
-    # Custom behavior for GET request
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
-    # Custom behavior for POST request
     def post(self, request, *args, **kwargs):
         data = request.POST
         context = {
             "message": "This is a POST request!",
             "submitted_data": data,
         }
-        # Optionally render a different template after POST, or just return JSON response
         return JsonResponse(context)
 
     def handle_no_permission(self):
@@ -303,21 +294,14 @@ import openpyxl
 class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "member/pages/dashboards/app_list.html"
     permission_required = "member_app.can_view_otp"
+    login_url = ''
 
     def get(self, request, *args, **kwargs):
-        # Get the search query
         search_query = request.GET.get('search', '')
-
-        # Fetch all users at once
         users = User.objects.all()
         user_mobile_numbers = list(users.values_list('username', flat=True))
-
-        # Optimize querying by fetching all member masters at once
         member_masters = MemberMaster.objects.using("sarthak_kashee").filter(mobile_no__in=user_mobile_numbers)
-
-        # Prepare a dictionary for fast lookups
         member_master_dict = {member.mobile_no: member for member in member_masters}
-
         member_master_list = []
         
         for user in users:
@@ -337,10 +321,7 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
                     "mpp_collection_agg": mpp_collection_agg,
                     "otp": otp,
                 }
-
-                # If there's a search query, filter results based on it
                 if search_query:
-                    # Filter on multiple fields using Q objects
                     if (
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_name.lower()) or
                         (mpp_collection_agg and search_query.lower() in mpp_collection_agg.mcc_tr_code.lower()) or
@@ -352,12 +333,9 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
                         member_master_list.append(member_data_dict)
                 else:
                     member_master_list.append(member_data_dict)
-
-        # Pagination
         page_number = request.GET.get('page', 1)
         paginator = Paginator(member_master_list, 300)
         page_obj = paginator.get_page(page_number)
-
         context = {
             "message": "This is a GET request!",
             "objects": page_obj,
@@ -366,8 +344,6 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
         }
         return render(request, self.template_name, context)
 
-
-    # Handle POST request (for Export or Delete)
     def post(self, request, *args, **kwargs):
         action = request.POST.get('action')
         selected_members = request.POST.getlist('selected_members')
@@ -378,42 +354,26 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
             return self.delete_selected(request, selected_members)
 
     def export_selected(self, request, selected_members):
-        # Check if any members were selected
         if not selected_members:
             messages.error(request, "No members were selected for export.")
             return redirect('list')
-
-        # Query for members that exist in the database
         existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
-
-        # Check if any of the selected members exist
         if not existing_members.exists():
             messages.error(request, "No valid members found for export.")
             return redirect('list')
-
-        # Prepare Excel response
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="application_installation_list.xlsx"'
-
-        # Create a workbook and add a worksheet
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         worksheet.title = 'Selected Members'
-
-        # Write header row
         headers = ['MCC', 'MCC Code', 'MPP', 'MPP Code', 'Member Name', 'Member Code', 'Mobile No', 'OTP']
         worksheet.append(headers)
-
-        # Find the non-existent members (if any)
         existing_member_codes = existing_members.values_list('member_code', flat=True)
         non_existent_members = set(selected_members) - set(existing_member_codes)
-
-        # Iterate over existing members and write data to the Excel file
         for member_master in existing_members:
             mpp_collection_agg = MppCollectionAggregation.objects.filter(member_code=member_master.member_code).first()
             otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
-            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None
-            
+            mpp_data = Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first() if mpp_collection_agg else None            
             worksheet.append([
                 mpp_collection_agg.mcc_name if mpp_collection_agg else '',
                 mpp_collection_agg.mcc_tr_code if mpp_collection_agg else '',
@@ -424,43 +384,127 @@ class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
                 member_master.mobile_no if member_master else '',
                 otp.otp if otp else '',
             ])
-
-        # If there are non-existent members, show a warning message
         if non_existent_members:
             messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
-
-        # Save the workbook to the response
         workbook.save(response)
-
         return response
 
     def delete_selected(self, request, selected_members):
-        # Query for members that exist in the database
         existing_members = MemberMaster.objects.using("sarthak_kashee").filter(member_code__in=selected_members)
-
-        # Check if any selected members were found in the database
         if not existing_members.exists():
             messages.error(request, "No valid members found for deletion.")
             return redirect('list')  # Redirect to the app list view
-
-        # List the codes of members that were found and will be deleted
         existing_member_codes = existing_members.values_list('member_code', flat=True)
-
-        # Perform the deletion of the existing members
         existing_members.delete()
-
-        # Find the non-existent members (if any)
         non_existent_members = set(selected_members) - set(existing_member_codes)
-
-        # Add success message for deleted members
         messages.success(request, f"Successfully deleted {len(existing_member_codes)} members.")
-
-        # If there are non-existent members, show a warning message
         if non_existent_members:
             messages.warning(request, f"The following members could not be found: {', '.join(non_existent_members)}.")
-
-        # Redirect back to the app list view
         return redirect('list')
     
     def handle_no_permission(self):
         return HttpResponseForbidden("You don't have permission to perform this action.")
+
+
+from .serialzers import CdaAggregationDaywiseMilktypeSerializer
+from .filters import CdaAggregationDaywiseMilktypeFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Sum, Avg
+from django.utils.timezone import now
+from datetime import date
+from django.utils.dateparse import parse_date
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10 
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
+    queryset = CdaAggregationDaywiseMilktype.objects.all()
+    serializer_class = CdaAggregationDaywiseMilktypeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CdaAggregationDaywiseMilktypeFilter
+    pagination_class = StandardResultsSetPagination
+
+    def get_financial_year_dates(self, input_date):
+        year = input_date.year
+        if input_date.month < 4:
+            start_year = year - 1
+            end_year = year
+        else:
+            start_year = year
+            end_year = year + 1
+        start_date = date(start_year, 4, 1)
+        end_date = date(end_year, 3, 31)
+        return start_date, end_date
+
+    def format_aggregates(self, aggregates):
+        formatted_aggregates = {}
+        for key, value in aggregates.items():
+            if value is not None:
+                formatted_aggregates[key] = round(value, 2)
+            else:
+                formatted_aggregates[key] = None
+        return formatted_aggregates
+
+    def list(self, request, *args, **kwargs):
+        collection_date_param = request.query_params.get('collection_date', None)
+        mppcode = request.query_params.get('mppcode', None)
+        if collection_date_param and collection_date_param.lower() != 'null':
+            collection_date = parse_date(collection_date_param)
+        else:
+            collection_date = now().date()
+        if not mppcode:
+            return Response({
+                "status": "error",
+                "message": "mppcode parameter is required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        mpp = Mpp.objects.filter(mpp_ex_code=mppcode).last()
+        if not mpp:
+            return Response({
+                "status": "error",
+                "message": f"No MPP found for the provided mppcode: {mppcode}"
+            }, status=status.HTTP_404_NOT_FOUND)
+        start_date, end_date = self.get_financial_year_dates(collection_date)
+        current_date_data = CdaAggregationDaywiseMilktype.objects.filter(
+            collection_date=collection_date,
+            mpp_code=mpp.mpp_code
+        )
+        fy_data = CdaAggregationDaywiseMilktype.objects.filter(
+            collection_date__gte=start_date,
+            collection_date__lte=end_date,
+            mpp_code=mpp.mpp_code
+        ).aggregate(
+            total_composite_qty=Sum('composite_qty'),
+            total_dispatch_qty=Sum('dispatch_qty'),
+            total_actual_qty=Sum('actual_qty'),
+            avg_composite_fat=Avg('composite_fat'),
+            avg_dispatch_fat=Avg('dispatch_fat'),
+            avg_actual_fat=Avg('actual_fat'),
+            avg_composite_snf=Avg('composite_snf'),
+            avg_dispatch_snf=Avg('dispatch_snf'),
+            avg_actual_snf=Avg('actual_snf'),
+        )
+
+        # Format the aggregated data
+        formatted_fy_data = self.format_aggregates(fy_data)
+
+        # Paginate and serialize current date data
+        page = self.paginate_queryset(current_date_data)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response({
+                "status": "success",
+                "current_date_data": serializer.data,
+                "fy_data": formatted_fy_data,
+                "message":"Success"
+            })
+
+        serializer = self.get_serializer(current_date_data, many=True)
+        return Response({
+            "status": "success",
+            "current_date_data": serializer.data,
+            "fy_data": formatted_fy_data,
+                "message":"Success"
+        }, status=status.HTTP_200_OK)

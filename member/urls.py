@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import GenerateOTPView, VerifyOTPView,VerifySession,LogoutView,UserAPiView,ProductRateListView,MyHomePage
+from .views import GenerateOTPView, VerifyOTPView,VerifySession,LogoutView,UserAPiView,ProductRateListView,CdaAggregationDaywiseMilktypeViewSet
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 from rest_framework.routers import DefaultRouter
@@ -7,6 +7,8 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'users',UserAPiView , basename='user')
+router.register(r'cda-milktypes', CdaAggregationDaywiseMilktypeViewSet, basename='cda_milktypes')
+
 
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),
@@ -22,5 +24,5 @@ urlpatterns = [
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('api/', include(router.urls)),
     path('api/product-rates/', ProductRateListView.as_view(), name='product_rate_list'),
-    path('api/sahayak-cda/', CdaAggregationView.as_view(), name='cda-aggregation'),
+    
     ]

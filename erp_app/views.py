@@ -3,20 +3,15 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.views import APIView
 from django.db.models import Q,Sum, Count,Avg,Max,Count
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from mpms.serializers import TblfarmercollectionSerializer
 from django.db.models.functions import TruncDate,Cast
-from datetime import datetime, date
 from rest_framework.pagination import PageNumberPagination
 from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import DatabaseError
-
-
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
     serializer_class = MemberMasterSerializer
@@ -74,7 +69,6 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         }
         return Response(response)
 
-
 class BillingMemberDetailView(generics.RetrieveAPIView):
     """
     Retrieve view for billing member details.
@@ -106,7 +100,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         from_date = parse_datetime(from_date_str)
         to_date = parse_datetime(to_date_str)
         
-         # Filter the BillingMemberMaster objects
+        # Filter the BillingMemberMaster objects
         billing_member_master_qs = BillingMemberMaster.objects.filter(from_date__lte=to_date, to_date__gte=from_date)
         
         # Get the related BillingMemberDetail objects
@@ -137,7 +131,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
 
                 local_sales_queryset = LocalSale.objects.using('sarthak_kashee').filter(
                     module_code=instance.member_code,
-                   installment_start_date__range=[from_date, to_date]
+                installment_start_date__range=[from_date, to_date]
                 )
                 for local_sale in local_sales_queryset:
                     local_sale_txns_queryset = local_sale.local_sale_txn.all()
@@ -155,14 +149,10 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         }
         return Response(response)
 
-
 class CustomPageNumberPagination(PageNumberPagination):
     page_size = 20  # Default page size
     page_size_query_param = 'page_size'
     max_page_size = 100
-
-
-from mpms.models import Tblfarmercollection,Tblfarmer
 
 class MppCollectionAggregationListView(generics.ListAPIView):
     '''
@@ -241,7 +231,6 @@ class MppCollectionAggregationListView(generics.ListAPIView):
                 "message": f"An unexpected error occurred: {str(e)}",
                 "data": []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class MppCollectionDetailView(generics.GenericAPIView):
     """
@@ -323,8 +312,6 @@ class MppCollectionDetailView(generics.GenericAPIView):
         return start_date, end_date
 
 
-from rest_framework.views import APIView
-
 class MemberShareFinalInfoView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -351,58 +338,3 @@ class MemberShareFinalInfoView(APIView):
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
-
-
-class CdaAggregationPagination(PageNumberPagination):
-    page_size = 10
-
-
-class CdaAggregationView(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request):
-        try:
-            paginator = CdaAggregationPagination()
-            sahayak = MemberSahayakContactDetail.objects.get(mob_no=self.request.user.username)
-            mpp = Mpp.objects.get()
-            queryset = CdaAggregation.objects.all()
-            
-            page = paginator.paginate_queryset(queryset, request)
-            if page is not None:
-                serializer = CdaAggregationSerializer(page, many=True)
-                return paginator.get_paginated_response(serializer.data)
-
-            serializer = CdaAggregationSerializer(queryset, many=True)
-            return Response({
-                "status": "success",
-                "message": "Data retrieved successfully",
-                "data": serializer.data
-            }, status=status.HTTP_200_OK)
-
-        except ValidationError as e:
-            return Response({
-                "status": "error",
-                "message": "Validation Error",
-                "errors": e.detail
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        except ObjectDoesNotExist:
-            return Response({
-                "status": "error",
-                "message": "Object does not exist",
-                "errors": "The requested data was not found."
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        except DatabaseError as e:
-            return Response({
-                "status": "error",
-                "message": "Database Error",
-                "errors": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        except Exception as e:
-            return Response({
-                "status": "error",
-                "message": "An unexpected error occurred",
-                "errors": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
