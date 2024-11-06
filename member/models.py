@@ -72,8 +72,8 @@ class SahayakIncentives(models.Model):
     class Meta:
         app_label = 'member'
         db_table = 'sahayak'
-        verbose_name = _('Product Rate')
-        verbose_name_plural = _('Product Rates')
+        verbose_name = _('Sahayak Incentive')
+        verbose_name_plural = _('Sahayak Incentives')
 
 class ProductRate(models.Model):
     LOCALE_CHOICES = (

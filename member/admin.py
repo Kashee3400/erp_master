@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import *
+from import_export.admin import ImportExportModelAdmin
+from .resources import SahayakIncentivesResource
 
 
 class UserDeviceAdmin(admin.ModelAdmin):
@@ -24,3 +26,8 @@ class ProductRateAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 admin.site.register(ProductRate, ProductRateAdmin)
+
+
+@admin.register(SahayakIncentives)
+class SahayakIncentivesAdmin(ImportExportModelAdmin):
+    resource_class = SahayakIncentivesResource

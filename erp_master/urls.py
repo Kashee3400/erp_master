@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from member.views import MyHomePage,MyAppLists
+from member.views import MyHomePage,MyAppLists,SahayakIncentivesAllInOneView,SahayakIncentivesUpdateView,SahayakIncentivesCreateView
 
 from django.conf.urls.static import static
 admin.site.site_title = 'ERP Admin'
@@ -12,6 +12,9 @@ from member.views import app_ads_txt
 urlpatterns = [    
     path('',MyHomePage.as_view(),name='home'),
     path('list',MyAppLists.as_view(),name='list'),
+    path('sahayak-incentives/', SahayakIncentivesAllInOneView.as_view(), name='sahayak_incentives_list'),
+    path('sahayak-incentives/create/', SahayakIncentivesCreateView.as_view(), name='sahayak_incentives_create'),
+    path('sahayak-incentives/update/<int:pk>/', SahayakIncentivesUpdateView.as_view(), name='sahayak_incentives_update'),
     path('export_selected/', MyAppLists.export_selected, name='export_selected'),
     path('delete_selected/', MyAppLists.delete_selected, name='delete_selected'),
     path('admin/', admin.site.urls),

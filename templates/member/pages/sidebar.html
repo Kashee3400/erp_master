@@ -31,6 +31,7 @@
         </a>
         {% url 'home' as home %}
         {% url 'list' as list %}
+        {% url 'sahayak_incentives_list' as sahayak_incentives_list %}
         <div class="collapse show" id="dashboardsExamples">
           <ul class="nav ms-4 ps-3">
             <li class="nav-item {% if request.path == home %}active{% endif %}">
@@ -43,6 +44,12 @@
               <a class="nav-link {% if request.path == list %}active{% endif %}" href="{% url 'list' %}">
                 <span class="sidenav-mini-icon">M</span>
                 <span class="sidenav-normal">Member List</span>
+              </a>
+            </li>
+            <li class="nav-item {% if request.path == sahayak_incentives_list %}active{% endif %}">
+              <a class="nav-link {% if request.path == sahayak_incentives_list %}active{% endif %}" href="{% url 'sahayak_incentives_list' %}">
+                <span class="sidenav-mini-icon">M</span>
+                <span class="sidenav-normal">Sahayak Incentives</span>
               </a>
             </li>
           </ul>

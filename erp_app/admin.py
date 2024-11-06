@@ -523,3 +523,19 @@ class CdaAggregationPaymentCycleWiseMilktypeAdmin(admin.ModelAdmin):
     ]
 
     ordering = ['from_date']
+
+
+@admin.register(MemberSahayakContactDetail)
+class MemberSahayakContactDetailAdmin(admin.ModelAdmin):
+    list_display = (
+        'contact_details_code', 'first_name', 'last_name', 'sur_name', 
+        'department_code', 'designation', 'pan_no', 'aadhar_no', 'wef_date',
+        'module_code', 'module_name', 'is_default', 'mob_no', 'billing_type_code',
+        'flg_sentbox_entry', 'originating_type', 'created_at', 'created_by', 
+        'originating_org_code', 'updated_at', 'updated_by'
+    )
+    search_fields = ('first_name', 'last_name', 'mob_no', 'designation')
+    list_filter = ('department_code', 'is_default', 'created_at', 'updated_at')
+
+    # Optional: Read-only fields if this data is not meant to be editable from the admin.
+    readonly_fields = ('contact_details_code', 'created_at', 'updated_at')

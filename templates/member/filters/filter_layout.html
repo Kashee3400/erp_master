@@ -1,0 +1,15 @@
+<div class="filter-section">
+    <form method="GET" class="form-inline mb-3">
+        <label for="filter" class="mr-2">Filter by:</label>
+        <select name="filter_field" class="form-control mr-2">
+            <option value="">Select Field</option>
+            {% for field in fields %}
+                <option value="{{ field }}">{{ field|capfirst }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="text" name="filter_value" class="form-control mr-2" placeholder="Enter value" value="{{ request.GET.filter_value }}">
+
+        <button class="btn btn-secondary" type="submit">Apply</button>
+    </form>
+</div>

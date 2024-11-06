@@ -1,0 +1,56 @@
+{% extends 'member/pages/base.html' %}
+{% load static crispy_forms_tags %}
+
+{% block title %}
+Create Sahayak Incentives
+{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card p-3">
+      <div class="card-header">
+        <h5 class="mb-0">Sahayak Incentives</h5>
+        <p class="text-sm mb-0">Sahayak Incentive data and form</p>
+      </div>
+
+      <div>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+          
+          <div class="mb-3">
+            <fieldset class="border p-3">
+              <legend class="w-auto">Incentive Details</legend>
+              <div class="row">
+                {% for field in form %}
+                  <div class="col-md-4 mb-3">
+                    {{ field|as_crispy_field }}
+                    {% if field.errors %}
+                      <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                    {% if field.help_text %}
+                      <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </fieldset>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <button type="submit" name="create" class="btn btn-primary">Create</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

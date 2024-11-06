@@ -1,5 +1,15 @@
 from django.urls import path,include
-from .views import GenerateOTPView, VerifyOTPView,VerifySession,LogoutView,UserAPiView,ProductRateListView,CdaAggregationDaywiseMilktypeViewSet
+from .views import (
+    GenerateOTPView,
+    VerifyOTPView,
+    VerifySession,
+    LogoutView,
+    UserAPiView,
+    ProductRateListView,
+    CdaAggregationDaywiseMilktypeViewSet,
+    GenerateSahayakOTPView,
+    VerifySahayakOTPView,
+)
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 from rest_framework.routers import DefaultRouter
@@ -13,6 +23,8 @@ router.register(r'cda-milktypes', CdaAggregationDaywiseMilktypeViewSet, basename
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),
     path('api/otp/verify/', VerifyOTPView.as_view(), name='verify-otp'),
+    path('api/otp/sahayak/generate/', GenerateSahayakOTPView.as_view(), name='generate-sahayak-otp'),
+    path('api/otp/sahayak/verify/', VerifySahayakOTPView.as_view(), name='verify-sahayak-otp'),
     path('api/verify/session/', VerifySession.as_view(), name='verify-session'),
     path('api/members/phone/', MemberByPhoneNumberView.as_view(), name='member-by-phone'),
     path('api/members/billing-history/', BillingMemberDetailView.as_view(), name='member-billing-history'),

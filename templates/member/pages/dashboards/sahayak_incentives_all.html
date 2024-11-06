@@ -1,0 +1,205 @@
+{% extends 'member/pages/base.html' %}
+{% load i18n static crispy_forms_tags member_filters import_export_tags %}
+
+{% block title %}
+  Sahayak Incentives
+{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{% static 'import_export/import.css' %}" />
+{% endblock %}
+
+{% block extrahead %}
+  <script src="{% static 'import_export/guess_format.js' %}"></script>
+  {% if confirm_form %}
+    {{ confirm_form.media }}
+  {% else %}
+    {{ import_form.media }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-3">
+              <h5 class="mb-0">Sahayak Incentives</h5>
+              <p class="text-sm mb-0">Sahayak incentive data</p>
+            </div>
+            <div class="col-9 row align-items-center">
+              <form method="GET" class="col-auto">
+                <div class="row">
+                  <div class="col-auto">
+                    <select id="action-dropdown" name="month" class="form-control">
+                      <option value="">Choose Month</option>
+                      {% for month in months %}
+                        <option value="{{ month }}">{{ month|upper }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                      <div class="input-group">
+                        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="q" placeholder="Search by MCC name or code, MPP name or code, sahayak name" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-dark btn-sm mt-3" >Filter</button>
+                  </div>
+                </div>
+              </form>
+              <div class="col-auto">
+                <a href="{% url 'sahayak_incentives_create' %}" class="btn btn-success btn-sm mt-3"><i class="fas fa-add"></i>Add</a>
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-dark btn-sm mt-3" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-excel"></i>Import</button>
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-dark btn-sm mt-3" >Export</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
+              <form id="selectedForm" method="POST" action="{% url 'sahayak_incentives_list' %}">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <select id="action-dropdown" name="action" class="form-control">
+                      <option value="">Choose Action</option>
+                      {% for action in actions %}
+                        <option value="{{ action.value }}">{{ action.label }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-2">
+                    <button type="submit" class="btn btn-secondary btn-sm">Go</button>
+                  </div>
+                  <div class="col-4 text-end">
+                    <span>Total Rows: {{ total_rows }}</span> |
+                    <span>Selected Rows: <span id="selected-count">0</span></span>
+                  </div>
+                </div>
+                <table class="table table-striped" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" id="selectAll" />ID
+                      </th>
+                      <th>MCC</th>
+                      <th>MCC Code</th>
+                      <th>MPP</th>
+                      <th>MPP Code</th>
+                      <th>Sahayak Name</th>
+                      <th>Month</th>
+                      <th>Opening</th>
+                      <th>Milk Incentive</th>
+                      <th>Other Incentive</th>
+                      <th>Payable</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for object in objects %}
+                      <tr>
+                        <td>
+                          <input type="checkbox" class="selectRows" name="selected_rows" value="{{ object.id }}" />
+                        </td>
+                        <td>
+                          <a href="{% url 'sahayak_incentives_update' object.id %}">{{ object.mcc_name }}</a>
+                        </td>
+                        <td>{{ object.mcc_code }}</td>
+                        <td>{{ object.mpp_name }}</td>
+                        <td>{{ object.mpp_code }}</td>
+                        <td>{{ object.user.get_full_name }}</td>
+                        <td>{{ object.month }}</td>
+                        <td>{{ object.opening }}</td>
+                        <td>{{ object.milk_incentive }}</td>
+                        <td>{{ object.other_incentive }}</td>
+                        <td>{{ object.payable }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </form>
+            </div>
+          </div>
+
+          <div class="pagination mt-4">
+            <span class="step-links">
+              {% if page_obj.has_previous %}
+                <a href="?page=1" title="First Page"><i class="fas fa-angle-double-left"></i></a>
+                <a href="?page={{ page_obj.previous_page_number }}" title="Previous Page"><i class="fas fa-angle-left"></i></a>
+              {% endif %}
+
+              <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} (Total: {{ total_rows }} rows)</span>
+
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" title="Next Page"><i class="fas fa-angle-right"></i></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" title="Last Page"><i class="fas fa-angle-double-right"></i></a>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Import Excel To Populate the Data</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <form method="post" enctype="multipart/form-data" class="m-3 p-3">
+            <div class="modal-body">
+              {% csrf_token %}
+              <input type="hidden" name="excel_import" value="excel_import" />
+              {% include 'admin/import_export/resource_fields_list.html' with import_or_export='import' %}
+              {% block import_form_additional_info %}
+
+              {% endblock %}
+              {% block form_detail %}
+                {{ import_form|crispy }}
+              {% endblock %}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const selectAllCheckbox = document.getElementById('selectAll')
+      const rowCheckboxes = document.querySelectorAll('.selectRows')
+      const selectedCountDisplay = document.getElementById('selected-count')
+    
+      selectAllCheckbox.addEventListener('change', function () {
+        rowCheckboxes.forEach((checkbox) => {
+          checkbox.checked = selectAllCheckbox.checked // Set the checked state of all member checkboxes
+        })
+        updateSelectedCount()
+      })
+    
+      rowCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', function () {
+          updateSelectedCount()
+        })
+      })
+    
+      function updateSelectedCount() {
+        const selectedCount = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked).length
+        selectedCountDisplay.textContent = selectedCount
+      }
+    })
+  </script>
+{% endblock %}
