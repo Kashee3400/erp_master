@@ -40,6 +40,7 @@ from .forms import *
 from .filters import CdaAggregationDaywiseMilktypeFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Avg
+from django.conf import settings
 from django.utils.timezone import now
 from datetime import date
 from django.utils.dateparse import parse_date
@@ -686,10 +687,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
         import_form = self.create_import_form(request=request)
         total_rows = SahayakIncentives.objects.count()
         selected_rows_count = 0
-        months = [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ]
+        months = settings.MONTHS
 
         fields = self.resource_class._meta.fields
         fields_list = [
@@ -974,3 +972,99 @@ class SahayakIncentivesUpdateView(UpdateView):
     def form_valid(self, form):
         # Custom processing before saving
         return super().form_valid(form)
+
+
+
+class SahayakIncentivesViewSet(viewsets.ModelViewSet):
+    queryset = SahayakIncentives.objects.all()
+    serializer_class = SahayakIncentivesSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month']
+    pagination_class = PageNumberPagination
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(
+                {"status": "success", "message": "Incentive created successfully", "result": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        except exceptions.ValidationError as e:
+            return Response(
+                {"status": "error", "message": str(e), "result": {}},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(
+                {"status": "success", "message": "Incentive updated successfully", "result": serializer.data},
+                status=status.HTTP_200_OK
+            )
+        except exceptions.ValidationError as e:
+            return Response(
+                {"status": "error", "message": str(e), "result": {}},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(
+                {"status": "success", "message": "Incentive deleted successfully", "result": {}},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": "Error deleting incentive", "result": {}},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(
+                {"status": "success", "message": "Incentive retrieved successfully", "result": serializer.data},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": "Error retrieving incentive", "result": {}},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(
+                    {"status": "success", "message": "Incentives retrieved successfully", "result": serializer.data}
+                )
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(
+                {"status": "success", "message": "Incentives retrieved successfully", "result": serializer.data},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": "Error retrieving incentives", "result": {}},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class MonthListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(
+            {"status": "success", "message": "Months retrieved successfully", "result": settings.MONTHS},
+            status=status.HTTP_200_OK
+        )

@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import OTP,ProductRate
+from .models import OTP,ProductRate,SahayakIncentives
 from erp_app.models import  CdaAggregationDaywiseMilktype
 
 class UserSerializer(serializers.ModelSerializer):
@@ -68,3 +68,9 @@ class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
             'actual_snf',
             'actual_amount',
         ]
+
+
+class SahayakIncentivesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SahayakIncentives
+        fields = '__all__'
