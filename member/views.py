@@ -194,6 +194,7 @@ def send_sms_api(mobile, otp):
         "duplicatecheck": "true",
     }
     response = requests.get(url, params=params)
+    print(response.json())
     if response.status_code == 200:
         data = response.json()
         return True
@@ -982,6 +983,12 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month']
     pagination_class = PageNumberPagination
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return SahayakIncentives.objects.filter(user=self.request.user)
+        else:
+            return SahayakIncentives.objects.all()
+    
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
