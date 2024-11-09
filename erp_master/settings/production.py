@@ -1,29 +1,29 @@
 from .base import *
 
 
-DB_ENGINE = os.getenv("DB_ENGINE", None)
+DB_ENGINE = config("DB_ENGINE", None)
 
 # cred for connecting sarthak db
-DB_NAME_SARTHAK = os.getenv("DB_NAME_SARTHAK", None)
-DB_USER_SARTHAK = os.getenv("DB_USER_SARTHAK", None)
-DB_PASSWORD_SARTHAK = os.getenv("DB_PASSWORD_SARTHAK", None)
-DB_HOST_SARTHAK = os.getenv("DB_HOST_SARTHAK", None)
-DB_PORT_SARTHAK = os.getenv("DB_PORT_SARTHAK", None)
+DB_NAME_SARTHAK = config("DB_NAME_SARTHAK", None)
+DB_USER_SARTHAK = config("DB_USER_SARTHAK", None)
+DB_PASSWORD_SARTHAK = config("DB_PASSWORD_SARTHAK", None)
+DB_HOST_SARTHAK = config("DB_HOST_SARTHAK", None)
+DB_PORT_SARTHAK = config("DB_PORT_SARTHAK", None)
 
 
 # cred for connecting member db
-DB_NAME_MEMBER = os.getenv("DB_NAME_MEMBER", None)
-DB_MEMBER_USER = os.getenv("DB_MEMBER_USER", None)
-DB_MEMBER_PASS = os.getenv("DB_MEMBER_PASS", None)
-DB_HOST_MEMBER = os.getenv("DB_HOST_MEMBER", None)
-DB_PORT_MEMBER = os.getenv("DB_PORT_MEMBER", None)
+DB_NAME_MEMBER = config("DB_NAME_MEMBER", None)
+DB_MEMBER_USER = config("DB_MEMBER_USER", None)
+DB_MEMBER_PASS = config("DB_MEMBER_PASS", None)
+DB_HOST_MEMBER = config("DB_HOST_MEMBER", None)
+DB_PORT_MEMBER = config("DB_PORT_MEMBER", None)
 
 # cred for connecting mpms db
-DB_NAME_MPMS = os.getenv("DB_NAME_MPMS", None)
-DB_USER_MPMS = os.getenv("DB_USER_MPMS", None)
-DB_PASSWORD_MPMS = os.getenv("DB_PASSWORD_MPMS", None)
-DB_HOST_MPMS = os.getenv("DB_HOST_MPMS", None)
-DB_PORT_MPMS = os.getenv("DB_PORT_MPMS", None)
+DB_NAME_MPMS = config("DB_NAME_MPMS", None)
+DB_USER_MPMS = config("DB_USER_MPMS", None)
+DB_PASSWORD_MPMS = config("DB_PASSWORD_MPMS", None)
+DB_HOST_MPMS = config("DB_HOST_MPMS", None)
+DB_PORT_MPMS = config("DB_PORT_MPMS", None)
 
 DATABASES = {
     "default": {
