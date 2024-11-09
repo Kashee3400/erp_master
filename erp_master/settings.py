@@ -298,6 +298,7 @@ LANGUAGES = [
     ('hi', 'Hindi'),
     ('en', 'English'),
 ]
+
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
@@ -434,7 +435,7 @@ JAZZMIN_SETTINGS = {
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string 
-    "search_model": ["auth.User", "auth.Group"],
+    "search_model": ["auth.User", "auth.Group","member.OTP"],
 
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
@@ -450,7 +451,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "View Site", "url": "/", "new_window": True},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},
@@ -537,7 +538,7 @@ JAZZMIN_SETTINGS = {
     # - carousel
     "changeform_format": "horizontal_tabs",
     # override change forms on a per modeladmin basis
-    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    "changeform_format_overrides": {"auth.user": "carousel", "auth.group": "vertical_tabs"},
     # Add a language dropdown into the admin
     "language_chooser": True,
 }
@@ -584,6 +585,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MONTHS = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+            "January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"
         ]

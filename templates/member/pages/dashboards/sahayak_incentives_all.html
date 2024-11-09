@@ -25,15 +25,15 @@
         <div class="card-header">
           <div class="row">
             <div class="col-3">
-              <h5 class="mb-0">Sahayak Incentives</h5>
-              <p class="text-sm mb-0">Sahayak incentive data</p>
+              <h5 class="mb-0">{% trans "Sahayak Incentives" %}</h5>
+              <p class="text-sm mb-0">{% trans "Sahayak incentive data" %}</p>
             </div>
             <div class="col-9 row align-items-center">
               <form method="GET" class="col-auto">
                 <div class="row">
                   <div class="col-auto">
                     <select id="action-dropdown" name="month" class="form-control">
-                      <option value="">Choose Month</option>
+                      <option value="">{% trans "Choose Month" %}</option>
                       {% for month in months %}
                         <option value="{{ month }}">{{ month|upper }}</option>
                       {% endfor %}
@@ -48,18 +48,18 @@
                     </div>
                   </div>
                   <div class="col-auto">
-                    <button type="submit" class="btn btn-dark btn-sm mt-3" >Filter</button>
+                    <button type="submit" class="btn btn-dark btn-sm mt-3" >{% trans "Filter" %}</button>
                   </div>
                 </div>
               </form>
               <div class="col-auto">
-                <a href="{% url 'sahayak_incentives_create' %}" class="btn btn-success btn-sm mt-3"><i class="fas fa-add"></i>Add</a>
+                <a href="{% url 'sahayak_incentives_create' %}" class="btn btn-success btn-sm mt-3"><i class="fas fa-add"></i>{% trans "Add" %}</a>
               </div>
               <div class="col-auto">
-                <button type="button" class="btn btn-dark btn-sm mt-3" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-excel"></i>Import</button>
+                <button type="button" class="btn btn-dark btn-sm mt-3" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-excel"></i>{% trans "Import" %}</button>
               </div>
               <div class="col-auto">
-                <button type="button" class="btn btn-dark btn-sm mt-3" >Export</button>
+                <button type="button" class="btn btn-dark btn-sm mt-3" >{% trans "Export" %}</button>
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@
                 <div class="row mb-3">
                   <div class="col-6">
                     <select id="action-dropdown" name="action" class="form-control">
-                      <option value="">Choose Action</option>
+                      <option value="">{% trans "Choose Action" %}</option>
                       {% for action in actions %}
                         <option value="{{ action.value }}">{{ action.label }}</option>
                       {% endfor %}
@@ -82,8 +82,8 @@
                     <button type="submit" class="btn btn-secondary btn-sm">Go</button>
                   </div>
                   <div class="col-4 text-end">
-                    <span>Total Rows: {{ total_rows }}</span> |
-                    <span>Selected Rows: <span id="selected-count">0</span></span>
+                    <span>{% trans "Total Rows" %}: {{ total_rows }}</span> |
+                    <span>{% trans "Selected Rows" %}: <span id="selected-count">0</span></span>
                   </div>
                 </div>
                 <table class="table table-striped" style="width:100%">
@@ -153,7 +153,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">Import Excel To Populate the Data</h5>
+            <h5 class="modal-title" id="exampleModalCenterTitle">{% trans "Import Excel To Populate the Data" %}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <form method="post" enctype="multipart/form-data" class="m-3 p-3">

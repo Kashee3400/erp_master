@@ -22,3 +22,12 @@ class SahayakIncentivesResource(resources.ModelResource):
         exclude = ('id',)  # Exclude the primary key
         import_id_fields = ('user', 'month')
         
+
+class UserResource(resources.ModelResource):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name')
+
+        exclude = ('id',)  # Exclude the primary key
+        import_id_fields = ('username')
+        
