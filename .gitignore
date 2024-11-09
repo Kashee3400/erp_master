@@ -2,16 +2,13 @@
 __pycache__/
 
 # Ignore environment configuration files
-.env
+.envs
 
 # Ignore SQLite database file
 sqlite3.db
 
 # Ignore log files
 *.log
-
-# Ignore static files (if using collectstatic)
-/static/
 
 # Ignore media files (if using media uploads)
 /media/
