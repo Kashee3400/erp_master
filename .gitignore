@@ -2,7 +2,7 @@
 __pycache__/
 
 # Ignore environment configuration files
-.envs
+.env
 
 # Ignore SQLite database file
 sqlite3.db
