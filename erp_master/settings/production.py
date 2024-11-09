@@ -102,15 +102,15 @@ LOGGING = {
         },
         "django.db": {"level": "WARNING"},
         "django.request": {
-            "handlers": ["mail_admins", "file"],  # Log errors to file as well
+            "handlers": ["mail_admins", "file"],
             "level": "ERROR",
             "propagate": False,
         },
-        # Suppress output of this debug toolbar panel
         "template_timings_panel": {
             "handlers": ["null"],
         },
     },
 }
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL="static/"
+STATIC_ROOT="static/"
