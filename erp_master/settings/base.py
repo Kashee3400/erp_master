@@ -1,19 +1,17 @@
 from pathlib import Path
 from django.conf import settings
 import os
-from dotenv import load_dotenv
+from decouple import config
 from typing import Any, Dict
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
-DEBUG = os.getenv("DEBUG", None)
-SECRET_KEY = os.getenv("SECRET_KEY", None)
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="").split(",")
+DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY = config("SECRET_KEY", None)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
 # URL for login
 LOGIN_URL = "/admin/login/"

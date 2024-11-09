@@ -2,12 +2,9 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from dotenv import load_dotenv
+from decouple import config
 
-load_dotenv()
-
-DEBUG = os.getenv("DEBUG", None)
-
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 def main():
     """Run administrative tasks."""
