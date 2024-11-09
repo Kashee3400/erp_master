@@ -113,4 +113,4 @@ LOGGING = {
     },
 }
 
-STATIC_ROOT = STATIC_DIR
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
