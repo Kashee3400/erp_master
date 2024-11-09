@@ -13,11 +13,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 SECRET_KEY = config("SECRET_KEY", None)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
-# URL for login
-LOGIN_URL = "/admin/login/"
-
-LOGIN_REDIRECT_URL = "/admin/"
-
 
 INSTALLED_APPS = [
     "member",
@@ -64,7 +59,7 @@ DATABASE_ROUTERS = [
     "erp_app.dbrouters.SarthakKasheeRouter",
     "mpms.db_routers.MPMSDBRouter",
 ]
-
+WSGI_APPLICATION = "erp_master.wsgi.application"
 
 ROOT_URLCONF = "erp_master.urls"
 
@@ -95,7 +90,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "erp_master.wsgi.application"
+# URL for login
+LOGIN_URL = "/admin/login/"
+
+LOGIN_REDIRECT_URL = "/admin/"
+
 
 
 
