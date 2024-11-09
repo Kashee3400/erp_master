@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "member",
     "mpms",
     "erp_app",
+    "daphne",
     "bootstrap5",
     "django_filters",
     "crispy_forms",
@@ -60,6 +61,7 @@ DATABASE_ROUTERS = [
     "mpms.db_routers.MPMSDBRouter",
 ]
 WSGI_APPLICATION = "erp_master.wsgi.application"
+ASGI_APPLICATION = "erp_master.asgi.application"
 
 ROOT_URLCONF = "erp_master.urls"
 
