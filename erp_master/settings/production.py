@@ -112,4 +112,4 @@ LOGGING = {
     },
 }
 
-STATIC_ROOT="static/"
+STATIC_ROOT=STATIC_DIR
