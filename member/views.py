@@ -606,7 +606,7 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
             )
         start_date, end_date = self.get_financial_year_dates(collection_date)
         current_date_data = CdaAggregationDaywiseMilktype.objects.filter(
-            collection_date=collection_date, mpp_code=mpp.mpp_code
+            created_at=collection_date, mpp_code=mpp.mpp_code
         )
         fy_data = CdaAggregationDaywiseMilktype.objects.filter(
             created_at__gte=start_date,
