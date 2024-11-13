@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-05 15:04+0530\n"
+"POT-Creation-Date: 2024-11-13 12:58+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,60 +17,584 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: .\erp_app\models.py:3649
+
+#: .\erp_app\apps.py:9
+msgid "Kashee ERP"
+msgstr ""
+
+#: .\erp_app\models.py:3670
 msgid "Billing Member Master Code"
 msgstr "बिलिंग सदस्य मास्टर कोड"
 
-#: .\erp_app\models.py:3650
+#: .\erp_app\models.py:3671
 msgid "Company Code"
 msgstr "कंपनी कोड"
 
-#: .\erp_app\models.py:3651
+#: .\erp_app\models.py:3672
 msgid "Plant Code"
 msgstr "प्लांट कोड"
 
+#: .\erp_app\models.py:3673
 msgid "MCC CODE"
 msgstr "एमसीसी कोड"
 
+#: .\erp_app\models.py:3674
 msgid "BMC CODE"
 msgstr "बीएमसी कोड"
 
+#: .\erp_app\models.py:3675
 msgid "MPP CODE"
 msgstr "एमपीपी कोड"
 
+#: .\erp_app\views.py:93
+#, python-brace-format
+msgid "No member found on this mobile no {self.request.user.username}"
+msgstr ""
 
-#: .\member\models.py:12
+#: .\erp_app\views.py:116
+msgid "No Data Found"
+msgstr ""
+#: .\erp_master\settings\base.py:233
+msgid "January"
+msgstr "जनवरी"
+
+#: .\erp_master\settings\base.py:234
+msgid "February"
+msgstr "फरवरी"
+
+#: .\erp_master\settings\base.py:235
+msgid "March"
+msgstr "मार्च"
+
+#: .\erp_master\settings\base.py:236
+msgid "April"
+msgstr "अप्रैल"
+
+#: .\erp_master\settings\base.py:237
+msgid "May"
+msgstr "मई"
+
+#: .\erp_master\settings\base.py:238
+msgid "June"
+msgstr "जून"
+
+#: .\erp_master\settings\base.py:239
+msgid "July"
+msgstr "जुलाई"
+
+#: .\erp_master\settings\base.py:240
+msgid "August"
+msgstr "अगस्त"
+
+#: .\erp_master\settings\base.py:241
+msgid "September"
+msgstr "सितंबर"
+
+#: .\erp_master\settings\base.py:242
+msgid "October"
+msgstr "अक्टूबर"
+
+#: .\erp_master\settings\base.py:243
+msgid "November"
+msgstr "नवंबर"
+
+#: .\erp_master\settings\base.py:244
+msgid "December"
+msgstr "दिसंबर"
+
+#: .\member\apps.py:8
+msgid "Kashee Member"
+msgstr "कश्शी सदस्य"
+
+#: .\member\models.py:16
 msgid "Phone Number"
 msgstr "फ़ोन नंबर"
 
-#: .\member\models.py:13
+#: .\member\models.py:17
 msgid "OTP"
 msgstr "ओ.टी.पी"
 
-#: .\member\models.py:14
+#: .\member\models.py:18
 msgid "Created AT"
 msgstr "पर बनाया गया"
 
-#: .\member\models.py:29
+#: .\member\models.py:39
 msgid "User OTP"
 msgstr "उपयोगकर्ता ओ.टी.पी"
 
-#: .\member\models.py:30
+#: .\member\models.py:40
 msgid "Users' OTPs"
 msgstr "उपयोगकर्ताओं के ओ.टी.पी"
 
-#: .\member\models.py:34
+#: .\member\models.py:44
 msgid "User"
 msgstr "उपयोगकर्ता"
 
-#: .\member\models.py:35
+#: .\member\models.py:45
 msgid "Device"
 msgstr "उपकरण"
 
-#: .\member\models.py:43
+#: .\member\models.py:53
 msgid "User Device"
 msgstr "उपयोगकर्ता डिवाइस"
 
-#: .\member\models.py:44
+#: .\member\models.py:54
 msgid "Users' Devices"
 msgstr "उपयोगकर्ताओं के उपकरण"
+
+#: .\member\models.py:57
+msgid "Sahayak"
+msgstr ""
+
+#: .\member\models.py:58
+#, fuzzy
+#| msgid "MCC CODE"
+msgid "MCC Code"
+msgstr "एमसीसी कोड"
+
+#: .\member\models.py:59
+msgid "MCC Name"
+msgstr ""
+
+#: .\member\models.py:60
+#, fuzzy
+#| msgid "Plant Code"
+msgid "MPP Code"
+msgstr "प्लांट कोड"
+
+#: .\member\models.py:61
+msgid "MPP Name"
+msgstr ""
+
+#: .\member\models.py:62
+msgid "Month"
+msgstr ""
+
+#: .\member\models.py:63
+msgid "Previous Month Opening"
+msgstr ""
+
+#: .\member\models.py:64
+msgid "Milk Incentive"
+msgstr ""
+
+#: .\member\models.py:65
+msgid "Other Incentive"
+msgstr ""
+
+#: .\member\models.py:66
+msgid "Net Payable"
+msgstr ""
+
+#: .\member\models.py:67
+msgid "Closing"
+msgstr ""
+
+#: .\member\models.py:75
+msgid "Sahayak Incentive"
+msgstr ""
+
+#: .\member\models.py:76
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:28
+msgid "Sahayak Incentives"
+msgstr ""
+
+#: .\member\models.py:80
+msgid "English"
+msgstr ""
+
+#: .\member\models.py:81
+msgid "Hindi"
+msgstr ""
+
+#: .\member\models.py:84
+msgid "Product Name"
+msgstr ""
+
+#: .\member\models.py:85
+msgid "The name of product"
+msgstr ""
+
+#: .\member\models.py:86
+msgid "Product Price"
+msgstr ""
+
+#: .\member\models.py:87
+msgid "Rate of the product"
+msgstr ""
+
+#: .\member\models.py:88
+msgid "Product Image"
+msgstr ""
+
+#: .\member\models.py:89
+msgid "Image of the product to display as icon, size should be 100x100"
+msgstr ""
+
+#: .\member\models.py:90
+msgid "Locale"
+msgstr ""
+
+#: .\member\models.py:91
+msgid "Locale of the product data (e.g., en for English, hi for Hindi)"
+msgstr ""
+
+#: .\member\models.py:93
+msgid "Translated Product Name"
+msgstr ""
+
+#: .\member\models.py:94
+msgid "Translated name of the product in the selected locale"
+msgstr ""
+
+#: .\member\models.py:95
+msgid "Price Description"
+msgstr ""
+
+#: .\member\models.py:96
+msgid "Description of the product price, e.g., price of 1 bag or 1 pill"
+msgstr ""
+
+#: .\member\models.py:99
+#, fuzzy
+#| msgid "Created AT"
+msgid "Created At"
+msgstr "पर बनाया गया"
+
+#: .\member\models.py:100
+#, fuzzy
+#| msgid "Created AT"
+msgid "Updated At"
+msgstr "पर बनाया गया"
+
+#: .\member\models.py:101
+#, fuzzy
+#| msgid "Created AT"
+msgid "Created By"
+msgstr "पर बनाया गया"
+
+#: .\member\models.py:102
+msgid "Updated By"
+msgstr ""
+
+#: .\member\models.py:111
+msgid "Product Rate"
+msgstr ""
+
+#: .\member\models.py:112
+msgid "Product Rates"
+msgstr ""
+
+#: .\member\views.py:62 .\member\views.py:86
+msgid "Mobile number doest not exists"
+msgstr ""
+
+#: .\member\views.py:71 .\member\views.py:95
+msgid "OTP sent"
+msgstr ""
+
+#: .\member\views.py:114 .\member\views.py:155
+msgid "Invalid OTP"
+msgstr ""
+
+#: .\member\views.py:121 .\member\views.py:162
+msgid "OTP expired"
+msgstr ""
+
+#: .\member\views.py:132 .\member\views.py:173
+msgid "Authentication successful"
+msgstr ""
+
+#: .\member\views.py:229
+msgid "Logout successful"
+msgstr ""
+
+#: .\member\views.py:806
+msgid ""
+"No valid data to import. Ensure your file has the correct headers or data "
+"for import."
+msgstr ""
+
+#: .\member\views.py:846
+msgid "Import Sahayak Incentive Preview"
+msgstr ""
+
+#: .\member\views.py:886 .\templates\member\form\confirm_excel_import.html:18
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:59
+msgid "Import"
+msgstr ""
+
+#: .\mpms\apps.py:10
+msgid "MPMS"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:42
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:45
+msgid "Confirm import"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:53
+#: .\templates\member\form\confirm_excel_import.html:99
+msgid "Errors"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:68
+#, fuzzy
+#| msgid "Phone Number"
+msgid "Line number"
+msgstr "फ़ोन नंबर"
+
+#: .\templates\member\form\confirm_excel_import.html:86
+msgid "Some rows failed to validate"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:89
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:96
+msgid "Row"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:126
+msgid "Non field specific"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:147
+msgid "Preview"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:162
+msgid "New"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:164
+msgid "Skipped"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:166
+msgid "Delete"
+msgstr ""
+
+#: .\templates\member\form\confirm_excel_import.html:168
+msgid "Update"
+msgstr ""
+
+#: .\templates\member\form\export.html:17
+msgid "Export"
+msgstr ""
+
+#: .\templates\member\form\export.html:44
+#, python-format
+msgid ""
+"\n"
+"                          Export %(len)s selected item.\n"
+"                          "
+msgid_plural ""
+"\n"
+"                          Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\member\form\export.html:71
+msgid "This exporter will export the following fields: "
+msgstr ""
+
+#: .\templates\member\form\export.html:105
+msgid "Submit"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:29
+msgid "Sahayak incentive data"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:36
+msgid "Choose Month"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:51
+msgid "Filter"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:56
+msgid "Add"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:72
+msgid "Choose Action"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:82
+msgid "Total Rows"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:83
+msgid "Selected Rows"
+msgstr ""
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:153
+msgid "Import Excel To Populate the Data"
+msgstr ""
+
+#: .\templates\member\pages\sidebar.html:7
+msgid "ERP Dashboard"
+msgstr ""
+
+#: .\templates\member\pages\sidebar.html:17
+msgid "Dashboard"
+msgstr ""
+
+#: .\templates\registration\logged_out.html:4
+#: .\templates\registration\password_change_done.html:13
+#: .\templates\registration\password_change_form.html:14
+#: .\templates\registration\password_reset_complete.html:6
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_done.html:6
+#: .\templates\registration\password_reset_form.html:7
+msgid "Home"
+msgstr ""
+
+#: .\templates\registration\logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr ""
+
+#: .\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr ""
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Documentation"
+msgstr ""
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Change password"
+msgstr ""
+
+#: .\templates\registration\password_change_done.html:7
+#: .\templates\registration\password_change_form.html:8
+msgid "Log out"
+msgstr ""
+
+#: .\templates\registration\password_change_done.html:14
+#: .\templates\registration\password_change_form.html:15
+msgid "Password change"
+msgstr ""
+
+#: .\templates\registration\password_change_done.html:19
+msgid "Your password was changed."
+msgstr ""
+
+#: .\templates\registration\password_change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\registration\password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: .\templates\registration\password_change_form.html:58
+#: .\templates\registration\password_reset_confirm.html:37
+msgid "Change my password"
+msgstr ""
+
+#: .\templates\registration\password_reset_complete.html:7
+#: .\templates\registration\password_reset_done.html:7
+#: .\templates\registration\password_reset_form.html:8
+msgid "Password reset"
+msgstr ""
+
+#: .\templates\registration\password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Log in"
+msgstr ""
+
+#: .\templates\registration\password_reset_confirm.html:8
+msgid "Password reset confirmation"
+msgstr ""
+
+#: .\templates\registration\password_reset_confirm.html:16
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "New password:"
+msgstr ""
+
+#: .\templates\registration\password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr ""
+
+#: .\templates\registration\password_reset_confirm.html:43
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: .\templates\registration\password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: .\templates\registration\password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: .\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr ""
+
+#: .\templates\registration\password_reset_form.html:27
+msgid "Reset my password"
+msgstr ""

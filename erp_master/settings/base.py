@@ -230,16 +230,16 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MONTHS = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    _("January"),
+    _("February"),
+    _("March"),
+    _("April"),
+    _("May"),
+    _("June"),
+    _("July"),
+    _("August"),
+    _("September"),
+    _("October"),
+    _("November"),
+    _("December"),
 ]

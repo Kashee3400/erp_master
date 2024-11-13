@@ -609,8 +609,8 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
             collection_date=collection_date, mpp_code=mpp.mpp_code
         )
         fy_data = CdaAggregationDaywiseMilktype.objects.filter(
-            collection_date__gte=start_date,
-            collection_date__lte=end_date,
+            created_at__gte=start_date,
+            created_at__lte=end_date,
             mpp_code=mpp.mpp_code,
         ).aggregate(
             total_composite_qty=Sum("composite_qty"),
@@ -1069,9 +1069,30 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+from django.utils.translation import gettext as _
+
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
+        months = [
+            _("January"),
+            _("February"),
+            _("March"),
+            _("April"),
+            _("May"),
+            _("June"),
+            _("July"),
+            _("August"),
+            _("September"),
+            _("October"),
+            _("November"),
+            _("December"),
+        ]
+        
         return Response(
-            {"status": "success", "message": "Months retrieved successfully", "result": settings.MONTHS},
+            {
+                "status": "success",
+                "message": _("Months retrieved successfully"),
+                "result": months,
+            },
             status=status.HTTP_200_OK
         )
