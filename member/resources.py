@@ -19,7 +19,7 @@ class SahayakIncentivesResource(resources.ModelResource):
         fields = ('user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month', 'opening', 'milk_incentive', 'other_incentive', 'payable', 'closing')
 
         # Optional: Customize import/export behavior
-        exclude = ('id',)  # Exclude the primary key
+        exclude = ('id',)
         import_id_fields = ('user', 'month')
         
 
@@ -28,6 +28,6 @@ class UserResource(resources.ModelResource):
         model = User
         fields = ('username', 'first_name', 'last_name')
 
-        exclude = ('id',)  # Exclude the primary key
-        import_id_fields = ('username')
+        exclude = ('id',)
+        import_id_fields = ('username',)
         
