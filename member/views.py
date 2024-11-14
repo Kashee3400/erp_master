@@ -186,7 +186,7 @@ def send_sms_api(mobile, otp):
         "password": "Kash@12",
         "sendMethod": "quick",
         "mobile": f"{mobile}",
-        "msg": f"आपका काशी सहायक लॉगिन ओटीपी कोड {otp} है। किसी के साथ साझा न करें- काशी डेरी",
+        "msg": f"आपका काशी ई-डेयरी लॉगिन ओटीपी कोड {otp} है। किसी के साथ साझा न करें- काशी डेरी",
         "senderid": "KMPCLV",
         "msgType": "unicode",
         "dltEntityId": "1001453540000074525",
@@ -194,7 +194,6 @@ def send_sms_api(mobile, otp):
         "duplicatecheck": "true",
     }
     response = requests.get(url, params=params)
-    print(response.json())
     if response.status_code == 200:
         data = response.json()
         return True
@@ -558,6 +557,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
     queryset = CdaAggregationDaywiseMilktype.objects.all()
     serializer_class = CdaAggregationDaywiseMilktypeSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = CdaAggregationDaywiseMilktypeFilter
     pagination_class = StandardResultsSetPagination
 
@@ -605,8 +605,13 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
             )
         start_date, end_date = self.get_financial_year_dates(collection_date)
         current_date_data = CdaAggregationDaywiseMilktype.objects.filter(
-            collection_date=collection_date, mpp_code=mpp.mpp_code
+            created_at=collection_date, mpp_code=mpp.mpp_code
         )
+        from datetime import datetime
+        specific_date = datetime(2024, 4,21,0,0)
+        records = CdaAggregationDaywiseMilktype.objects.filter(created_at=specific_date)
+        print(records)
+        print(current_date_data)
         fy_data = CdaAggregationDaywiseMilktype.objects.filter(
             created_at__gte=start_date,
             created_at__lte=end_date,
