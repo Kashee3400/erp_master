@@ -186,7 +186,7 @@ def send_sms_api(mobile, otp):
         "password": "Kash@12",
         "sendMethod": "quick",
         "mobile": f"{mobile}",
-        "msg": f"आपका काशी ई-डेयरी लॉगिन ओटीपी कोड {otp} है। किसी के साथ साझा न करें- काशी डेरी",
+        "msg": f"आपका काशी सहायक लॉगिन ओटीपी कोड {otp} है। किसी के साथ साझा न करें- काशी डेरी",
         "senderid": "KMPCLV",
         "msgType": "unicode",
         "dltEntityId": "1001453540000074525",
@@ -558,7 +558,6 @@ class StandardResultsSetPagination(PageNumberPagination):
 class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
     queryset = CdaAggregationDaywiseMilktype.objects.all()
     serializer_class = CdaAggregationDaywiseMilktypeSerializer
-    filter_backends = [DjangoFilterBackend]
     filterset_class = CdaAggregationDaywiseMilktypeFilter
     pagination_class = StandardResultsSetPagination
 
@@ -584,7 +583,7 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         return formatted_aggregates
 
     def list(self, request, *args, **kwargs):
-        collection_date_param = request.query_params.get("collection_date", None)
+        collection_date_param = request.query_params.get("created_at", None)
         mppcode = request.query_params.get("mppcode", None)
         if collection_date_param and collection_date_param.lower() != "null":
             collection_date = parse_date(collection_date_param)
@@ -606,7 +605,7 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
             )
         start_date, end_date = self.get_financial_year_dates(collection_date)
         current_date_data = CdaAggregationDaywiseMilktype.objects.filter(
-            created_at=collection_date, mpp_code=mpp.mpp_code
+            collection_date=collection_date, mpp_code=mpp.mpp_code
         )
         fy_data = CdaAggregationDaywiseMilktype.objects.filter(
             created_at__gte=start_date,
