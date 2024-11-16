@@ -400,10 +400,7 @@ class CdaAggregationAdmin(admin.ModelAdmin):
 
 @admin.register(CdaAggregationDateshiftWiseMilktype)
 class CdaAggregationDateshiftWiseMilktypeAdmin(admin.ModelAdmin):
-    # Display all fields in the list view
     list_display = [field.name for field in CdaAggregationDateshiftWiseMilktype._meta.get_fields()]
-    
-    # Add search functionality on certain fields
     search_fields = [
         'company_code', 
         'company_name', 
@@ -424,60 +421,10 @@ class CdaAggregationDateshiftWiseMilktypeAdmin(admin.ModelAdmin):
         'shift', 
         'milk_type_code', 
         'milk_quality_type_code', 
-    ]
-
-    ordering = ['collection_date']  # Order by collection date by default
-
-@admin.register(CdaAggregationDateshiftWiseMilktypeRealTime)
-class CdaAggregationDateshiftWiseMilktypeRealTimeAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregationDateshiftWiseMilktypeRealTime._meta.get_fields()]
-    
-    search_fields = [
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'mpp_code', 
-        'mpp_name', 
-        'shift', 
-        'milk_type_name', 
-        'milk_quality_type_name',
-    ]
-
-    list_filter = [
-        'shift', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-    ]
-
-    ordering = ['collection_date']
-
-
-@admin.register(CdaAggregationDateshiftWiseWithoutMilktypeRealTime)
-class CdaAggregationDateshiftWiseWithoutMilktypeRealTimeAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregationDateshiftWiseWithoutMilktypeRealTime._meta.get_fields()]
-    
-    search_fields = [
-        'company_code', 
-        'company_name', 
-        'plant_code', 
-        'plant_tr_code', 
-        'plant_name', 
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'bmc_name', 
-        'mpp_code', 
-        'mpp_name', 
-        'shift',
-    ]
-
-    list_filter = [
-        'company_code', 
-        'plant_code', 
-        'shift', 
     ]
 
     ordering = ['collection_date'] 
+
 
 @admin.register(CdaAggregationDaywiseMilktype)
 class CdaAggregationDaywiseMilktypeAdmin(admin.ModelAdmin):
@@ -539,3 +486,56 @@ class MemberSahayakContactDetailAdmin(admin.ModelAdmin):
 
     # Optional: Read-only fields if this data is not meant to be editable from the admin.
     readonly_fields = ('contact_details_code', 'created_at', 'updated_at')
+
+
+    
+@admin.register(Shift)
+class ShiftAdmin(admin.ModelAdmin):
+    list_display = ('shift_code', 'shift_name', 'shift_short_name', 'shift_at', 'is_active')
+    search_fields = ('shift_name', 'shift_short_name', 'shift_code')
+    list_filter = ('is_active', 'originating_type')
+    ordering = ('shift_code',)
+
+
+@admin.register(LocalSaleTxn)
+class LocalSaleTxnAdmin(admin.ModelAdmin):
+    # Dynamically get all fields from the model
+    list_display = [field.name for field in LocalSaleTxn._meta.fields]
+    search_fields = [field.name for field in LocalSaleTxn._meta.fields if isinstance(field, (models.CharField, models.TextField))]
+    list_filter = ['created_at', 'updated_at']  # Add fields to filter by, if applicable
+    readonly_fields = ['created_at', 'updated_at']  # Example of read-only fields
+
+    # Optional: Customize display for related fields
+    def local_sale_code_display(self, obj):
+        return obj.local_sale_code.local_sale_txn_code if obj.local_sale_code else "-"
+    local_sale_code_display.short_description = "Local Sale Code"
+    
+    
+@admin.register(LocalSale)
+class LocalSaleAdmin(admin.ModelAdmin):
+    # Dynamically get all fields from the model
+    list_display = [field.name for field in LocalSale._meta.fields]
+    search_fields = [field.name for field in LocalSale._meta.fields if isinstance(field, (models.CharField, models.TextField))]
+    list_filter = ['local_sale_date', 'transaction_date', 'status']  # Add fields to filter by
+    readonly_fields = ['created_at', 'updated_at']  # Example of read-only fields
+
+    # Optional: Customize display for related fields
+    def local_sale_code_display(self, obj):
+        return obj.local_sale_code
+    local_sale_code_display.short_description = "Local Sale Code"
+    
+    def module_name_display(self, obj):
+        return obj.module_name
+    module_name_display.short_description = "Module Name"
+    
+    def status_display(self, obj):
+        return obj.status
+    status_display.short_description = "Sale Status"
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['product_code', 'product_name', 'sku', 'pack_type', 'is_purchase', 'is_saleable', 'created_at']
+    search_fields = ['product_name', 'sku', 'brand_code__brand_name']
+    list_filter = ['is_saleable', 'is_purchase']
+    ordering = ['product_name']
+
+admin.site.register(Product, ProductAdmin)

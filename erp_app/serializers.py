@@ -61,13 +61,12 @@ class MppCollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MppCollection
         fields = ['member_code','collection_date','shift','milk_type','milk_quality_type','sampleno','qty','fat','snf','rate',
-                  'amount','mpp_collection_code','mpp_collection_references_code']
+                'amount','mpp_collection_code','mpp_collection_references_code']
 
         depth = 1
 
 
 class LocalSaleSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = LocalSale
         fields = '__all__'
@@ -99,13 +98,11 @@ class ProductSubGroupSerializer(serializers.ModelSerializer):
         fields = ['product_sub_group_code','product_group','product_sub_group_name']
 
 class ProductCategorySerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = ProductCategory
         fields = ['product_category_code','product_category_name']
 
 class BrandSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Brand
         fields = ['brand_code','brand_name']
@@ -117,22 +114,13 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['product_code','product_name','product_category','brand','sku','pack_type',
-                  'description','product_type']
+                'description','product_type']
 
 
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source='binlocation_code',read_only=True)
     product = ProductSerializer(source='product_code',read_only=True)
-
-    class Meta:
-        model = LocalSaleTxn
-        fields = '__all__'
-
-
-
-class LocalSaleTxnSerializer(serializers.ModelSerializer):
-    binlocation = BinLocationSerializer(source='binlocation_code',read_only=True)
-    product = ProductSerializer(source='product_code',read_only=True)
+    local_sale_code = LocalSaleSerializer(read_only=True)
 
     class Meta:
         model = LocalSaleTxn

@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import OTP,ProductRate,SahayakIncentives
-from erp_app.models import  CdaAggregationDaywiseMilktype
+from erp_app.models import  CdaAggregationDateshiftWiseMilktype,Shift
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,10 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ['password','groups','user_permissions'] 
         
 
+class ShiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shift
+        fields = '__all__'
 class OTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = OTP
@@ -40,7 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CdaAggregationDaywiseMilktype
+        model = CdaAggregationDateshiftWiseMilktype
         fields = [
             'id',
             'mcc_code',
@@ -49,6 +53,7 @@ class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
             'mpp_code',
             'mpp_tr_code',
             'mpp_name',
+            'shift',
             'collection_date',
             'milk_type_code',
             'milk_type_name',

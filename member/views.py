@@ -8,18 +8,23 @@ from .serialzers import *
 from erp_app.models import (
     MemberMaster,
     MppCollectionAggregation,
+    CdaAggregationDateshiftWiseMilktype,
     Mpp,
     Mcc,
-    MemberSahayakContactDetail,
+    MemberSahayakContactDetail,LocalSale,LocalSaleTxn
 )
+from erp_app.serializers import LocalSaleSerializer,LocalSaleTxnSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
     ImportForm,
-    ConfirmImportForm,
-    ExportForm,
-    SelectableFieldsExportForm,
 )
+
+from django.db.models import Q
+from django_filters import FilterSet
+from .resources import SahayakIncentivesResource
+import openpyxl
+import csv
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -37,7 +42,6 @@ from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import *
-from .filters import CdaAggregationDaywiseMilktypeFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Avg
 from django.conf import settings
@@ -95,7 +99,6 @@ class GenerateSahayakOTPView(APIView):
             {"status": 200, "message": _("OTP sent")}, status=status.HTTP_200_OK
         )
 
-
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -107,6 +110,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
+
         try:
             otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
         except OTP.DoesNotExist:
@@ -121,10 +125,14 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         user, created = User.objects.get_or_create(username=phone_number)
-        UserDevice.objects.filter(user=user).delete()
-        UserDevice.objects.filter(device=device_id).delete()
-        UserDevice.objects.create(user=user, device=device_id)
+        
+        UserDevice.objects.update_or_create(
+            user=user,
+            defaults={'device': device_id}
+        )
+
         refresh = RefreshToken.for_user(user)
         response = {
             "status": status.HTTP_200_OK,
@@ -135,7 +143,6 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             "device_id": device_id,
         }
         return Response(response, status=status.HTTP_200_OK)
-
 
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
@@ -555,11 +562,10 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
-    queryset = CdaAggregationDaywiseMilktype.objects.all()
+    queryset = CdaAggregationDateshiftWiseMilktype.objects.all()
     serializer_class = CdaAggregationDaywiseMilktypeSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CdaAggregationDaywiseMilktypeFilter
     pagination_class = StandardResultsSetPagination
+    permission_classes = [IsAuthenticated]
 
     def get_financial_year_dates(self, input_date):
         year = input_date.year
@@ -583,38 +589,29 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         return formatted_aggregates
 
     def list(self, request, *args, **kwargs):
+        device = self.request.user.device
         collection_date_param = request.query_params.get("created_at", None)
-        mppcode = request.query_params.get("mppcode", None)
         if collection_date_param and collection_date_param.lower() != "null":
             collection_date = parse_date(collection_date_param)
         else:
             collection_date = now().date()
-        if not mppcode:
-            return Response(
-                {"status": "error", "message": "mppcode parameter is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        mpp = Mpp.objects.filter(mpp_ex_code=mppcode).last()
+        mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
         if not mpp:
             return Response(
                 {
                     "status": "error",
-                    "message": f"No MPP found for the provided mppcode: {mppcode}",
+                    "message": f"No MPP found for the provided mppcode: {device.mpp_code}",
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
         start_date, end_date = self.get_financial_year_dates(collection_date)
-        current_date_data = CdaAggregationDaywiseMilktype.objects.filter(
-            created_at=collection_date, mpp_code=mpp.mpp_code
+        current_date_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
+            collection_date__date=collection_date, mpp_code=mpp.mpp_code
         )
-        from datetime import datetime
-        specific_date = datetime(2024, 4,21,0,0)
-        records = CdaAggregationDaywiseMilktype.objects.filter(created_at=specific_date)
-        print(records)
-        print(current_date_data)
-        fy_data = CdaAggregationDaywiseMilktype.objects.filter(
-            created_at__gte=start_date,
-            created_at__lte=end_date,
+        
+        fy_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
+            collection_date__gte=start_date,
+            collection_date__lte=end_date,
             mpp_code=mpp.mpp_code,
         ).aggregate(
             total_composite_qty=Sum("composite_qty"),
@@ -631,36 +628,33 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         # Format the aggregated data
         formatted_fy_data = self.format_aggregates(fy_data)
 
-        # Paginate and serialize current date data
-        page = self.paginate_queryset(current_date_data)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
+        page_morning = self.paginate_queryset(current_date_data.filter(shift='Morning'))
+        page_evening = self.paginate_queryset(current_date_data.filter(shift="Evening"))
+        if page_morning is not None:
+            serializer_morning = self.get_serializer(page_morning, many=True)
+            serializer_evening = self.get_serializer(page_evening, many=True)
             return self.get_paginated_response(
                 {
                     "status": "success",
-                    "current_date_data": serializer.data,
+                    "current_date_data": serializer_morning.data,
+                    "current_date_data_evening":serializer_evening.data,
                     "fy_data": formatted_fy_data,
                     "message": "Success",
                 }
             )
 
-        serializer = self.get_serializer(current_date_data, many=True)
+        serializer_morning = self.get_serializer(current_date_data.filter(shift='Morning'), many=True)
+        serializer_evening = self.get_serializer(current_date_data.filter(shift="Evening"), many=True)
         return Response(
             {
                 "status": "success",
-                "current_date_data": serializer.data,
+                "current_date_data": serializer_morning.data,
+                "current_date_data_evening":serializer_evening.data,
                 "fy_data": formatted_fy_data,
                 "message": "Success",
             },
             status=status.HTTP_200_OK,
         )
-
-
-from django.db.models import Q
-from django_filters import FilterSet
-from .resources import SahayakIncentivesResource
-import openpyxl
-import csv
 
 class SahayakIncentivesFilter(FilterSet):
     class Meta:
@@ -986,12 +980,10 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month']
     pagination_class = PageNumberPagination
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return SahayakIncentives.objects.filter(user=self.request.user)
-        else:
-            return SahayakIncentives.objects.all()
+        return SahayakIncentives.objects.filter(user=self.request.user)
     
     def create(self, request, *args, **kwargs):
         try:
@@ -1100,3 +1092,86 @@ class MonthListAPIView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+from .filters import ProductFilter
+class ProductViewSet(viewsets.ModelViewSet):
+    from erp_app.serializers import ProductSerializer
+    queryset = Product.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['is_saleable','is_purchase']
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        return Product.objects.filter(is_saleable=True,is_purchase=True)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override the list method to customize the response format with `status`, `message`, and `results`.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        
+        response_data = {
+            "status": "success",
+            "message": "Data fetched successfully",
+            "results": serializer.data,
+        }
+        return Response(response_data)
+
+from django.db.models import Sum, Avg
+
+class LocalSaleViewSet(viewsets.ModelViewSet):
+    queryset = LocalSaleTxn.objects.all()
+    serializer_class = LocalSaleTxnSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        device = self.request.user.device
+        mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
+        return queryset.filter(local_sale_code__mpp_code=mpp.mpp_code)
+
+    def list(self, request, *args, **kwargs):
+        month = request.query_params.get("month", None)
+        year = request.query_params.get("year", None)
+        product_id = request.query_params.get("product_id", None)
+
+        # Filter queryset based on parameters
+        queryset = self.get_queryset()
+        if month and year:
+            queryset = queryset.filter(
+                local_sale_code__transaction_date__month=month,
+                local_sale_code__transaction_date__year=year,
+            )
+        if product_id:
+            queryset = queryset.filter(product_code__product_code=product_id)
+
+        # Aggregate data
+        aggregated_data = queryset.aggregate(
+            total_qty=Sum('qty'),
+            total_amount=Sum('amount'),
+            avg_rate=Avg('rate'),
+        )
+
+        # Paginate queryset
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response({
+                "status": "success",
+                "message": "Data fetched successfully",
+                "aggregated_data": aggregated_data,
+                "results": serializer.data,
+            })
+
+        # Serialize and return response
+        serializer = self.get_serializer(queryset, many=True)
+        response_data = {
+            "status": "success",
+            "message": "Data fetched successfully",
+            "aggregated_data": aggregated_data,
+            "results": serializer.data,
+        }
+        return Response(response_data)

@@ -9,8 +9,10 @@ from .views import (
     CdaAggregationDaywiseMilktypeViewSet,
     GenerateSahayakOTPView,
     VerifySahayakOTPView,
+    LocalSaleViewSet,
     SahayakIncentivesViewSet,
     MonthListAPIView,
+    ProductViewSet,
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -21,7 +23,8 @@ router = DefaultRouter()
 router.register(r'users',UserAPiView , basename='user')
 router.register(r'cda-milktypes', CdaAggregationDaywiseMilktypeViewSet, basename='cda_milktypes')
 router.register(r'sahayak-incentives', SahayakIncentivesViewSet, basename='sahayak-incentives')
-
+router.register(r'local-sale', LocalSaleViewSet)
+router.register(r'products', ProductViewSet)
 
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),

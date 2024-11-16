@@ -43,7 +43,8 @@ class OTP(models.Model):
 class UserDevice(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE, related_name='device', verbose_name=_('User'))
     device = models.CharField(max_length=255, unique=True, blank=True, null=True,verbose_name=_('Device'))
-    
+    mpp_code = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("MPP Code"))
+    module = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Module Code"))
     def __str__(self):
         return f'{self.user} - {self.device}'
     
@@ -63,8 +64,12 @@ class SahayakIncentives(models.Model):
     opening = models.FloatField(default=0.0, verbose_name=_('Previous Month Opening'))
     milk_incentive = models.FloatField(default=0.0, verbose_name=_('Milk Incentive'))
     other_incentive = models.FloatField(default=0.0, verbose_name=_('Other Incentive'))
+    sahayak_recovery = models.FloatField(default=0.0, verbose_name=_('Sahayak Recovery'))
+    recovery_deposit = models.FloatField(default=0.0, verbose_name=_('Recovery Deposit'))
     payable = models.FloatField(default=0.0, verbose_name=_('Net Payable'))
     closing = models.FloatField(default=0.0, verbose_name=_('Closing'))
+    additional_data = models.JSONField(verbose_name=_('Additional Data'),blank=True,null=True,help_text=_("Add additional data to be shown in sahayak recovery"))
+    
 
     def __str__(self):
         return self.mpp_code

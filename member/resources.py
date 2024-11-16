@@ -1,5 +1,5 @@
 from import_export import resources
-from .models import SahayakIncentives
+from .models import SahayakIncentives,UserDevice
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import SahayakIncentives
@@ -30,4 +30,16 @@ class UserResource(resources.ModelResource):
 
         exclude = ('id',)
         import_id_fields = ('username',)
+
+class UserDeviceResource(resources.ModelResource):
+    user = fields.Field(
+        column_name='user',
+        attribute='user',
+        widget=ForeignKeyWidget(User, 'username')
+    )
+    class Meta:
+        model = UserDevice
+        fields = ('user', 'mpp_code','module')
+        exclude = ('id',)
+        import_id_fields = ('user',)
         
