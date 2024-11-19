@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import OTP,ProductRate,SahayakIncentives
+from .models import OTP,ProductRate,SahayakIncentives,SahayakFeedback
 from erp_app.models import  CdaAggregationDateshiftWiseMilktype,Shift
 
 class UserSerializer(serializers.ModelSerializer):
@@ -79,3 +79,22 @@ class SahayakIncentivesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SahayakIncentives
         fields = '__all__'
+
+
+from rest_framework import serializers
+from .models import SahayakFeedback
+
+class SahayakFeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SahayakFeedback
+        fields = '__all__'
+        read_only_fields = ['feedback_id', 'remark', 'created_at', 'resolved_at', 'sender']
+
+    def create(self, validated_data):
+        # Automatically set sender to the logged-in user
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            validated_data['sender'] = request.user
+            validated_data['mpp_code'] = request.user.device.mpp_code
+        
+        return super().create(validated_data)

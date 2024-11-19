@@ -243,3 +243,13 @@ MONTHS = [
     _("November"),
     _("December"),
 ]
+
+OPEN = 'open'
+CLOSED = 'closed'
+RE_OPENED = 're opened'
+
+FEEDBACK_STATUS = [
+    (OPEN, 'Open'),
+    (CLOSED, 'Closed'),
+    (RE_OPENED, 'Re-opened'),
+]

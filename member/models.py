@@ -4,6 +4,7 @@ import string
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+import uuid
 
 
 
@@ -115,3 +116,98 @@ class ProductRate(models.Model):
         db_table = 'product_rate'
         verbose_name = _('Product Rate')
         verbose_name_plural = _('Product Rates')
+
+from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.core.files.base import ContentFile
+import base64
+
+
+class SahayakFeedback(models.Model):
+    feedback_id = models.CharField(
+        max_length=50, unique=True, blank=True, editable=False
+    )
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_feedbacks"
+    )
+    mpp_code = models.CharField(
+        max_length=9, blank=True, null=True, verbose_name=_("MPP Code")
+    )
+    status = models.CharField(
+        max_length=100,
+        choices=settings.FEEDBACK_STATUS,
+        verbose_name=_("Feedback Status"),
+        default=settings.OPEN,
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    resolved_at = models.DateTimeField(verbose_name=_("Resolved At"), null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    remark = models.TextField(blank=True, verbose_name=_("Remark"))
+    message = models.TextField(verbose_name=_("Message"))
+
+    # New file field for uploaded files
+    files = models.FileField(
+        upload_to="feedback_files/", blank=True, null=True, verbose_name=_("Files")
+    )
+
+    def save_base64_files(self, base64_file_list):
+        """
+        Save Base64-encoded files to the `files` field.
+        :param base64_file_list: List of base64-encoded strings
+        """
+        for idx, base64_file in enumerate(base64_file_list):
+            file_data = base64.b64decode(base64_file.get("file", ""))
+            filename = f"{self.feedback_id}_file_{idx}.jpg"
+            self.files.save(filename, ContentFile(file_data), save=False)
+
+    def close_feedback(self, user, reason="Feedback resolved"):
+        self.resolved_at = timezone.now()
+        self.save()
+        FeedbackLog.objects.create(
+            feedback=self,
+            user=user,
+            status=settings.CLOSED,
+            reason=reason,
+        )
+
+    def reopen_feedback(self, user, reason="Feedback reopened"):
+        FeedbackLog.objects.create(
+            feedback=self,
+            user=user,
+            status=settings.RE_OPENED,
+            reason=reason,
+        )
+
+    def save(self, *args, **kwargs):
+        if not self.feedback_id:
+            self.feedback_id = 'FEED' + str(uuid.uuid4().hex)[:6]
+        super().save(*args, **kwargs)
+
+    class Meta:
+        app_label = 'member'
+        db_table = 'sahayak_feedback'
+        verbose_name = _('Sahayak Feedback')
+        verbose_name_plural = _('Sahayak Feedbacks')
+
+
+class FeedbackLog(models.Model):
+    feedback = models.ForeignKey(
+        SahayakFeedback, 
+        on_delete=models.CASCADE, 
+        related_name="logs"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="feedback_logs")
+    status = models.CharField(max_length=20, )
+    reason = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'member'
+        db_table = 'feedback_logs'
+        verbose_name = _('Feedback Log')
+        verbose_name_plural = _('Feedback Logs')
+
+    def __str__(self):
+        return f"{self.status} - {self.feedback.feedback_id} by {self.user.username}"
+
+

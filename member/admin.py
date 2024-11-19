@@ -47,4 +47,10 @@ class SahayakIncentivesAdmin(ImportExportModelAdmin):
     resource_class = SahayakIncentivesResource
     list_display = ("user",'mcc_code','mcc_name','mpp_code','mpp_name','month','opening','milk_incentive','other_incentive','payable','closing')
     search_fields = ('user__first_name','user__last_name','user__username','mcc_code','mcc_name','mpp_code','mpp_name','month',)
+
+@admin.register(SahayakFeedback)
+class SahayakFeedbackAdmin(ImportExportModelAdmin):
+    list_display = ('feedback_id','sender','mpp_code','status','created_at','resolved_at','updated_at')
+    search_fields = ('feedback_id','sender__username','sender__first_name','sender_last_name')
     
+

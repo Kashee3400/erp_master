@@ -1,6 +1,19 @@
 import django_filters
-from erp_app.models import CdaAggregationDaywiseMilktype,LocalSaleTxn,LocalSale,Product
-import django_filters
+from erp_app.models import CdaAggregationDaywiseMilktype,LocalSaleTxn,LocalSale,Product,MemberHierarchyView
+
+class BooleanStringFilter(django_filters.BooleanFilter):
+    def filter(self, qs, value):
+        if value in ['true', 'false']:
+            value = value == 'true'
+        return super().filter(qs, value)
+
+class MemberHeirarchyFilter(django_filters.FilterSet):
+    is_active = BooleanStringFilter(field_name='is_active', label='Is Active')
+    mpp_code = django_filters.CharFilter(field_name='mpp_code', lookup_expr='icontains', label='MPP Code')
+
+    class Meta:
+        model = MemberHierarchyView
+        fields = ['is_active', 'mpp_code']
 
 class CdaAggregationDaywiseMilktypeFilter(django_filters.FilterSet):
     class Meta:

@@ -138,5 +138,9 @@ class CdaAggregationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
-        # Add custom validations if necessary
         return data
+
+class MemberHierarchyViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberHierarchyView
+        fields = ('member_code','member_tr_code','member_name','member_master_relation','member_middle_name','member_surname','mobile_no','age','is_active','folio_no')

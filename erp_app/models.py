@@ -12081,6 +12081,41 @@ class MemberMaster(models.Model):
         return f'{self.member_code} {self.member_name}'
     
 
+class MemberHierarchyView(models.Model):
+    company_code = models.CharField(max_length=50,blank=True, null=True)
+    plant_code = models.CharField(max_length=50,blank=True, null=True)
+    mcc_code = models.CharField(max_length=50,blank=True, null=True)
+    bmc_code = models.CharField(max_length=50,blank=True, null=True)
+    mpp_code = models.CharField(max_length=50,blank=True, null=True)
+    member_code = models.CharField(max_length=50,primary_key=True)
+    member_tr_code = models.CharField(max_length=50,blank=True, null=True)
+    member_name = models.CharField(max_length=255,blank=True, null=True)
+    member_middle_name = models.CharField(max_length=255, blank=True, null=True)
+    member_surname = models.CharField(max_length=255,blank=True, null=True)
+    gender = models.CharField(max_length=10,blank=True, null=True)
+    mobile_no = models.CharField(max_length=15,blank=True, null=True)
+    member_type = models.CharField(max_length=50,blank=True, null=True)
+    caste_category = models.CharField(max_length=50,blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    is_active = models.BooleanField()
+    wef_date = models.DateField(blank=True, null=True)
+    is_default = models.BooleanField()
+    created_at = models.DateTimeField()
+    folio_no = models.CharField(max_length=50, blank=True, null=True)
+    application_date = models.DateField(blank=True, null=True)
+    application_no = models.CharField(max_length=50, blank=True, null=True)
+    created_by = models.CharField(max_length=50, blank=True, null=True)
+    member_master_relation = models.CharField(max_length=255, blank=True, null=True)
+    ex_member_code = models.CharField(max_length=50, blank=True, null=True)
+    device_id = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        managed = False  
+        db_table = 'member_hierarchy_view' 
+        verbose_name = "Member Heirarchy"
+        verbose_name_plural = "Member Heirarchies"
+
 class MemberMasterHistory(models.Model):
     history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)

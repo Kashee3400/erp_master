@@ -539,3 +539,17 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ['product_name']
 
 admin.site.register(Product, ProductAdmin)
+
+
+class MemberHierarchyViewAdmin(admin.ModelAdmin):
+    list_display = (
+        'member_code', 
+        'member_name', 
+        'mobile_no', 
+        'is_active', 
+        'created_at'
+    )
+    search_fields = ('member_code', 'member_name', 'mobile_no','mpp_code')
+    list_filter = ('is_active', 'created_at')
+
+admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)

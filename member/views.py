@@ -11,9 +11,10 @@ from erp_app.models import (
     CdaAggregationDateshiftWiseMilktype,
     Mpp,
     Mcc,
-    MemberSahayakContactDetail,LocalSale,LocalSaleTxn
+    MemberSahayakContactDetail,LocalSale,LocalSaleTxn,
+    MemberHierarchyView,
 )
-from erp_app.serializers import LocalSaleSerializer,LocalSaleTxnSerializer
+from erp_app.serializers import LocalSaleSerializer,LocalSaleTxnSerializer,MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
@@ -973,7 +974,6 @@ class SahayakIncentivesUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-
 class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     queryset = SahayakIncentives.objects.all()
     serializer_class = SahayakIncentivesSerializer
@@ -1134,28 +1134,21 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         return queryset.filter(local_sale_code__mpp_code=mpp.mpp_code)
 
     def list(self, request, *args, **kwargs):
-        month = request.query_params.get("month", None)
-        year = request.query_params.get("year", None)
         product_id = request.query_params.get("product_id", None)
-
-        # Filter queryset based on parameters
+        start_date = request.query_params.get("start_date", None)
+        end_date = request.query_params.get("end_date", None)
         queryset = self.get_queryset()
-        if month and year:
-            queryset = queryset.filter(
-                local_sale_code__transaction_date__month=month,
-                local_sale_code__transaction_date__year=year,
-            )
         if product_id:
             queryset = queryset.filter(product_code__product_code=product_id)
-
-        # Aggregate data
+        if not start_date == 'null' and not end_date == 'null':
+            queryset = queryset.filter(
+                    local_sale_code__transaction_date__range=[start_date, end_date]
+                )
         aggregated_data = queryset.aggregate(
             total_qty=Sum('qty'),
             total_amount=Sum('amount'),
             avg_rate=Avg('rate'),
         )
-
-        # Paginate queryset
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -1175,3 +1168,139 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
             "results": serializer.data,
         }
         return Response(response_data)
+    
+from rest_framework import viewsets, filters
+
+class CustomPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+
+    def get_paginated_response(self, data):
+        return Response({
+            "status": "success",
+            "status_code": 200,
+            "message": "Data fetched successfully",
+            "pagination": {
+                "count": self.page.paginator.count,
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "page_size":self.page_size
+            },
+            "results": data,
+        })
+
+from .filters import MemberHeirarchyFilter
+class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A simple ViewSet for viewing MemberHierarchy data.
+    """
+    queryset = MemberHierarchyView.objects.all()
+    serializer_class = MemberHierarchyViewSerializer
+    pagination_class = CustomPagination
+    permission_classes=  [IsAuthenticated]
+    filterset_class = MemberHeirarchyFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['member_name', 'member_code','member_tr_code']
+    ordering_fields = ['created_at', 'member_code']
+    
+    def get_queryset(self):
+        queryset =  super().get_queryset()
+        device = self.request.user.device
+        mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
+        if not mpp:
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"No MPP found for the provided mppcode: {device.mpp_code}",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return queryset.filter(mpp_code=mpp.mpp_code)
+
+
+
+class SahayakFeedbackViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for handling SahayakFeedback operations with custom responses and pagination.
+    """
+    queryset = SahayakFeedback.objects.all()
+    serializer_class = SahayakFeedbackSerializer
+    # permission_classes = [IsAuthenticated]  # Uncomment to enforce authentication
+    pagination_class = CustomPagination
+
+    # def get_queryset(self):
+    #     """
+    #     Restrict to feedbacks created by the authenticated user.
+    #     """
+    #     if not self.request.user.is_superuser:
+    #         return self.queryset.filter(sender=self.request.user)
+    #     return self.queryset
+
+    def perform_create(self, serializer):
+        """
+        Automatically set the authenticated user as the sender during feedback creation.
+        """
+        serializer.save(sender=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override the list response to include a custom format.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page if page is not None else queryset, many=True)
+
+        response_data = {
+            "status": "success",
+            "status_code": status.HTTP_200_OK,
+            "message": "Feedbacks retrieved successfully.",
+            "results": serializer.data,
+        }
+
+        return self.get_paginated_response(response_data) if page is not None else Response(response_data)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Override the create response to include a custom format.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response({
+            "status": "success",
+            "status_code": status.HTTP_201_CREATED,
+            "message": "Feedback created successfully.",
+            "results": serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Override the update response to include a custom format.
+        """
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            "status": "success",
+            "status_code": status.HTTP_200_OK,
+            "message": "Feedback updated successfully.",
+            "results": serializer.data
+        })
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Override the delete response to include a custom format.
+        """
+        instance = self.get_object()
+        self.perform_destroy(instance)
+
+        return Response({
+            "status": "success",
+            "status_code": status.HTTP_204_NO_CONTENT,
+            "message": "Feedback deleted successfully.",
+            "results": None
+        }, status=status.HTTP_204_NO_CONTENT)
