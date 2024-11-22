@@ -12111,6 +12111,7 @@ class MemberHierarchyView(models.Model):
     device_id = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
+        app_label = 'erp_app'
         managed = False  
         db_table = 'member_hierarchy_view' 
         verbose_name = "Member Heirarchy"

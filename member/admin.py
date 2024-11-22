@@ -45,7 +45,7 @@ admin.site.register(ProductRate, ProductRateAdmin)
 @admin.register(SahayakIncentives)
 class SahayakIncentivesAdmin(ImportExportModelAdmin):
     resource_class = SahayakIncentivesResource
-    list_display = ("user",'mcc_code','mcc_name','mpp_code','mpp_name','month','opening','milk_incentive','other_incentive','payable','closing')
+    list_display = ("user",'mcc_code','mcc_name','mpp_code','mpp_name','year','month','opening','milk_incentive','other_incentive','payable','closing')
     search_fields = ('user__first_name','user__last_name','user__username','mcc_code','mcc_name','mpp_code','mpp_name','month',)
 
 @admin.register(SahayakFeedback)
@@ -54,3 +54,9 @@ class SahayakFeedbackAdmin(ImportExportModelAdmin):
     search_fields = ('feedback_id','sender__username','sender__first_name','sender_last_name')
     
 
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'published_date', 'is_published')
+    list_filter = ('is_published', 'published_date')
+    search_fields = ('title', 'author', 'tags')
+    prepopulated_fields = {'slug': ('title',)}

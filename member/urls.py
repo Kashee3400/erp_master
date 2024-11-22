@@ -14,7 +14,9 @@ from .views import (
     MonthListAPIView,
     ProductViewSet,
     MemberHierarchyViewSet,
-    SahayakFeedbackViewSet
+    SahayakFeedbackViewSet,
+    NewsViewSet,
+    NewsNotReadCountAPIView
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -29,6 +31,7 @@ router.register(r'local-sale', LocalSaleViewSet)
 router.register(r'products', ProductViewSet)
 router.register(r'members', MemberHierarchyViewSet, basename='member')
 router.register(r'feedback', SahayakFeedbackViewSet, basename='feedback')
+router.register(r'news', NewsViewSet, basename='news')
 
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),
@@ -47,4 +50,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/product-rates/', ProductRateListView.as_view(), name='product_rate_list'),
     path('api/months/', MonthListAPIView.as_view(), name='month-list'),
+    path('api/news/not-read-count/', NewsNotReadCountAPIView.as_view(), name='news-not-read-count'),
     ]

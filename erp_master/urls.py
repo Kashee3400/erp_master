@@ -10,6 +10,7 @@ admin.site.site_header = 'ERP Administration'
 from member.views import app_ads_txt
 
 urlpatterns = [    
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path('',MyHomePage.as_view(),name='home'),
     path('list',MyAppLists.as_view(),name='list'),
     path('sahayak-incentives/', SahayakIncentivesAllInOneView.as_view(), name='sahayak_incentives_list'),

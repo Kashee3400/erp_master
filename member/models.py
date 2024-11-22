@@ -62,15 +62,22 @@ class SahayakIncentives(models.Model):
     mpp_code = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('MPP Code'))
     mpp_name = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('MPP Name'))
     month = models.CharField(max_length=100, verbose_name=_('Month'))
-    opening = models.FloatField(default=0.0, verbose_name=_('Previous Month Opening'))
-    milk_incentive = models.FloatField(default=0.0, verbose_name=_('Milk Incentive'))
+    year = models.CharField(max_length=100,default='2024', verbose_name=_('Year'))
+    opening = models.FloatField(default=0.0, verbose_name=_('Opening Balance'))
+    milk_qty = models.FloatField(default=0.0,verbose_name=_('Milk Qty'))
+    milk_incentive = models.FloatField(default=0.0, verbose_name=_('Milk Incentive After TDS'))
+    tds = models.FloatField(default=0.0, verbose_name=_('TDS(%)'))
+    tds_amt = models.FloatField(default=0.0, verbose_name=_('TDS (AMT)'))
     other_incentive = models.FloatField(default=0.0, verbose_name=_('Other Incentive'))
-    sahayak_recovery = models.FloatField(default=0.0, verbose_name=_('Sahayak Recovery'))
-    recovery_deposit = models.FloatField(default=0.0, verbose_name=_('Recovery Deposit'))
-    payable = models.FloatField(default=0.0, verbose_name=_('Net Payable'))
-    closing = models.FloatField(default=0.0, verbose_name=_('Closing'))
+    cf_incentive = models.FloatField(default=0.0, verbose_name=_('Cattle Feed Incentive'))
+    mm_incentive = models.FloatField(default=0.0, verbose_name=_('Mineral Mixture Incentive'))
+    cda_recovery = models.FloatField(default=0.0, verbose_name=_('C.D.A Recovery'))
+    asset_recovery = models.FloatField(default=0.0, verbose_name=_('Asset Recovery'))
+    milk_incentive_payable = models.FloatField(default=0.0, verbose_name=_('Milk Incentive Payable'))
+    payable = models.FloatField(default=0.0, verbose_name=_('Payable'))
+    closing = models.FloatField(default=0.0, verbose_name=_('Closing Balance'))
     additional_data = models.JSONField(verbose_name=_('Additional Data'),blank=True,null=True,help_text=_("Add additional data to be shown in sahayak recovery"))
-    
+
 
     def __str__(self):
         return self.mpp_code
@@ -210,4 +217,81 @@ class FeedbackLog(models.Model):
     def __str__(self):
         return f"{self.status} - {self.feedback.feedback_id} by {self.user.username}"
 
+from django_ckeditor_5.fields import CKEditor5Field
+from django.db import models
+
+class News(models.Model):
+    title = models.CharField(
+        max_length=255,
+        verbose_name="Title",
+        help_text="Enter the title of the news article."
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=255,
+        verbose_name="Slug",
+        help_text="Unique identifier for the news article (auto-generated from the title)."
+    )
+    summary = models.TextField(
+        verbose_name="Summary",
+        help_text="Enter a brief summary or introduction to the news article."
+    )
+    content = CKEditor5Field(
+        verbose_name="Content",
+        help_text="Enter the full content of the news article using a rich text editor."
+    )
+    author = models.CharField(
+        max_length=100,
+        verbose_name="Author",
+        help_text="Name of the author of the article."
+    )
+    published_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Published Date",
+        help_text="The date and time when the article was published."
+    )
+    updated_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Updated Date",
+        help_text="The date and time when the article was last updated."
+    )
+    image = models.ImageField(
+        upload_to='news/images/',
+        blank=True,
+        null=True,
+        verbose_name="Image",
+        help_text="Upload an optional image for the news article."
+    )
+    tags = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Tags",
+        help_text="Comma-separated tags for categorizing the article."
+    )
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name="Is Published",
+        help_text="Check this box to publish the article."
+    )
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name="Is Read",
+        help_text="Check this box to mark the article as read."
+    )
+    
+    @classmethod
+    def not_read_count(cls):
+        """
+        Return the count of news articles that are marked as 'not read'.
+        """
+        return cls.objects.filter(is_read=False).count()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        app_label = 'member'
+        ordering = ['-published_date']
+        verbose_name = 'News'
+        verbose_name_plural = 'News'
 

@@ -114,7 +114,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['product_code','product_name','product_category','brand','sku','pack_type',
-                'description','product_type']
+                'description','product_type','standard_rate']
 
 
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
@@ -143,4 +143,15 @@ class CdaAggregationSerializer(serializers.ModelSerializer):
 class MemberHierarchyViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberHierarchyView
-        fields = ('member_code','member_tr_code','member_name','member_master_relation','member_middle_name','member_surname','mobile_no','age','is_active','folio_no')
+        fields = ('member_code',
+                  'member_tr_code',
+                  'member_name',
+                  'member_master_relation',
+                  'member_middle_name',
+                  'member_surname',
+                  'mobile_no',
+                  'age',
+                  'is_active',
+                  'folio_no',
+                  'created_at',
+                  )

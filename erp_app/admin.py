@@ -544,12 +544,32 @@ admin.site.register(Product, ProductAdmin)
 class MemberHierarchyViewAdmin(admin.ModelAdmin):
     list_display = (
         'member_code', 
+        'member_tr_code',
         'member_name', 
         'mobile_no', 
         'is_active', 
         'created_at'
     )
-    search_fields = ('member_code', 'member_name', 'mobile_no','mpp_code')
+    search_fields = ('member_code','member_tr_code', 'member_name', 'mobile_no','mpp_code')
     list_filter = ('is_active', 'created_at')
 
 admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)
+
+class UnitAdmin(admin.ModelAdmin):
+    # List display: specify the fields to be displayed in the list view
+    list_display = ('unit_code', 'unit', 'unit_short_name', 'created_at', 'updated_at', 'is_decimal_allow')
+    
+    # Search functionality: enable search by fields
+    search_fields = ('unit', 'unit_short_name', 'created_by', 'updated_by')
+    
+    # Filtering options: enable filters in the sidebar
+    list_filter = ('is_decimal_allow', 'originating_org_code', 'originating_type')
+    
+    # Allow ordering the records based on certain fields
+    ordering = ('unit_code',)
+    
+    # Enable date-based filtering if needed
+    date_hierarchy = 'created_at'
+
+# Register the model along with the UnitAdmin configuration
+admin.site.register(Unit, UnitAdmin)

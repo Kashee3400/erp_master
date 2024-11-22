@@ -14,7 +14,7 @@ from erp_app.models import (
     MemberSahayakContactDetail,LocalSale,LocalSaleTxn,
     MemberHierarchyView,
 )
-from erp_app.serializers import LocalSaleSerializer,LocalSaleTxnSerializer,MemberHierarchyViewSerializer
+from erp_app.serializers import MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
@@ -978,7 +978,7 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     queryset = SahayakIncentives.objects.all()
     serializer_class = SahayakIncentivesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month']
+    filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month','year']
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated]
 
@@ -1095,11 +1095,10 @@ class MonthListAPIView(APIView):
 
 from .filters import ProductFilter
 class ProductViewSet(viewsets.ModelViewSet):
-    from erp_app.serializers import ProductSerializer
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_saleable','is_purchase']
-    serializer_class = ProductSerializer
+    serializer_class = ERProductSerializer
     permission_classes = [AllowAny]
     
     def get_queryset(self):
@@ -1190,33 +1189,49 @@ class CustomPagination(PageNumberPagination):
         })
 
 from .filters import MemberHeirarchyFilter
+
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    A simple ViewSet for viewing MemberHierarchy data.
+    A ViewSet for viewing MemberHierarchy data with additional last 15 days data.
     """
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchyViewSerializer
     pagination_class = CustomPagination
-    permission_classes=  [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filterset_class = MemberHeirarchyFilter
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['member_name', 'member_code','member_tr_code']
-    ordering_fields = ['created_at', 'member_code']
+    search_fields = ['member_name', 'member_code', 'member_tr_code']
+    ordering_fields = ['member_name']
     
     def get_queryset(self):
-        queryset =  super().get_queryset()
+        queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
         if not mpp:
-            return Response(
-                {
-                    "status": "error",
-                    "message": f"No MPP found for the provided mppcode: {device.mpp_code}",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        return queryset.filter(mpp_code=mpp.mpp_code)
+            return MemberHierarchyView.objects.none()
+        return queryset.filter(mpp_code=mpp.mpp_code).order_by('member_name')
 
+    def list(self, request, *args, **kwargs):
+        from datetime import timedelta,datetime
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            main_data = self.get_serializer(page, many=True).data
+            paginated_response = self.get_paginated_response(main_data)
+        else:
+            main_data = self.get_serializer(queryset, many=True).data
+            paginated_response = {"results": main_data}
+
+        # Calculate the last 15 days
+        # fixed_date = datetime(2024, 3, 28, 0, 0, 0)
+        # last_15_days_date = fixed_date - timedelta(days=15)
+        last_15_days_date = timezone.now() - timedelta(days=15)
+        last_15_days_data = queryset.filter(created_at__gte=last_15_days_date)
+        last_15_days_serializer = self.get_serializer(last_15_days_data, many=True)
+
+        # Add last 15 days data to the response
+        paginated_response.data['last_15_days'] = last_15_days_serializer.data
+        return Response(paginated_response.data)
 
 
 class SahayakFeedbackViewSet(viewsets.ModelViewSet):
@@ -1225,16 +1240,16 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
     """
     queryset = SahayakFeedback.objects.all()
     serializer_class = SahayakFeedbackSerializer
-    # permission_classes = [IsAuthenticated]  # Uncomment to enforce authentication
+    permission_classes = [IsAuthenticated] 
     pagination_class = CustomPagination
 
-    # def get_queryset(self):
-    #     """
-    #     Restrict to feedbacks created by the authenticated user.
-    #     """
-    #     if not self.request.user.is_superuser:
-    #         return self.queryset.filter(sender=self.request.user)
-    #     return self.queryset
+    def get_queryset(self):
+        """
+        Restrict to feedbacks created by the authenticated user.
+        """
+        if not self.request.user.is_superuser:
+            return self.queryset.filter(sender=self.request.user)
+        return self.queryset
 
     def perform_create(self, serializer):
         """
@@ -1257,7 +1272,7 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
             "results": serializer.data,
         }
 
-        return self.get_paginated_response(response_data) if page is not None else Response(response_data)
+        return self.get_paginated_response(serializer.data) if page is not None else Response(response_data)
 
     def create(self, request, *args, **kwargs):
         """
@@ -1304,3 +1319,186 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
             "message": "Feedback deleted successfully.",
             "results": None
         }, status=status.HTTP_204_NO_CONTENT)
+
+from .serialzers import NewsSerializer
+from django.db.models import Q
+
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['is_published']
+    ordering_fields = ['published_date', 'updated_date']
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        """
+        Optionally filter queryset by date range.
+        """
+        queryset = super().get_queryset()
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        search = self.request.query_params.get('search')
+        if start_date and end_date:
+            try:
+                queryset = queryset.filter(
+                    published_date__date__range=[start_date, end_date]
+                )
+            except Exception as e:
+                raise exceptions.ValidationError(
+                    {"error": f"Invalid date range provided: {str(e)}"}
+                )
+        
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(summary__icontains=search) |
+                Q(content__icontains=search)
+            )
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        """
+        Customize the response for list API.
+        """
+        try:
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(data=serializer.data)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response({
+                "status": "success",
+                "status_code": 200,
+                "results": len(serializer.data),
+                "message": "News articles retrieved successfully.",
+                "data": serializer.data,
+            }, status=status.HTTP_200_OK)
+
+        except exceptions.ValidationError as e:
+            return Response({
+                "status": "error",
+                "status_code": 400,
+                "message": "Validation error.",
+                "errors": e.detail,
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "status_code": 500,
+                "message": "An unexpected error occurred.",
+                "errors": str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Customize the response for retrieve API.
+        """
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({
+                "status": "success",
+                "status_code": 200,
+                "message": "News article retrieved successfully.",
+                "data": serializer.data,
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "status_code": 404,
+                "message": "News article not found.",
+                "errors": str(e),
+            }, status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Customize the response for create API.
+        """
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response({
+                "status": "success",
+                "status_code": 201,
+                "message": "News article created successfully.",
+                "data": serializer.data,
+            }, status=status.HTTP_201_CREATED)
+        except exceptions.ValidationError as e:
+            return Response({
+                "status": "error",
+                "status_code": 400,
+                "message": "Validation error.",
+                "errors": e.detail,
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "status_code": 500,
+                "message": "An unexpected error occurred.",
+                "errors": str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Customize the response for update API.
+        """
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response({
+                "status": "success",
+                "status_code": 200,
+                "message": "News article updated successfully.",
+                "data": serializer.data,
+            }, status=status.HTTP_200_OK)
+        except exceptions.ValidationError as e:
+            return Response({
+                "status": "error",
+                "status_code": 400,
+                "message": "Validation error.",
+                "errors": e.detail,
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "status_code": 500,
+                "message": "An unexpected error occurred.",
+                "errors": str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Customize the response for delete API.
+        """
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({
+                "status": "success",
+                "status_code": 204,
+                "message": "News article deleted successfully.",
+            }, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "status_code": 500,
+                "message": "An unexpected error occurred.",
+                "errors": str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class NewsNotReadCountAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        # Get the count of not read articles
+        not_read_count = News.objects.filter(is_read=False).count()
+        return Response({
+            'not_read_count': not_read_count
+        })
