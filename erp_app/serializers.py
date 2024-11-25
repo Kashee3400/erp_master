@@ -52,7 +52,7 @@ class MilkQualityTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model=MilkQualityType
         fields = ['milk_quality_type_code','milk_quality_type_name','is_active']
-       
+
 
 class MppCollectionSerializer(serializers.ModelSerializer):
     shift = ShiftSerializer(source='shift_code',read_only=True)
@@ -116,15 +116,15 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['product_code','product_name','product_category','brand','sku','pack_type',
                 'description','product_type','standard_rate']
 
-
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source='binlocation_code',read_only=True)
     product = ProductSerializer(source='product_code',read_only=True)
-    local_sale_code = LocalSaleSerializer(read_only=True)
 
     class Meta:
         model = LocalSaleTxn
-        fields = '__all__'
+        fields = ('local_sale_txn_code','warehouse_code','binlocation','product','qty','rate','amount','discount_type','discount_type_value','discount_amount',
+                'tax_code','tax_amount','net_amount','inventory_item_value','remarks','created_at',
+                'created_by','updated_at','updated_by','originating_org_code','flg_sentbox_entry','originating_type')
 
 
 class MemberShareFinalInfoSerializer(serializers.ModelSerializer):

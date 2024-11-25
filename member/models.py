@@ -46,6 +46,7 @@ class UserDevice(models.Model):
     device = models.CharField(max_length=255, unique=True, blank=True, null=True,verbose_name=_('Device'))
     mpp_code = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("MPP Code"))
     module = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Module Code"))
+
     def __str__(self):
         return f'{self.user} - {self.device}'
     
