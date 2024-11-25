@@ -14,14 +14,28 @@ class SahayakIncentivesResource(resources.ModelResource):
         attribute='user',
         widget=ForeignKeyWidget(User, 'username')
     )
+
+    def import_row(self, row, instance_loader, **kwargs):
+        # Check for missing 'user' value
+        user_value = str(row.get('user', '')).strip()
+        if not user_value:
+            raise ValueError(f"Missing 'user' value for row: {row}")
+
+        # Ensure 'user' matches an existing username in the database
+        if not User.objects.filter(username=user_value).exists():
+            raise ValueError(f"Invalid 'user' value: {user_value} - No matching User found.")
+        
+        return super().import_row(row, instance_loader, **kwargs)
+
     class Meta:
         model = SahayakIncentives
-        fields = ('user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month', 'opening', 'milk_incentive', 'other_incentive', 'payable', 'closing')
-
-        # Optional: Customize import/export behavior
+        fields = ('user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month', 'year',
+                  'opening', 'milk_qty', 'milk_incentive', 'tds', 'tds_amt', 'cf_incentive',
+                  'mm_incentive', 'cda_recovery', 'asset_recovery', 'milk_incentive_payable',
+                  'payable', 'closing')
         exclude = ('id',)
         import_id_fields = ('user', 'month')
-        
+
 
 class UserResource(resources.ModelResource):
     class Meta:
