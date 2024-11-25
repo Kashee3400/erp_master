@@ -119,10 +119,10 @@ class ProductSerializer(serializers.ModelSerializer):
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source='binlocation_code',read_only=True)
     product = ProductSerializer(source='product_code',read_only=True)
-
+    local_sale_code = serializers.PrimaryKeyRelatedField(queryset=LocalSale.objects.all())
     class Meta:
         model = LocalSaleTxn
-        fields = ('local_sale_txn_code','warehouse_code','binlocation','product','qty','rate','amount','discount_type','discount_type_value','discount_amount',
+        fields = ('local_sale_txn_code','local_sale_code','warehouse_code','binlocation','product','qty','rate','amount','discount_type','discount_type_value','discount_amount',
                 'tax_code','tax_amount','net_amount','inventory_item_value','remarks','created_at',
                 'created_by','updated_at','updated_by','originating_org_code','flg_sentbox_entry','originating_type')
 
