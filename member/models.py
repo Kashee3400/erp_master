@@ -10,7 +10,7 @@ import uuid
 
 User = get_user_model()
 
-HARD_CODED_NUMBER = '9415829988'
+HARD_CODED_NUMBER = '6388952128'
 HARD_CODED_OTP = '112233'
 
 class OTP(models.Model):
