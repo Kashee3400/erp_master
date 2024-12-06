@@ -1708,13 +1708,19 @@ class MppViewSet(viewsets.ModelViewSet):
                 "message": "Mpp deleted successfully",
             }
         )
-
+class LocalSaleTxnFilter(FilterSet):
+    installment_start_date = DateFromToRangeFilter(field_name='local_sale_code__installment_start_date')
+    class Meta:
+        model = LocalSaleTxn
+        fields = ['installment_start_date', 'local_sale_code__module_code']
+        
 class LocalSaleTxnViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
     serializer_class = LocalSaleTxnSerializer
     filter_backends = [DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
-    filterset_fields = ['local_sale_code__module_code', 'local_sale_code__transaction_date']
+    filterset_class = LocalSaleTxnFilter
+    
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
