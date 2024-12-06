@@ -108,7 +108,6 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         return billing_member_details
 
     def retrieve(self, request, *args, **kwargs):
-
         instances = self.get_objects()
         if not instances:
             response = {
@@ -117,13 +116,10 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
                 
             }
             return Response(response, status=status.HTTP_404_NOT_FOUND)
-        
         detailed_data = []
-
         for instance in instances:
             serializer = self.get_serializer(instance)
             local_sale_txns = []
-
             if BillingMemberMaster.objects.using('sarthak_kashee').filter(billing_member_master_code=instance.billing_member_master_code.billing_member_master_code).exists():
                 billing_master_instance = BillingMemberMaster.objects.using('sarthak_kashee').get(billing_member_master_code=instance.billing_member_master_code.billing_member_master_code)
                 from_date = billing_master_instance.from_date

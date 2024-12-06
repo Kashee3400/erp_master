@@ -11,8 +11,11 @@ from erp_app.models import (
     CdaAggregationDateshiftWiseMilktype,
     Mpp,
     Mcc,
-    MemberSahayakContactDetail,LocalSale,LocalSaleTxn,
+    MemberSahayakContactDetail,
+    LocalSale,
+    LocalSaleTxn,
     MemberHierarchyView,
+    BillingMemberDetail,
 )
 from erp_app.serializers import MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -20,9 +23,8 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
     ImportForm,
 )
-
 from django.db.models import Q
-from django_filters import FilterSet
+from django_filters import FilterSet, DateFromToRangeFilter, DateTimeFromToRangeFilter
 from .resources import SahayakIncentivesResource
 import openpyxl
 import csv
@@ -100,6 +102,7 @@ class GenerateSahayakOTPView(APIView):
             {"status": 200, "message": _("OTP sent")}, status=status.HTTP_200_OK
         )
 
+
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -126,14 +129,8 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         user, created = User.objects.get_or_create(username=phone_number)
-        
-        UserDevice.objects.update_or_create(
-            user=user,
-            defaults={'device': device_id}
-        )
-
+        device,created = UserDevice.objects.update_or_create(user=user, defaults={"device": device_id})
         refresh = RefreshToken.for_user(user)
         response = {
             "status": status.HTTP_200_OK,
@@ -142,8 +139,10 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
             "device_id": device_id,
+            "mpp_code":device.mpp_code
         }
         return Response(response, status=status.HTTP_200_OK)
+
 
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
@@ -351,6 +350,7 @@ class ProductRateListView(generics.ListAPIView):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
     permission_required = "member_app.can_view_otp"
@@ -370,191 +370,6 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
         return HttpResponseForbidden(
             "You don't have permission to perform this action."
         )
-
-
-class MyAppLists(LoginRequiredMixin, PermissionRequiredMixin, View):
-    template_name = "member/pages/dashboards/app_list.html"
-    permission_required = "member_app.can_view_otp"
-    login_url = ""
-
-    def get(self, request, *args, **kwargs):
-        search_query = request.GET.get("search", "")
-        users = User.objects.all()
-        user_mobile_numbers = list(users.values_list("username", flat=True))
-        member_masters = MemberMaster.objects.using("sarthak_kashee").filter(
-            mobile_no__in=user_mobile_numbers
-        )
-        member_master_dict = {member.mobile_no: member for member in member_masters}
-        member_master_list = []
-
-        for user in users:
-            mobile_no = user.username
-            member_master = member_master_dict.get(mobile_no)
-
-            if member_master:
-                mpp_collection_agg = MppCollectionAggregation.objects.filter(
-                    member_code=member_master.member_code
-                ).first()
-                mpp_data = (
-                    Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
-                    if mpp_collection_agg
-                    else None
-                )
-                otp = OTP.objects.filter(phone_number=mobile_no).first()
-
-                # Build a dictionary to store member data
-                member_data_dict = {
-                    "member_data": member_master,
-                    "user": user,
-                    "mpp": mpp_data,
-                    "mpp_collection_agg": mpp_collection_agg,
-                    "otp": otp,
-                }
-                if search_query:
-                    if (
-                        (
-                            mpp_collection_agg
-                            and search_query.lower()
-                            in mpp_collection_agg.mcc_name.lower()
-                        )
-                        or (
-                            mpp_collection_agg
-                            and search_query.lower()
-                            in mpp_collection_agg.mcc_tr_code.lower()
-                        )
-                        or (
-                            mpp_data
-                            and search_query.lower() in mpp_data.mpp_name.lower()
-                        )
-                        or (
-                            mpp_data
-                            and search_query.lower() in mpp_data.mpp_ex_code.lower()
-                        )
-                        or (
-                            member_master
-                            and search_query.lower()
-                            in member_master.member_name.lower()
-                        )
-                        or (
-                            mpp_collection_agg
-                            and search_query.lower()
-                            in mpp_collection_agg.member_tr_code.lower()
-                        )
-                    ):
-                        member_master_list.append(member_data_dict)
-                else:
-                    member_master_list.append(member_data_dict)
-        page_number = request.GET.get("page", 1)
-        paginator = Paginator(member_master_list, 300)
-        page_obj = paginator.get_page(page_number)
-        context = {
-            "message": "This is a GET request!",
-            "objects": page_obj,
-            "paginator": paginator,
-            "page_obj": page_obj,
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        action = request.POST.get("action")
-        selected_members = request.POST.getlist("selected_members")
-
-        if action == "export":
-            return self.export_selected(request, selected_members)
-        elif action == "delete":
-            return self.delete_selected(request, selected_members)
-
-    def export_selected(self, request, selected_members):
-        if not selected_members:
-            messages.error(request, "No members were selected for export.")
-            return redirect("list")
-        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(
-            member_code__in=selected_members
-        )
-        if not existing_members.exists():
-            messages.error(request, "No valid members found for export.")
-            return redirect("list")
-        response = HttpResponse(
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-        response["Content-Disposition"] = (
-            'attachment; filename="application_installation_list.xlsx"'
-        )
-        workbook = openpyxl.Workbook()
-        worksheet = workbook.active
-        worksheet.title = "Selected Members"
-        headers = [
-            "MCC",
-            "MCC Code",
-            "MPP",
-            "MPP Code",
-            "Member Name",
-            "Member Code",
-            "Mobile No",
-            "OTP",
-        ]
-        worksheet.append(headers)
-        existing_member_codes = existing_members.values_list("member_code", flat=True)
-        non_existent_members = set(selected_members) - set(existing_member_codes)
-        for member_master in existing_members:
-            mpp_collection_agg = MppCollectionAggregation.objects.filter(
-                member_code=member_master.member_code
-            ).first()
-            otp = OTP.objects.filter(phone_number=member_master.mobile_no).first()
-            mpp_data = (
-                Mpp.objects.filter(mpp_code=mpp_collection_agg.mpp_code).first()
-                if mpp_collection_agg
-                else None
-            )
-            worksheet.append(
-                [
-                    mpp_collection_agg.mcc_name if mpp_collection_agg else "",
-                    mpp_collection_agg.mcc_tr_code if mpp_collection_agg else "",
-                    mpp_data.mpp_name if mpp_data else "",
-                    mpp_data.mpp_ex_code if mpp_data else "",
-                    member_master.member_name if member_master else "",
-                    (
-                        f"'{mpp_collection_agg.member_tr_code}"
-                        if mpp_collection_agg
-                        else ""
-                    ),
-                    member_master.mobile_no if member_master else "",
-                    otp.otp if otp else "",
-                ]
-            )
-        if non_existent_members:
-            messages.warning(
-                request,
-                f"The following members could not be found: {', '.join(non_existent_members)}.",
-            )
-        workbook.save(response)
-        return response
-
-    def delete_selected(self, request, selected_members):
-        existing_members = MemberMaster.objects.using("sarthak_kashee").filter(
-            member_code__in=selected_members
-        )
-        if not existing_members.exists():
-            messages.error(request, "No valid members found for deletion.")
-            return redirect("list")  # Redirect to the app list view
-        existing_member_codes = existing_members.values_list("member_code", flat=True)
-        existing_members.delete()
-        non_existent_members = set(selected_members) - set(existing_member_codes)
-        messages.success(
-            request, f"Successfully deleted {len(existing_member_codes)} members."
-        )
-        if non_existent_members:
-            messages.warning(
-                request,
-                f"The following members could not be found: {', '.join(non_existent_members)}.",
-            )
-        return redirect("list")
-
-    def handle_no_permission(self):
-        return HttpResponseForbidden(
-            "You don't have permission to perform this action."
-        )
-
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -609,7 +424,7 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         current_date_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
             collection_date__date=collection_date, mpp_code=mpp.mpp_code
         )
-        
+
         fy_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
             collection_date__gte=start_date,
             collection_date__lte=end_date,
@@ -629,7 +444,7 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         # Format the aggregated data
         formatted_fy_data = self.format_aggregates(fy_data)
 
-        page_morning = self.paginate_queryset(current_date_data.filter(shift='Morning'))
+        page_morning = self.paginate_queryset(current_date_data.filter(shift="Morning"))
         page_evening = self.paginate_queryset(current_date_data.filter(shift="Evening"))
         if page_morning is not None:
             serializer_morning = self.get_serializer(page_morning, many=True)
@@ -638,24 +453,29 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "current_date_data": serializer_morning.data,
-                    "current_date_data_evening":serializer_evening.data,
+                    "current_date_data_evening": serializer_evening.data,
                     "fy_data": formatted_fy_data,
                     "message": "Success",
                 }
             )
 
-        serializer_morning = self.get_serializer(current_date_data.filter(shift='Morning'), many=True)
-        serializer_evening = self.get_serializer(current_date_data.filter(shift="Evening"), many=True)
+        serializer_morning = self.get_serializer(
+            current_date_data.filter(shift="Morning"), many=True
+        )
+        serializer_evening = self.get_serializer(
+            current_date_data.filter(shift="Evening"), many=True
+        )
         return Response(
             {
                 "status": "success",
                 "current_date_data": serializer_morning.data,
-                "current_date_data_evening":serializer_evening.data,
+                "current_date_data_evening": serializer_evening.data,
                 "fy_data": formatted_fy_data,
                 "message": "Success",
             },
             status=status.HTTP_200_OK,
         )
+
 
 class SahayakIncentivesFilter(FilterSet):
     class Meta:
@@ -702,9 +522,9 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             "filter": filter_class,
             "import_form": import_form,
             "actions": actions,
-            "months":months,
+            "months": months,
             "total_rows": total_rows,
-            "fields_list":fields_list,
+            "fields_list": fields_list,
             "selected_rows_count": selected_rows_count,
         }
         return render(request, self.template_name, context)
@@ -729,7 +549,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
         if query:
             return SahayakIncentives.objects.filter(
                 Q(mcc_name__icontains=query)
-                |Q(mpp_name__icontains=query)
+                | Q(mpp_name__icontains=query)
                 | Q(user__username__icontains=query)
             )
         return filter_class.qs
@@ -838,7 +658,6 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             res_kwargs = self.get_import_resource_kwargs(
                 request=request, form=import_form, **kwargs
             )
-            
 
         context.update(self.get_context_data())
 
@@ -889,7 +708,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
                 }
             )
             return TemplateResponse(request, [self.import_template_name], context)
-        
+
     def process_result(self, result, request):
         self.generate_log_entries(result, request)
         self.add_success_message(result, request)
@@ -908,7 +727,6 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
 
     def handle_export_csv(self, request):
         return self.export_to_csv()
-    
 
     def save_form(self, form, action):
         if form.is_valid():
@@ -919,14 +737,30 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
         return redirect(self.success_url)
 
     def export_to_csv(self):
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="sahayak_incentives.csv"'
-            writer = csv.writer(response)
-            writer.writerow(['User', 'MCC Code', 'MCC Name', 'MPP Code', 'MPP Name', 'Month', 
-                            'Opening', 'Milk Incentive', 'Other Incentive', 'Payable', 'Closing'])
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = (
+            'attachment; filename="sahayak_incentives.csv"'
+        )
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "User",
+                "MCC Code",
+                "MCC Name",
+                "MPP Code",
+                "MPP Name",
+                "Month",
+                "Opening",
+                "Milk Incentive",
+                "Other Incentive",
+                "Payable",
+                "Closing",
+            ]
+        )
 
-            for incentive in SahayakIncentives.objects.all():
-                writer.writerow([
+        for incentive in SahayakIncentives.objects.all():
+            writer.writerow(
+                [
                     incentive.user.username,
                     incentive.mcc_code,
                     incentive.mcc_name,
@@ -937,9 +771,11 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
                     incentive.milk_incentive,
                     incentive.other_incentive,
                     incentive.payable,
-                    incentive.closing
-                ])
-            return response
+                    incentive.closing,
+                ]
+            )
+        return response
+
 
 class SahayakIncentivesCreateView(CreateView):
     model = SahayakIncentives
@@ -978,43 +814,61 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     queryset = SahayakIncentives.objects.all()
     serializer_class = SahayakIncentivesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user', 'mcc_code', 'mcc_name', 'mpp_code', 'mpp_name', 'month','year']
+    filterset_fields = [
+        "user",
+        "mcc_code",
+        "mcc_name",
+        "mpp_code",
+        "mpp_name",
+        "month",
+        "year",
+    ]
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return SahayakIncentives.objects.filter(user=self.request.user)
-    
+
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             return Response(
-                {"status": "success", "message": "Incentive created successfully", "result": serializer.data},
-                status=status.HTTP_201_CREATED
+                {
+                    "status": "success",
+                    "message": "Incentive created successfully",
+                    "result": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
             )
         except exceptions.ValidationError as e:
             return Response(
                 {"status": "error", "message": str(e), "result": {}},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(
-                {"status": "success", "message": "Incentive updated successfully", "result": serializer.data},
-                status=status.HTTP_200_OK
+                {
+                    "status": "success",
+                    "message": "Incentive updated successfully",
+                    "result": serializer.data,
+                },
+                status=status.HTTP_200_OK,
             )
         except exceptions.ValidationError as e:
             return Response(
                 {"status": "error", "message": str(e), "result": {}},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -1022,13 +876,21 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response(
-                {"status": "success", "message": "Incentive deleted successfully", "result": {}},
-                status=status.HTTP_204_NO_CONTENT
+                {
+                    "status": "success",
+                    "message": "Incentive deleted successfully",
+                    "result": {},
+                },
+                status=status.HTTP_204_NO_CONTENT,
             )
         except Exception as e:
             return Response(
-                {"status": "error", "message": "Error deleting incentive", "result": {}},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "status": "error",
+                    "message": "Error deleting incentive",
+                    "result": {},
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def retrieve(self, request, *args, **kwargs):
@@ -1036,13 +898,21 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response(
-                {"status": "success", "message": "Incentive retrieved successfully", "result": serializer.data},
-                status=status.HTTP_200_OK
+                {
+                    "status": "success",
+                    "message": "Incentive retrieved successfully",
+                    "result": serializer.data,
+                },
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {"status": "error", "message": "Error retrieving incentive", "result": {}},
-                status=status.HTTP_404_NOT_FOUND
+                {
+                    "status": "error",
+                    "message": "Error retrieving incentive",
+                    "result": {},
+                },
+                status=status.HTTP_404_NOT_FOUND,
             )
 
     def list(self, request, *args, **kwargs):
@@ -1052,20 +922,34 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(
-                    {"status": "success", "message": "Incentives retrieved successfully", "result": serializer.data}
+                    {
+                        "status": "success",
+                        "message": "Incentives retrieved successfully",
+                        "result": serializer.data,
+                    }
                 )
             serializer = self.get_serializer(queryset, many=True)
             return Response(
-                {"status": "success", "message": "Incentives retrieved successfully", "result": serializer.data},
-                status=status.HTTP_200_OK
+                {
+                    "status": "success",
+                    "message": "Incentives retrieved successfully",
+                    "result": serializer.data,
+                },
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {"status": "error", "message": "Error retrieving incentives", "result": {}},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "status": "error",
+                    "message": "Error retrieving incentives",
+                    "result": {},
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
+
 from django.utils.translation import gettext as _
+
 
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -1083,26 +967,29 @@ class MonthListAPIView(APIView):
             _("November"),
             _("December"),
         ]
-        
+
         return Response(
             {
                 "status": "success",
                 "message": _("Months retrieved successfully"),
                 "result": months,
             },
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
+
 from .filters import ProductFilter
+
+
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['is_saleable','is_purchase']
+    filterset_fields = ["is_saleable", "is_purchase"]
     serializer_class = ERProductSerializer
     permission_classes = [AllowAny]
-    
+
     def get_queryset(self):
-        return Product.objects.filter(is_saleable=True,is_purchase=True)
+        return Product.objects.filter(is_saleable=True, is_purchase=True)
 
     def list(self, request, *args, **kwargs):
         """
@@ -1110,7 +997,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        
+
         response_data = {
             "status": "success",
             "message": "Data fetched successfully",
@@ -1118,7 +1005,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data)
 
+
 from django.db.models import Sum, Avg
+
 
 class LocalSaleViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
@@ -1139,24 +1028,26 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
         if product_id:
             queryset = queryset.filter(product_code__product_code=product_id)
-        if not start_date == 'null' and not end_date == 'null':
+        if not start_date == "null" and not end_date == "null":
             queryset = queryset.filter(
-                    local_sale_code__transaction_date__range=[start_date, end_date]
-                )
+                local_sale_code__transaction_date__range=[start_date, end_date]
+            )
         aggregated_data = queryset.aggregate(
-            total_qty=Sum('qty'),
-            total_amount=Sum('amount'),
-            avg_rate=Avg('rate'),
+            total_qty=Sum("qty"),
+            total_amount=Sum("amount"),
+            avg_rate=Avg("rate"),
         )
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response({
-                "status": "success",
-                "message": "Data fetched successfully",
-                "aggregated_data": aggregated_data,
-                "results": serializer.data,
-            })
+            return self.get_paginated_response(
+                {
+                    "status": "success",
+                    "message": "Data fetched successfully",
+                    "aggregated_data": aggregated_data,
+                    "results": serializer.data,
+                }
+            )
 
         # Serialize and return response
         serializer = self.get_serializer(queryset, many=True)
@@ -1167,52 +1058,64 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
             "results": serializer.data,
         }
         return Response(response_data)
-    
+
+
 from rest_framework import viewsets, filters
+
 
 class CustomPagination(PageNumberPagination):
     page_size = 20
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
 
     def get_paginated_response(self, data):
-        return Response({
-            "status": "success",
-            "status_code": 200,
-            "message": "Data fetched successfully",
-            "pagination": {
-                "count": self.page.paginator.count,
-                "next": self.get_next_link(),
-                "previous": self.get_previous_link(),
-                "page_size":self.page_size
-            },
-            "results": data,
-        })
+        return Response(
+            {
+                "status": "success",
+                "status_code": 200,
+                "message": "Data fetched successfully",
+                "pagination": {
+                    "count": self.page.paginator.count,
+                    "next": self.get_next_link(),
+                    "previous": self.get_previous_link(),
+                    "page_size": self.page_size,
+                },
+                "results": data,
+            }
+        )
+
 
 from .filters import MemberHeirarchyFilter
+
 
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A ViewSet for viewing MemberHierarchy data with additional last 15 days data.
     """
+
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchyViewSerializer
     pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]
     filterset_class = MemberHeirarchyFilter
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['member_name', 'member_code', 'member_tr_code']
-    ordering_fields = ['member_name']
-    
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    search_fields = ["member_name", "member_code", "member_tr_code"]
+    ordering_fields = ["member_name"]
+
     def get_queryset(self):
         queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
         if not mpp:
             return MemberHierarchyView.objects.none()
-        return queryset.filter(mpp_code=mpp.mpp_code).order_by('member_name')
+        return queryset.filter(mpp_code=mpp.mpp_code).order_by("member_name")
 
     def list(self, request, *args, **kwargs):
-        from datetime import timedelta,datetime
+        from datetime import timedelta, datetime
+
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -1230,7 +1133,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         last_15_days_serializer = self.get_serializer(last_15_days_data, many=True)
 
         # Add last 15 days data to the response
-        paginated_response.data['last_15_days'] = last_15_days_serializer.data
+        paginated_response.data["last_15_days"] = last_15_days_serializer.data
         return Response(paginated_response.data)
 
 
@@ -1238,9 +1141,10 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
     """
     ViewSet for handling SahayakFeedback operations with custom responses and pagination.
     """
+
     queryset = SahayakFeedback.objects.all()
     serializer_class = SahayakFeedbackSerializer
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -1263,7 +1167,9 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
         """
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page if page is not None else queryset, many=True)
+        serializer = self.get_serializer(
+            page if page is not None else queryset, many=True
+        )
 
         response_data = {
             "status": "success",
@@ -1272,7 +1178,11 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
             "results": serializer.data,
         }
 
-        return self.get_paginated_response(serializer.data) if page is not None else Response(response_data)
+        return (
+            self.get_paginated_response(serializer.data)
+            if page is not None
+            else Response(response_data)
+        )
 
     def create(self, request, *args, **kwargs):
         """
@@ -1282,29 +1192,34 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        return Response({
-            "status": "success",
-            "status_code": status.HTTP_201_CREATED,
-            "message": "Feedback created successfully.",
-            "results": serializer.data
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_201_CREATED,
+                "message": "Feedback created successfully.",
+                "results": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def update(self, request, *args, **kwargs):
         """
         Override the update response to include a custom format.
         """
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response({
-            "status": "success",
-            "status_code": status.HTTP_200_OK,
-            "message": "Feedback updated successfully.",
-            "results": serializer.data
-        })
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Feedback updated successfully.",
+                "results": serializer.data,
+            }
+        )
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -1313,32 +1228,37 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
 
-        return Response({
-            "status": "success",
-            "status_code": status.HTTP_204_NO_CONTENT,
-            "message": "Feedback deleted successfully.",
-            "results": None
-        }, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "Feedback deleted successfully.",
+                "results": None,
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
 
 from .serialzers import NewsSerializer
 from django.db.models import Q
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['is_published']
-    ordering_fields = ['published_date', 'updated_date']
+    filterset_fields = ["is_published"]
+    ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
-    
+
     def get_queryset(self):
         """
         Optionally filter queryset by date range.
         """
         queryset = super().get_queryset()
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
-        search = self.request.query_params.get('search')
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        search = self.request.query_params.get("search")
         if start_date and end_date:
             try:
                 queryset = queryset.filter(
@@ -1348,12 +1268,12 @@ class NewsViewSet(viewsets.ModelViewSet):
                 raise exceptions.ValidationError(
                     {"error": f"Invalid date range provided: {str(e)}"}
                 )
-        
+
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) |
-                Q(summary__icontains=search) |
-                Q(content__icontains=search)
+                Q(title__icontains=search)
+                | Q(summary__icontains=search)
+                | Q(content__icontains=search)
             )
 
         return queryset
@@ -1369,28 +1289,37 @@ class NewsViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(data=serializer.data)
             serializer = self.get_serializer(queryset, many=True)
-            return Response({
-                "status": "success",
-                "status_code": 200,
-                "results": len(serializer.data),
-                "message": "News articles retrieved successfully.",
-                "data": serializer.data,
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "status": "success",
+                    "status_code": 200,
+                    "results": len(serializer.data),
+                    "message": "News articles retrieved successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
 
         except exceptions.ValidationError as e:
-            return Response({
-                "status": "error",
-                "status_code": 400,
-                "message": "Validation error.",
-                "errors": e.detail,
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 400,
+                    "message": "Validation error.",
+                    "errors": e.detail,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
-            return Response({
-                "status": "error",
-                "status_code": 500,
-                "message": "An unexpected error occurred.",
-                "errors": str(e),
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 500,
+                    "message": "An unexpected error occurred.",
+                    "errors": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -1399,19 +1328,25 @@ class NewsViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-            return Response({
-                "status": "success",
-                "status_code": 200,
-                "message": "News article retrieved successfully.",
-                "data": serializer.data,
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "status": "success",
+                    "status_code": 200,
+                    "message": "News article retrieved successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
-            return Response({
-                "status": "error",
-                "status_code": 404,
-                "message": "News article not found.",
-                "errors": str(e),
-            }, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 404,
+                    "message": "News article not found.",
+                    "errors": str(e),
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     def create(self, request, *args, **kwargs):
         """
@@ -1421,57 +1356,77 @@ class NewsViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
-            return Response({
-                "status": "success",
-                "status_code": 201,
-                "message": "News article created successfully.",
-                "data": serializer.data,
-            }, status=status.HTTP_201_CREATED)
+            return Response(
+                {
+                    "status": "success",
+                    "status_code": 201,
+                    "message": "News article created successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
         except exceptions.ValidationError as e:
-            return Response({
-                "status": "error",
-                "status_code": 400,
-                "message": "Validation error.",
-                "errors": e.detail,
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 400,
+                    "message": "Validation error.",
+                    "errors": e.detail,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
-            return Response({
-                "status": "error",
-                "status_code": 500,
-                "message": "An unexpected error occurred.",
-                "errors": str(e),
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 500,
+                    "message": "An unexpected error occurred.",
+                    "errors": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def update(self, request, *args, **kwargs):
         """
         Customize the response for update API.
         """
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
-            return Response({
-                "status": "success",
-                "status_code": 200,
-                "message": "News article updated successfully.",
-                "data": serializer.data,
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "status": "success",
+                    "status_code": 200,
+                    "message": "News article updated successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
         except exceptions.ValidationError as e:
-            return Response({
-                "status": "error",
-                "status_code": 400,
-                "message": "Validation error.",
-                "errors": e.detail,
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 400,
+                    "message": "Validation error.",
+                    "errors": e.detail,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
-            return Response({
-                "status": "error",
-                "status_code": 500,
-                "message": "An unexpected error occurred.",
-                "errors": str(e),
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 500,
+                    "message": "An unexpected error occurred.",
+                    "errors": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -1480,25 +1435,276 @@ class NewsViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
-            return Response({
-                "status": "success",
-                "status_code": 204,
-                "message": "News article deleted successfully.",
-            }, status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {
+                    "status": "success",
+                    "status_code": 204,
+                    "message": "News article deleted successfully.",
+                },
+                status=status.HTTP_204_NO_CONTENT,
+            )
         except Exception as e:
-            return Response({
-                "status": "error",
-                "status_code": 500,
-                "message": "An unexpected error occurred.",
-                "errors": str(e),
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {
+                    "status": "error",
+                    "status_code": 500,
+                    "message": "An unexpected error occurred.",
+                    "errors": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class NewsNotReadCountAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         # Get the count of not read articles
         not_read_count = News.objects.filter(is_read=False).count()
-        return Response({
-            'not_read_count': not_read_count
-        })
+        return Response({"not_read_count": not_read_count})
+
+
+from erp_app.models import BillingMemberMaster
+
+
+class BillingMemberMasterRowFilter(FilterSet):
+    from_date = DateTimeFromToRangeFilter()
+    to_date = DateTimeFromToRangeFilter()
+
+    class Meta:
+        model = BillingMemberMaster
+        fields = ["from_date", "to_date", "mpp_code"]
+
+
+class MemberMasterViewSet(viewsets.ModelViewSet):
+    queryset = MemberMaster.objects.all()
+    serializer_class = MemberMasterSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["member_code", "member_name", "is_active"]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Member Masters retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Member Master retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+
+class BankViewSet(viewsets.ModelViewSet):
+    queryset = Bank.objects.all()
+    serializer_class = BankSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["bank_name", "is_active", "nationalized_bank"]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Banks retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Bank retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+
+class BillingMemberMasterViewSet(viewsets.ModelViewSet):
+    queryset = BillingMemberMaster.objects.all()
+    serializer_class = BillingMemberMasterSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = BillingMemberMasterRowFilter
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Billing Member Master Rows retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Billing Member Master Row retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+
+class BillingMemberDetailViewSet(viewsets.ModelViewSet):
+    queryset = BillingMemberDetail.objects.all()
+    serializer_class = BillingMemberDetailSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["member_code", "billing_member_master_code"]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or user.is_staff:
+            return BillingMemberDetail.objects.all()
+        billing_master_code = self.request.GET.get('billing_member_master_code')
+        return BillingMemberDetail.objects.filter(billing_member_master_code=billing_master_code)
+    
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True,context={'request': request})
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True,context={'request': request})
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Billing Member Details retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Billing Member Detail retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+
+class MppViewSet(viewsets.ModelViewSet):
+    queryset = Mpp.objects.all()
+    serializer_class = MppSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["mpp_ex_code"]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Mpp list retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Mpp retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_201_CREATED,
+                "message": "Mpp created successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Mpp updated successfully",
+                "results": serializer.data,
+            }
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "Mpp deleted successfully",
+            }
+        )

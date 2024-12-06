@@ -40,12 +40,6 @@
                 <span class="sidenav-normal">Dashboard</span>
               </a>
             </li>
-            <li class="nav-item {% if request.path == list %}active{% endif %}">
-              <a class="nav-link {% if request.path == list %}active{% endif %}" href="{% url 'list' %}">
-                <span class="sidenav-mini-icon">M</span>
-                <span class="sidenav-normal">Member List</span>
-              </a>
-            </li>
             <li class="nav-item {% if request.path == sahayak_incentives_list %}active{% endif %}">
               <a class="nav-link {% if request.path == sahayak_incentives_list %}active{% endif %}" href="{% url 'sahayak_incentives_list' %}">
                 <span class="sidenav-mini-icon">M</span>

@@ -16,7 +16,12 @@ from .views import (
     MemberHierarchyViewSet,
     SahayakFeedbackViewSet,
     NewsViewSet,
-    NewsNotReadCountAPIView
+    NewsNotReadCountAPIView,
+    BillingMemberMasterViewSet,
+    BillingMemberDetailViewSet,
+    BankViewSet,
+    MemberMasterViewSet,
+    MppViewSet
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -25,6 +30,10 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'users',UserAPiView , basename='user')
+router.register(r'banks', BankViewSet, basename='bank')
+router.register(r'member-masters', MemberMasterViewSet,basename="membermaster")
+router.register(r'mpps', MppViewSet,basename="mpp")
+router.register(r'billing-member-details', BillingMemberDetailViewSet)
 router.register(r'cda-milktypes', CdaAggregationDaywiseMilktypeViewSet, basename='cda_milktypes')
 router.register(r'sahayak-incentives', SahayakIncentivesViewSet, basename='sahayak-incentives')
 router.register(r'local-sale', LocalSaleViewSet)
@@ -32,6 +41,8 @@ router.register(r'products', ProductViewSet)
 router.register(r'members', MemberHierarchyViewSet, basename='member')
 router.register(r'feedback', SahayakFeedbackViewSet, basename='feedback')
 router.register(r'news', NewsViewSet, basename='news')
+router.register(r'billing-member-master', BillingMemberMasterViewSet)
+
 
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),

@@ -281,103 +281,103 @@ class MppCollectionDateShiftWiseAggregationAdmin(admin.ModelAdmin):
     search_fields = ['company_code', 'company_name', 'collection_date', 'shift_name']
     list_filter = ['company_code', 'collection_date', 'shift_name']
 
-@admin.register(RmrdCollectionAggregation)
-class RmrdCollectionAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdCollectionAggregation._meta.fields]
+# @admin.register(RmrdCollectionAggregation)
+# class RmrdCollectionAggregationAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in RmrdCollectionAggregation._meta.fields]
     
-    search_fields = [
-        'company_code', 
-        'company_name', 
-        'plant_code', 
-        'plant_name', 
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'bmc_name', 
-        'mpp_code', 
-        'mpp_name', 
-        'from_shift', 
-        'to_shift', 
-        'milk_type_name', 
-        'milk_quality_type_name', 
-        'created_by', 
-        'updated_by'
-    ]
+#     search_fields = [
+#         'company_code', 
+#         'company_name', 
+#         'plant_code', 
+#         'plant_name', 
+#         'mcc_code', 
+#         'mcc_name', 
+#         'bmc_code', 
+#         'bmc_name', 
+#         'mpp_code', 
+#         'mpp_name', 
+#         'from_shift', 
+#         'to_shift', 
+#         'milk_type_name', 
+#         'milk_quality_type_name', 
+#         'created_by', 
+#         'updated_by'
+#     ]
     
-    # Define filters
-    list_filter = [
-        'company_code', 
-        'plant_code', 
-        'mcc_code', 
-        'bmc_code', 
-        'mpp_code', 
-        'from_date', 
-        'to_date', 
-        'payment_cycle_code', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-        'created_at'
-    ]
+#     # Define filters
+#     list_filter = [
+#         'company_code', 
+#         'plant_code', 
+#         'mcc_code', 
+#         'bmc_code', 
+#         'mpp_code', 
+#         'from_date', 
+#         'to_date', 
+#         'payment_cycle_code', 
+#         'milk_type_code', 
+#         'milk_quality_type_code', 
+#         'created_at'
+#     ]
 
-@admin.register(RmrdMilkCollection)
-class RmrdMilkCollectionAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdMilkCollection._meta.fields]
+# @admin.register(RmrdMilkCollection)
+# class RmrdMilkCollectionAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in RmrdMilkCollection._meta.fields]
     
-    search_fields = [
-        'rmrd_milk_collection_code',
-        'rmrd_milk_collection_references_code',
-        'vehicle_no',
-        'module_code',
-    ]
+#     search_fields = [
+#         'rmrd_milk_collection_code',
+#         'rmrd_milk_collection_references_code',
+#         'vehicle_no',
+#         'module_code',
+#     ]
     
-    list_filter = [
-        'collection_date',
-        'shift_code',
-        'milk_type_code',
-        'milk_quality_type_code',
-        'created_at',
-        'updated_at'
-    ]
+#     list_filter = [
+#         'collection_date',
+#         'shift_code',
+#         'milk_type_code',
+#         'milk_quality_type_code',
+#         'created_at',
+#         'updated_at'
+#     ]
 
-@admin.register(RmrdMilkCollectionDetail)
-class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdMilkCollectionDetail._meta.fields]
+# @admin.register(RmrdMilkCollectionDetail)
+# class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in RmrdMilkCollectionDetail._meta.fields]
     
-    search_fields = [
-        'own_module_code',
-        'own_module_name',
-        'module_code',
-        'module_name',
-        'vehicle_no'
-    ]
+#     search_fields = [
+#         'own_module_code',
+#         'own_module_name',
+#         'module_code',
+#         'module_name',
+#         'vehicle_no'
+#     ]
     
-    list_filter = [
-        'collection_date',
-        'shift_code',
-        'milk_type_code',
-        'milk_quality_type_code',
-    ]
+#     list_filter = [
+#         'collection_date',
+#         'shift_code',
+#         'milk_type_code',
+#         'milk_quality_type_code',
+#     ]
 
-@admin.register(RmrdQualityCollection)
-class RmrdQualityCollectionAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdQualityCollection._meta.fields]
+# @admin.register(RmrdQualityCollection)
+# class RmrdQualityCollectionAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in RmrdQualityCollection._meta.fields]
     
-    search_fields = [
-        'rmrd_quality_collection_code',
-        'own_module_code',
-        'own_module_name',
-        'originating_org_code',
-    ]
+#     search_fields = [
+#         'rmrd_quality_collection_code',
+#         'own_module_code',
+#         'own_module_name',
+#         'originating_org_code',
+#     ]
     
-    list_filter = [
-        'collection_date',
-        'shift_code',
-        'dock_no',
-        'is_quality_auto',
-        'is_merge',
-        'created_at',
-        'updated_at'
-    ]
+#     list_filter = [
+#         'collection_date',
+#         'shift_code',
+#         'dock_no',
+#         'is_quality_auto',
+#         'is_merge',
+#         'created_at',
+#         'updated_at'
+#     ]
 
 @admin.register(CdaAggregation)
 class CdaAggregationAdmin(admin.ModelAdmin):
@@ -573,3 +573,16 @@ class UnitAdmin(admin.ModelAdmin):
 
 # Register the model along with the UnitAdmin configuration
 admin.site.register(Unit, UnitAdmin)
+
+
+@admin.register(BillingMemberMaster)
+class BillingMemberMasterAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in BillingMemberMaster._meta.fields]
+    search_fields = ['company_code', 'plant_code', 'mcc_code','mpp_code']
+
+
+@admin.register(BillingMemberDetail)
+class BillingMemberDetailAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in BillingMemberDetail._meta.fields]
+    search_fields = ['billing_member_master_code__billing_member_master_code']
+    list_filter = ['transaction_date', 'status', 'payment_mode']

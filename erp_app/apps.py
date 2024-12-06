@@ -7,4 +7,4 @@ class ErpAppConfig(AppConfig):
     name = 'erp_app'
     label = 'erp_app'
     verbose_name = _('Kashee ERP')
-    
+
