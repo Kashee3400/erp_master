@@ -35,6 +35,7 @@ class MppAdmin(admin.ModelAdmin):
     search_fields = (
         'mpp_code',
         'mpp_short_name',
+        'mpp_ex_code',
         'mpp_name',
         'mpp_type',
     )
