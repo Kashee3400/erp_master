@@ -502,7 +502,7 @@ class ShiftAdmin(admin.ModelAdmin):
 class LocalSaleTxnAdmin(admin.ModelAdmin):
     # Dynamically get all fields from the model
     list_display = [field.name for field in LocalSaleTxn._meta.fields]
-    search_fields = [field.name for field in LocalSaleTxn._meta.fields if isinstance(field, (models.CharField, models.TextField))]
+    search_fields = ["local_sale_code__local_sale_code"]
     list_filter = ['created_at', 'updated_at']  # Add fields to filter by, if applicable
     readonly_fields = ['created_at', 'updated_at']  # Example of read-only fields
 
@@ -516,7 +516,7 @@ class LocalSaleTxnAdmin(admin.ModelAdmin):
 class LocalSaleAdmin(admin.ModelAdmin):
     # Dynamically get all fields from the model
     list_display = [field.name for field in LocalSale._meta.fields]
-    search_fields = [field.name for field in LocalSale._meta.fields if isinstance(field, (models.CharField, models.TextField))]
+    search_fields = ["module_code"]
     list_filter = ['local_sale_date', 'transaction_date', 'status']  # Add fields to filter by
     readonly_fields = ['created_at', 'updated_at']  # Example of read-only fields
 
