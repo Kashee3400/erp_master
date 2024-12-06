@@ -12,12 +12,12 @@ from erp_app.models import (
     BillingMemberMaster,
     BillingMemberDetail,
     Bank,
-    Mpp,
+    Mpp,MemberHierarchyView
 )
 from erp_app.serializers import (
     BinLocationSerializer,
     ProductCategorySerializer,
-    BrandSerializer,
+    BrandSerializer,MemberHierarchyViewSerializer
 )
 
 
@@ -371,9 +371,9 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
 
     def get_member(self, obj):
         try:
-            member = MemberMaster.objects.get(member_code=obj.member_code)
-            return MemberMasterSerializer(member, context=self.context).data
-        except MemberMaster.DoesNotExist:
+            member = MemberHierarchyView.objects.get(member_code=obj.member_code)
+            return MemberHierarchyViewSerializer(member, context=self.context).data
+        except MemberHierarchyView.DoesNotExist:
             return None
 
 class BillingMemberMasterSerializer(serializers.ModelSerializer):
