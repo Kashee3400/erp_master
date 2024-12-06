@@ -1708,3 +1708,35 @@ class MppViewSet(viewsets.ModelViewSet):
                 "message": "Mpp deleted successfully",
             }
         )
+
+class LocalSaleTxnViewSet(viewsets.ModelViewSet):
+    queryset = LocalSaleTxn.objects.all()
+    serializer_class = LocalSaleTxnSerializer
+    filter_backends = [DjangoFilterBackend]
+    pagination_class = StandardResultsSetPagination
+    filterset_fields = ['local_sale_code__module_code', 'local_sale_code__transaction_date']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'status': 'success',
+            'status_code': status.HTTP_200_OK,
+            'message': 'Local sale transactions retrieved successfully',
+            'results': serializer.data
+        })
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({
+            'status': 'success',
+            'status_code': status.HTTP_200_OK,
+            'message': 'Local sale transaction retrieved successfully',
+            'results': serializer.data
+        })

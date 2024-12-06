@@ -21,7 +21,8 @@ from .views import (
     BillingMemberDetailViewSet,
     BankViewSet,
     MemberMasterViewSet,
-    MppViewSet
+    MppViewSet,
+    LocalSaleTxnViewSet
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -32,6 +33,7 @@ router = DefaultRouter()
 router.register(r'users',UserAPiView , basename='user')
 router.register(r'banks', BankViewSet, basename='bank')
 router.register(r'member-masters', MemberMasterViewSet,basename="membermaster")
+router.register(r'deductions', LocalSaleTxnViewSet,basename="deduction")
 router.register(r'mpps', MppViewSet,basename="mpp")
 router.register(r'billing-member-details', BillingMemberDetailViewSet)
 router.register(r'cda-milktypes', CdaAggregationDaywiseMilktypeViewSet, basename='cda_milktypes')

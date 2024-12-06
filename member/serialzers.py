@@ -109,6 +109,12 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         except MemberMaster.DoesNotExist:
             return None
 
+class DeductionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocalSale
+        fields = ['module_code','local_sale_no']
+
+
 
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -152,7 +158,7 @@ class ERProductSerializer(serializers.ModelSerializer):
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source="binlocation_code", read_only=True)
     product = ERProductSerializer(source="product_code", read_only=True)
-    local_sale_code = LocalSaleSerializer(read_only=True)
+    local_sale_code = DeductionSerializer(read_only=True)
 
     class Meta:
         model = LocalSaleTxn
