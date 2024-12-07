@@ -1015,6 +1015,9 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
     def get_queryset(self):
         queryset = super().get_queryset()
         device = self.request.user.device

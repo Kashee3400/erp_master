@@ -105,7 +105,7 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         """
         try:
             member = MemberMaster.objects.get(member_code=obj.module_code)
-            return MemberMasterSerializer(member).data
+            return MemberMasterSerializer(member,context=self.context).data
         except MemberMaster.DoesNotExist:
             return None
 
