@@ -1716,7 +1716,7 @@ class LocalSaleTxnFilter(FilterSet):
         
 class LocalSaleTxnViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
-    serializer_class = LocalSaleTxnSerializer
+    serializer_class = DeductionTxnSerializer
     filter_backends = [DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
     filterset_class = LocalSaleTxnFilter

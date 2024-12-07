@@ -155,7 +155,7 @@ class ERProductSerializer(serializers.ModelSerializer):
             None
 
 
-class LocalSaleTxnSerializer(serializers.ModelSerializer):
+class DeductionTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source="binlocation_code", read_only=True)
     product = ERProductSerializer(source="product_code", read_only=True)
     local_sale_code = DeductionSerializer(read_only=True)
@@ -163,6 +163,16 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSaleTxn
         fields = "__all__"
+
+class LocalSaleTxnSerializer(serializers.ModelSerializer):
+    binlocation = BinLocationSerializer(source="binlocation_code", read_only=True)
+    product = ERProductSerializer(source="product_code", read_only=True)
+    local_sale_code = LocalSaleSerializer(read_only=True)
+
+    class Meta:
+        model = LocalSaleTxn
+        fields = "__all__"
+
 
 
 class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
