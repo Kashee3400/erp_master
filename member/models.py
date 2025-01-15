@@ -66,7 +66,7 @@ class SahayakIncentives(models.Model):
     year = models.CharField(max_length=100,default='2024', verbose_name=_('Year'))
     opening = models.FloatField(default=0.0, verbose_name=_('Opening Balance'))
     milk_qty = models.FloatField(default=0.0,verbose_name=_('Milk Qty'))
-    milk_incentive = models.FloatField(default=0.0, verbose_name=_('Milk Incentive After TDS'))
+    milk_incentive = models.FloatField(default=0.0, verbose_name=_('Milk Incentive'))
     tds = models.FloatField(default=0.0, verbose_name=_('TDS(%)'))
     tds_amt = models.FloatField(default=0.0, verbose_name=_('TDS (AMT)'))
     other_incentive = models.FloatField(default=0.0, verbose_name=_('Other Incentive'))

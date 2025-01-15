@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
 from erp_app.models import (
-    CdaAggregationDateshiftWiseMilktype,
+    CdaAggregationDateshiftWiseMilktype,CdaAggregation,
     Shift,
     MemberMaster,
     LocalSale,
@@ -177,7 +177,7 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
 
 class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CdaAggregationDateshiftWiseMilktype
+        model = CdaAggregation
         fields = [
             "id",
             "mcc_code",
