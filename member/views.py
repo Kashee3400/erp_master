@@ -378,7 +378,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
-    queryset = CdaAggregationDateshiftWiseMilktype.objects.all()
+    queryset = CdaAggregation.objects.all()
     serializer_class = CdaAggregationDaywiseMilktypeSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
@@ -421,11 +421,11 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         start_date, end_date = self.get_financial_year_dates(collection_date)
-        current_date_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
+        current_date_data = CdaAggregation.objects.filter(
             collection_date__date=collection_date, mpp_code=mpp.mpp_code
         )
 
-        fy_data = CdaAggregationDateshiftWiseMilktype.objects.filter(
+        fy_data = CdaAggregation.objects.filter(
             collection_date__gte=start_date,
             collection_date__lte=end_date,
             mpp_code=mpp.mpp_code,
