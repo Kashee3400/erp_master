@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('member/', include('member.urls')),
     path('mpms/', include('mpms.urls')),
+    path('facilitator/', include('facilitator.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('app-ads.txt', app_ads_txt, name='app_ads_txt'),
 

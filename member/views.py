@@ -7,15 +7,11 @@ import requests
 from .serialzers import *
 from erp_app.models import (
     MemberMaster,
-    MppCollectionAggregation,
-    CdaAggregationDateshiftWiseMilktype,
     Mpp,
-    Mcc,
     MemberSahayakContactDetail,
-    LocalSale,
     LocalSaleTxn,
     MemberHierarchyView,
-    BillingMemberDetail,
+    BillingMemberDetail,MppCollection,MppCollectionReferences,RmrdMilkCollection
 )
 from erp_app.serializers import MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -26,7 +22,6 @@ from import_export.forms import (
 from django.db.models import Q
 from django_filters import FilterSet, DateFromToRangeFilter, DateTimeFromToRangeFilter
 from .resources import SahayakIncentivesResource
-import openpyxl
 import csv
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
@@ -94,6 +89,7 @@ class GenerateSahayakOTPView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         otp = OTP.objects.filter(phone_number=phone_number)
+    
         if otp:
             otp.delete()
         notp = OTP.objects.create(phone_number=phone_number)
@@ -1643,6 +1639,7 @@ class MppViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["mpp_ex_code"]
+    permission_classes = [AllowAny]
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -1749,3 +1746,53 @@ class LocalSaleTxnViewSet(viewsets.ModelViewSet):
             'message': 'Local sale transaction retrieved successfully',
             'results': serializer.data
         })
+
+class SahayakDashboardAPI(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        created_date = request.GET.get("date", timezone.now().date())
+        mpp_code = request.GET.get("mpp_code")
+        shift_code = request.GET.get("shift_code")
+
+        if not mpp_code:
+            return Response({"status": "error", "message": "Please provide the MPP code"}, status=status.HTTP_400_BAD_REQUEST)
+
+        mpp_ref = MppCollectionReferences.objects.filter(
+            created_at__date=created_date, mpp_code=mpp_code, shift_code=shift_code
+        ).first()
+
+        if not mpp_ref:
+            return Response({"status": "error", "message": "No MPP reference found"}, status=status.HTTP_404_NOT_FOUND)
+
+        mpp_collection_agg = MppCollection.objects.filter(
+            mpp_collection_references_code=mpp_ref.mpp_collection_references_code
+        ).aggregate(
+            qty=Sum("qty"), fat=Avg("fat"), snf=Avg("snf")
+        )
+
+        actual_agg_data = RmrdMilkCollection.objects.filter(
+            collection_date__date=created_date, module_code=mpp_code, shift_code__shift_code=shift_code
+        ).first()
+
+        return Response({
+            "status": 200,
+            "message": _("Data Retrieved"),
+            "data": {
+                "composite": self.format_aggregates(mpp_collection_agg),
+                "actual": RmrdCollectionSerializer(actual_agg_data).data if actual_agg_data else {},
+                "dispatch": {},
+            }
+        }, status=status.HTTP_200_OK)
+
+    def format_aggregates(self, aggregates):
+        return {key: round(value, 2) if value is not None else None for key, value in aggregates.items()}
+
+class ShiftViewSet(viewsets.ModelViewSet):
+    queryset = Shift.objects.all()
+    serializer_class = ShiftSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(self.queryset, pk=kwargs['pk'])
+        serializer = self.get_serializer(instance)
+        return JsonResponse(serializer.data)

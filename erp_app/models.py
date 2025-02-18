@@ -14678,6 +14678,7 @@ class MppCollection(models.Model):
     txfarmer_id = models.BigIntegerField(blank=True, null=True)
     mpp_collection_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     mpp_collection_references_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    # mpp_collection_references_code = models.ForeignKey("MppCollectionReferences", verbose_name=_("MPP Collection Reference"), on_delete=models.CASCADE,db_column="mpp_collection_references_code")
     
     def __str__(self):
         return str(self.collection_date)
@@ -15362,6 +15363,7 @@ class MppCollectionReferences(models.Model):
     collection_point_code = models.CharField(max_length=11, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     collection_date = models.DateTimeField()
     shift_code = models.IntegerField()
+    # shift_code = models.ForeignKey("Shift", verbose_name=_("Shift"), on_delete=models.CASCADE)
     purchase_rate_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     version_no = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -15647,7 +15649,7 @@ class MppDeactiveHistory(models.Model):
         db_table = 'mpp_deactive_history'
 
 class MppDispatch(models.Model):
-    mpp_code = models.CharField(max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
+    mpp_code = models.CharField(primary_key=True,max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
     challan_no = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     dispatch_type = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True, db_comment='can/tanker')
     destination_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -19205,7 +19207,8 @@ class RmrdMilkCollection(models.Model):
     rmrd_milk_collection_references_code = models.CharField(max_length=150, db_collation='SQL_Latin1_General_CP1_CI_AS')
     route_code = models.IntegerField(blank=True, null=True)
     collection_date = models.DateTimeField()
-    shift_code = models.IntegerField(blank=True, null=True)
+    # shift_code = models.IntegerField(blank=True, null=True)
+    shift_code = models.ForeignKey('Shift', on_delete=models.CASCADE, db_column='shift_code')
     milk_type_code = models.IntegerField()
     milk_quality_type_code = models.IntegerField(blank=True, null=True)
     sampleno = models.IntegerField(blank=True, null=True)
@@ -21209,7 +21212,7 @@ class Shift(models.Model):
     originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     
     def __str__(self):
-        return str(self.shift_code)
+        return str(f"{self.shift_name} {self.shift_code}")
     
     class Meta:
         managed = False

@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
+from django.utils.timezone import now
+
 from erp_app.models import (
     CdaAggregationDateshiftWiseMilktype,CdaAggregation,
     Shift,
@@ -12,14 +12,31 @@ from erp_app.models import (
     BillingMemberMaster,
     BillingMemberDetail,
     Bank,
-    Mpp,MemberHierarchyView,RmrdMilkCollection
+    Mpp,MemberHierarchyView
 )
 from erp_app.serializers import (
     BinLocationSerializer,
     ProductCategorySerializer,
     BrandSerializer,MemberHierarchyViewSerializer
 )
+from member.models import OTP,SahayakIncentives
 
+from rest_framework import serializers
+from .models import AssignedMppToFacilitator
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
+
+User = get_user_model()
+
+class AssignedMppToFacilitatorSerializer(serializers.ModelSerializer):
+    sahayak = serializers.StringRelatedField()
+    class Meta:
+        model = AssignedMppToFacilitator
+        fields = [
+            'id', 'sahayak', 'mpp_code','mpp_ex_code', 'mpp_name', 'mpp_short_name',
+            'mpp_type', 'mpp_logo', 'mpp_icon', 'mpp_punch_line',
+            'mpp_opening_date', 'created_at', 'updated_at',
+        ]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,24 +75,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "refresh": data["refresh"],
             "access": data["access"],
         }
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductRate
-        fields = [
-            "name",
-            "price",
-            "price_description",
-            "image",
-            "locale",
-            "name_translation",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
-        ]
-
 
 class MemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -215,7 +214,7 @@ class SahayakIncentivesSerializer(serializers.ModelSerializer):
 
 
 from rest_framework import serializers
-from .models import SahayakFeedback
+from member.models import SahayakFeedback,News
 
 
 class SahayakFeedbackSerializer(serializers.ModelSerializer):
@@ -239,8 +238,6 @@ class SahayakFeedbackSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-from .models import News
-from django.utils.timezone import now
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -412,15 +409,3 @@ class BillingMemberMasterSerializer(serializers.ModelSerializer):
             "net_payable",
             "status",
         ]
-
-
-
-class RmrdCollectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RmrdMilkCollection
-        fields = [
-            "qty",
-            "fat",
-            "snf",
-        ]
-

@@ -22,7 +22,9 @@ from .views import (
     BankViewSet,
     MemberMasterViewSet,
     MppViewSet,
-    LocalSaleTxnViewSet
+    LocalSaleTxnViewSet,
+    SahayakDashboardAPI,
+    ShiftViewSet
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -44,6 +46,8 @@ router.register(r'members', MemberHierarchyViewSet, basename='member')
 router.register(r'feedback', SahayakFeedbackViewSet, basename='feedback')
 router.register(r'news', NewsViewSet, basename='news')
 router.register(r'billing-member-master', BillingMemberMasterViewSet)
+router.register(r'shifts', ShiftViewSet,basename="shifts")
+
 
 
 urlpatterns = [
@@ -64,4 +68,5 @@ urlpatterns = [
     path('api/product-rates/', ProductRateListView.as_view(), name='product_rate_list'),
     path('api/months/', MonthListAPIView.as_view(), name='month-list'),
     path('api/news/not-read-count/', NewsNotReadCountAPIView.as_view(), name='news-not-read-count'),
+    path('api/sahayak-dashboard-data/', SahayakDashboardAPI.as_view(), name='sahayak-dashboard-data'),
     ]
