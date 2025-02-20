@@ -1749,7 +1749,7 @@ class SahayakDashboardAPI(APIView):
             return Response({"status": "error", "message": "Please provide the MPP code"}, status=status.HTTP_400_BAD_REQUEST)
 
         mpp_ref = MppCollectionReferences.objects.filter(
-            created_at__date=created_date, mpp_code=mpp_code, shift_code=shift_code
+            collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
         ).first()
 
         if not mpp_ref:
