@@ -601,3 +601,20 @@ class BillingMemberDetailAdmin(admin.ModelAdmin):
     list_display = [field.name for field in BillingMemberDetail._meta.fields]
     search_fields = ['billing_member_master_code__billing_member_master_code']
     list_filter = ['transaction_date', 'status', 'payment_mode']
+
+
+from .models import DispatchBmp, DispatchBmpTxn
+
+@admin.register(DispatchBmp)
+class DispatchBmpAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in DispatchBmp._meta.fields]
+    search_fields = ('dispatch_bmp_code', 'challan_no', 'destination_code', 'vehicle_no')
+    list_filter = ('transaction_date', 'created_at', 'is_last_destination')
+    readonly_fields = ('created_at', 'updated_at')
+
+@admin.register(DispatchBmpTxn)
+class DispatchBmpTxnAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in DispatchBmpTxn._meta.fields]
+    search_fields = ('dispatch_bmp_txn_code', 'dispatch_bmp_code')
+    list_filter = ('created_at', 'updated_at', 'is_rejected')
+    readonly_fields = ('created_at', 'updated_at')

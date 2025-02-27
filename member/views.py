@@ -11,7 +11,10 @@ from erp_app.models import (
     MemberSahayakContactDetail,
     LocalSaleTxn,
     MemberHierarchyView,
-    BillingMemberDetail,MppCollection,MppCollectionReferences,RmrdMilkCollection
+    BillingMemberDetail,
+    MppCollection,
+    MppCollectionReferences,
+    RmrdMilkCollection,
 )
 from erp_app.serializers import MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -116,7 +119,9 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user, created = User.objects.get_or_create(username=phone_number)
-        device,created = UserDevice.objects.update_or_create(user=user, defaults={"device": device_id})
+        device, created = UserDevice.objects.update_or_create(
+            user=user, defaults={"device": device_id}
+        )
         refresh = RefreshToken.for_user(user)
         response = {
             "status": status.HTTP_200_OK,
@@ -125,7 +130,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
             "device_id": device_id,
-            "mpp_code":device.mpp_code
+            "mpp_code": device.mpp_code,
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -356,6 +361,7 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
         return HttpResponseForbidden(
             "You don't have permission to perform this action."
         )
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -1002,8 +1008,8 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_context(self):
-        return {'request': self.request}
-    
+        return {"request": self.request}
+
     def get_queryset(self):
         queryset = super().get_queryset()
         device = self.request.user.device
@@ -1587,20 +1593,26 @@ class BillingMemberDetailViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_superuser or user.is_staff:
             return BillingMemberDetail.objects.all()
-        billing_master_code = self.request.GET.get('billing_member_master_code')
-        return BillingMemberDetail.objects.filter(billing_member_master_code=billing_master_code)
-    
+        billing_master_code = self.request.GET.get("billing_member_master_code")
+        return BillingMemberDetail.objects.filter(
+            billing_member_master_code=billing_master_code
+        )
+
     def get_serializer_context(self):
-        return {'request': self.request}
-    
+        return {"request": self.request}
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True,context={'request': request})
+            serializer = self.get_serializer(
+                page, many=True, context={"request": request}
+            )
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True,context={'request': request})
+        serializer = self.get_serializer(
+            queryset, many=True, context={"request": request}
+        )
         return Response(
             {
                 "status": "success",
@@ -1630,7 +1642,7 @@ class MppViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["mpp_ex_code"]
     permission_classes = [AllowAny]
-    
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -1698,19 +1710,24 @@ class MppViewSet(viewsets.ModelViewSet):
                 "message": "Mpp deleted successfully",
             }
         )
+
+
 class LocalSaleTxnFilter(FilterSet):
-    installment_start_date = DateFromToRangeFilter(field_name='local_sale_code__installment_start_date')
+    installment_start_date = DateFromToRangeFilter(
+        field_name="local_sale_code__installment_start_date"
+    )
+
     class Meta:
         model = LocalSaleTxn
-        fields = ['installment_start_date', 'local_sale_code__module_code']
-        
+        fields = ["installment_start_date", "local_sale_code__module_code"]
+
+
 class LocalSaleTxnViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
     serializer_class = DeductionTxnSerializer
     filter_backends = [DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
     filterset_class = LocalSaleTxnFilter
-    
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -1720,22 +1737,29 @@ class LocalSaleTxnViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({
-            'status': 'success',
-            'status_code': status.HTTP_200_OK,
-            'message': 'Local sale transactions retrieved successfully',
-            'results': serializer.data
-        })
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Local sale transactions retrieved successfully",
+                "results": serializer.data,
+            }
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response({
-            'status': 'success',
-            'status_code': status.HTTP_200_OK,
-            'message': 'Local sale transaction retrieved successfully',
-            'results': serializer.data
-        })
+        return Response(
+            {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Local sale transaction retrieved successfully",
+                "results": serializer.data,
+            }
+        )
+
+from django.db.models import Sum, F, FloatField
+from django.db.models.functions import Coalesce
 
 class SahayakDashboardAPI(APIView):
     permission_classes = [AllowAny]
@@ -1746,43 +1770,75 @@ class SahayakDashboardAPI(APIView):
         shift_code = request.GET.get("shift_code")
 
         if not mpp_code:
-            return Response({"status": "error", "message": "Please provide the MPP code"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "error", "message": "Please provide the MPP code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         mpp_ref = MppCollectionReferences.objects.filter(
             collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
         ).first()
 
         if not mpp_ref:
-            return Response({"status": "error", "message": "No MPP reference found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"status": "error", "message": "No MPP reference found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        from django.db.models import Sum, F, FloatField, DecimalField
+        from django.db.models.functions import Coalesce, Cast
 
         mpp_collection_agg = MppCollection.objects.filter(
             mpp_collection_references_code=mpp_ref.mpp_collection_references_code
         ).aggregate(
-            qty=Sum("qty"), fat=Avg("fat"), snf=Avg("snf")
+            qty=Sum("qty"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField()) /
+                Cast(Sum("qty"), FloatField()), 
+                0.0
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField()) /
+                Cast(Sum("qty"), FloatField()), 
+                0.0
+            ),
         )
 
         actual_agg_data = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date, module_code=mpp_code, shift_code__shift_code=shift_code
+            collection_date__date=created_date,
+            module_code=mpp_code,
+            shift_code__shift_code=shift_code,
         ).first()
 
-        return Response({
-            "status": 200,
-            "message": _("Data Retrieved"),
-            "data": {
-                "composite": self.format_aggregates(mpp_collection_agg),
-                "actual": RmrdCollectionSerializer(actual_agg_data).data if actual_agg_data else {},
-                "dispatch": {},
-            }
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": 200,
+                "message": _("Data Retrieved"),
+                "data": {
+                    "composite": self.format_aggregates(mpp_collection_agg),
+                    "actual": (
+                        RmrdCollectionSerializer(actual_agg_data).data
+                        if actual_agg_data
+                        else {}
+                    ),
+                    "dispatch": {},
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def format_aggregates(self, aggregates):
-        return {key: round(value, 2) if value is not None else None for key, value in aggregates.items()}
+        return {
+            key: round(value, 2) if value is not None else None
+            for key, value in aggregates.items()
+        }
+
 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        instance = get_object_or_404(self.queryset, pk=kwargs['pk'])
+        instance = get_object_or_404(self.queryset, pk=kwargs["pk"])
         serializer = self.get_serializer(instance)
         return JsonResponse(serializer.data)
