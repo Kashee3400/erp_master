@@ -21,7 +21,7 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
     def get_object(self):
         phone_number = self.request.user.username
         try:
-            return MemberMaster.objects.using('sarthak_kashee').get(mobile_no=phone_number)
+            return MemberMaster.objects.using('sarthak_kashee').filter(mobile_no=phone_number).last()
         except MemberMaster.DoesNotExist:
             return None
 
@@ -41,18 +41,18 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
 
         # Fetch and serialize related MppCollectionAggregation data
         mpp_aggregations = MppCollectionAggregation.objects.filter(member_code=instance.member_code).first()
-        mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
-        mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
+        if mpp_aggregations:
+            mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
+            mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
+                    # Prepare response
+            response_data = member_serializer.data
+            response_data['mcc_code'] = mcc.mcc_ex_code
+            response_data['mcc_name'] = mcc.mcc_name
+            response_data['mcc_tr_code'] = mcc.mcc_code
 
-        # Prepare response
-        response_data = member_serializer.data
-        response_data['mcc_code'] = mcc.mcc_ex_code
-        response_data['mcc_name'] = mcc.mcc_name
-        response_data['mcc_tr_code'] = mcc.mcc_code
-
-        response_data['mpp_name'] = mpp.mpp_name
-        response_data['mpp_code'] = mpp.mpp_ex_code
-        response_data['mpp_tr_code'] = mpp_aggregations.mpp_tr_code
+            response_data['mpp_name'] = mpp.mpp_name
+            response_data['mpp_code'] = mpp.mpp_ex_code
+            response_data['mpp_tr_code'] = mpp_aggregations.mpp_tr_code
 
         response_data['company_code'] = mpp_aggregations.company_code
         response_data['company_name'] = mpp_aggregations.company_name

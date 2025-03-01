@@ -14,10 +14,12 @@ router.register(
 router.register(
     "incentives", SahayakIncentivesViewSet, basename="incentive"
 )
+router.register(r'shifts', ShiftViewSet,basename="shifts")
 
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("dashboard-data/", FacilitatorDashboardAPI.as_view(), name="dashboard_data"),
+    path("password/change/", ChangePasswordView.as_view(), name="password_change"),
+    path("dashboard-data/", DashboardAPI.as_view(), name="dashboard_data"),
 ] + router.urls

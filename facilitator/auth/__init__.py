@@ -1,0 +1,3 @@
+from .user_authentication import EnforceBothAuthentication
+
+__all__=[EnforceBothAuthentication]

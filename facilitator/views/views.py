@@ -6,12 +6,6 @@ from rest_framework.pagination import PageNumberPagination
 from ..models import AssignedMppToFacilitator
 from ..serializers import *
 from erp_app.models import (
-    MemberMaster,
-    Mpp,
-    MemberSahayakContactDetail,
-    LocalSaleTxn,
-    MemberHierarchyView,
-    BillingMemberDetail,
     MppCollection,
     MppCollectionReferences,
     RmrdMilkCollection,
@@ -21,7 +15,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
-from django.utils.dateparse import parse_date
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -58,40 +52,48 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             return Response(
-                {"message": "Assigned MPP created successfully.", "data": serializer.data},
-                status=status.HTTP_201_CREATED
+                {
+                    "message": "Assigned MPP created successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
             )
         except ValidationError as e:
             return Response(
                 {"message": "Validation error occurred.", "errors": e.detail},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
                 {"message": "An unexpected error occurred.", "error": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(
-                {"message": "Assigned MPP updated successfully.", "data": serializer.data},
-                status=status.HTTP_200_OK
+                {
+                    "message": "Assigned MPP updated successfully.",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
             )
         except ValidationError as e:
             return Response(
                 {"message": "Validation error occurred.", "errors": e.detail},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
                 {"message": "An unexpected error occurred.", "error": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -100,12 +102,12 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response(
                 {"message": "Assigned MPP deleted successfully."},
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
                 {"message": "An unexpected error occurred.", "error": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
@@ -243,10 +245,11 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
-class FacilitatorDashboardAPI(APIView):
+from facilitator.auth import EnforceBothAuthentication
+class DashboardAPI(APIView):
+    authentication_classes = [ApiKeyAuthentication,JWTAuthentication]
     permission_classes = [AllowAny]
-
+    
     def get(self, request, *args, **kwargs):
         created_date = request.GET.get("date", timezone.now().date())
         mpp_codes = request.GET.get("mpp_code")
@@ -257,112 +260,154 @@ class FacilitatorDashboardAPI(APIView):
                 {"status": "error", "message": "Please provide at least one MPP code"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        mpp_codes = mpp_codes.split(",")
+        response_data = []
+        for mpp_code in mpp_codes:
+            mpp_ref = MppCollectionReferences.objects.filter(
+                collection_date__date=created_date,
+                mpp_code=mpp_code,
+                shift_code=shift_code,
+            ).first()
 
-        # Convert comma-separated MPP codes into a list
-        mpp_code_list = [code.strip() for code in mpp_codes.split(",")]
-
-        # Fetch all MPP references
-        mpp_refs = MppCollectionReferences.objects.filter(
-            collection_date__date=created_date, 
-            mpp_code__in=mpp_code_list, 
-            shift_code=shift_code
-        )
-
-        if not mpp_refs.exists():
-            return Response(
-                {"status": "error", "message": "No MPP references found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        from django.db.models import Sum, F, FloatField
-        from django.db.models.functions import Coalesce, Cast
-
-        # Fetch all actual milk collection data for given MPPs
-        actual_agg_data = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date,
-            module_code__in=mpp_code_list,
-            shift_code__shift_code=shift_code,
-        )
-        print(f"actual_agg_data: {actual_agg_data}")
-        # Store actual milk collection data in a dictionary {mpp_code: serialized_data}
-        actual_data_dict = {
-            item.module_code: RmrdCollectionSerializer(item).data for item in actual_agg_data
-        }
-
-        response_data = {}
-        total_composite = {"qty": 0.0, "fat": 0.0, "snf": 0.0, "fat_weighted": 0.0, "snf_weighted": 0.0}
-        total_actual = {"qty": 0.0, "fat": 0.0, "snf": 0.0, "fat_weighted": 0.0, "snf_weighted": 0.0}
-
-        for mpp_ref in mpp_refs:
-            mpp_code = mpp_ref.mpp_code
-
-            # Aggregate MPP Collection Data
+            if not mpp_ref:
+                response_data.append(
+                    {
+                        "mpp_code": mpp_code,
+                        "status": "error",
+                        "message": "No data found for this MPP",
+                    }
+                )
+                continue
+            from django.db.models import Sum, F, FloatField
+            from django.db.models.functions import Coalesce, Cast
             mpp_collection_agg = MppCollection.objects.filter(
                 mpp_collection_references_code=mpp_ref.mpp_collection_references_code
             ).aggregate(
-                qty=Sum("qty", default=0.0),
+                qty=Sum("qty"),
                 fat=Coalesce(
-                    Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField()) /
-                    Cast(Sum("qty"), FloatField()), 
-                    0.0
+                    Cast(
+                        Sum(F("qty") * F("fat"), output_field=FloatField()),
+                        FloatField(),
+                    )
+                    / Cast(Sum("qty"), FloatField()),
+                    0.0,
                 ),
                 snf=Coalesce(
-                    Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField()) /
-                    Cast(Sum("qty"), FloatField()), 
-                    0.0
+                    Cast(
+                        Sum(F("qty") * F("snf"), output_field=FloatField()),
+                        FloatField(),
+                    )
+                    / Cast(Sum("qty"), FloatField()),
+                    0.0,
                 ),
             )
 
-            # Fetch actual collection data from dictionary
-            actual_data = actual_data_dict.get(mpp_code, {})
+            actual_agg_data = RmrdMilkCollection.objects.filter(
+                collection_date__date=created_date,
+                module_code=mpp_code,
+                shift_code__shift_code=shift_code,
+            ).first()
 
-            # Extract actual values
-            actual_qty = float(actual_data.get("quantity", 0.0))
-            actual_fat = float(actual_data.get("fat", 0.0))
-            actual_snf = float(actual_data.get("snf", 0.0))
-            total_composite["qty"] += float(mpp_collection_agg["qty"] or 0.0)
-            total_composite["fat_weighted"] += float(mpp_collection_agg["qty"] or 0.0) * float(mpp_collection_agg["fat"] or 0.0)
-            total_composite["snf_weighted"] += float(mpp_collection_agg["qty"] or 0.0) * float(mpp_collection_agg["snf"] or 0.0)
+            response_data.append(
+                {
+                    "mpp_code": mpp_code,
+                    "composite": self.format_aggregates(mpp_collection_agg),
+                    "actual": (
+                        RmrdCollectionSerializer(actual_agg_data).data
+                        if actual_agg_data
+                        else {}
+                    ),
+                    "dispatch": {},
+                }
+            )
 
-            # Update total actual
-            total_actual["qty"] += float(actual_qty)
-            total_actual["fat_weighted"] += float(actual_qty) * float(actual_fat)
-            total_actual["snf_weighted"] += float(actual_qty) * float(actual_snf)
-
-            # Store results per MPP
-            response_data[mpp_code] = {
-                "composite": self.format_aggregates(mpp_collection_agg),
-                "actual": actual_data,  
-                "dispatch": {},
-            }
-
-        # Calculate weighted average for total fat & snf
-        total_composite["fat"] = (total_composite["fat_weighted"] / total_composite["qty"]) if total_composite["qty"] else 0.0
-        total_composite["snf"] = (total_composite["snf_weighted"] / total_composite["qty"]) if total_composite["qty"] else 0.0
-
-        total_actual["fat"] = (total_actual["fat_weighted"] / total_actual["qty"]) if total_actual["qty"] else 0.0
-        total_actual["snf"] = (total_actual["snf_weighted"] / total_actual["qty"]) if total_actual["qty"] else 0.0
-
-        # Prepare final response
-        final_response = {
-            "status": 200,
-            "message": _("Data Retrieved"),
-            "data": {
-                "composite": self.format_aggregates(total_composite),
-                "actual": {
-                    "qty": round(total_actual["qty"], 2),
-                    "fat": round(total_actual["fat"], 2),
-                    "snf": round(total_actual["snf"], 2),
-                },
-                "dispatch": {},
-            },
-        }
-
-        return Response(final_response, status=status.HTTP_200_OK)
+        return Response(
+            {"status": 200, "message": "Data Retrieved", "data": response_data},
+            status=status.HTTP_200_OK,
+        )
 
     def format_aggregates(self, aggregates):
         return {
             key: round(value, 2) if value is not None else None
             for key, value in aggregates.items()
-            if key in ["qty", "fat", "snf"]
         }
+
+class ShiftViewSet(viewsets.ModelViewSet):
+    authentication_classes = [ApiKeyAuthentication,JWTAuthentication]
+    permission_classes = [AllowAny]
+    queryset = Shift.objects.all().order_by("shift_name")
+    serializer_class = ShiftSerializer
+
+
+from django.contrib.auth.models import update_last_login
+from django.contrib.auth.password_validation import validate_password
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+        confirm_password = data.get("confirm_password")
+
+        if not old_password or not new_password or not confirm_password:
+            return Response({"message": _("All fields are required.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_password != confirm_password:
+            return Response({"message": _("Passwords do not match.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.check_password(old_password):
+            return Response({"message": _("Old password is incorrect.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(new_password, user)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+
+        # Update last login if required
+        update_last_login(None, user)
+
+        return Response({"message": _("Password changed successfully.")}, status=status.HTTP_200_OK)
+
+import random
+from django.core.cache import cache
+
+class RequestOTPPasswordResetView(APIView):
+    def post(self, request):
+        username = request.data.get("username")  # Or phone number
+        if not username:
+            return Response({"message": _("Username is required")}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"message": _("User not found")}, status=status.HTTP_404_NOT_FOUND)
+        otp = str(random.randint(100000, 999999))  # Generate 6-digit OTP
+        cache.set(f"otp_{username}", otp, timeout=300)  # Store OTP for 5 minutes
+        # TODO: Integrate an SMS/notification service to send OTP to the user
+        print(f"Your OTP is: {otp}")  # Debugging (Remove in production)
+        return Response({"message": _("OTP sent successfully.")}, status=status.HTTP_200_OK)
+
+class VerifyOTPResetPasswordView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        otp = request.data.get("otp")
+        new_password = request.data.get("new_password")
+        if not username or not otp or not new_password:
+            return Response({"message": _("All fields are required")}, status=status.HTTP_400_BAD_REQUEST)
+        cached_otp = cache.get(f"otp_{username}")
+        if cached_otp is None or cached_otp != otp:
+            return Response({"message": _("Invalid or expired OTP")}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"message": _("User not found")}, status=status.HTTP_404_NOT_FOUND)
+        user.set_password(new_password)
+        user.save()
+        cache.delete(f"otp_{username}")
+        return Response({"message": _("Password reset successfully.")}, status=status.HTTP_200_OK)
