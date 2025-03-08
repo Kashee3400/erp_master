@@ -3,22 +3,9 @@ from django.apps import apps
 from django.contrib import admin
 from django.utils.translation import gettext_lazy
 from .models import *
-from django.contrib.auth.admin import UserAdmin
 
 app_name = 'erp_app'
 app_models = apps.get_app_config(app_name).get_models()
-
-
-# for model in app_models:
-#     search_fields = [field.name for field in model._meta.fields if isinstance(field, (models.CharField, models.TextField))]
-#     admin_class_attrs = {
-#         '__module__': model.__module__,
-#         'list_display': [field.name for field in model._meta.fields],
-#         'search_fields': search_fields,
-#     }
-#     admin_class = type(f'{model.__name__}Admin', (admin.ModelAdmin,), admin_class_attrs)
-    
-#     admin.site.register(model, admin_class)
 
 class MppAdmin(admin.ModelAdmin):
     list_display = (
@@ -602,19 +589,14 @@ class BillingMemberDetailAdmin(admin.ModelAdmin):
     search_fields = ['billing_member_master_code__billing_member_master_code']
     list_filter = ['transaction_date', 'status', 'payment_mode']
 
+@admin.register(MppDispatch)
+class MppDispatchAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in MppDispatch._meta.fields]
+    search_fields = ('mpp_code',)
+    list_filter = ('dispatch_type', 'destination_type', 'transaction_date', 'from_date', 'to_date')
 
-from .models import DispatchBmp, DispatchBmpTxn
-
-@admin.register(DispatchBmp)
-class DispatchBmpAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in DispatchBmp._meta.fields]
-    search_fields = ('dispatch_bmp_code', 'challan_no', 'destination_code', 'vehicle_no')
-    list_filter = ('transaction_date', 'created_at', 'is_last_destination')
-    readonly_fields = ('created_at', 'updated_at')
-
-@admin.register(DispatchBmpTxn)
-class DispatchBmpTxnAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in DispatchBmpTxn._meta.fields]
-    search_fields = ('dispatch_bmp_txn_code', 'dispatch_bmp_code')
-    list_filter = ('created_at', 'updated_at', 'is_rejected')
-    readonly_fields = ('created_at', 'updated_at')
+@admin.register(MppDispatchTxn)
+class MppDispatchTxnAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in MppDispatchTxn._meta.fields]
+    search_fields = ('mpp_dispatch_txn_code', 'mpp_dispatch_code')
+    list_filter = ('is_quality_auto', 'is_quantity_auto', 'quality_date_time', 'quantity_date_time')

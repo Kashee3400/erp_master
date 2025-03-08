@@ -1,5 +1,5 @@
 from django import forms
-from .models import AssignedMppToFacilitator
+from ..models.facilitator_model import AssignedMppToFacilitator
 from erp_app.models import Mpp
 
 

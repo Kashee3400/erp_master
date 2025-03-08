@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import AssignedMppToFacilitator
-from .forms import AssignedMppToFacilitatorForm
+from .models.facilitator_model import AssignedMppToFacilitator,ApiKey
+from .forms.base_form import AssignedMppToFacilitatorForm
 
 @admin.register(AssignedMppToFacilitator)
 class AssignedMppToFacilitatorAdmin(admin.ModelAdmin):
@@ -16,8 +16,6 @@ class AssignedMppToFacilitatorAdmin(admin.ModelAdmin):
         Only show the 'mpp' field in the form.
         """
         return ['mpp','sahayak']
-
-from .models import ApiKey
 
 @admin.register(ApiKey)
 class ApiKeyAdmin(admin.ModelAdmin):

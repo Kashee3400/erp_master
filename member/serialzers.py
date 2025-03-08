@@ -11,7 +11,7 @@ from erp_app.models import (
     Unit,
     BillingMemberMaster,
     BillingMemberDetail,
-    Bank,
+    Bank,Product,
     Mpp,MemberHierarchyView,RmrdMilkCollection
 )
 from erp_app.serializers import (
@@ -122,16 +122,45 @@ class UnitSerializer(serializers.ModelSerializer):
         fields = ["unit_code", "unit", "unit_short_name"]
 
 
+# class ERProductSerializer(serializers.ModelSerializer):
+#     product_category = ProductCategorySerializer(
+#         source="product_category_code", read_only=True
+#     )
+#     brand = BrandSerializer(source="brand_code", read_only=True)
+#     unit = serializers.SerializerMethodField()
+
+#     class Meta:
+#         from erp_app.models import Product,PriceBookDetail,PriceBook
+#         model = Product
+#         fields = [
+#             "product_code",
+#             "product_name",
+#             "product_category",
+#             "brand",
+#             "sku",
+#             "pack_type",
+#             "description",
+#             "product_type",
+#             "informative_price",
+#             "standard_rate",
+#             "unit",
+#         ]
+
+#     def get_unit(self, obj):
+#         try:
+#             unit = Unit.objects.get(unit_code=obj.unit_code)
+#             return UnitSerializer(unit).data
+#         except:
+#             None
+
 class ERProductSerializer(serializers.ModelSerializer):
     product_category = ProductCategorySerializer(
         source="product_category_code", read_only=True
     )
     brand = BrandSerializer(source="brand_code", read_only=True)
     unit = serializers.SerializerMethodField()
-
+    standard_rate = serializers.SerializerMethodField()  # Replace standard_rate with PriceBookDetail rate
     class Meta:
-        from erp_app.models import Product
-
         model = Product
         fields = [
             "product_code",
@@ -148,11 +177,25 @@ class ERProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_unit(self, obj):
+        """
+        Fetch unit details if available.
+        """
         try:
             unit = Unit.objects.get(unit_code=obj.unit_code)
             return UnitSerializer(unit).data
-        except:
-            None
+        except Unit.DoesNotExist:
+            return None
+
+    def get_standard_rate(self, obj):
+        """
+        Fetch the rate from PriceBookDetail and round to 2 decimal places.
+        """
+        price_book_details = self.context.get("price_book_details", {})
+        price_book_detail = price_book_details.get(obj.product_code)
+        
+        if price_book_detail and price_book_detail.rate is not None:
+            return f"{round(price_book_detail.rate, 2):.2f}"  # Round & format to 2 decimal places
+        return "0.00"
 
 
 class DeductionTxnSerializer(serializers.ModelSerializer):
@@ -422,5 +465,6 @@ class RmrdCollectionSerializer(serializers.ModelSerializer):
             "qty",
             "fat",
             "snf",
+            "amount",
         ]
 

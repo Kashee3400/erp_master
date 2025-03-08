@@ -15362,8 +15362,8 @@ class MppCollectionReferences(models.Model):
     mpp_code = models.CharField(primary_key=True,max_length=9, db_collation='SQL_Latin1_General_CP1_CI_AS')
     collection_point_code = models.CharField(max_length=11, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     collection_date = models.DateTimeField()
-    shift_code = models.IntegerField()
-    # shift_code = models.ForeignKey("Shift", verbose_name=_("Shift"), on_delete=models.CASCADE)
+    # shift_code = models.IntegerField()
+    shift_code = models.ForeignKey("Shift", verbose_name=_("Shift"), on_delete=models.CASCADE,db_column="shift_code")
     purchase_rate_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     version_no = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -15673,7 +15673,10 @@ class MppDispatch(models.Model):
     sent_date = models.DateTimeField(blank=True, null=True)
     txfarmer_id = models.BigIntegerField(blank=True, null=True)
     mpp_dispatch_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
+    
+    def __str__(self):
+        return f"{self.mpp_dispatch_code}"
+        
     class Meta:
         managed = False
         db_table = 'mpp_dispatch'
@@ -15780,11 +15783,11 @@ class MppDispatchTxn(models.Model):
     vendor_date_time = models.DateTimeField(blank=True, null=True)
     txfarmer_id = models.BigIntegerField(blank=True, null=True)
     mpp_dispatch_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    mpp_dispatch_txn_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
+    mpp_dispatch_txn_code = models.CharField(max_length=50, primary_key=True,db_collation='SQL_Latin1_General_CP1_CI_AS')
 
     class Meta:
         managed = False
-        db_table = 'mpp_dispatch_txn'
+        db_table = 'mpp_dispatch_view'
 
 
 class MppDispatchTxnHistory(models.Model):
@@ -16998,7 +17001,7 @@ class PriceBookApplicabitityHistory(models.Model):
 class PriceBookDetail(models.Model):
     price_book_detail_code = models.AutoField(primary_key=True)
     price_book_code = models.IntegerField(blank=True, null=True)
-    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True)
+    product_code = models.ForeignKey('Product',on_delete=models.SET_NULL,blank=True, null=True,db_column="product_code")
     # product_code = models.IntegerField(blank=True, null=True)
     rate = models.DecimalField(max_digits=18, decimal_places=5, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)

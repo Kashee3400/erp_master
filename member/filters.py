@@ -39,3 +39,25 @@ class LocalSaleTxnFilter(django_filters.FilterSet):
         model = LocalSaleTxn
         fields = ['transaction_date', 'transaction_month', 'transaction_year']
 
+from django.conf import settings
+from django import forms
+from .models import SahayakIncentives
+
+class SahayakIncentivesFilter(django_filters.FilterSet):
+    mpp_code = django_filters.CharFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter MPP Code"})
+    )
+    mcc_code = django_filters.CharFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter MCC Code"})
+    )
+    month = django_filters.ChoiceFilter(
+        choices=settings.MONTH_FILTER,
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+    year = django_filters.NumberFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Year"})
+    )
+
+    class Meta:
+        model = SahayakIncentives
+        fields = ["mpp_code", "mcc_code","month", "year"]

@@ -1,7 +1,7 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
-from .models import ApiKey
+from .models.facilitator_model import ApiKey
 from django.utils.timezone import now
 
 class ApiKeyAuthentication(BaseAuthentication):

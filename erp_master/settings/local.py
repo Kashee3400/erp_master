@@ -7,10 +7,22 @@ DB_PASSWORD_SARTHAK = config("DB_PASSWORD_SARTHAK", None)
 DB_HOST_SARTHAK = config("DB_HOST_SARTHAK", None)
 DB_PORT_SARTHAK = config("DB_PORT_SARTHAK", None)
 
+
+# cred for connecting member db
+DB_NAME_MEMBER = config("DB_NAME_MEMBER", None)
+DB_MEMBER_USER = config("DB_MEMBER_USER", None)
+DB_MEMBER_PASS = config("DB_MEMBER_PASS", None)
+DB_HOST_MEMBER = config("DB_HOST_MEMBER", None)
+DB_PORT_MEMBER = config("DB_PORT_MEMBER", None)
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "sqlite3.db"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_NAME_MEMBER,
+        "USER": DB_MEMBER_USER,
+        "PASSWORD": DB_MEMBER_PASS,
+        "HOST": DB_HOST_MEMBER,
+        "PORT": DB_PORT_MEMBER,
     },
     "sarthak_kashee": {
         "ENGINE": DB_ENGINE,

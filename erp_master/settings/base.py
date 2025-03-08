@@ -13,13 +13,19 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 SECRET_KEY = config("SECRET_KEY", None)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
-
-INSTALLED_APPS = [
+LOCAL_APPS = [
     "member",
     "mpms",
     "erp_app",
-    "daphne",
     "facilitator",
+]
+
+THIRD_PARTY_APPS = [
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "rest_framework",
+    "widget_tweaks",
+    "django_tables2",
     "bootstrap5",
     "django_filters",
     "crispy_forms",
@@ -27,6 +33,10 @@ INSTALLED_APPS = [
     "django_ckeditor_5",
     "fontawesomefree",
     "import_export",
+]
+
+ADMIN_APPS = [
+    "daphne",
     "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -35,12 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
-    "rest_framework",
-    "widget_tweaks",
-    "django_tables2",
 ]
+
+INSTALLED_APPS = ADMIN_APPS+LOCAL_APPS+THIRD_PARTY_APPS
 
 SITE_ID = 1
 THUMBNAIL_DEBUG = True
@@ -261,7 +268,20 @@ MONTHS = [
     _("November"),
     _("December"),
 ]
-
+MONTH_FILTER = [
+    ("January", "January"),
+    ("February", "February"),
+    ("March", "March"),
+    ("April", "April"),
+    ("May", "May"),
+    ("June", "June"),
+    ("July", "July"),
+    ("August", "August"),
+    ("September", "September"),
+    ("October", "October"),
+    ("November", "November"),
+    ("December", "December"),
+]
 OPEN = "open"
 CLOSED = "closed"
 RE_OPENED = "re opened"

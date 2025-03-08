@@ -12,7 +12,8 @@ from erp_app.models import (
     BillingMemberMaster,
     BillingMemberDetail,
     Bank,
-    Mpp,MemberHierarchyView
+    Mpp,MemberHierarchyView,
+    MppDispatchTxn
 )
 from erp_app.serializers import (
     BinLocationSerializer,
@@ -22,7 +23,7 @@ from erp_app.serializers import (
 from member.models import OTP,SahayakIncentives
 
 from rest_framework import serializers
-from .models import AssignedMppToFacilitator
+from ..models.facilitator_model import AssignedMppToFacilitator
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
@@ -409,3 +410,11 @@ class BillingMemberMasterSerializer(serializers.ModelSerializer):
             "net_payable",
             "status",
         ]
+
+
+class MppDispatchTxnSerializer(serializers.ModelSerializer):
+    qty = serializers.DecimalField(source="dispatch_qty", max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = MppDispatchTxn
+        fields = [ "qty","fat", "snf","amount"]

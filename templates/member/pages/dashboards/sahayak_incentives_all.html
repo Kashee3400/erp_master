@@ -19,48 +19,47 @@
 {% endblock %}
 
 {% block content %}
+  <div class="row">
+    <div class="col-12 bg-white px-3 py-2">
+      <form method="GET" class="row g-2">
+        {% for field in filter.form %}
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+          </div>
+        {% endfor %}
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i> {% trans 'Filter' %}</button>
+          <a href="{% url 'sahayak_incentives_list' %}" class="btn btn-sm btn-secondary"><i class="fas fa-undo"></i> {% trans 'Reset' %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
   <div class="row mt-4">
     <div class="col-12">
       <div class="card p-3">
         <div class="card-header">
           <div class="row">
-            <div class="col-3">
-              <h5 class="mb-0">{% trans "Sahayak Incentives" %}</h5>
-              <p class="text-sm mb-0">{% trans "Sahayak incentive data" %}</p>
+            <!-- Left Section: Title & Description -->
+            <div class="col-lg-3 col-md-12 mb-3">
+              <h5 class="mb-0">{% trans 'Sahayak Incentives' %}</h5>
+              <p class="text-sm mb-0">
+                {% trans 'Sahayak incentive data' %}
+              </p>
             </div>
-            <div class="col-9 row align-items-center">
-              <form method="GET" class="col-auto">
-                <div class="row">
-                  <div class="col-auto">
-                    <select id="action-dropdown" name="month" class="form-control">
-                      <option value="">{% trans "Choose Month" %}</option>
-                      {% for month in months %}
-                        <option value="{{ month }}">{{ month|upper }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="col-auto">
-                    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                      <div class="input-group">
-                        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                        <input type="text" class="form-control" name="q" placeholder="Search by MCC name or code, MPP name or code, sahayak name" />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <button type="submit" class="btn btn-dark btn-sm mt-3" >{% trans "Filter" %}</button>
-                  </div>
+            <!-- Right Section: Filters & Buttons -->
+            <div class="col-lg-9 col-md-12">
+              <div class="row g-3 align-items-end">
+                <!-- Buttons for Add & Import -->
+                <div class="col-12 d-flex justify-content-end gap-2">
+                  <a href="{% url 'sahayak_incentives_create' %}" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> {% trans 'Add' %}</a>
+                  <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-file-excel"></i> {% trans 'Import' %}</button>
                 </div>
-              </form>
-              <div class="col-auto">
-                <a href="{% url 'sahayak_incentives_create' %}" class="btn btn-success btn-sm mt-3"><i class="fas fa-add"></i>{% trans "Add" %}</a>
-              </div>
-              <div class="col-auto">
-                <button type="button" class="btn btn-dark btn-sm mt-3" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-excel"></i>{% trans "Import" %}</button>
               </div>
             </div>
           </div>
         </div>
+
         <div class="card-body">
           <div class="table-responsive">
             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-height fixed-columns">
@@ -69,7 +68,9 @@
                 <div class="row mb-3">
                   <div class="col-6">
                     <select id="action-dropdown" name="action" class="form-control">
-                      <option value="">{% trans "Choose Action" %}</option>
+                      <option value="">
+                        {% trans 'Choose Action' %}
+                      </option>
                       {% for action in actions %}
                         <option value="{{ action.value }}">{{ action.label }}</option>
                       {% endfor %}
@@ -79,8 +80,8 @@
                     <button type="submit" class="btn btn-secondary btn-sm">Go</button>
                   </div>
                   <div class="col-4 text-end">
-                    <span>{% trans "Total Rows" %}: {{ total_rows }}</span> |
-                    <span>{% trans "Selected Rows" %}: <span id="selected-count">0</span></span>
+                    <span>{% trans 'Total Rows' %}: {{ total_rows }}</span> |
+                    <span>{% trans 'Selected Rows' %}: <span id="selected-count">0</span></span>
                   </div>
                 </div>
                 <table class="table table-striped" style="width:100%">
@@ -89,16 +90,36 @@
                       <th>
                         <input type="checkbox" id="selectAll" />ID
                       </th>
-                      <th>MCC</th>
-                      <th>MCC Code</th>
-                      <th>MPP</th>
-                      <th>MPP Code</th>
-                      <th>Sahayak Name</th>
-                      <th>Month</th>
-                      <th>Opening</th>
-                      <th>Milk Incentive</th>
-                      <th>Other Incentive</th>
-                      <th>Payable</th>
+                      <th>
+                        {% trans 'MCC' %}
+                      </th>
+                      <th>
+                        {% trans 'MCC Code' %}
+                      </th>
+                      <th>
+                        {% trans 'MPP' %}
+                      </th>
+                      <th>
+                        {% trans 'MPP Code' %}
+                      </th>
+                      <th>
+                        {% trans 'Sahayak Name' %}
+                      </th>
+                      <th>
+                        {% trans 'Month' %}
+                      </th>
+                      <th>
+                        {% trans 'Opening' %}
+                      </th>
+                      <th>
+                        {% trans 'Milk Incentive' %}
+                      </th>
+                      <th>
+                        {% trans 'Other Incentive' %}
+                      </th>
+                      <th>
+                        {% trans 'Payable' %}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,22 +147,38 @@
               </form>
             </div>
           </div>
+          {% if objects.has_other_pages %}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <!-- Pagination Controls (Left) -->
+              <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                  {% if objects.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page=1" title="First Page"><i class="fas fa-angle-double-left"></i></a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ objects.previous_page_number }}" title="Previous Page"><i class="fas fa-angle-left"></i></a>
+                    </li>
+                  {% endif %}
 
-          <div class="pagination mt-4">
-            <span class="step-links">
-              {% if page_obj.has_previous %}
-                <a href="?page=1" title="First Page"><i class="fas fa-angle-double-left"></i></a>
-                <a href="?page={{ page_obj.previous_page_number }}" title="Previous Page"><i class="fas fa-angle-left"></i></a>
-              {% endif %}
+                  <li class="page-item disabled">
+                    <span class="page-link">{{ objects.number }}</span>
+                  </li>
 
-              <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} (Total: {{ total_rows }} rows)</span>
-
-              {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" title="Next Page"><i class="fas fa-angle-right"></i></a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" title="Last Page"><i class="fas fa-angle-double-right"></i></a>
-              {% endif %}
-            </span>
-          </div>
+                  {% if objects.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ objects.next_page_number }}" title="Next Page"><i class="fas fa-angle-right"></i></a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ objects.paginator.num_pages }}" title="Last Page"><i class="fas fa-angle-double-right"></i></a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+              <!-- Total Rows Count (Right) -->
+              <span class="badge bg-secondary p-2">Total: {{ total_rows }} rows</span>
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -150,7 +187,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">{% trans "Import Excel To Populate the Data" %}</h5>
+            <h5 class="modal-title" id="exampleModalCenterTitle">{% trans 'Import Excel To Populate the Data' %}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <form method="post" enctype="multipart/form-data" class="m-3 p-3">

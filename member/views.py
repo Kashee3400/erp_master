@@ -8,13 +8,14 @@ from .serialzers import *
 from erp_app.models import (
     MemberMaster,
     Mpp,
-    MemberSahayakContactDetail,
     LocalSaleTxn,
     MemberHierarchyView,
     BillingMemberDetail,
     MppCollection,
     MppCollectionReferences,
     RmrdMilkCollection,
+    PriceBook,
+    PriceBookDetail,
 )
 from erp_app.serializers import MemberHierarchyViewSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -34,7 +35,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.paginator import Paginator
 from django_filters import rest_framework as filters
 import os
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -47,6 +47,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Avg
 from django.conf import settings
 from django.utils.timezone import now
+from .filters import SahayakIncentivesFilter
 from datetime import date
 from django.utils.dateparse import parse_date
 
@@ -469,12 +470,6 @@ class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
         )
 
 
-class SahayakIncentivesFilter(FilterSet):
-    class Meta:
-        model = SahayakIncentives
-        fields = ["mpp_code", "month"]
-
-
 class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelAdmin):
     template_name = "member/pages/dashboards/sahayak_incentives_all.html"
     form_class = SahayakIncentivesForm
@@ -483,6 +478,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
     import_template_name = "member/form/confirm_excel_import.html"
     success_url = reverse_lazy("sahayak_incentives_list")
     model = SahayakIncentives
+
     export_template_name = "member/form/export.html"
 
     def get(self, request, *args, **kwargs):
@@ -491,33 +487,24 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             request.GET, queryset=SahayakIncentives.objects.all().order_by("-id")
         )
         incentives = self.get_filtered_incentives(query, filter_class)
-
+        # Pagination setup
+        page_number = request.GET.get("page", 1)
+        per_page = settings.PAGINATION_SIZE if hasattr(settings, "PAGINATION_SIZE") else 100
+        paginator = Paginator(incentives, per_page)
+        paginated_incentives = paginator.get_page(page_number)
         actions = [
             {"value": "bulk_delete", "label": "Delete Selected"},
             {"value": "export_csv", "label": "Export Selected"},
         ]
         import_form = self.create_import_form(request=request)
-        total_rows = SahayakIncentives.objects.count()
-        selected_rows_count = 0
-        months = settings.MONTHS
-
-        fields = self.resource_class._meta.fields
-        fields_list = [
-            (
-                self.resource_class.get_display_name(),  # This is a placeholder, modify as needed
-                fields,  # Use the fields from the Meta class
-            )
-        ]
+        total_rows = incentives.count()
         context = {
-            "objects": incentives,
+            "objects": paginated_incentives, 
             "form": self.form_class(),
             "filter": filter_class,
             "import_form": import_form,
             "actions": actions,
-            "months": months,
             "total_rows": total_rows,
-            "fields_list": fields_list,
-            "selected_rows_count": selected_rows_count,
         }
         return render(request, self.template_name, context)
 
@@ -560,20 +547,12 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
 
         import_formats = self.get_import_formats()
         import_form = self.create_import_form(request)
-        resources = []
         if request.POST and import_form.is_valid():
             input_format = import_formats[int(import_form.cleaned_data["format"])]()
             if not input_format.is_binary():
                 input_format.encoding = self.from_encoding
             import_file = import_form.cleaned_data["import_file"]
-
             if self.is_skip_import_confirm_enabled():
-                # This setting means we are going to skip the import confirmation step.
-                # Go ahead and process the file for import in a transaction
-                # If there are any errors, we roll back the transaction.
-                # rollback_on_validation_errors is set to True so that we rollback on
-                # validation errors. If this is not done validation errors would be
-                # silently skipped.
                 data = b""
                 for chunk in import_file.chunks():
                     data += chunk
@@ -595,16 +574,9 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
                     else:
                         context["result"] = result
             else:
-                # first always write the uploaded file to disk as it may be a
-                # memory file or else based on settings upload handlers
                 tmp_storage = self.write_to_tmp_storage(import_file, input_format)
-                # allows get_confirm_form_initial() to include both the
-                # original and saved file names from form.cleaned_data
                 import_file.tmp_storage_name = tmp_storage.name
-
                 try:
-                    # then read the file, using the proper format-specific mode
-                    # warning, big files may exceed memory
                     data = tmp_storage.read()
                     dataset = input_format.create_dataset(data)
                 except Exception as e:
@@ -618,7 +590,6 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
                                 "has the correct headers or data for import."
                             ),
                         )
-
                 if not import_form.errors:
                     # prepare kwargs for import data, if needed
                     res_kwargs = self.get_import_resource_kwargs(
@@ -627,7 +598,6 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
                     resource = self.choose_import_resource_class(import_form, request)(
                         **res_kwargs
                     )
-
                     # prepare additional kwargs for import_data, if needed
                     imp_kwargs = self.get_import_data_kwargs(
                         request=request, form=import_form, **kwargs
@@ -650,9 +620,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             res_kwargs = self.get_import_resource_kwargs(
                 request=request, form=import_form, **kwargs
             )
-
         context.update(self.get_context_data())
-
         context["title"] = _("Import Sahayak Incentive Preview")
         context["form"] = import_form
         context["media"] = self.media + import_form.media
@@ -768,7 +736,6 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             )
         return response
 
-
 class SahayakIncentivesCreateView(CreateView):
     model = SahayakIncentives
     form_class = SahayakIncentivesForm
@@ -785,8 +752,6 @@ class SahayakIncentivesCreateView(CreateView):
             "Error creating Sahayak incentive. Please correct the errors below.",
         )
         return super().form_invalid(form)
-
-
 class SahayakIncentivesUpdateView(UpdateView):
     model = SahayakIncentives
     form_class = SahayakIncentivesForm
@@ -821,92 +786,6 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return SahayakIncentives.objects.filter(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Incentive created successfully",
-                    "result": serializer.data,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        except exceptions.ValidationError as e:
-            return Response(
-                {"status": "error", "message": str(e), "result": {}},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def update(self, request, *args, **kwargs):
-        try:
-            partial = kwargs.pop("partial", False)
-            instance = self.get_object()
-            serializer = self.get_serializer(
-                instance, data=request.data, partial=partial
-            )
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Incentive updated successfully",
-                    "result": serializer.data,
-                },
-                status=status.HTTP_200_OK,
-            )
-        except exceptions.ValidationError as e:
-            return Response(
-                {"status": "error", "message": str(e), "result": {}},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            self.perform_destroy(instance)
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Incentive deleted successfully",
-                    "result": {},
-                },
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        except Exception as e:
-            return Response(
-                {
-                    "status": "error",
-                    "message": "Error deleting incentive",
-                    "result": {},
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Incentive retrieved successfully",
-                    "result": serializer.data,
-                },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            return Response(
-                {
-                    "status": "error",
-                    "message": "Error retrieving incentive",
-                    "result": {},
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.filter_queryset(self.get_queryset())
@@ -938,11 +817,7 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-
 from django.utils.translation import gettext as _
-
-
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         months = [
@@ -973,30 +848,79 @@ class MonthListAPIView(APIView):
 from .filters import ProductFilter
 
 
+# class ProductViewSet(viewsets.ModelViewSet):
+#     queryset = Product.objects.all()
+#     filter_backends = [DjangoFilterBackend]
+#     filterset_fields = ["is_saleable", "is_purchase"]
+#     serializer_class = ERProductSerializer
+#     permission_classes = [AllowAny]
+
+#     def get_queryset(self):
+#         return Product.objects.filter(is_saleable=True, is_purchase=True)
+
+#     def list(self, request, *args, **kwargs):
+#         """
+#         Override the list method to customize the response format with `status`, `message`, and `results`.
+#         """
+#         queryset = self.filter_queryset(self.get_queryset())
+#         serializer = self.get_serializer(queryset, many=True)
+
+#         response_data = {
+#             "status": "success",
+#             "message": "Data fetched successfully",
+#             "results": serializer.data,
+#         }
+#         return Response(response_data)
+
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["is_saleable", "is_purchase"]
     serializer_class = ERProductSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Product.objects.filter(is_saleable=True, is_purchase=True)
+        """
+        Fetch products based on the latest PriceBook and its PriceBookDetail efficiently.
+        """
+        latest_price_book = PriceBook.objects.order_by("-created_at").first()
+        self.latest_price_book = latest_price_book  # Store it for reuse
+
+        if latest_price_book:
+            # Fetch PriceBookDetails efficiently & store for later use
+            self.price_book_details = {
+                detail.product_code.product_code: detail
+                for detail in PriceBookDetail.objects.filter(
+                    price_book_code=latest_price_book.price_book_code
+                ).select_related("product_code")  # Optimize joins
+            }
+            
+            # Get only the filtered products
+            product_codes = self.price_book_details.keys()
+            return Product.objects.filter(product_code__in=product_codes)
+
+        self.price_book_details = {}  # Empty dictionary if no price book
+        return Product.objects.none()
 
     def list(self, request, *args, **kwargs):
         """
-        Override the list method to customize the response format with `status`, `message`, and `results`.
+        Custom response format with `status`, `message`, and `results`.
+        Pass `price_book` and `price_book_details` to the serializer.
         """
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-
+        queryset = self.get_queryset()  # Calls optimized get_queryset()
+        serializer = self.get_serializer(
+            queryset,
+            many=True,
+            context={
+                "latest_price_book": self.latest_price_book, 
+                "price_book_details": self.price_book_details
+            }
+        )
         response_data = {
             "status": "success",
             "message": "Data fetched successfully",
             "results": serializer.data,
         }
         return Response(response_data)
-
 
 from django.db.models import Sum, Avg
 
