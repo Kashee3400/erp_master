@@ -186,7 +186,7 @@ class ERProductSerializer(serializers.ModelSerializer):
         except Unit.DoesNotExist:
             return None
 
-    def get_standard_rate(self, obj):
+    def get_informative_price(self, obj):
         """
         Fetch the rate from PriceBookDetail and round to 2 decimal places.
         """
