@@ -159,7 +159,7 @@ class ERProductSerializer(serializers.ModelSerializer):
     )
     brand = BrandSerializer(source="brand_code", read_only=True)
     unit = serializers.SerializerMethodField()
-    standard_rate = serializers.SerializerMethodField()  # Replace standard_rate with PriceBookDetail rate
+    informative_price = serializers.SerializerMethodField()
     class Meta:
         model = Product
         fields = [
