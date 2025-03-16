@@ -44,7 +44,7 @@ class VCGroup(models.Model):
         help_text=_("Unique identifier for the VCG member."),
     )
     member_name = models.CharField(
-        max_length=100,  # Increased for longer names
+        max_length=100,
         blank=True,
         null=True,
         verbose_name=_("Member Name"),
@@ -487,15 +487,12 @@ class MonthAssignment(models.Model):
         help_text=_("Total milk collected per day in liters."),
     )
     no_of_members = models.PositiveIntegerField(default=0, verbose_name=_("No of Members"))
-    no_of_pourers = models.PositiveIntegerField(default=0, verbose_name=_("No Of Pourers"))
     pourers_15_days = models.PositiveIntegerField(default=0, verbose_name=_(">=15 Days Pourers"))
     pourers_25_days = models.PositiveIntegerField(default=0, verbose_name=_(">=25 Days Pourers"))
     zero_days_pourers = models.PositiveIntegerField(default=0, verbose_name=_("Zero Days Pourers"))
-
     cattle_feed_sale = models.FloatField(default=0, validators=[MinValueValidator(0)], verbose_name=_("Cattle Feed Sale (KG)"))
     mineral_mixture_sale = models.FloatField(default=0, validators=[MinValueValidator(0)], verbose_name=_("Mineral Mixture Sale (KG)"))
     sahayak_recovery = models.FloatField(default=0, validators=[MinValueValidator(0)], verbose_name=_("Sahayak Recovery (%)"))
-
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
@@ -514,3 +511,6 @@ class MonthAssignment(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["mpp_code", "month"], name="unique_mpp_month_assignment"),
         ]
+
+
+

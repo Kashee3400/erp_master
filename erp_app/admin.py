@@ -3,11 +3,13 @@ from django.apps import apps
 from django.contrib import admin
 from django.utils.translation import gettext_lazy
 from .models import *
+from import_export.admin import ImportExportModelAdmin
 
 app_name = 'erp_app'
 app_models = apps.get_app_config(app_name).get_models()
 
-class MppAdmin(admin.ModelAdmin):
+
+class MppAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = (
         'mpp_code',
         'mpp_short_name',
@@ -48,7 +50,7 @@ class MppAdmin(admin.ModelAdmin):
         'updated_by',
     )
 
-    # You can also define the readonly fields if needed
+    # Define readonly fields
     readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
 
 # Register the Mpp model with the custom admin class
@@ -99,138 +101,6 @@ class MccAdmin(admin.ModelAdmin):
 # Register the Mcc model with the custom admin class
 admin.site.register(Mcc, MccAdmin)
 
-
-class MppCollectionAggregationAdmin(admin.ModelAdmin):
-
-    # Define the fields that can be searched
-    search_fields = (
-        'mcc_code',
-        'mcc_name',
-        'bmc_code',
-        'mpp_code',
-        'member_code',
-    )
-
-    # Define the fields that can be filtered
-    list_filter = (
-        'payment_cycle_code',
-        'from_date',
-        'to_date',
-        'created_at',
-        'updated_at',
-    )
-
-    # Enable editing of specific fields
-    list_display = (
-        'mcc_code',
-        'mcc_tr_code',
-        'mcc_name',
-        'bmc_code',
-        'bmc_tr_code',
-        'bmc_name',
-        'mpp_code',
-        'mpp_tr_code',
-        'mpp_name',
-        'member_code',
-        'member_tr_code',
-        'member_name',
-        'payment_cycle_code',
-        'from_date',
-        'from_shift',
-        'to_date',
-        'to_shift',
-        'qty',
-        'fat',
-        'snf',
-        'clr',
-        'kg_fat',
-        'kg_snf',
-        'kg_clr',
-        'amount',
-        'no_of_pouring_days',
-        'no_of_pouring_shift',
-        'created_at',
-        'created_by',
-        'updated_at',
-        'updated_by',
-        'flg_sentbox_entry',
-        'originating_type',
-        'originating_org_code',
-    )
-
-    readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
-
-# Register the MppCollectionAggregation model
-admin.site.register(MppCollectionAggregation, MppCollectionAggregationAdmin)
-
-class MppCollectionAggregationWithoutMilktypeAdmin(admin.ModelAdmin):
-
-    search_fields = (
-        'company_code',
-        'company_name',
-        'plant_code',
-        'mcc_code',
-        'bmc_code',
-        'mpp_code',
-        'member_code',
-        'payment_cycle_code',
-    )
-
-    list_filter = (
-        'payment_cycle_code',
-        'from_date',
-        'to_date',
-        'created_at',
-        'updated_at',
-    )
-
-    list_display = (
-        'company_code',
-        'company_name',
-        'plant_code',
-        'plant_tr_code',
-        'plant_name',
-        'mcc_code',
-        'mcc_tr_code',
-        'mcc_name',
-        'bmc_code',
-        'bmc_tr_code',
-        'bmc_name',
-        'mpp_code',
-        'mpp_tr_code',
-        'mpp_name',
-        'member_code',
-        'member_tr_code',
-        'member_name',
-        'payment_cycle_code',
-        'from_date',
-        'from_shift',
-        'to_date',
-        'to_shift',
-        'qty',
-        'fat',
-        'snf',
-        'clr',
-        'kg_fat',
-        'kg_snf',
-        'kg_clr',
-        'amount',
-        'no_of_pouring_days',
-        'no_of_pouring_shift',
-        'created_at',
-        'created_by',
-        'updated_at',
-        'updated_by',
-        'flg_sentbox_entry',
-        'originating_type',
-        'originating_org_code',
-        'share_value',
-    )
-
-    readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
-
-admin.site.register(MppCollectionAggregationWithoutMilktype, MppCollectionAggregationWithoutMilktypeAdmin)
-
 @admin.register(MemberMaster)
 class MemberMasterAdmin(admin.ModelAdmin):
     list_display = [
@@ -257,69 +127,7 @@ class MppCollectionAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MppCollection._meta.fields]
     search_fields = ['member_code', 'mpp_collection_references_code']
     list_filter = ['shift_code', 'collection_date']
-    
-@admin.register(MppCollectionReferences)
-class MppCollectionReferencesAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppCollectionReferences._meta.fields]
-    search_fields = ['mpp_code', 'mpp_collection_references_code']
-    list_filter = ['shift_code', 'collection_date']
-    
-    
-@admin.register(MppCollectionDateMilkWiseAggregation)
-class MppCollectionDateMilkWiseAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppCollectionDateMilkWiseAggregation._meta.fields]
-    search_fields = ['company_code', 'company_name', 'collection_date']
-    list_filter = ['company_code', 'collection_date']
-    
-@admin.register(MppCollectionDateShiftMilkWiseAggregation)
-class MppCollectionDateShiftMilkWiseAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppCollectionDateShiftMilkWiseAggregation._meta.fields]
-    search_fields = ['company_code', 'company_name', 'collection_date', 'shift_name']
-    list_filter = ['company_code', 'collection_date', 'shift_name']
 
-@admin.register(MppCollectionDateShiftWiseAggregation)
-class MppCollectionDateShiftWiseAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppCollectionDateShiftWiseAggregation._meta.fields]
-    search_fields = ['company_code', 'company_name', 'collection_date', 'shift_name']
-    list_filter = ['company_code', 'collection_date', 'shift_name']
-
-@admin.register(RmrdCollectionAggregation)
-class RmrdCollectionAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdCollectionAggregation._meta.fields]
-    
-    search_fields = [
-        'company_code', 
-        'company_name', 
-        'plant_code', 
-        'plant_name', 
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'bmc_name', 
-        'mpp_code', 
-        'mpp_name', 
-        'from_shift', 
-        'to_shift', 
-        'milk_type_name', 
-        'milk_quality_type_name', 
-        'created_by', 
-        'updated_by'
-    ]
-    
-    # Define filters
-    list_filter = [
-        'company_code', 
-        'plant_code', 
-        'mcc_code', 
-        'bmc_code', 
-        'mpp_code', 
-        'from_date', 
-        'to_date', 
-        'payment_cycle_code', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-        'created_at'
-    ]
 
 @admin.register(RmrdMilkCollection)
 class RmrdMilkCollectionAdmin(admin.ModelAdmin):
@@ -359,136 +167,6 @@ class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
         'milk_type_code',
         'milk_quality_type_code',
     ]
-
-@admin.register(RmrdQualityCollection)
-class RmrdQualityCollectionAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RmrdQualityCollection._meta.fields]
-    
-    search_fields = [
-        'rmrd_quality_collection_code',
-        'own_module_code',
-        'own_module_name',
-        'originating_org_code',
-    ]
-    
-    list_filter = [
-        'collection_date',
-        'shift_code',
-        'dock_no',
-        'is_quality_auto',
-        'is_merge',
-        'created_at',
-        'updated_at'
-    ]
-
-@admin.register(CdaAggregation)
-class CdaAggregationAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregation._meta.get_fields()]
-    
-    search_fields = [
-        'mcc_code',
-        'mcc_name', 
-        'mpp_code',
-        'mpp_name',
-        ]
-
-    list_filter = [
-        'company_code', 
-        'plant_code', 
-        'shift', 
-    ]
-
-    ordering = ['collection_date']
-
-@admin.register(CdaAggregationDateshiftWiseMilktype)
-class CdaAggregationDateshiftWiseMilktypeAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregationDateshiftWiseMilktype._meta.get_fields()]
-    search_fields = [
-        'company_code', 
-        'company_name', 
-        'plant_code', 
-        'plant_tr_code', 
-        'plant_name', 
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'mpp_code', 
-        'mpp_name', 
-        'shift', 
-        'milk_type_name', 
-        'milk_quality_type_name',
-    ]
-
-    list_filter = [
-        'shift', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-    ]
-
-    ordering = ['collection_date'] 
-
-
-@admin.register(CdaAggregationDaywiseMilktype)
-class CdaAggregationDaywiseMilktypeAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregationDaywiseMilktype._meta.get_fields()]
-
-    search_fields = [
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'bmc_name', 
-        'mpp_code', 
-        'mpp_name', 
-    ]
-
-    list_filter = [
-        'company_code', 
-        'plant_code', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-    ]
-
-    ordering = ['collection_date']
-
-
-@admin.register(CdaAggregationPaymentCycleWiseMilktype)
-class CdaAggregationPaymentCycleWiseMilktypeAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CdaAggregationPaymentCycleWiseMilktype._meta.get_fields()]
-
-    search_fields = [
-        'mcc_code', 
-        'mcc_name', 
-        'bmc_code', 
-        'bmc_name', 
-        'mpp_code', 
-        'mpp_name', 
-    ]
-
-    # Add filter functionality
-    list_filter = [
-        'payment_cycle_code', 
-        'milk_type_code', 
-        'milk_quality_type_code', 
-    ]
-
-    ordering = ['from_date']
-
-
-@admin.register(MemberSahayakContactDetail)
-class MemberSahayakContactDetailAdmin(admin.ModelAdmin):
-    list_display = (
-        'contact_details_code', 'first_name', 'last_name', 'sur_name', 
-        'department_code', 'designation', 'pan_no', 'aadhar_no', 'wef_date',
-        'module_code', 'module_name', 'is_default', 'mob_no', 'billing_type_code',
-        'flg_sentbox_entry', 'originating_type', 'created_at', 'created_by', 
-        'originating_org_code', 'updated_at', 'updated_by'
-    )
-    search_fields = ('first_name', 'last_name', 'mob_no', 'designation')
-    list_filter = ('department_code', 'is_default', 'created_at', 'updated_at')
-
-    # Optional: Read-only fields if this data is not meant to be editable from the admin.
-    readonly_fields = ('contact_details_code', 'created_at', 'updated_at')
-
 
     
 @admin.register(Shift)
@@ -544,14 +222,15 @@ admin.site.register(Product, ProductAdmin)
 
 
 class MemberHierarchyViewAdmin(admin.ModelAdmin):
-    list_display = (
-        'member_code', 
-        'member_tr_code',
-        'member_name', 
-        'mobile_no', 
-        'is_active', 
-        'created_at'
-    )
+    list_display = [field.name for field in MemberHierarchyView._meta.fields]
+    # list_display = (
+    #     'member_code', 
+    #     'member_tr_code',
+    #     'member_name', 
+    #     'mobile_no', 
+    #     'is_active', 
+    #     'created_at'
+    # )
     search_fields = ('member_code','member_tr_code', 'member_name', 'mobile_no','mpp_code')
     list_filter = ('is_active', 'created_at')
 
@@ -589,14 +268,9 @@ class BillingMemberDetailAdmin(admin.ModelAdmin):
     search_fields = ['billing_member_master_code__billing_member_master_code']
     list_filter = ['transaction_date', 'status', 'payment_mode']
 
-@admin.register(MppDispatch)
-class MppDispatchAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppDispatch._meta.fields]
-    search_fields = ('mpp_code',)
-    list_filter = ('dispatch_type', 'destination_type', 'transaction_date', 'from_date', 'to_date')
-
 @admin.register(MppDispatchTxn)
 class MppDispatchTxnAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppDispatchTxn._meta.fields]
-    search_fields = ('mpp_dispatch_txn_code', 'mpp_dispatch_code')
-    list_filter = ('is_quality_auto', 'is_quantity_auto', 'quality_date_time', 'quantity_date_time')
+    list_per_page = 10
+    list_display = ["mpp_dispatch_txn_code","dispatch_qty","fat","snf","rate","amount","created_at"]
+    search_fields = ('mpp_dispatch_code__mpp_code',)
+    list_filter = ('created_at',)

@@ -3,7 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
 from erp_app.models import (
-    CdaAggregationDateshiftWiseMilktype,CdaAggregation,
+    CdaAggregationDateshiftWiseMilktype,
+    CdaAggregation,
     Shift,
     MemberMaster,
     LocalSale,
@@ -11,13 +12,19 @@ from erp_app.models import (
     Unit,
     BillingMemberMaster,
     BillingMemberDetail,
-    Bank,Product,
-    Mpp,MemberHierarchyView,RmrdMilkCollection
+    Bank,
+    Product,
+    MppDispatchTxn,
+    Mpp,
+    MemberHierarchyView,
+    RmrdMilkCollection,
+    MppCollection,
 )
 from erp_app.serializers import (
     BinLocationSerializer,
     ProductCategorySerializer,
-    BrandSerializer,MemberHierarchyViewSerializer
+    BrandSerializer,
+    MemberHierarchyViewSerializer,
 )
 
 
@@ -105,15 +112,15 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         """
         try:
             member = MemberHierarchyView.objects.get(member_code=obj.module_code)
-            return MemberHierarchyViewSerializer(member,context=self.context).data
+            return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
             return None
+
 
 class DeductionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale
-        fields = ['module_code','local_sale_no']
-
+        fields = ["module_code", "local_sale_no"]
 
 
 class UnitSerializer(serializers.ModelSerializer):
@@ -122,37 +129,6 @@ class UnitSerializer(serializers.ModelSerializer):
         fields = ["unit_code", "unit", "unit_short_name"]
 
 
-# class ERProductSerializer(serializers.ModelSerializer):
-#     product_category = ProductCategorySerializer(
-#         source="product_category_code", read_only=True
-#     )
-#     brand = BrandSerializer(source="brand_code", read_only=True)
-#     unit = serializers.SerializerMethodField()
-
-#     class Meta:
-#         from erp_app.models import Product,PriceBookDetail,PriceBook
-#         model = Product
-#         fields = [
-#             "product_code",
-#             "product_name",
-#             "product_category",
-#             "brand",
-#             "sku",
-#             "pack_type",
-#             "description",
-#             "product_type",
-#             "informative_price",
-#             "standard_rate",
-#             "unit",
-#         ]
-
-#     def get_unit(self, obj):
-#         try:
-#             unit = Unit.objects.get(unit_code=obj.unit_code)
-#             return UnitSerializer(unit).data
-#         except:
-#             None
-
 class ERProductSerializer(serializers.ModelSerializer):
     product_category = ProductCategorySerializer(
         source="product_category_code", read_only=True
@@ -160,6 +136,7 @@ class ERProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer(source="brand_code", read_only=True)
     unit = serializers.SerializerMethodField()
     informative_price = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         fields = [
@@ -192,7 +169,7 @@ class ERProductSerializer(serializers.ModelSerializer):
         """
         price_book_details = self.context.get("price_book_details", {})
         price_book_detail = price_book_details.get(obj.product_code)
-        
+
         if price_book_detail and price_book_detail.rate is not None:
             return f"{round(price_book_detail.rate, 2):.2f}"  # Round & format to 2 decimal places
         return "0.00"
@@ -207,6 +184,7 @@ class DeductionTxnSerializer(serializers.ModelSerializer):
         model = LocalSaleTxn
         fields = "__all__"
 
+
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     binlocation = BinLocationSerializer(source="binlocation_code", read_only=True)
     product = ERProductSerializer(source="product_code", read_only=True)
@@ -215,7 +193,6 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSaleTxn
         fields = "__all__"
-
 
 
 class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
@@ -429,6 +406,7 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
         except MemberHierarchyView.DoesNotExist:
             return None
 
+
 class BillingMemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingMemberMaster
@@ -457,6 +435,17 @@ class BillingMemberMasterSerializer(serializers.ModelSerializer):
         ]
 
 
+class NShiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shift
+        fields = [
+            "shift_code",
+            "shift_name",
+            "shift_short_name",
+            "shift_at",
+            "is_active",
+        ]
+
 
 class RmrdCollectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -468,3 +457,22 @@ class RmrdCollectionSerializer(serializers.ModelSerializer):
             "amount",
         ]
 
+
+class MPPCollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MppCollection
+        fields = [
+            "qty",
+            "fat",
+            "snf",
+            "amount",
+        ]
+
+
+class MppDispatchTxnSerializer(serializers.ModelSerializer):
+    qty = serializers.DecimalField(
+        source="dispatch_qty", max_digits=10, decimal_places=2
+    )
+    class Meta:
+        model = MppDispatchTxn
+        fields = ["qty", "fat", "snf", "amount"]

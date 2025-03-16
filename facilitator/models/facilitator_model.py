@@ -252,7 +252,7 @@ class AssignedMppToFacilitator(models.Model):
     )
 
     class Meta:
-        db_table = 'assigned_mpp_to_facilitator'  # Specify the table name in the database
+        db_table = 'assigned_mpp_to_facilitator'
         ordering = ['-created_at']  # Default ordering when queried (newest first)
         verbose_name = _('Assigned MPP to Facilitator')  # Singular form of model name
         verbose_name_plural = _('Assigned MPPs to Facilitators')  # Plural form of model name

@@ -1,21 +1,37 @@
 from django.contrib import admin
-
 from .models.facilitator_model import AssignedMppToFacilitator,ApiKey
 from .forms.base_form import AssignedMppToFacilitatorForm
+from import_export.admin import ImportExportModelAdmin
 
-@admin.register(AssignedMppToFacilitator)
-class AssignedMppToFacilitatorAdmin(admin.ModelAdmin):
-    form = AssignedMppToFacilitatorForm
-    list_display = ('sahayak','mpp_code','mpp_ex_code', 'mpp_name', 'mpp_type', 'mpp_opening_date', 'created_at', 'updated_at')
-    search_fields = ('mpp_ex_code', 'mpp_name', 'mpp_short_name')
-    list_filter = ('mpp_type', 'mpp_opening_date', 'created_at')
-    ordering = ('-created_at',)
+class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    # form = AssignedMppToFacilitatorForm
+    list_display = (
+        'mpp_code',
+        'mpp_short_name',
+        'mpp_ex_code',
+        'mpp_name',
+        'mpp_type',
+        'sahayak',
+        'created_at',
+        'updated_at',
+    )
 
-    def get_fields(self, request, obj=None):
-        """
-        Only show the 'mpp' field in the form.
-        """
-        return ['mpp','sahayak']
+    search_fields = (
+        'mpp_code',
+        'mpp_ex_code',
+        'mpp_name',
+    )
+
+    list_filter = (
+        'sahayak',
+        'mpp_type',
+        'created_at',
+        'updated_at',
+    )
+    readonly_fields = ('created_at', 'updated_at')
+
+admin.site.register(AssignedMppToFacilitator,AssignedMppToFacilitatorAdmin)
+
 
 @admin.register(ApiKey)
 class ApiKeyAdmin(admin.ModelAdmin):

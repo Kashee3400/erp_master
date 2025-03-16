@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import views , vcg_api_views as api_view
+from .views import views , vcg_api_views as api_view,members_view as m_view
 from django.urls import path, include, re_path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -24,11 +24,15 @@ router.register(r'zero-days-reasons', api_view.ZeroDaysReasonViewSet,basename="z
 router.register(r'member-complaint-reasons', api_view.MemberComplaintReasonViewSet,basename="member-complaint-reasons")
 router.register(r'upload-images', api_view.VCGMeetingImagesViewSet,basename="upload-images")
 router.register(r'vcg-meetings', api_view.VCGMeetingViewSet,basename="vcg-meetings-reasons")
+router.register(r'dashboard-summary-data', views.DashboardSummaryViewSet,basename="dashboard-summary-data")
+router.register(r'members', m_view.MemberHierarchyViewSet,basename="members")
+router.register(r'local-sales', m_view.LocalSaleViewSet,basename="local_sales")
 
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("password/change/", views.ChangePasswordView.as_view(), name="password_change"),
-    path("dashboard-data/", views.DashboardAPI.as_view(), name="dashboard_data"),
+    path("dashboard-detail-data/", views.DashboardDetailAPI.as_view(), name="dashboard_detail_data"),
+    path("monthly-assignment/", m_view.MonthlyDataView.as_view(), name="monthly_assignment"),
 ] + router.urls

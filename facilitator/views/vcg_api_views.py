@@ -292,6 +292,7 @@ class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
             response_data["errors"] = errors
         return Response(response_data, status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK)
 
+
 class VCGMeetingViewSet(viewsets.ModelViewSet):
     queryset = VCGMeeting.objects.all()
     serializer_class = VCGMeetingSerializer
@@ -387,3 +388,4 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+

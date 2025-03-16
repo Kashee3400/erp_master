@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.utils.timezone import now
 
 from erp_app.models import (
-    CdaAggregationDateshiftWiseMilktype,CdaAggregation,
+    CdaAggregation,
     Shift,
     MemberMaster,
     LocalSale,
@@ -13,7 +13,6 @@ from erp_app.models import (
     BillingMemberDetail,
     Bank,
     Mpp,MemberHierarchyView,
-    MppDispatchTxn
 )
 from erp_app.serializers import (
     BinLocationSerializer,
@@ -97,7 +96,19 @@ class LocalSaleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalSale
-        fields = "__all__"
+        fields = [
+            "local_sale_code",
+            "local_sale_date",
+            "module_code",
+            "module_name",
+            "transaction_date",
+            "status",
+            "net_amount",
+            "round_amount",
+            "total_amount",
+            "credit_limit",
+            "member",
+        ]
 
     def get_member(self, obj):
         """
@@ -165,13 +176,18 @@ class DeductionTxnSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
-    binlocation = BinLocationSerializer(source="binlocation_code", read_only=True)
-    product = ERProductSerializer(source="product_code", read_only=True)
+    # product = ERProductSerializer(source="product_code", read_only=True)
     local_sale_code = LocalSaleSerializer(read_only=True)
 
     class Meta:
         model = LocalSaleTxn
-        fields = "__all__"
+        fields = [
+            "local_sale_txn_code",
+            "local_sale_code",
+            "qty",
+            "rate",
+            "amount",
+            ]
 
 
 
@@ -188,10 +204,6 @@ class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
             "mpp_name",
             "shift",
             "collection_date",
-            # "milk_type_code",
-            # "milk_type_name",
-            # "milk_quality_type_code",
-            # "milk_quality_type_name",
             "composite_qty",
             "composite_fat",
             "composite_snf",
@@ -411,10 +423,48 @@ class BillingMemberMasterSerializer(serializers.ModelSerializer):
             "status",
         ]
 
-
-class MppDispatchTxnSerializer(serializers.ModelSerializer):
-    qty = serializers.DecimalField(source="dispatch_qty", max_digits=10, decimal_places=2)
-
+class MemberHierarchySerializer(serializers.ModelSerializer):
     class Meta:
-        model = MppDispatchTxn
-        fields = [ "qty","fat", "snf","amount"]
+        model = MemberHierarchyView
+        fields = [
+            "mcc_code",
+            "bmc_code",
+            "mpp_code",
+            "member_code",
+            "member_tr_code",
+            "member_name",
+            "member_middle_name",
+            "member_surname",
+            "gender",
+            "mobile_no",
+            "caste_category",
+            "member_type",
+            "is_active",
+            "application_date",
+            "application_no",
+            "member_master_relation",
+            "ex_member_code",
+        ]
+
+from django.urls import reverse
+
+class TopPourerSerializer(serializers.Serializer):
+    member_code = serializers.CharField()
+    total_qty = serializers.DecimalField(max_digits=18, decimal_places=2)
+    detail_url = serializers.SerializerMethodField()
+
+    def get_detail_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(reverse('members-detail', args=[obj['member_code']]))
+        return reverse('members-detail', args=[obj['member_code']])
+
+class MonthAssignmentSerializer(serializers.Serializer):
+    month = serializers.CharField()
+    milk_collection = serializers.DecimalField(max_digits=18, decimal_places=2)
+    total_members = serializers.IntegerField()
+    no_of_pourers = serializers.IntegerField()
+    pourers_15_days = serializers.IntegerField()
+    pourers_25_days = serializers.IntegerField()
+    zero_days_pourers = serializers.IntegerField()
+    top_pourers = TopPourerSerializer(many=True)

@@ -50,6 +50,11 @@ from django.utils.timezone import now
 from .filters import SahayakIncentivesFilter
 from datetime import date
 from django.utils.dateparse import parse_date
+from django.db.models import Sum, Avg
+from rest_framework import viewsets, filters
+from .filters import MemberHeirarchyFilter
+from .serialzers import NewsSerializer
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -316,7 +321,7 @@ def custom_response(status, data=None, message=None, status_code=200):
 class ProductRateListView(generics.ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("locale",)
 
     def get_queryset(self):
@@ -845,34 +850,7 @@ class MonthListAPIView(APIView):
         )
 
 
-from .filters import ProductFilter
-
-
-# class ProductViewSet(viewsets.ModelViewSet):
-#     queryset = Product.objects.all()
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ["is_saleable", "is_purchase"]
-#     serializer_class = ERProductSerializer
-#     permission_classes = [AllowAny]
-
-#     def get_queryset(self):
-#         return Product.objects.filter(is_saleable=True, is_purchase=True)
-
-#     def list(self, request, *args, **kwargs):
-#         """
-#         Override the list method to customize the response format with `status`, `message`, and `results`.
-#         """
-#         queryset = self.filter_queryset(self.get_queryset())
-#         serializer = self.get_serializer(queryset, many=True)
-
-#         response_data = {
-#             "status": "success",
-#             "message": "Data fetched successfully",
-#             "results": serializer.data,
-#         }
-#         return Response(response_data)
-
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["is_saleable", "is_purchase"]
     serializer_class = ERProductSerializer
@@ -891,7 +869,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 detail.product_code.product_code: detail
                 for detail in PriceBookDetail.objects.filter(
                     price_book_code=latest_price_book.price_book_code
-                ).select_related("product_code")  # Optimize joins
+                ).select_related("product_code") 
             }
             
             # Get only the filtered products
@@ -919,10 +897,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             "status": "success",
             "message": "Data fetched successfully",
             "results": serializer.data,
+            "latest_price_book":self.latest_price_book.price_book_code
         }
         return Response(response_data)
-
-from django.db.models import Sum, Avg
 
 
 class LocalSaleViewSet(viewsets.ModelViewSet):
@@ -978,10 +955,6 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data)
 
-
-from rest_framework import viewsets, filters
-
-
 class CustomPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = "page_size"
@@ -1001,10 +974,6 @@ class CustomPagination(PageNumberPagination):
                 "results": data,
             }
         )
-
-
-from .filters import MemberHeirarchyFilter
-
 
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -1054,7 +1023,6 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         # Add last 15 days data to the response
         paginated_response.data["last_15_days"] = last_15_days_serializer.data
         return Response(paginated_response.data)
-
 
 class SahayakFeedbackViewSet(viewsets.ModelViewSet):
     """
@@ -1156,11 +1124,6 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
-
-
-from .serialzers import NewsSerializer
-from django.db.models import Q
-
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
@@ -1373,7 +1336,6 @@ class NewsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-
 class NewsNotReadCountAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1382,9 +1344,7 @@ class NewsNotReadCountAPIView(APIView):
         not_read_count = News.objects.filter(is_read=False).count()
         return Response({"not_read_count": not_read_count})
 
-
 from erp_app.models import BillingMemberMaster
-
 
 class BillingMemberMasterRowFilter(FilterSet):
     from_date = DateTimeFromToRangeFilter()
@@ -1469,12 +1429,13 @@ class BankViewSet(viewsets.ModelViewSet):
         )
 
 
-class BillingMemberMasterViewSet(viewsets.ModelViewSet):
+class BillingMemberMasterViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BillingMemberMaster.objects.all()
     serializer_class = BillingMemberMasterSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = BillingMemberMasterRowFilter
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -1506,12 +1467,13 @@ class BillingMemberMasterViewSet(viewsets.ModelViewSet):
         )
 
 
-class BillingMemberDetailViewSet(viewsets.ModelViewSet):
+class BillingMemberDetailViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BillingMemberDetail.objects.all()
     serializer_class = BillingMemberDetailSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["member_code", "billing_member_master_code"]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
@@ -1559,7 +1521,7 @@ class BillingMemberDetailViewSet(viewsets.ModelViewSet):
         )
 
 
-class MppViewSet(viewsets.ModelViewSet):
+class MppViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Mpp.objects.all()
     serializer_class = MppSerializer
     pagination_class = StandardResultsSetPagination
@@ -1596,46 +1558,6 @@ class MppViewSet(viewsets.ModelViewSet):
             }
         )
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_201_CREATED,
-                "message": "Mpp created successfully",
-                "results": serializer.data,
-            }
-        )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_200_OK,
-                "message": "Mpp updated successfully",
-                "results": serializer.data,
-            }
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "Mpp deleted successfully",
-            }
-        )
-
-
 class LocalSaleTxnFilter(FilterSet):
     installment_start_date = DateFromToRangeFilter(
         field_name="local_sale_code__installment_start_date"
@@ -1646,12 +1568,13 @@ class LocalSaleTxnFilter(FilterSet):
         fields = ["installment_start_date", "local_sale_code__module_code"]
 
 
-class LocalSaleTxnViewSet(viewsets.ModelViewSet):
+class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = LocalSaleTxn.objects.all()
     serializer_class = DeductionTxnSerializer
     filter_backends = [DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
     filterset_class = LocalSaleTxnFilter
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -1682,8 +1605,8 @@ class LocalSaleTxnViewSet(viewsets.ModelViewSet):
             }
         )
 
-from django.db.models import Sum, F, FloatField
-from django.db.models.functions import Coalesce
+from django.db.models import Sum, F, FloatField, DecimalField
+from django.db.models.functions import Coalesce, Cast
 
 class SahayakDashboardAPI(APIView):
     permission_classes = [AllowAny]
@@ -1708,9 +1631,6 @@ class SahayakDashboardAPI(APIView):
                 {"status": "error", "message": "No MPP reference found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-        from django.db.models import Sum, F, FloatField, DecimalField
-        from django.db.models.functions import Coalesce, Cast
 
         mpp_collection_agg = MppCollection.objects.filter(
             mpp_collection_references_code=mpp_ref.mpp_collection_references_code

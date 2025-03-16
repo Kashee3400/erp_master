@@ -1,4 +1,4 @@
-from rest_framework import generics, status, viewsets, exceptions, decorators
+from rest_framework import status, viewsets, exceptions
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -7,14 +7,11 @@ from ..models.facilitator_model import AssignedMppToFacilitator
 from ..serializers.serializers import *
 from erp_app.models import (
     MppCollection,
-    MppCollectionReferences,
     RmrdMilkCollection,
-    MppDispatch,
     MppDispatchTxn,
 )
 from django.db.models import Sum, F, FloatField
-from django.db.models.functions import Coalesce, Cast, NullIf
-from member.serialzers import RmrdCollectionSerializer
+from django.db.models.functions import Coalesce, Cast
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
@@ -34,6 +31,8 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
     serializer_class = AssignedMppToFacilitatorSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
+    lookup_field = "mpp_code"
 
     def get_queryset(self):
         """
@@ -41,12 +40,8 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
         if the user is not a superuser or staff.
         """
         user = self.request.user
-
-        # If the user is a superuser or staff, return all MPPs
         if user.is_superuser or user.is_staff:
             return AssignedMppToFacilitator.objects.all()
-
-        # Otherwise, return only the MPPs assigned to the authenticated user
         return AssignedMppToFacilitator.objects.filter(sahayak=user)
 
     def create(self, request, *args, **kwargs):
@@ -248,125 +243,180 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-from django.db.models import DecimalField, FloatField, Value
+
+from django.db.models import Sum, OuterRef, Subquery, FloatField
 
 
-class DashboardAPI(APIView):
-    authentication_classes = [ApiKeyAuthentication, JWTAuthentication]
-    permission_classes = [AllowAny]
-    pagination_class = StandardResultsSetPagination  # Assign pagination
+class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [ApiKeyAuthentication]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        created_date = self.request.GET.get("date", timezone.now().date())
+        mpp_codes = self.request.GET.get("mpp_code")
+        if not mpp_codes:
+            if self.request.user.is_authenticated and self.request.user.is_superuser:
+                mpp_codes = list(
+                    AssignedMppToFacilitator.objects.values_list("mpp_code", flat=True)
+                )
+            else:
+                mpp_codes = list(
+                    AssignedMppToFacilitator.objects.filter(
+                        sahayak=self.request.user
+                    ).values_list("mpp_code", flat=True)
+                )
+        else:
+            mpp_codes = mpp_codes.split(",")
+        # Subquery for actual amount
+        actual_subquery = (
+            RmrdMilkCollection.objects.filter(
+                collection_date__date=created_date, module_code=OuterRef("mpp_code")
+            )
+            .values("module_code")
+            .annotate(amount=Sum("amount"))
+            .values("amount")
+        )
+        # Subquery for composite amount
+        composite_subquery = (
+            MppCollection.objects.filter(
+                references__collection_date__date=created_date,
+                references__mpp_code=OuterRef("mpp_code"),
+            )
+            .values("references__mpp_code")
+            .annotate(amount=Sum("amount"))
+            .values("amount")
+        )
+        # Annotate actual and composite amounts
+        return Mpp.objects.filter(mpp_code__in=mpp_codes).annotate(
+            actual_amount=Subquery(actual_subquery, output_field=FloatField()),
+            composite_amount=Subquery(composite_subquery, output_field=FloatField()),
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        response_data = [
+            {
+                "mpp_code": mpp.mpp_code,
+                "date": self.request.GET.get("date", timezone.now().date()),
+                "variation": (
+                    round(
+                        float(mpp.actual_amount) - float(mpp.composite_amount or 0), 2
+                    )
+                    if mpp.actual_amount and float(mpp.actual_amount) > 0
+                    else round(float(mpp.composite_amount or 0), 2)
+                ),
+            }
+            for mpp in queryset
+        ]
+        # Sorting by variation
+        response_data.sort(key=lambda x: x["variation"])
+        # Paginate response
+        paginator = self.pagination_class()
+        paginated_data = paginator.paginate_queryset(response_data, request)
+        return paginator.get_paginated_response(paginated_data)
+
+
+class DashboardDetailAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [ApiKeyAuthentication]
+    # permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         created_date = request.GET.get("date", timezone.now().date())
-        mpp_codes = request.GET.get("mpp_code")
-        sort_by = request.GET.get("sort_by", "morning")  # Default sorting by morning
+        mpp_code = request.GET.get("mpp_code")
+        shift_code = request.GET.get("shift_code")
 
-        if not mpp_codes:
-            mpp_codes = list(
-                AssignedMppToFacilitator.objects.all().values_list(
-                    "mpp_code", flat=True
-                )
+        if not mpp_code:
+            return Response(
+                {"message": "mpp_code required", "status": "error"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        else:
-            mpp_codes = mpp_codes.split(",")
-        morning_code, evening_code = self.get_shifts()
 
-        # 🔹 Step 4: Bulk fetch actual data for all mpp_codes
-        actual_data = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date, module_code__in=mpp_codes
-        ).select_related("shift_code")
+        actual, dispatch, composite = self.get_bulk_data(
+            created_date, mpp_code, shift_code
+        )
 
-        actual_lookup = {
-            (data.module_code, data.shift_code.shift_code): data for data in actual_data
+        response_data = {
+            "mpp_code": mpp_code,
+            "date": created_date,
+            "shift_code":shift_code,
+            "data": {
+                "actual": actual,
+                "dispatch": dispatch,
+                "composite": composite,
+            },
         }
-        response_data = []
-        # 🔹 Step 5: Process each mpp_code
-        for mpp_code in mpp_codes:
-            # Get morning & evening references
-            # Fetch morning and evening dispatch codes
-            mor_mpp_dispatch_codes = MppDispatch.objects.filter(
-                from_date__date=created_date, mpp_code=mpp_code, from_shift=morning_code
-            ).values_list("mpp_dispatch_code", flat=True)
 
-            eve_mpp_dispatch_codes = MppDispatch.objects.filter(
-                from_date__date=created_date, mpp_code=mpp_code, from_shift=evening_code
-            ).values_list("mpp_dispatch_code", flat=True)
+        return Response(response_data, status=status.HTTP_200_OK)
 
-            # Fetch Dispatch Transactions
-            mor_dispatch_txn_data = MppDispatchTxn.objects.filter(
-                mpp_dispatch_code__in=mor_mpp_dispatch_codes
-            ).first()
+    def get_bulk_data(self, created_date, mpp_code, shift_codes):
+        collections = RmrdMilkCollection.objects.filter(
+            collection_date__date=created_date,
+            module_code=mpp_code,
+            shift_code=shift_codes,
+        ).aggregate(
+            qty=Sum("qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+        )
 
-            eve_dispatch_txn_data = MppDispatchTxn.objects.filter(
-                mpp_dispatch_code__in=eve_mpp_dispatch_codes
-            ).first()
-            # Serialize Dispatch Transactions
-            mor_dispatch_data = MppDispatchTxnSerializer(mor_dispatch_txn_data).data
-            eve_dispatch_data = MppDispatchTxnSerializer(eve_dispatch_txn_data).data
-            
-            # 🔹 Step 2: Bulk fetch MppCollectionReferences for all mpp_codes
-            mpp_refs = MppCollectionReferences.objects.filter(
-                collection_date__date=created_date, mpp_code__in=mpp_codes,shift_code__shift_code=morning_code
-            ).values_list("mpp_collection_references_code", flat=True)
+        dispatches = MppDispatchTxn.objects.filter(
+            mpp_dispatch_code__mpp_code=mpp_code,
+            mpp_dispatch_code__from_date__date=created_date,
+            mpp_dispatch_code__from_shift=shift_codes,
+        ).aggregate(
+            qty=Sum("dispatch_qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(
+                    Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum("dispatch_qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(
+                    Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum("dispatch_qty"), FloatField()),
+                0.0,
+            ),
+        )
 
-            mor_mpp_collections = MppCollection.objects.filter(
-                mpp_collection_references_code__in=mpp_refs
-            ).aggregate(
-                qty=Sum("qty"),
-                fat=Coalesce(
-                    Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                    / Cast(Sum("qty"), FloatField()),
-                    0.0,
-                ),
-                snf=Coalesce(
-                    Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                    / Cast(Sum("qty"), FloatField()),
-                    0.0,
-                ),
-            )
-
-            # Get morning & evening actual data
-            mor_actual_agg_data = actual_lookup.get((mpp_code, morning_code))
-            eve_actual_agg_data = actual_lookup.get((mpp_code, evening_code))
-
-            response_data.append(
-                {
-                    "mpp_code": mpp_code,
-                    "morning": {
-                        "composite": self.format_aggregates(mor_mpp_collections),
-                        "actual": (
-                            RmrdCollectionSerializer(mor_actual_agg_data).data
-                            if mor_actual_agg_data
-                            else {}
-                        ),
-                        "dispatch": mor_dispatch_data,
-                    },
-                    "evening": {
-                        "composite": self.format_aggregates(mor_mpp_collections),
-                        "actual": (
-                            RmrdCollectionSerializer(eve_actual_agg_data).data
-                            if eve_actual_agg_data
-                            else {}
-                        ),
-                        "dispatch": eve_dispatch_data,
-                    },
-                }
-            )
-
-        # 🔹 Step 6: Sorting based on query param
-        if sort_by == "evening":
-            sorted_data = sorted(
-                response_data, key=lambda x: x["evening"].get("variation", 0)
-            )
-        else:
-            sorted_data = sorted(
-                response_data, key=lambda x: x["morning"].get("variation", 0)
-            )
-
-        # 🔹 Step 7: Paginate and return response
-        paginator = self.pagination_class()
-        paginated_response = paginator.paginate_queryset(sorted_data, request)
-        return paginator.get_paginated_response(paginated_response)
+        aggregated_data = MppCollection.objects.filter(
+            references__collection_date__date=created_date,
+            references__mpp_code=mpp_code,
+            shift_code=shift_codes,
+        ).aggregate(
+            qty=Sum("qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+        )
+        return collections, dispatches, aggregated_data
 
     def format_aggregates(self, aggregates):
         return {
