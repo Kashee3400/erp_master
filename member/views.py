@@ -1631,9 +1631,9 @@ class SahayakDashboardAPI(APIView):
                 {"status": "error", "message": "No MPP reference found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
+            #references
         mpp_collection_agg = MppCollection.objects.filter(
-            mpp_collection_references_code=mpp_ref.mpp_collection_references_code
+            references=mpp_ref.mpp_collection_references_code
         ).aggregate(
             qty=Sum("qty"),
             fat=Coalesce(
