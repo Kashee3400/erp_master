@@ -1654,6 +1654,31 @@ class SahayakDashboardAPI(APIView):
             shift_code__shift_code=shift_code,
         ).first()
 
+        dispatches = MppDispatchTxn.objects.filter(
+                    mpp_dispatch_code__mpp_code=mpp_code,
+                    mpp_dispatch_code__from_date__date=created_date,
+                    mpp_dispatch_code__from_shift=shift_code,
+                ).aggregate(
+                    qty=Sum("dispatch_qty"),
+                    amount=Sum("amount"),
+                    fat=Coalesce(
+                        Cast(
+                            Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
+                            FloatField(),
+                        )
+                        / Cast(Sum("dispatch_qty"), FloatField()),
+                        0.0,
+                    ),
+                    snf=Coalesce(
+                        Cast(
+                            Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
+                            FloatField(),
+                        )
+                        / Cast(Sum("dispatch_qty"), FloatField()),
+                        0.0,
+                    ),
+                )
+                
         return Response(
             {
                 "status": 200,
@@ -1665,7 +1690,7 @@ class SahayakDashboardAPI(APIView):
                         if actual_agg_data
                         else {}
                     ),
-                    "dispatch": {},
+                    "dispatch": self.format_aggregates(dispatches),
                 },
             },
             status=status.HTTP_200_OK,
