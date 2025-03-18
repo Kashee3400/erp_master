@@ -366,6 +366,7 @@ class MppSerializer(serializers.ModelSerializer):
 
 class BillingMemberDetailSerializer(serializers.ModelSerializer):
     member = serializers.SerializerMethodField()
+    qty = serializers.SerializerMethodField()
 
     class Meta:
         model = BillingMemberDetail
@@ -404,9 +405,10 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
             member = MemberHierarchyView.objects.get(member_code=obj.member_code)
             return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
+            
             return None
-
-
+    def get_qty(self, obj):
+        return obj.total_qty
 class BillingMemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingMemberMaster

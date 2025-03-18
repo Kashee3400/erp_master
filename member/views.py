@@ -1648,19 +1648,34 @@ class SahayakDashboardAPI(APIView):
             ),
         )
 
+        # actual_agg_data = RmrdMilkCollection.objects.filter(
+        #     collection_date__date=created_date,
+        #     module_code=mpp_code,
+        #     shift_code__shift_code=shift_code,
+        # ).first()
         actual_agg_data = RmrdMilkCollection.objects.filter(
             collection_date__date=created_date,
             module_code=mpp_code,
             shift_code__shift_code=shift_code,
-        ).first()
-
+        ).aggregate(
+            qty=Sum("qty"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+        )
         dispatches = MppDispatchTxn.objects.filter(
                     mpp_dispatch_code__mpp_code=mpp_code,
                     mpp_dispatch_code__from_date__date=created_date,
                     mpp_dispatch_code__from_shift=shift_code,
                 ).aggregate(
                     qty=Sum("dispatch_qty"),
-                    amount=Sum("amount"),
                     fat=Coalesce(
                         Cast(
                             Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
@@ -1685,11 +1700,12 @@ class SahayakDashboardAPI(APIView):
                 "message": _("Data Retrieved"),
                 "data": {
                     "composite": self.format_aggregates(mpp_collection_agg),
-                    "actual": (
-                        RmrdCollectionSerializer(actual_agg_data).data
-                        if actual_agg_data
-                        else {}
-                    ),
+                    # "actual": (
+                    #     RmrdCollectionSerializer(actual_agg_data).data
+                    #     if actual_agg_data
+                    #     else {}
+                    # ),
+                    "actual":self.format_aggregates(actual_agg_data),
                     "dispatch": self.format_aggregates(dispatches),
                 },
             },
