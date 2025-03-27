@@ -39,12 +39,24 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ['mcc_code', 'mpp_code', 'bmc_code','is_active']
+    filterset_fields = ['mcc_code', 'mpp_code', 'bmc_code','is_active',"is_default"]
     ordering_fields = ['created_at', 'member_name']
     search_fields = ['member_name', 'mobile_no']
     pagination_class = StandardResultsSetPagination
     lookup_field = "member_code"
 
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Override retrieve to filter data based on `member_code`
+        """
+        member_code = self.kwargs.get(self.lookup_field)
+        queryset = self.get_queryset().filter(member_code=member_code,is_default=True)
+        
+        if not queryset.exists():
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.get_serializer(queryset.first())
+        return Response(serializer.data)
 
 class MonthlyDataView(APIView):
     authentication_classes = [ApiKeyAuthentication]
@@ -54,10 +66,8 @@ class MonthlyDataView(APIView):
         year = int(request.GET.get("year", datetime.now().year))
         month = int(request.GET.get("month", datetime.now().month))
         mpp_code = request.GET.get("mpp_code")
-
         if not mpp_code:
             return Response({"status": "error", "message": "mpp_code is required"}, status=status.HTTP_400_BAD_REQUEST)
-
         start_date = make_aware(datetime(year, month, 1))
         if month == 12:
             end_date = make_aware(datetime(year + 1, 1, 1)) - timedelta(seconds=1)
@@ -92,6 +102,7 @@ class MonthlyDataView(APIView):
 
         # Prepare response data
         response_data = {
+            "mpp_code":mpp_code,
             "month": f"{year}-{month:02}",
             "milk_collection": round(milk_collection, 2),
             "total_members": total_members,
@@ -103,7 +114,7 @@ class MonthlyDataView(APIView):
         }
 
         serializer = MonthAssignmentSerializer(response_data,context={"request":request})
-        return Response(serializer.data)
+        return Response({"status":"success","message":"Data fetched successfully","result":serializer.data},status=status.HTTP_200_OK)
 
 class LocalSaleViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
@@ -158,3 +169,4 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
                 "aggregated_data": aggregated_data,
                 "results": serializer.data,
             })
+

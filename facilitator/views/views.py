@@ -10,7 +10,7 @@ from erp_app.models import (
     RmrdMilkCollection,
     MppDispatchTxn,
 )
-from django.db.models import Sum, F, FloatField
+from django.db.models import Sum, F, FloatField,Avg
 from django.db.models.functions import Coalesce, Cast
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
@@ -40,8 +40,8 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
         if the user is not a superuser or staff.
         """
         user = self.request.user
-        if user.is_superuser or user.is_staff:
-            return AssignedMppToFacilitator.objects.all()
+        # if user.is_superuser or user.is_staff:
+        #     return AssignedMppToFacilitator.objects.all()
         return AssignedMppToFacilitator.objects.filter(sahayak=user)
 
     def create(self, request, *args, **kwargs):
@@ -246,28 +246,20 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
 
 from django.db.models import Sum, OuterRef, Subquery, FloatField
 
-
 class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [JWTAuthentication]
-    # authentication_classes = [ApiKeyAuthentication]
     permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         created_date = self.request.GET.get("date", timezone.now().date())
         mpp_codes = self.request.GET.get("mpp_code")
         if not mpp_codes:
-            if self.request.user.is_authenticated and self.request.user.is_superuser:
-                mpp_codes = list(
-                    AssignedMppToFacilitator.objects.values_list("mpp_code", flat=True)
-                )
-            else:
-                mpp_codes = list(
-                    AssignedMppToFacilitator.objects.filter(
-                        sahayak=self.request.user
-                    ).values_list("mpp_code", flat=True)
-                )
+            mpp_codes = list(
+                AssignedMppToFacilitator.objects.filter(
+                    sahayak=self.request.user
+                ).values_list("mpp_code", flat=True)
+            )
         else:
             mpp_codes = mpp_codes.split(",")
         # Subquery for actual amount
@@ -284,7 +276,7 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             MppCollection.objects.filter(
                 references__collection_date__date=created_date,
                 references__mpp_code=OuterRef("mpp_code"),
-            )
+            ).select_related("references")
             .values("references__mpp_code")
             .annotate(amount=Sum("amount"))
             .values("amount")
@@ -343,7 +335,7 @@ class DashboardDetailAPI(APIView):
         response_data = {
             "mpp_code": mpp_code,
             "date": created_date,
-            "shift_code":shift_code,
+            "shift_code": shift_code,
             "data": {
                 "actual": actual,
                 "dispatch": dispatch,
@@ -430,6 +422,158 @@ class DashboardDetailAPI(APIView):
         )
         shift_dict = dict(shifts)
         return shift_dict.get("M"), shift_dict.get("E")
+
+from django.utils.dateparse import parse_date
+
+class LocalSaleViewSet(viewsets.ModelViewSet):
+    queryset = LocalSaleTxn.objects.all()
+    authentication_classes = [JWTAuthentication]
+    serializer_class = [LocalSaleTxnSerializer]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        start_date = self.request.query_params.get("start_date", None)
+        mpp_codes = self.request.GET.get("mpp_code",None)
+        end_date = self.request.query_params.get("end_date", None)
+        if not mpp_codes:
+            mpp_codes = list(
+                AssignedMppToFacilitator.objects.filter(
+                    sahayak=self.request.user
+                ).values_list("mpp_code", flat=True)
+            )
+        else:
+            mpp_codes = mpp_codes.split(",")
+        if mpp_codes:
+            queryset = queryset.filter(local_sale_code__mpp_code__in=mpp_codes)
+
+        if start_date and end_date:
+            start_date = parse_date(start_date)
+            end_date = parse_date(end_date)
+
+            if start_date and end_date:
+                queryset = queryset.filter(
+                    local_sale_code__transaction_date__range=[start_date, end_date]
+                )
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
+        # 🟢 Product-wise Summary (Group by product_code)
+        product_summary = []
+        products = queryset.values("product_code", "product_code__product_name").distinct()
+
+        for product in products:
+            product_id = product["product_code"]
+            product_name = product["product_code__product_name"]
+            product_data = queryset.filter(product_code=product_id)
+            
+            # Get all MPP data for this product
+            mpp_data = product_data.values(
+                "local_sale_code__mpp_code", 
+                "local_sale_code"
+            ).annotate(
+                total_qty=Sum("qty"),
+                total_amount=Sum("amount"),
+                avg_rate=Avg("rate"),
+            ).order_by("local_sale_code__mpp_code")
+            
+            # Group by mpp_code and aggregate
+            mpp_groups = {}
+            for item in mpp_data:
+                mpp_code = item["local_sale_code__mpp_code"]
+                if mpp_code not in mpp_groups:
+                    mpp_groups[mpp_code] = {
+                        "local_sale_code__mpp_code": mpp_code,
+                        "local_sale_codes": [],
+                        "total_qty": 0,
+                        "total_amount": 0,
+                        "rate_values": []
+                    }
+                
+                mpp_groups[mpp_code]["local_sale_codes"].append(str(item["local_sale_code"]))
+                mpp_groups[mpp_code]["total_qty"] += item["total_qty"]
+                mpp_groups[mpp_code]["total_amount"] += item["total_amount"]
+                mpp_groups[mpp_code]["rate_values"].append(item["avg_rate"])
+            
+            # Prepare the final mpp_summary
+            mpp_summary = []
+            for mpp_code, data in mpp_groups.items():
+                # Calculate weighted average rate
+                total_amount = data["total_amount"]
+                total_qty = data["total_qty"]
+                avg_rate = total_amount / total_qty if total_qty != 0 else 0
+                
+                mpp_summary.append({
+                    "local_sale_code__mpp_code": mpp_code,
+                    "local_sale_code": ", ".join(data["local_sale_codes"]),  # Comma separated string
+                    "total_qty": data["total_qty"],
+                    "total_amount": data["total_amount"],
+                    "avg_rate": avg_rate
+                })
+            
+            product_summary.append({
+                "product_id": product_id,
+                "product_name": product_name,
+                "from_date": start_date,
+                "to_date": end_date,
+                "total_qty": product_data.aggregate(Sum("qty"))["qty__sum"] or 0,
+                "total_amount": product_data.aggregate(Sum("amount"))["amount__sum"] or 0,
+                "avg_rate": product_data.aggregate(Avg("rate"))["rate__avg"] or 0,
+                "mpp_summary": mpp_summary,
+            })
+
+        return Response({
+            "status": "success",
+            "message": "Data fetched successfully",
+            "product_summary": product_summary,
+        })
+
+        # def list(self, request, *args, **kwargs):
+        #     queryset = self.get_queryset()
+        #     start_date = self.request.query_params.get("start_date", None)
+        #     end_date = self.request.query_params.get("end_date", None)
+        #     # 🟢 Product-wise Summary (Group by product_code)
+        #     product_summary = []
+        #     products = queryset.values("product_code", "product_code__product_name").distinct()
+
+        #     for product in products:
+        #         product_id = product["product_code"]
+        #         product_name = product["product_code__product_name"]
+        #         product_data = queryset.filter(product_code=product_id)
+        #         mpp_summary = (
+        #             product_data.values("local_sale_code__mpp_code", "local_sale_code")  # Include Local Sale Code
+        #             .annotate(
+        #                 total_qty=Sum("qty"),
+        #                 total_amount=Sum("amount"),
+        #                 avg_rate=Avg("rate"),  # You can replace this with the latest rate if needed
+        #             )
+        #             .order_by("local_sale_code__mpp_code")  # Sort by MPP
+        #         )
+                
+        #         product_summary.append({
+        #             "product_id": product_id,
+        #             "product_name": product_name,
+        #             "from_date":start_date,
+        #             "to_date":end_date,
+        #             "total_qty": product_data.aggregate(Sum("qty"))["qty__sum"] or 0,
+        #             "total_amount": product_data.aggregate(Sum("amount"))["amount__sum"] or 0,
+        #             "avg_rate": product_data.aggregate(Avg("rate"))["rate__avg"] or 0,
+        #             "mpp_summary": list(mpp_summary),
+        #         })
+
+        #     return Response({
+        #         "status": "success",
+        #         "message": "Data fetched successfully",
+        #         "product_summary": product_summary,
+        #     })
 
 
 class ShiftViewSet(viewsets.ModelViewSet):

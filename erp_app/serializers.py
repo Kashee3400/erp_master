@@ -61,7 +61,7 @@ class MppCollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MppCollection
         fields = ['member_code','collection_date','shift','milk_type','milk_quality_type','sampleno','qty','fat','snf','rate',
-                'amount','mpp_collection_code','mpp_collection_references_code']
+                'amount','mpp_collection_code','references']
 
         depth = 1
 

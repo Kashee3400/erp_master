@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-
+from datetime import datetime
 User = get_user_model()
 
 # *****************************************************************************************************************#
@@ -40,7 +40,7 @@ class VCGroup(models.Model):
         blank=True,
         null=True,
         unique=True,
-        verbose_name=_("Member Code"),
+        verbose_name=_("Member Ex Code"),
         help_text=_("Unique identifier for the VCG member."),
     )
     member_name = models.CharField(
@@ -82,6 +82,7 @@ class VCGroup(models.Model):
             )
         ]
 
+from django.db.models import Q
 class VCGMeeting(models.Model):
     STARTED = "started"
     COMPLETED = "completed"
@@ -184,7 +185,6 @@ class VCGMeeting(models.Model):
             return delta.total_seconds() / 60
         return None  # If not completed
 
-    # Meta Information
     class Meta:
         db_table = "tbl_vcg_meeting"
         verbose_name = _("VCG Meeting")
@@ -196,9 +196,26 @@ class VCGMeeting(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(
-                fields=["mpp_name", "mpp_code"], name="unique_mpp_name_code"
-            )
+                fields=["mpp_name", "mpp_code", "started_at"],
+                condition=Q(status="started"),
+                name="unique_mpp_meeting_per_month"
+            ),
         ]
+
+    @classmethod
+    def get_ongoing_meeting(cls, mpp_code,date):
+        """
+        Check if an ongoing meeting exists (status=STARTED) for the given MPP in the specified year and month.
+        Returns a tuple (bool, meeting_instance or None).
+        """
+        meeting = cls.objects.filter(
+            mpp_code=mpp_code,
+            status=cls.STARTED,
+            started_at__year=date.year,
+            started_at__month=date.month
+        ).first()
+
+        return (bool(meeting), meeting)
 
 class VCGMemberAttendance(models.Model):
     PRESENT = "present"

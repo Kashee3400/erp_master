@@ -50,10 +50,29 @@ class MemberComplaintReportSerializer(serializers.ModelSerializer):
         fields = ['member_code', 'member_ex_code','member_name','reason']
 
 
+from rest_framework import serializers
+
 class VCGMeetingSerializer(serializers.ModelSerializer):
     meeting_id = serializers.UUIDField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)  # Ensure user is set automatically
+
     class Meta:
         model = VCGMeeting
-        fields = ['meeting_id', 'user', 'mpp_name', 'mpp_ex_code', 'mpp_code', 
-                'lat', 'lon', 'status', 'started_at', 'completed_at', 'synced']
+        fields = [
+            'meeting_id', 'user', 'mpp_name', 'mpp_ex_code', 'mpp_code', 
+            'lat', 'lon', 'status', 'started_at', 'completed_at', 'synced'
+        ]
+
+    def create(self, validated_data):
+        """Override create to set the user as the authenticated user."""
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['user'] = request.user  # Set authenticated user
+        else:
+            raise serializers.ValidationError({"user": "User must be authenticated."})
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        """Override update to prevent changing the user field."""
+        validated_data.pop('user', None)  # Ensure user cannot be updated
+        return super().update(instance, validated_data)

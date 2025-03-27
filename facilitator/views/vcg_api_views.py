@@ -300,48 +300,58 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = VCGMeetingFilter
-    search_fields = ['mpp_name', 'mpp_code']
-    ordering_fields = ['started_at', 'completed_at']
-    ordering = ['-started_at']
+
+    search_fields = ["mpp_name", "mpp_code"]
+    ordering_fields = ["started_at", "completed_at"]
+    ordering = ["-started_at"]
 
     def get_queryset(self):
         user = self.request.user
         queryset = VCGMeeting.objects.annotate(num_images=Count("meeting_images"))
-        
+
         if user.is_staff or user.is_superuser:
             return queryset
         return queryset.filter(user=user, num_images=0)
-    
+
     def create(self, request, *args, **kwargs):
         """
-        Create a new meeting record.
-        Expected request format:
-        {
-            "user": <user_id>,
-            "mpp_name": "MPP Name",
-            "mpp_ex_code": "MPP_EX_001",
-            "mpp_code": "MPP_001",
-            "lat": 23.456,
-            "lon": 78.123,
-            "started_at": "YYYY-MM-DD HH:MM:SS"
-        }
+        Create a new meeting record if it doesn't exist.
+        If a meeting with the same `mpp_name`, `mpp_ex_code`, and `mpp_code` exists, return that instead.
         """
+        mpp_code = request.data.get("mpp_code")
+        started_at = request.data.get("started_at")
+        dt_obj = datetime.fromisoformat(started_at) 
+        exists, meeting = VCGMeeting.get_ongoing_meeting(mpp_code=mpp_code,date=dt_obj)
+        if exists:
+            return Response(
+                {
+                    "status": "success",
+                    "message": _("A meeting with the same details already exists."),
+                    "result": VCGMeetingSerializer(meeting).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        # If no existing meeting, create a new one
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             meeting = serializer.save(status=VCGMeeting.STARTED, synced=False)
             return Response(
                 {
-                    "message": "Meeting created successfully",
-                    "meeting_id": meeting.meeting_id,
-                    "status": meeting.status
+                    "status": "success",
+                    "message": _("Your meeting has started"),
+                    "result": serializer.data,
                 },
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"status": "error", "message": _("Invalid data"), "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def update(self, request, *args, **kwargs):
         """
-        Update meeting details including marking it as completed.
+        Update meeting details, including marking it as completed.
         Expected request format:
         {
             "completed_at": "YYYY-MM-DD HH:MM:SS",
@@ -353,39 +363,63 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             meeting = serializer.save()
-            response_data = {
-                "message": "Meeting updated successfully",
-                "meeting_id": meeting.meeting_id,
-                "status": meeting.status
-            }
-            return Response(response_data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=["post"])
-    def mark_completed(self, request, pk=None):
-        """
-        Marks a meeting as completed.
-        Expected request format:
-        {
-            "completed_at": "YYYY-MM-DD HH:MM:SS"
-        }
-        """
-        meeting = get_object_or_404(VCGMeeting, pk=pk)
-        if meeting.status == VCGMeeting.COMPLETED:
-            return Response({"message": "Meeting is already completed."}, status=status.HTTP_400_BAD_REQUEST)
-        completed_at = request.data.get("completed_at", timezone.now())
-        meeting.completed_at = completed_at
-        meeting.status = VCGMeeting.COMPLETED
-        meeting.synced = True
-        meeting.save()
+            return Response(
+                {
+                    "status": "success",
+                    "message": _("Meeting updated successfully"),
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            {
-                "message": "Meeting marked as completed",
-                "meeting_id": meeting.meeting_id,
-                "completed_at": meeting.completed_at
-            },
-            status=status.HTTP_200_OK
+            {"status": "error", "message": _("Invalid data"), "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
+class VCGroupViewSet(viewsets.ModelViewSet):
+    queryset = VCGroup.objects.all()
+    serializer_class = VCGroupSerializer
+    # authentication_classes =[ApiKeyAuthentication]
+    permission_classes= [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": _( "VCG Member created successfully" ),
+                "data": serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response({
+            "error": _( "Invalid data" ),
+            "details": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": _( "VCG Member updated successfully" ),
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        return Response({
+            "error": _( "Invalid data" ),
+            "details": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({"message": _( "VCG Member deleted successfully" )}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get'])
+    def get_member(self, request, pk=None):
+        member = get_object_or_404(VCGroup, pk=pk)
+        serializer = self.get_serializer(member)
+        return Response({
+            "message": _( "VCG Member retrieved successfully" ),
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)

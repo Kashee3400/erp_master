@@ -18,7 +18,6 @@ router.register(r'shifts', views.ShiftViewSet,basename="shifts")
 
 router.register(r'attendances', api_view.VCGMemberAttendanceViewSet,basename="attendances")
 router.register(r'zero-days-pouring-reports', api_view.ZeroDaysPouringReportViewSet,basename="zero-days-pouring-reports")
-router.register(r'month-assignment', api_view.MonthAssignmentViewSet,basename="month-assignment")
 router.register(r'member-complaint-reports', api_view.MemberComplaintReportViewSet,basename="member-complaint-reports")
 router.register(r'zero-days-reasons', api_view.ZeroDaysReasonViewSet,basename="zero-days-reasons")
 router.register(r'member-complaint-reasons', api_view.MemberComplaintReasonViewSet,basename="member-complaint-reasons")
@@ -26,7 +25,9 @@ router.register(r'upload-images', api_view.VCGMeetingImagesViewSet,basename="upl
 router.register(r'vcg-meetings', api_view.VCGMeetingViewSet,basename="vcg-meetings-reasons")
 router.register(r'dashboard-summary-data', views.DashboardSummaryViewSet,basename="dashboard-summary-data")
 router.register(r'members', m_view.MemberHierarchyViewSet,basename="members")
-router.register(r'local-sales', m_view.LocalSaleViewSet,basename="local_sales")
+router.register(r'local-sales', views.LocalSaleViewSet,basename="local_sales")
+router.register(r'vcg-groups', api_view.VCGroupViewSet,basename="vcg-groups")
+
 
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

@@ -1608,6 +1608,109 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
 from django.db.models import Sum, F, FloatField, DecimalField
 from django.db.models.functions import Coalesce, Cast
 
+# class SahayakDashboardAPI(APIView):
+#     permission_classes = [AllowAny]
+
+#     def get(self, request, *args, **kwargs):
+#         created_date = request.GET.get("date", timezone.now().date())
+#         mpp_code = request.GET.get("mpp_code")
+#         shift_code = request.GET.get("shift_code")
+
+#         if not mpp_code:
+#             return Response(
+#                 {"status": "error", "message": "Please provide the MPP code"},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         mpp_ref = MppCollectionReferences.objects.filter(
+#             collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
+#         ).first()
+
+#         if not mpp_ref:
+#             return Response(
+#                 {"status": "error", "message": "No MPP reference found"},
+#                 status=status.HTTP_404_NOT_FOUND,
+#             )
+#             #references
+#         mpp_collection_agg = MppCollection.objects.filter(
+#             references=mpp_ref.mpp_collection_references_code
+#         ).aggregate(
+#             qty=Sum("qty"),
+#             fat=Coalesce(
+#                 Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField()) /
+#                 Cast(Sum("qty"), FloatField()), 
+#                 0.0
+#             ),
+#             snf=Coalesce(
+#                 Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField()) /
+#                 Cast(Sum("qty"), FloatField()), 
+#                 0.0
+#             ),
+#         )
+        
+#         actual_agg_data = RmrdMilkCollection.objects.filter(
+#             collection_date__date=created_date,
+#             module_code=mpp_code,
+#             shift_code__shift_code=shift_code,
+#         ).aggregate(
+#             qty=Sum("qty"),
+#             fat=Coalesce(
+#                 Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+#                 / Cast(Sum("qty"), FloatField()),
+#                 0.0,
+#             ),
+#             snf=Coalesce(
+#                 Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+#                 / Cast(Sum("qty"), FloatField()),
+#                 0.0,
+#             ),
+#         )
+#         dispatches = MppDispatchTxn.objects.filter(
+#                     mpp_dispatch_code__mpp_code=mpp_code,
+#                     mpp_dispatch_code__from_date__date=created_date,
+#                     mpp_dispatch_code__from_shift=shift_code,
+#                 ).aggregate(
+#                     qty=Sum("dispatch_qty"),
+#                     fat=Coalesce(
+#                         Cast(
+#                             Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
+#                             FloatField(),
+#                         )
+#                         / Cast(Sum("dispatch_qty"), FloatField()),
+#                         0.0,
+#                     ),
+#                     snf=Coalesce(
+#                         Cast(
+#                             Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
+#                             FloatField(),
+#                         )
+#                         / Cast(Sum("dispatch_qty"), FloatField()),
+#                         0.0,
+#                     ),
+#                 )
+                
+#         return Response(
+#             {
+#                 "status": 200,
+#                 "message": _("Data Retrieved"),
+#                 "data": {
+#                     "composite": self.format_aggregates(mpp_collection_agg),
+#                     "actual":self.format_aggregates(actual_agg_data),
+#                     "dispatch": self.format_aggregates(dispatches),
+#                 },
+#             },
+#             status=status.HTTP_200_OK,
+#         )
+
+#     def format_aggregates(self, aggregates):
+#         return {
+#             key: round(value, 2) if value is not None else None
+#             for key, value in aggregates.items()
+#         }
+
+from django.utils.translation import gettext as _
+from django.core.cache import cache
+
 class SahayakDashboardAPI(APIView):
     permission_classes = [AllowAny]
 
@@ -1617,107 +1720,66 @@ class SahayakDashboardAPI(APIView):
         shift_code = request.GET.get("shift_code")
 
         if not mpp_code:
-            return Response(
-                {"status": "error", "message": "Please provide the MPP code"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"status": "error", "message": "Please provide the MPP code"}, status=status.HTTP_400_BAD_REQUEST)
 
-        mpp_ref = MppCollectionReferences.objects.filter(
+        # Caching: Store and retrieve results from cache
+        cache_key = f"sahayak_dashboard_{mpp_code}_{shift_code}_{created_date}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        # Use `.values_list()` to fetch only required field
+        mpp_ref_code = MppCollectionReferences.objects.filter(
             collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
-        ).first()
+        ).values_list("mpp_collection_references_code", flat=True).first()
 
-        if not mpp_ref:
-            return Response(
-                {"status": "error", "message": "No MPP reference found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-            #references
-        mpp_collection_agg = MppCollection.objects.filter(
-            references=mpp_ref.mpp_collection_references_code
-        ).aggregate(
-            qty=Sum("qty"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField()) /
-                Cast(Sum("qty"), FloatField()), 
-                0.0
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField()) /
-                Cast(Sum("qty"), FloatField()), 
-                0.0
-            ),
-        )
+        if not mpp_ref_code:
+            return Response({"status": "error", "message": "No MPP reference found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # actual_agg_data = RmrdMilkCollection.objects.filter(
-        #     collection_date__date=created_date,
-        #     module_code=mpp_code,
-        #     shift_code__shift_code=shift_code,
-        # ).first()
-        actual_agg_data = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date,
-            module_code=mpp_code,
-            shift_code__shift_code=shift_code,
-        ).aggregate(
-            qty=Sum("qty"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-        )
-        dispatches = MppDispatchTxn.objects.filter(
-                    mpp_dispatch_code__mpp_code=mpp_code,
-                    mpp_dispatch_code__from_date__date=created_date,
-                    mpp_dispatch_code__from_shift=shift_code,
-                ).aggregate(
-                    qty=Sum("dispatch_qty"),
-                    fat=Coalesce(
-                        Cast(
-                            Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
-                            FloatField(),
-                        )
-                        / Cast(Sum("dispatch_qty"), FloatField()),
-                        0.0,
-                    ),
-                    snf=Coalesce(
-                        Cast(
-                            Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
-                            FloatField(),
-                        )
-                        / Cast(Sum("dispatch_qty"), FloatField()),
-                        0.0,
-                    ),
-                )
-                
-        return Response(
-            {
-                "status": 200,
-                "message": _("Data Retrieved"),
-                "data": {
-                    "composite": self.format_aggregates(mpp_collection_agg),
-                    # "actual": (
-                    #     RmrdCollectionSerializer(actual_agg_data).data
-                    #     if actual_agg_data
-                    #     else {}
-                    # ),
-                    "actual":self.format_aggregates(actual_agg_data),
-                    "dispatch": self.format_aggregates(dispatches),
-                },
+        # Optimize aggregations
+        mpp_collection_agg = self.get_aggregates(MppCollection, "qty", "fat", "snf", references=mpp_ref_code)
+        actual_agg_data = self.get_aggregates(RmrdMilkCollection, "qty", "fat", "snf", collection_date__date=created_date, module_code=mpp_code, shift_code__shift_code=shift_code)
+        dispatches = self.get_aggregates(MppDispatchTxn, "dispatch_qty", "fat", "snf", mpp_dispatch_code__mpp_code=mpp_code, mpp_dispatch_code__from_date__date=created_date, mpp_dispatch_code__from_shift=shift_code)
+
+        # Construct response data
+        response_data = {
+            "status": 200,
+            "message": _("Data Retrieved"),
+            "data": {
+                "composite": self.format_aggregates(mpp_collection_agg),
+                "actual": self.format_aggregates(actual_agg_data),
+                "dispatch": self.format_aggregates(dispatches),
             },
-            status=status.HTTP_200_OK,
-        )
-
-    def format_aggregates(self, aggregates):
-        return {
-            key: round(value, 2) if value is not None else None
-            for key, value in aggregates.items()
         }
 
+        # Store in cache for 5 minutes
+        cache.set(cache_key, response_data, timeout=300)
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def get_aggregates(self, model, qty_field, fat_field, snf_field, **filters):
+        """
+        Optimized function to compute aggregations efficiently.
+        """
+        aggregation = model.objects.filter(**filters).aggregate(
+            qty=Sum(qty_field),
+            fat=Coalesce(
+                Cast(Sum(F(qty_field) * F(fat_field), output_field=FloatField()), FloatField()) /
+                Cast(Sum(qty_field), FloatField()), 
+                0.0
+            ),
+            snf=Coalesce(
+                Cast(Sum(F(qty_field) * F(snf_field), output_field=FloatField()), FloatField()) /
+                Cast(Sum(qty_field), FloatField()), 
+                0.0
+            ),
+        )
+        return aggregation
+
+    def format_aggregates(self, aggregates):
+        """
+        Rounds float values for better readability.
+        """
+        return {key: round(value, 2) if value is not None else 0.0 for key, value in aggregates.items()}
 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()

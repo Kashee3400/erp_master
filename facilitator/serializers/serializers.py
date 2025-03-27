@@ -460,6 +460,7 @@ class TopPourerSerializer(serializers.Serializer):
         return reverse('members-detail', args=[obj['member_code']])
 
 class MonthAssignmentSerializer(serializers.Serializer):
+    mpp_code = serializers.CharField()
     month = serializers.CharField()
     milk_collection = serializers.DecimalField(max_digits=18, decimal_places=2)
     total_members = serializers.IntegerField()

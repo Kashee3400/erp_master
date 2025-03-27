@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.apps import apps
-from django.contrib import admin
-from django.utils.translation import gettext_lazy
 from .models import *
 from import_export.admin import ImportExportModelAdmin
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 app_name = 'erp_app'
 app_models = apps.get_app_config(app_name).get_models()
@@ -23,18 +24,8 @@ class MppAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     # Define the fields that can be searched
     search_fields = (
         'mpp_code',
-        'mpp_short_name',
         'mpp_ex_code',
         'mpp_name',
-        'mpp_type',
-    )
-
-    # Define the fields that can be filtered
-    list_filter = (
-        'mpp_type',
-        'originating_type',
-        'created_at',
-        'updated_at',
     )
 
     # Enable editing of specific fields
@@ -44,10 +35,6 @@ class MppAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'mpp_short_name',
         'mpp_name',
         'mpp_type',
-        'created_at',
-        'created_by',
-        'updated_at',
-        'updated_by',
     )
 
     # Define readonly fields
@@ -77,9 +64,6 @@ class MccAdmin(admin.ModelAdmin):
     # Define the fields that can be filtered
     list_filter = (
         'is_active',
-        'originating_type',
-        'created_at',
-        'updated_at',
     )
 
     # Enable editing of specific fields
@@ -89,10 +73,6 @@ class MccAdmin(admin.ModelAdmin):
         'mcc_name',
         'description',
         'is_active',
-        'created_at',
-        'created_by',
-        'updated_at',
-        'updated_by',
     )
 
     # You can also define the readonly fields if needed
@@ -121,12 +101,30 @@ class MemberMasterAdmin(admin.ModelAdmin):
     search_fields = ['member_code', 'member_name', 'mobile_no']
     list_filter = ['is_active', 'member_type', 'application_date','created_at']
 
-
+from rangefilter.filters import DateRangeFilter
 @admin.register(MppCollection)
 class MppCollectionAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in MppCollection._meta.fields]
-    search_fields = ['member_code', 'mpp_collection_references_code']
-    list_filter = ['shift_code', 'collection_date']
+    list_display = ["member_code","get_mpp_code","collection_date","shift_code","qty",
+                    "fat","snf","rate","amount",
+                    ]
+    search_fields = ['member_code']
+    list_filter = ['shift_code','references__mpp_code',('collection_date', DateRangeFilter)]
+
+    def get_mpp_code(self, obj):
+        """Returns the related mpp_code value."""
+        if obj.references and obj.references.mpp_code:
+            return obj.references.mpp_code.mpp_name
+        return "-"
+
+    get_mpp_code.short_description = "MPP Code"
+    get_mpp_code.admin_order_field = "references__mpp_code__mpp_code"
+
+    def get_queryset(self, request):
+        """Prevents initial data from loading until a filter is applied."""
+        qs = super().get_queryset(request)
+        if not request.GET:
+            return qs.none()
+        return qs
 
 
 @admin.register(RmrdMilkCollection)
@@ -144,10 +142,15 @@ class RmrdMilkCollectionAdmin(admin.ModelAdmin):
         'collection_date',
         'shift_code',
         'milk_type_code',
-        'milk_quality_type_code',
-        'created_at',
-        'updated_at'
+        'module_code',
     ]
+    
+    def get_queryset(self, request):
+        """Prevents initial data from loading until a filter is applied."""
+        qs = super().get_queryset(request)
+        if not request.GET:  # If no filters are applied, return an empty queryset
+            return qs.none()
+        return qs
 
 @admin.register(RmrdMilkCollectionDetail)
 class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
@@ -167,6 +170,13 @@ class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
         'milk_type_code',
         'milk_quality_type_code',
     ]
+    
+    def get_queryset(self, request):
+        """Prevents initial data from loading until a filter is applied."""
+        qs = super().get_queryset(request)
+        if not request.GET:  # If no filters are applied, return an empty queryset
+            return qs.none()
+        return qs
 
     
 @admin.register(Shift)
@@ -221,17 +231,9 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Product, ProductAdmin)
 
 
-class MemberHierarchyViewAdmin(admin.ModelAdmin):
+class MemberHierarchyViewAdmin(ImportExportModelAdmin,admin.ModelAdmin):
     list_display = [field.name for field in MemberHierarchyView._meta.fields]
-    # list_display = (
-    #     'member_code', 
-    #     'member_tr_code',
-    #     'member_name', 
-    #     'mobile_no', 
-    #     'is_active', 
-    #     'created_at'
-    # )
-    search_fields = ('member_code','member_tr_code', 'member_name', 'mobile_no','mpp_code')
+    search_fields = ('member_code',)
     list_filter = ('is_active', 'created_at')
 
 admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)
@@ -274,3 +276,5 @@ class MppDispatchTxnAdmin(admin.ModelAdmin):
     list_display = ["mpp_dispatch_txn_code","dispatch_qty","fat","snf","rate","amount","created_at"]
     search_fields = ('mpp_dispatch_code__mpp_code',)
     list_filter = ('created_at',)
+
+
