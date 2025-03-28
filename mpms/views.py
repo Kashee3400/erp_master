@@ -111,13 +111,11 @@ class TblfarmercollectionViewSet(viewsets.ModelViewSet):
             total_days=Count('dumpdate', distinct=True),
             total_shift=Count('rowid')
         )
-        
         # Format numerical fields to two decimal places
         totals['total_qty'] = format(float(totals['total_qty'] or 0), '.2f')
         totals['avg_fat'] = format(float(totals['avg_fat'] or 0), '.3f')
         totals['avg_snf'] = format(float(totals['avg_snf'] or 0), '.3f')
         totals['total_amount'] = format(float(totals['total_amount'] or 0), '.2f')
-        
         return totals
 
     def list(self, request, *args, **kwargs):

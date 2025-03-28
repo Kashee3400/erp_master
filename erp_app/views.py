@@ -228,18 +228,112 @@ class MppCollectionAggregationListView(generics.ListAPIView):
                 "data": []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# class MppCollectionDetailView(generics.GenericAPIView):
+#     """
+#     API endpoint for fetching other dashboard data.
+#     """
+#     serializer_class = MppCollectionSerializer
+#     # authentication_classes = [JWTAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def get(self, request, *args, **kwargs):
+#         today = timezone.now().date()
+        
+#         member = MemberMaster.objects.filter(mobile_no="8810778378").first()
+#         if not member:
+#             return Response({
+#                 "status": 400,
+#                 "message": "No member found on this mobile number",
+#                 "data": {}
+#             }, status=status.HTTP_400_BAD_REQUEST)
+
+#         date_str = request.query_params.get('date')
+#         if date_str:
+#             try:
+#                 provided_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+#             except ValueError:
+#                 return Response({
+#                     "status": 400,
+#                     "message": "Date must be in YYYY-MM-DD format",
+#                     "data": {}
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             provided_date = today
+
+#         start_date, end_date = self.get_fiscal_year_range(provided_date)
+#         print(start_date)
+#         print(end_date)
+#         date_queryset = MppCollection.objects.filter(
+#             collection_date__date=provided_date,
+#             member_code=member.member_code
+#         )
+
+#         annotated_queryset = MppCollection.objects.filter(
+#             collection_date__range=(start_date, end_date),
+#             member_code=member.member_code
+#         ).annotate(date_only=TruncDate('collection_date')).values('date_only').annotate(
+#             total_qty=Sum('qty'),
+#             total_payment=Sum('amount')
+#         )
+        
+#         final_aggregated_data = {
+#             'total_days': annotated_queryset.count(),
+#             'total_qty': sum(item['total_qty'] for item in annotated_queryset),
+#             'total_payment': sum(item['total_payment'] for item in annotated_queryset)
+#         }
+
+#         date_serializer = self.get_serializer(date_queryset, many=True)
+
+#         response_data = {
+#             "status": status.HTTP_200_OK,
+#             "message": "success",
+#             "data": {
+#                 "dashboard_data": date_serializer.data,
+#                 "dashboard_fy_data": final_aggregated_data,
+#             }
+#         }
+        
+#         return Response(response_data, status=status.HTTP_200_OK)
+
+#     def get_fiscal_year_range(self, provided_date):
+#         current_year = provided_date.year
+#         current_month = provided_date.month
+
+#         if current_month < 4:
+#             start_year = current_year - 1
+#         else:
+#             start_year = current_year
+
+#         start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
+#         end_date = timezone.make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
+#         return start_date, end_date
+
+
+from django.core.cache import cache
+
 class MppCollectionDetailView(generics.GenericAPIView):
     """
     API endpoint for fetching other dashboard data.
     """
     serializer_class = MppCollectionSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
         
-        member = MemberMaster.objects.filter(mobile_no=request.user.username).first()
+        # Fetch date parameter and validate format
+        date_str = request.query_params.get('date', None)
+        provided_date = self.validate_date(date_str, today)
+        if isinstance(provided_date, Response):
+            return provided_date
+
+        # Fetch member by mobile number
+        cache_key_member = f"member_8810778378"
+        member = cache.get(cache_key_member)
+        if member is None:
+            member = MemberMaster.objects.filter(mobile_no="8810778378").values('member_code').first()
+            cache.set(cache_key_member, member, timeout=3600)  # Cache for 1 hour
+
         if not member:
             return Response({
                 "status": 400,
@@ -247,39 +341,33 @@ class MppCollectionDetailView(generics.GenericAPIView):
                 "data": {}
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        date_str = request.query_params.get('date')
-        if date_str:
-            try:
-                provided_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
-            except ValueError:
-                return Response({
-                    "status": 400,
-                    "message": "Date must be in YYYY-MM-DD format",
-                    "data": {}
-                }, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            provided_date = today
-
+        member_code = member['member_code']
         start_date, end_date = self.get_fiscal_year_range(provided_date)
 
-        date_queryset = MppCollection.objects.filter(
-            collection_date__date=provided_date,
-            member_code=member.member_code
-        )
+        # Cache key for collections on provided date
+        cache_key_date = f"mpp_collection_{member_code}_{provided_date}"
+        date_queryset = cache.get(cache_key_date)
+        if date_queryset is None:
+            date_queryset = list(MppCollection.objects.filter(
+                collection_date__date=provided_date, member_code=member_code
+            ))
+            cache.set(cache_key_date, date_queryset, timeout=3600)  # Cache for 1 hour
 
-        annotated_queryset = MppCollection.objects.filter(
-            collection_date__range=(start_date, end_date),
-            member_code=member.member_code
-        ).annotate(date_only=TruncDate('collection_date')).values('date_only').annotate(
-            total_qty=Sum('qty'),
-            total_payment=Sum('amount')
-        )
-        
-        final_aggregated_data = {
-            'total_days': annotated_queryset.count(),
-            'total_qty': sum(item['total_qty'] for item in annotated_queryset),
-            'total_payment': sum(item['total_payment'] for item in annotated_queryset)
-        }
+        # Cache key for fiscal year data
+        cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
+        fiscal_data = cache.get(cache_key_fy)
+        if fiscal_data is None:
+            aggregated_data = MppCollection.objects.filter(
+                collection_date__range=(start_date, end_date),
+                member_code=member_code
+            ).annotate(date_only=TruncDate('collection_date'))
+            
+            fiscal_data = aggregated_data.aggregate(
+                total_days=Count('date_only', distinct=True),
+                total_qty=Sum('qty', default=0),
+                total_payment=Sum('amount', default=0)
+            )
+            cache.set(cache_key_fy, fiscal_data, timeout=3600)  # Cache for 1 hour
 
         date_serializer = self.get_serializer(date_queryset, many=True)
 
@@ -288,7 +376,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
             "message": "success",
             "data": {
                 "dashboard_data": date_serializer.data,
-                "dashboard_fy_data": final_aggregated_data,
+                "dashboard_fy_data": fiscal_data,
             }
         }
         
@@ -296,17 +384,22 @@ class MppCollectionDetailView(generics.GenericAPIView):
 
     def get_fiscal_year_range(self, provided_date):
         current_year = provided_date.year
-        current_month = provided_date.month
-
-        if current_month < 4:
-            start_year = current_year - 1
-        else:
-            start_year = current_year
-
+        start_year = current_year - 1 if provided_date.month < 4 else current_year
         start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
         end_date = timezone.make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
         return start_date, end_date
 
+    def validate_date(self, date_str, default_date):
+        if not date_str:
+            return default_date
+        try:
+            return timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({
+                "status": 400,
+                "message": "Date must be in YYYY-MM-DD format",
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 class MemberShareFinalInfoView(APIView):
     permission_classes = [IsAuthenticated]
