@@ -16,8 +16,9 @@ from erp_app.models import (
     RmrdMilkCollection,
     PriceBook,
     PriceBookDetail,
+    Mcc
 )
-from erp_app.serializers import MemberHierarchyViewSerializer
+from erp_app.serializers import MemberHierarchyViewSerializer,MccSerializer,MppSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
@@ -48,6 +49,7 @@ from django.db.models import Sum, Avg
 from django.conf import settings
 from django.utils.timezone import now
 from .filters import SahayakIncentivesFilter
+from facilitator.authentication import ApiKeyAuthentication
 from datetime import date
 from django.utils.dateparse import parse_date
 from django.db.models import Sum, Avg
@@ -55,6 +57,8 @@ from rest_framework import viewsets, filters
 from .filters import MemberHeirarchyFilter
 from .serialzers import NewsSerializer
 from django.db.models import Q
+
+from member.models import UserDevice
 
 User = get_user_model()
 
@@ -347,13 +351,16 @@ class ProductRateListView(generics.ListAPIView):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-
-class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
+from django.db.models import Sum, Count,Avg
+from django.db.models.functions import TruncDate
+from django.utils.dateparse import parse_date
+        
+class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
     permission_required = "member_app.can_view_otp"
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name)    
 
     def post(self, request, *args, **kwargs):
         data = request.POST
@@ -363,10 +370,92 @@ class MyHomePage(LoginRequiredMixin, PermissionRequiredMixin, View):
         }
         return JsonResponse(context)
 
-    def handle_no_permission(self):
-        return HttpResponseForbidden(
-            "You don't have permission to perform this action."
-        )
+from rest_framework.generics import GenericAPIView
+
+# class AppInstalledData(APIView):
+#     authentication_classes = [ApiKeyAuthentication]
+#     filter_backends = [DjangoFilterBackend]
+#     permission_classes = [AllowAny]
+    
+#     def get(self, request, *args, **kwargs):
+#         mcc_code = self.request.GET.get('mcc_code', None)
+#         mpp_code = self.request.GET.get('mpp_code', None)
+#         if (mcc_code or mpp_code) is None:
+#             return Response({"status": "success", "message": f"{mcc_code} or {mpp_code} is required"})
+
+#         user_devices = UserDevice.objects.filter(module=None).values_list('user__username', flat=True)
+#         members = MemberHierarchyView.objects.filter(mcc_code=mcc_code, is_default=True, is_active=True)
+        
+#         mpp = None
+#         if mpp_code:
+#             members = members.filter(mpp_code=mpp_code)
+#             mpp = Mpp.objects.filter(mpp_code=mpp_code).first()
+            
+#         total_members = members.count()
+#         app_installed_by_users = members.filter(mobile_no__in=list(user_devices))
+#         installed_count = app_installed_by_users.count()
+#         installed_percentage = (installed_count / total_members) * 100 if total_members > 0 else 0
+        
+#         mcc = Mcc.objects.filter(mcc_code=mcc_code).first()
+#         data = {
+#             "total_members": total_members,
+#             "mcc": MccSerializer(mcc).data,
+#             "mpp": MppSerializer(mpp).data if mpp else None,
+#             "app_installed_by_member": installed_count,
+#             "installed_percentage": round(installed_percentage, 2)
+#         }
+#         return Response(data, status=status.HTTP_200_OK)
+
+import matplotlib.pyplot as plt
+import io
+from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
+
+class AppInstalledData(APIView):
+    # authentication_classes = [ApiKeyAuthentication]
+    filter_backends = [DjangoFilterBackend]
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        mcc_code = self.request.GET.get('mcc_code', None)
+        mpp_code = self.request.GET.get('mpp_code', None)
+
+        if not mcc_code and not mpp_code:
+            return Response({"status": "error", "message": "mcc_code or mpp_code is required"}, status=400)
+
+        user_devices = UserDevice.objects.filter(module=None).values_list('user__username', flat=True)
+        members = MemberHierarchyView.objects.filter(mcc_code=mcc_code, is_default=True, is_active=True)
+
+        mpp = None
+        if mpp_code:
+            members = members.filter(mpp_code=mpp_code)
+            mpp = Mpp.objects.filter(mpp_code=mpp_code).first()
+
+        total_members = members.count()
+        app_installed_by_users = members.filter(mobile_no__in=list(user_devices))
+        installed_count = app_installed_by_users.count()
+
+        installed_percentage = (installed_count / total_members) * 100 if total_members > 0 else 0
+        not_installed_percentage = 100 - installed_percentage
+
+        # Generate Pie Chart
+        labels = ['Total Members', 'Member Installed',"Percentage"]
+        sizes = [total_members, app_installed_by_users,not_installed_percentage]
+        colors = ['#4CAF50', '#FF6347','#FF5247']
+
+        plt.figure(figsize=(5, 5))
+        plt.pie(sizes, labels=labels, autopct='%1.1f%%', colors=colors, startangle=140)
+        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        # Convert plot to image
+        img_io = io.BytesIO()
+        plt.savefig(img_io, format='png')
+        plt.close()
+        img_io.seek(0)
+
+        return HttpResponse(img_io, content_type="image/png")
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -1607,106 +1696,6 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
 
 from django.db.models import Sum, F, FloatField, DecimalField
 from django.db.models.functions import Coalesce, Cast
-
-# class SahayakDashboardAPI(APIView):
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, *args, **kwargs):
-#         created_date = request.GET.get("date", timezone.now().date())
-#         mpp_code = request.GET.get("mpp_code")
-#         shift_code = request.GET.get("shift_code")
-
-#         if not mpp_code:
-#             return Response(
-#                 {"status": "error", "message": "Please provide the MPP code"},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         mpp_ref = MppCollectionReferences.objects.filter(
-#             collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
-#         ).first()
-
-#         if not mpp_ref:
-#             return Response(
-#                 {"status": "error", "message": "No MPP reference found"},
-#                 status=status.HTTP_404_NOT_FOUND,
-#             )
-#             #references
-#         mpp_collection_agg = MppCollection.objects.filter(
-#             references=mpp_ref.mpp_collection_references_code
-#         ).aggregate(
-#             qty=Sum("qty"),
-#             fat=Coalesce(
-#                 Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField()) /
-#                 Cast(Sum("qty"), FloatField()), 
-#                 0.0
-#             ),
-#             snf=Coalesce(
-#                 Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField()) /
-#                 Cast(Sum("qty"), FloatField()), 
-#                 0.0
-#             ),
-#         )
-        
-#         actual_agg_data = RmrdMilkCollection.objects.filter(
-#             collection_date__date=created_date,
-#             module_code=mpp_code,
-#             shift_code__shift_code=shift_code,
-#         ).aggregate(
-#             qty=Sum("qty"),
-#             fat=Coalesce(
-#                 Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-#                 / Cast(Sum("qty"), FloatField()),
-#                 0.0,
-#             ),
-#             snf=Coalesce(
-#                 Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-#                 / Cast(Sum("qty"), FloatField()),
-#                 0.0,
-#             ),
-#         )
-#         dispatches = MppDispatchTxn.objects.filter(
-#                     mpp_dispatch_code__mpp_code=mpp_code,
-#                     mpp_dispatch_code__from_date__date=created_date,
-#                     mpp_dispatch_code__from_shift=shift_code,
-#                 ).aggregate(
-#                     qty=Sum("dispatch_qty"),
-#                     fat=Coalesce(
-#                         Cast(
-#                             Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
-#                             FloatField(),
-#                         )
-#                         / Cast(Sum("dispatch_qty"), FloatField()),
-#                         0.0,
-#                     ),
-#                     snf=Coalesce(
-#                         Cast(
-#                             Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
-#                             FloatField(),
-#                         )
-#                         / Cast(Sum("dispatch_qty"), FloatField()),
-#                         0.0,
-#                     ),
-#                 )
-                
-#         return Response(
-#             {
-#                 "status": 200,
-#                 "message": _("Data Retrieved"),
-#                 "data": {
-#                     "composite": self.format_aggregates(mpp_collection_agg),
-#                     "actual":self.format_aggregates(actual_agg_data),
-#                     "dispatch": self.format_aggregates(dispatches),
-#                 },
-#             },
-#             status=status.HTTP_200_OK,
-#         )
-
-#     def format_aggregates(self, aggregates):
-#         return {
-#             key: round(value, 2) if value is not None else None
-#             for key, value in aggregates.items()
-#         }
 
 from django.utils.translation import gettext as _
 from django.core.cache import cache

@@ -14611,7 +14611,7 @@ class MppDispatchTxn(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'mpp_dispatch_txn'
+        db_table = 'mpp_dispatch_view'
 
 
 class MppHistory(models.Model):

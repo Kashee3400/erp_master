@@ -20,10 +20,6 @@ DB_PORT_MEMBER = config("DB_PORT_MEMBER", None)
 
 # cred for connecting mpms db
 DB_NAME_MPMS = config("DB_NAME_MPMS", None)
-DB_USER_MPMS = config("DB_USER_MPMS", None)
-DB_PASSWORD_MPMS = config("DB_PASSWORD_MPMS", None)
-DB_HOST_MPMS = config("DB_HOST_MPMS", None)
-DB_PORT_MPMS = config("DB_PORT_MPMS", None)
 
 DATABASES = {
     "default": {
@@ -48,10 +44,10 @@ DATABASES = {
     "mpms_db": {
         "ENGINE": DB_ENGINE,
         "NAME": DB_NAME_MPMS,
-        "USER": DB_USER_MPMS,
-        "PASSWORD": DB_PASSWORD_MPMS,
-        "HOST": DB_HOST_MPMS,
-        "PORT": DB_PORT_MPMS,
+        "USER": DB_USER_SARTHAK,
+        "PASSWORD": DB_PASSWORD_SARTHAK,
+        "HOST": DB_HOST_SARTHAK,
+        "PORT": DB_PORT_SARTHAK,
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
         },

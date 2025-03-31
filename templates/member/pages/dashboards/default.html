@@ -1,9 +1,10 @@
 {% extends 'member/pages/base.html' %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}
-ERP :: Dashboard
+{% trans "ERP :: Dashboard" %}
 {% endblock title %}
+
 {% block content %}
 
 <div class="row">
@@ -13,7 +14,7 @@ ERP :: Dashboard
         <div class="row">
           <div class="col-lg-6">
             <div class="d-flex flex-column h-100">
-              <h2 class="font-weight-bolder mb-0">General Statistics</h2>
+              <h2 class="font-weight-bolder mb-0">{% trans "General Statistics" %}</h2>
             </div>
           </div>
         </div>

@@ -9,6 +9,15 @@ class MemberMasterSerializer(serializers.ModelSerializer):
         model = MemberMaster
         fields = '__all__'
 
+class MccSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mcc
+        fields = '__all__'
+
+class MppSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mpp
+        fields = '__all__'
 
 class ShiftSerializer(serializers.ModelSerializer):
     
