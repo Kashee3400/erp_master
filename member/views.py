@@ -372,90 +372,39 @@ class MyHomePage(LoginRequiredMixin, View):
 
 from rest_framework.generics import GenericAPIView
 
-# class AppInstalledData(APIView):
-#     authentication_classes = [ApiKeyAuthentication]
-#     filter_backends = [DjangoFilterBackend]
-#     permission_classes = [AllowAny]
-    
-#     def get(self, request, *args, **kwargs):
-#         mcc_code = self.request.GET.get('mcc_code', None)
-#         mpp_code = self.request.GET.get('mpp_code', None)
-#         if (mcc_code or mpp_code) is None:
-#             return Response({"status": "success", "message": f"{mcc_code} or {mpp_code} is required"})
-
-#         user_devices = UserDevice.objects.filter(module=None).values_list('user__username', flat=True)
-#         members = MemberHierarchyView.objects.filter(mcc_code=mcc_code, is_default=True, is_active=True)
-        
-#         mpp = None
-#         if mpp_code:
-#             members = members.filter(mpp_code=mpp_code)
-#             mpp = Mpp.objects.filter(mpp_code=mpp_code).first()
-            
-#         total_members = members.count()
-#         app_installed_by_users = members.filter(mobile_no__in=list(user_devices))
-#         installed_count = app_installed_by_users.count()
-#         installed_percentage = (installed_count / total_members) * 100 if total_members > 0 else 0
-        
-#         mcc = Mcc.objects.filter(mcc_code=mcc_code).first()
-#         data = {
-#             "total_members": total_members,
-#             "mcc": MccSerializer(mcc).data,
-#             "mpp": MppSerializer(mpp).data if mpp else None,
-#             "app_installed_by_member": installed_count,
-#             "installed_percentage": round(installed_percentage, 2)
-#         }
-#         return Response(data, status=status.HTTP_200_OK)
-
-import matplotlib.pyplot as plt
-import io
-from django.http import HttpResponse
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from django_filters.rest_framework import DjangoFilterBackend
-
 class AppInstalledData(APIView):
     # authentication_classes = [ApiKeyAuthentication]
     filter_backends = [DjangoFilterBackend]
     permission_classes = [AllowAny]
-
+    
     def get(self, request, *args, **kwargs):
         mcc_code = self.request.GET.get('mcc_code', None)
         mpp_code = self.request.GET.get('mpp_code', None)
-
-        if not mcc_code and not mpp_code:
-            return Response({"status": "error", "message": "mcc_code or mpp_code is required"}, status=400)
+        if (mcc_code or mpp_code) is None:
+            return Response({"status": "success", "message": f"{mcc_code} or {mpp_code} is required"})
 
         user_devices = UserDevice.objects.filter(module=None).values_list('user__username', flat=True)
         members = MemberHierarchyView.objects.filter(mcc_code=mcc_code, is_default=True, is_active=True)
-
+        
         mpp = None
         if mpp_code:
             members = members.filter(mpp_code=mpp_code)
             mpp = Mpp.objects.filter(mpp_code=mpp_code).first()
-
+            
         total_members = members.count()
         app_installed_by_users = members.filter(mobile_no__in=list(user_devices))
         installed_count = app_installed_by_users.count()
-
         installed_percentage = (installed_count / total_members) * 100 if total_members > 0 else 0
-        not_installed_percentage = 100 - installed_percentage
-
-        # Generate Pie Chart
-        labels = ['Total Members', 'Member Installed',"Percentage"]
-        sizes = [total_members, app_installed_by_users,not_installed_percentage]
-        colors = ['#4CAF50', '#FF6347','#FF5247']
-
-        plt.figure(figsize=(5, 5))
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', colors=colors, startangle=140)
-        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        # Convert plot to image
-        img_io = io.BytesIO()
-        plt.savefig(img_io, format='png')
-        plt.close()
-        img_io.seek(0)
-
-        return HttpResponse(img_io, content_type="image/png")
+        
+        mcc = Mcc.objects.filter(mcc_code=mcc_code).first()
+        data = {
+            "total_members": total_members,
+            "mcc": MccSerializer(mcc).data,
+            "mpp": MppSerializer(mpp).data if mpp else None,
+            "app_installed_by_member": installed_count,
+            "installed_percentage": round(installed_percentage, 2)
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class StandardResultsSetPagination(PageNumberPagination):
