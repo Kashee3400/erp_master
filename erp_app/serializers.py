@@ -90,36 +90,19 @@ class MppCollectionSerializer(serializers.ModelSerializer):
     shift = ShiftSerializer(source='shift_code', read_only=True)
     milk_type = MilkTypeSerializer(source='milk_type_code', read_only=True)
     milk_quality_type = MilkQualityTypeSerializer(source='milk_quality_type_code', read_only=True)
-
-    qty = serializers.SerializerMethodField()
-    fat = serializers.SerializerMethodField()
-    snf = serializers.SerializerMethodField()
-    rate = serializers.SerializerMethodField()
-    amount = serializers.SerializerMethodField()
+    mpp_collection_references_code = serializers.SerializerMethodField()
 
     class Meta:
         model = MppCollection
         fields = [
             'member_code', 'collection_date', 'shift', 'milk_type', 'milk_quality_type', 'sampleno', 
-            'qty', 'fat', 'snf', 'rate', 'amount', 'mpp_collection_code',
+            'qty', 'fat', 'snf', 'rate', 'amount', 'mpp_collection_code',"mpp_collection_references_code"
         ]
         depth = 1
-
-    def get_qty(self, obj):
-        return float(obj.qty) if obj.qty is not None else 0.0
-
-    def get_fat(self, obj):
-        return float(obj.fat) if obj.fat is not None else 0.0
-
-    def get_snf(self, obj):
-        return float(obj.snf) if obj.snf is not None else 0.0
-
-    def get_rate(self, obj):
-        return float(obj.rate) if obj.rate is not None else 0.0
-
-    def get_amount(self, obj):
-        return float(obj.amount) if obj.amount is not None else 0.0
-
+        
+    def get_mpp_collection_references_code(self,obj):
+        return obj.references.mpp_collection_references_code 
+    
 class LocalSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale
