@@ -86,9 +86,14 @@ class MppCollectionReferencesSerializer(serializers.ModelSerializer):
         "shift_code"
         ]
 
+class MilkTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MilkType
+        fields = ['milk_type_code', 'milk_type_name', 'milk_type_short_name', 'is_active', 'is_milch']
+
 class MppCollectionSerializer(serializers.ModelSerializer):
     shift = ShiftSerializer(source='shift_code', read_only=True)
-    milk_type = MilkTypeSerializer(source='milk_type_code', read_only=True)
+    milk_type = serializers.SerializerMethodField()
     milk_quality_type = MilkQualityTypeSerializer(source='milk_quality_type_code', read_only=True)
     mpp_collection_references_code = serializers.SerializerMethodField()
 
@@ -103,6 +108,13 @@ class MppCollectionSerializer(serializers.ModelSerializer):
     def get_mpp_collection_references_code(self,obj):
         return obj.references.mpp_collection_references_code 
     
+    def get_milk_type(self, obj):
+        """Returns the serialized milk type or the first available milk type if missing"""
+        if obj.milk_type_code:
+            return MilkTypeSerializer(obj.milk_type_code).data
+        milk_type = MilkType.objects.first()
+        return MilkTypeSerializer(milk_type).data if milk_type else None
+
 class LocalSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale
