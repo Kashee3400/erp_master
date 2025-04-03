@@ -166,10 +166,10 @@ class OldDataCollectionView(generics.GenericAPIView):
     """
     serializer_class = TblfarmercollectionSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        phonenumber = "8810778378"  # Hardcoded; should be `self.request.user.username`
+        phonenumber = self.request.user.username 
         mpms_member = Tblfarmer.objects.filter(phonenumber=phonenumber).first()
         if not mpms_member:
             return Response({"status": 400, "message": "No member found on this mobile number", "data": {}}, 
