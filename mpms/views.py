@@ -169,38 +169,51 @@ class OldDataCollectionView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        phonenumber = self.request.user.username 
+        phonenumber = self.request.user.username
         mpms_member = Tblfarmer.objects.filter(phonenumber=phonenumber).first()
         if not mpms_member:
             return Response({"status": 400, "message": "No member found on this mobile number", "data": {}}, 
                             status=status.HTTP_400_BAD_REQUEST)
         provided_date = self.get_requested_date(request)
-        start_date, end_date = self.get_date_range(mpms_member, provided_date.year)
-
-        # Filter once and reuse the queryset
-        mpms_farmer_collection = Tblfarmercollection.objects.filter(
-            dumpdate__range=[start_date, end_date],  
-            isapproved=True,
-            isdelete=False,
-            member_other_code=mpms_member.farmercode,
-        )
-        mpms_farmer_collection_data = mpms_farmer_collection.filter(dumpdate=provided_date)
-        aggregates = mpms_farmer_collection.aggregate(
-            total_lr=Sum('weightliter') or 0,
-            total_amount=Sum('totalamount') or 0
-        )
-        response_data = {
-            "status": status.HTTP_200_OK,
-            "message": "success",
-            "data": {
-                "old_dashboard_data": TblfarmercollectionSerializer(mpms_farmer_collection_data, many=True).data,
-                "old_dashboard_fy_data": {
-                    "total_days": mpms_farmer_collection.values('dumpdate').distinct().count(),
-                    "total_qty": aggregates['total_lr'],
-                    "total_payment": aggregates['total_amount']
-                },
+        if datetime(2024,4,1).date() < provided_date < datetime(2025,3,31).date(): 
+            start_date, end_date = self.get_date_range(mpms_member)
+            mpms_farmer_collection = Tblfarmercollection.objects.filter(
+                member_other_code=f'{mpms_member.farmercode}',
+                dumpdate__range=[start_date, end_date],  
+                isapproved=True,
+                isdelete=False,
+            )
+            mpms_farmer_collection_data = mpms_farmer_collection.filter(dumpdate=provided_date)
+            
+            aggregates = mpms_farmer_collection.aggregate(
+                total_lr=Sum('weightliter') or 0,
+                total_amount=Sum('totalamount') or 0
+            )
+            response_data = {
+                "status": status.HTTP_200_OK,
+                "message": "success",
+                "data": {
+                    "old_dashboard_data": TblfarmercollectionSerializer(mpms_farmer_collection_data, many=True).data,
+                    "old_dashboard_fy_data": {
+                        "total_days": mpms_farmer_collection.values('dumpdate').distinct().count(),
+                        "total_qty": aggregates['total_lr'],
+                        "total_payment": aggregates['total_amount']
+                    },
+                }
             }
-        }
+        else:
+            response_data = {
+                "status": status.HTTP_200_OK,
+                "message": "success",
+                "data": {
+                    "old_dashboard_data": [],
+                    "old_dashboard_fy_data": {
+                        "total_days": 0,
+                        "total_qty": 0,
+                        "total_payment": 0
+                    },
+                }
+            }
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get_requested_date(self, request):
@@ -214,10 +227,10 @@ class OldDataCollectionView(generics.GenericAPIView):
                                 status=status.HTTP_400_BAD_REQUEST)
         return timezone.now().date()
 
-    def get_date_range(self, mpms_member, year):
+    def get_date_range(self, mpms_member):
         """Determine start and end date based on `mccid` rules."""
         day, end_day, month = 1, 1, 4
         mccid_mapping = {4: (6, 10), 2: (4, 10), 1: (4, 20), 3: (4, 20), 5: (4, 20)}
         month, end_day = mccid_mapping.get(int(mpms_member.mccid.mccid), (4, 1))
 
-        return date(year, month, day), date(year, month, end_day)
+        return date(2024, month, day), date(2024, month, end_day)
