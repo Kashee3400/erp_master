@@ -331,14 +331,10 @@ class MemberShareFinalInfoView(APIView):
         member = MemberMaster.objects.filter(mobile_no=self.request.user.username)
         if not member.exists():
             return Response({'status': status.HTTP_400_BAD_REQUEST,"message": "Member does not exists"}, status=status.HTTP_400_BAD_REQUEST)        
-        # Filter records by to_code
         first_member = member.first()
         records = MemberShareFinalInfo.objects.filter(to_code=first_member.member_code)     
-        print(first_member.member_code)   
         total_sum = records.aggregate(total_no_of_share=Sum('no_of_share'))['total_no_of_share'] or 0
-        # Serialize the data
         serializer = MemberShareFinalInfoSerializer(records, many=True)
-        
         response_data = {
             'status':status.HTTP_200_OK,
             'message':"Success",
@@ -347,7 +343,6 @@ class MemberShareFinalInfoView(APIView):
                 'records': serializer.data
             }
         }
-        
         return Response(response_data, status=status.HTTP_200_OK)
 
 

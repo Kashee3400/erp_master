@@ -1375,10 +1375,9 @@ class NewsViewSet(viewsets.ModelViewSet):
             )
 
 class NewsNotReadCountAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [AllowAny]
     def get(self, request, *args, **kwargs):
-        # Get the count of not read articles
         not_read_count = News.objects.filter(is_read=False).count()
         return Response({"not_read_count": not_read_count})
 

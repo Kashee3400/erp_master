@@ -652,8 +652,6 @@ class RequestOTPPasswordResetView(APIView):
             )
         otp = str(random.randint(100000, 999999))  # Generate 6-digit OTP
         cache.set(f"otp_{username}", otp, timeout=300)  # Store OTP for 5 minutes
-        # TODO: Integrate an SMS/notification service to send OTP to the user
-        print(f"Your OTP is: {otp}")  # Debugging (Remove in production)
         return Response(
             {"message": _("OTP sent successfully.")}, status=status.HTTP_200_OK
         )
