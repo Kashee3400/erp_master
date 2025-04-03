@@ -3,7 +3,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
 from erp_app.models import (
-    CdaAggregationDateshiftWiseMilktype,
     CdaAggregation,
     Shift,
     MemberMaster,
@@ -26,7 +25,8 @@ from erp_app.serializers import (
     BrandSerializer,
     MemberHierarchyViewSerializer,
 )
-
+from .models import News
+from django.utils.timezone import now
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -208,10 +208,6 @@ class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
             "mpp_name",
             "shift",
             "collection_date",
-            # "milk_type_code",
-            # "milk_type_name",
-            # "milk_quality_type_code",
-            # "milk_quality_type_name",
             "composite_qty",
             "composite_fat",
             "composite_snf",
@@ -234,10 +230,6 @@ class SahayakIncentivesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-from rest_framework import serializers
-from .models import SahayakFeedback
-
-
 class SahayakFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = SahayakFeedback
@@ -258,9 +250,6 @@ class SahayakFeedbackSerializer(serializers.ModelSerializer):
 
         return super().create(validated_data)
 
-
-from .models import News
-from django.utils.timezone import now
 
 
 class NewsSerializer(serializers.ModelSerializer):

@@ -12,12 +12,12 @@ class MemberMasterSerializer(serializers.ModelSerializer):
 class MccSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mcc
-        fields = '__all__'
+        fields = ('mcc_code','mcc_ex_code','mcc_name','is_active')
 
 class MppSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mpp
-        fields = '__all__'
+        fields = ('mpp_code','mpp_ex_code','mpp_name')
 
 class ShiftSerializer(serializers.ModelSerializer):
     
@@ -61,19 +61,44 @@ class MilkQualityTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model=MilkQualityType
         fields = ['milk_quality_type_code','milk_quality_type_name','is_active']
-
+class MppCollectionReferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MppCollectionReferences
+        fields = [
+        "mpp_collection_references_code",
+        "company_code",
+        "collection_point_code",
+        "collection_date",
+        "purchase_rate_code",
+        "version_no",
+        "created_at",
+        "created_by",
+        "updated_at",
+        "updated_by",
+        "flg_sentbox_entry",
+        "originating_type",
+        "originating_org_code",
+        "recalculate_purchase_rate_code",
+        "uuid",
+        "device_id",
+        "received_timestamp",
+        "mpp_code",
+        "shift_code"
+        ]
 
 class MppCollectionSerializer(serializers.ModelSerializer):
-    shift = ShiftSerializer(source='shift_code',read_only=True)
-    milk_type = MilkTypeSerializer(source='milk_type_code',read_only=True)
-    milk_quality_type = MilkQualityTypeSerializer(source='milk_quality_type_code',read_only=True)
+    shift = ShiftSerializer(source='shift_code', read_only=True)
+    milk_type = MilkTypeSerializer(source='milk_type_code', read_only=True)
+    milk_quality_type = MilkQualityTypeSerializer(source='milk_quality_type_code', read_only=True)
+    mpp_collection_references_code = MppCollectionReferencesSerializer(source="references")
+
     class Meta:
         model = MppCollection
-        fields = ['member_code','collection_date','shift','milk_type','milk_quality_type','sampleno','qty','fat','snf','rate',
-                'amount','mpp_collection_code','references']
-
+        fields = [
+            'member_code', 'collection_date', 'shift', 'milk_type', 'milk_quality_type', 'sampleno', 
+            'qty', 'fat', 'snf', 'rate', 'amount', 'mpp_collection_code', 'mpp_collection_references_code'
+        ]
         depth = 1
-
 
 class LocalSaleSerializer(serializers.ModelSerializer):
     class Meta:
