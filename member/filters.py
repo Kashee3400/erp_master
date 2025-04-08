@@ -1,5 +1,5 @@
 import django_filters
-from erp_app.models import CdaAggregationDaywiseMilktype,LocalSaleTxn,LocalSale,Product,MemberHierarchyView
+from erp_app.models import CdaAggregationDaywiseMilktype,LocalSaleTxn,LocalSale,Product,MemberHierarchyView,Mcc,Mpp
 
 class BooleanStringFilter(django_filters.BooleanFilter):
     def filter(self, qs, value):
@@ -61,3 +61,23 @@ class SahayakIncentivesFilter(django_filters.FilterSet):
     class Meta:
         model = SahayakIncentives
         fields = ["mpp_code", "mcc_code","month", "year"]
+
+class SahayakIncentivesFilter(django_filters.FilterSet):
+    mpp_code = django_filters.CharFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter MPP Code"})
+    )
+    mcc_code = django_filters.CharFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter MCC Code"})
+    )
+    month = django_filters.ChoiceFilter(
+        choices=settings.MONTH_FILTER,
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+    year = django_filters.NumberFilter(
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Year"})
+    )
+
+    class Meta:
+        model = SahayakIncentives
+        fields = ["mpp_code", "mcc_code","month", "year"]
+

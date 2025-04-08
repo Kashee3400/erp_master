@@ -1,4 +1,4 @@
-from rest_framework import generics, status, viewsets, exceptions, decorators
+from rest_framework import generics, status, viewsets, exceptions, decorators,filters
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -16,15 +16,18 @@ from erp_app.models import (
     RmrdMilkCollection,
     PriceBook,
     PriceBookDetail,
-    Mcc
+    Mcc,
 )
-from erp_app.serializers import MemberHierarchyViewSerializer,MccSerializer,MppSerializer
+from erp_app.serializers import (
+    MemberHierarchyViewSerializer,
+    MccSerializer,
+    MppSerializer,
+)
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from import_export.admin import ImportExportModelAdmin
 from import_export.forms import (
     ImportForm,
 )
-from django.db.models import Q
 from django_filters import FilterSet, DateFromToRangeFilter, DateTimeFromToRangeFilter
 from .resources import SahayakIncentivesResource
 import csv
@@ -45,18 +48,17 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import *
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg,Q
 from django.conf import settings
-from django.utils.timezone import now
-from .filters import SahayakIncentivesFilter
+from .filters import SahayakIncentivesFilter,MemberHeirarchyFilter
 from facilitator.authentication import ApiKeyAuthentication
 from datetime import date
 from django.utils.dateparse import parse_date
-from django.db.models import Sum, Avg
-from rest_framework import viewsets, filters
-from .filters import MemberHeirarchyFilter
 from .serialzers import NewsSerializer
-from django.db.models import Q
+from django.db.models import Sum, Count, Avg
+from django.utils.timezone import make_aware, now
+from django.db.models.functions import TruncDate
+from datetime import datetime, timedelta
 
 from member.models import UserDevice
 
@@ -236,10 +238,16 @@ class LogoutView(APIView):
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()  # Ensure token blacklisting is enabled in settings
-            return Response({"message": _("Logout successful")}, status=status.HTTP_205_RESET_CONTENT)
+            return Response(
+                {"message": _("Logout successful")},
+                status=status.HTTP_205_RESET_CONTENT,
+            )
         except Exception as e:
             return Response(
-                {"message": _("Invalid refresh token or already blacklisted"), "error": str(e)},
+                {
+                    "message": _("Invalid refresh token or already blacklisted"),
+                    "error": str(e),
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -350,62 +358,81 @@ class ProductRateListView(generics.ListAPIView):
                 message=str(e),
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-from django.db.models import Sum, Count,Avg
-from django.db.models.functions import TruncDate
-from django.utils.dateparse import parse_date
-        
+            
+from .forms import DataFilterForm
 class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
     permission_required = "member_app.can_view_otp"
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)    
-
-    def post(self, request, *args, **kwargs):
-        data = request.POST
-        context = {
-            "message": "This is a POST request!",
-            "submitted_data": data,
-        }
-        return JsonResponse(context)
-
-from rest_framework.generics import GenericAPIView
-
-class AppInstalledData(APIView):
-    # authentication_classes = [ApiKeyAuthentication]
-    filter_backends = [DjangoFilterBackend]
-    permission_classes = [AllowAny]
     
     def get(self, request, *args, **kwargs):
-        mcc_code = self.request.GET.get('mcc_code', None)
-        mpp_code = self.request.GET.get('mpp_code', None)
-        if (mcc_code or mpp_code) is None:
-            return Response({"status": "success", "message": f"{mcc_code} or {mpp_code} is required"})
+        return render(request, self.template_name)
+    
 
-        user_devices = UserDevice.objects.filter(module=None).values_list('user__username', flat=True)
-        members = MemberHierarchyView.objects.filter(mcc_code=mcc_code, is_default=True, is_active=True)
-        
-        mpp = None
-        if mpp_code:
-            members = members.filter(mpp_code=mpp_code)
-            mpp = Mpp.objects.filter(mpp_code=mpp_code).first()
-            
-        total_members = members.count()
-        app_installed_by_users = members.filter(mobile_no__in=list(user_devices))
-        installed_count = app_installed_by_users.count()
-        installed_percentage = (installed_count / total_members) * 100 if total_members > 0 else 0
-        
-        mcc = Mcc.objects.filter(mcc_code=mcc_code).first()
-        data = {
-            "total_members": total_members,
-            "mcc": MccSerializer(mcc).data,
-            "mpp": MppSerializer(mpp).data if mpp else None,
-            "app_installed_by_member": installed_count,
-            "installed_percentage": round(installed_percentage, 2)
-        }
-        return Response(data, status=status.HTTP_200_OK)
+class AppInstalledData(APIView):
+    permission_classes = [AllowAny]
 
+    def get(self, request, *args, **kwargs):
+        mcc_code = request.GET.get("mcc_code")
+        mpp_codes_param = request.GET.get("mpp_codes")  # comma-separated list
+        year = int(request.GET.get("year", now().year))
+        month = int(request.GET.get("month", now().month))
+
+        # Parse MPP codes if provided
+        mpp_codes = [code.strip() for code in mpp_codes_param.split(",")] if mpp_codes_param else None
+
+        # Date range for collection
+        start_date = make_aware(datetime(year, month, 1))
+        end_date = (
+            make_aware(datetime(year + 1, 1, 1)) - timedelta(seconds=1)
+            if month == 12
+            else make_aware(datetime(year, month + 1, 1)) - timedelta(seconds=1)
+        )
+
+        user_device_usernames = set(
+            UserDevice.objects.filter(module=None).values_list("user__username", flat=True)
+        )
+
+        mcc_queryset = Mcc.objects.filter(mcc_code=mcc_code) if mcc_code else Mcc.objects.all()
+        result = []
+
+        for mcc in mcc_queryset:
+            members_qs = MemberHierarchyView.objects.filter(
+                mcc_code=mcc.mcc_code,
+                is_active=True,
+                is_default=True,
+            )
+
+            if mpp_codes:
+                members_qs = members_qs.filter(mpp_code__in=mpp_codes)
+                mpp_list = list(Mpp.objects.filter(mpp_code__in=mpp_codes))
+                serialized_mpps = MppSerializer(mpp_list, many=True).data
+            else:
+                serialized_mpps = None
+
+            total_members = members_qs.count()
+            member_mobiles = members_qs.values_list("mobile_no", flat=True)
+            installed_count = sum(1 for mobile in member_mobiles if mobile in user_device_usernames)
+            installed_percentage = (installed_count / total_members * 100) if total_members else 0
+
+            member_codes = members_qs.values_list("member_code", flat=True)
+            collections = MppCollection.objects.filter(
+                collection_date__range=(start_date, end_date),
+                member_code__in=member_codes,
+            )
+            no_of_pourers = collections.values("member_code").annotate(
+                days=Count(TruncDate("collection_date"), distinct=True)
+            ).count()
+
+            result.append({
+                "mcc": MccSerializer(mcc).data,
+                "mpp": serialized_mpps,
+                "total_members": total_members,
+                "app_installed_by_member": installed_count,
+                "installed_percentage": round(installed_percentage, 2),
+                "no_of_pourers": no_of_pourers,
+            })
+
+        return Response(result, status=status.HTTP_200_OK)
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -532,7 +559,9 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
         incentives = self.get_filtered_incentives(query, filter_class)
         # Pagination setup
         page_number = request.GET.get("page", 1)
-        per_page = settings.PAGINATION_SIZE if hasattr(settings, "PAGINATION_SIZE") else 100
+        per_page = (
+            settings.PAGINATION_SIZE if hasattr(settings, "PAGINATION_SIZE") else 100
+        )
         paginator = Paginator(incentives, per_page)
         paginated_incentives = paginator.get_page(page_number)
         actions = [
@@ -542,7 +571,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
         import_form = self.create_import_form(request=request)
         total_rows = incentives.count()
         context = {
-            "objects": paginated_incentives, 
+            "objects": paginated_incentives,
             "form": self.form_class(),
             "filter": filter_class,
             "import_form": import_form,
@@ -779,6 +808,7 @@ class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelA
             )
         return response
 
+
 class SahayakIncentivesCreateView(CreateView):
     model = SahayakIncentives
     form_class = SahayakIncentivesForm
@@ -795,6 +825,8 @@ class SahayakIncentivesCreateView(CreateView):
             "Error creating Sahayak incentive. Please correct the errors below.",
         )
         return super().form_invalid(form)
+
+
 class SahayakIncentivesUpdateView(UpdateView):
     model = SahayakIncentives
     form_class = SahayakIncentivesForm
@@ -860,7 +892,11 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
 from django.utils.translation import gettext as _
+
+
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         months = [
@@ -907,9 +943,9 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
                 detail.product_code.product_code: detail
                 for detail in PriceBookDetail.objects.filter(
                     price_book_code=latest_price_book.price_book_code
-                ).select_related("product_code") 
+                ).select_related("product_code")
             }
-            
+
             # Get only the filtered products
             product_codes = self.price_book_details.keys()
             return Product.objects.filter(product_code__in=product_codes)
@@ -927,15 +963,15 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             queryset,
             many=True,
             context={
-                "latest_price_book": self.latest_price_book, 
-                "price_book_details": self.price_book_details
-            }
+                "latest_price_book": self.latest_price_book,
+                "price_book_details": self.price_book_details,
+            },
         )
         response_data = {
             "status": "success",
             "message": "Data fetched successfully",
             "results": serializer.data,
-            "latest_price_book":self.latest_price_book.price_book_code
+            "latest_price_book": self.latest_price_book.price_book_code,
         }
         return Response(response_data)
 
@@ -993,6 +1029,7 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data)
 
+
 class CustomPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = "page_size"
@@ -1013,6 +1050,7 @@ class CustomPagination(PageNumberPagination):
             }
         )
 
+
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A ViewSet for viewing MemberHierarchy data with additional last 15 days data.
@@ -1025,7 +1063,6 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = MemberHeirarchyFilter
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
         filters.OrderingFilter,
     ]
     search_fields = ["member_name", "member_code", "member_tr_code"]
@@ -1061,6 +1098,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         # Add last 15 days data to the response
         paginated_response.data["last_15_days"] = last_15_days_serializer.data
         return Response(paginated_response.data)
+
 
 class SahayakFeedbackViewSet(viewsets.ModelViewSet):
     """
@@ -1162,6 +1200,7 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
@@ -1374,14 +1413,18 @@ class NewsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class NewsNotReadCountAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
+
     def get(self, request, *args, **kwargs):
         not_read_count = News.objects.filter(is_read=False).count()
         return Response({"not_read_count": not_read_count})
 
+
 from erp_app.models import BillingMemberMaster
+
 
 class BillingMemberMasterRowFilter(FilterSet):
     from_date = DateTimeFromToRangeFilter()
@@ -1595,6 +1638,7 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
             }
         )
 
+
 class LocalSaleTxnFilter(FilterSet):
     installment_start_date = DateFromToRangeFilter(
         field_name="local_sale_code__installment_start_date"
@@ -1642,11 +1686,13 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
             }
         )
 
+
 from django.db.models import Sum, F, FloatField, DecimalField
 from django.db.models.functions import Coalesce, Cast
 
 from django.utils.translation import gettext as _
 from django.core.cache import cache
+
 
 class SahayakDashboardAPI(APIView):
     permission_classes = [AllowAny]
@@ -1657,7 +1703,10 @@ class SahayakDashboardAPI(APIView):
         shift_code = request.GET.get("shift_code")
 
         if not mpp_code:
-            return Response({"status": "error", "message": "Please provide the MPP code"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "error", "message": "Please provide the MPP code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Caching: Store and retrieve results from cache
         cache_key = f"sahayak_dashboard_{mpp_code}_{shift_code}_{created_date}"
@@ -1666,17 +1715,44 @@ class SahayakDashboardAPI(APIView):
             return Response(cached_data, status=status.HTTP_200_OK)
 
         # Use `.values_list()` to fetch only required field
-        mpp_ref_code = MppCollectionReferences.objects.filter(
-            collection_date__date=created_date, mpp_code=mpp_code, shift_code=shift_code
-        ).values_list("mpp_collection_references_code", flat=True).first()
+        mpp_ref_code = (
+            MppCollectionReferences.objects.filter(
+                collection_date__date=created_date,
+                mpp_code=mpp_code,
+                shift_code=shift_code,
+            )
+            .values_list("mpp_collection_references_code", flat=True)
+            .first()
+        )
 
         if not mpp_ref_code:
-            return Response({"status": "error", "message": "No MPP reference found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"status": "error", "message": "No MPP reference found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         # Optimize aggregations
-        mpp_collection_agg = self.get_aggregates(MppCollection, "qty", "fat", "snf", references=mpp_ref_code)
-        actual_agg_data = self.get_aggregates(RmrdMilkCollection, "qty", "fat", "snf", collection_date__date=created_date, module_code=mpp_code, shift_code__shift_code=shift_code)
-        dispatches = self.get_aggregates(MppDispatchTxn, "dispatch_qty", "fat", "snf", mpp_dispatch_code__mpp_code=mpp_code, mpp_dispatch_code__from_date__date=created_date, mpp_dispatch_code__from_shift=shift_code)
+        mpp_collection_agg = self.get_aggregates(
+            MppCollection, "qty", "fat", "snf", references=mpp_ref_code
+        )
+        actual_agg_data = self.get_aggregates(
+            RmrdMilkCollection,
+            "qty",
+            "fat",
+            "snf",
+            collection_date__date=created_date,
+            module_code=mpp_code,
+            shift_code__shift_code=shift_code,
+        )
+        dispatches = self.get_aggregates(
+            MppDispatchTxn,
+            "dispatch_qty",
+            "fat",
+            "snf",
+            mpp_dispatch_code__mpp_code=mpp_code,
+            mpp_dispatch_code__from_date__date=created_date,
+            mpp_dispatch_code__from_shift=shift_code,
+        )
 
         # Construct response data
         response_data = {
@@ -1700,14 +1776,20 @@ class SahayakDashboardAPI(APIView):
         aggregation = model.objects.filter(**filters).aggregate(
             qty=Sum(qty_field),
             fat=Coalesce(
-                Cast(Sum(F(qty_field) * F(fat_field), output_field=FloatField()), FloatField()) /
-                Cast(Sum(qty_field), FloatField()), 
-                0.0
+                Cast(
+                    Sum(F(qty_field) * F(fat_field), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum(qty_field), FloatField()),
+                0.0,
             ),
             snf=Coalesce(
-                Cast(Sum(F(qty_field) * F(snf_field), output_field=FloatField()), FloatField()) /
-                Cast(Sum(qty_field), FloatField()), 
-                0.0
+                Cast(
+                    Sum(F(qty_field) * F(snf_field), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum(qty_field), FloatField()),
+                0.0,
             ),
         )
         return aggregation
@@ -1716,7 +1798,11 @@ class SahayakDashboardAPI(APIView):
         """
         Rounds float values for better readability.
         """
-        return {key: round(value, 2) if value is not None else 0.0 for key, value in aggregates.items()}
+        return {
+            key: round(value, 2) if value is not None else 0.0
+            for key, value in aggregates.items()
+        }
+
 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
