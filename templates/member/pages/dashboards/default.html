@@ -2,11 +2,18 @@
 {% load static i18n %}
 
 {% block extrastyle %}
-<!-- DataTables core CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<!-- DataTables Buttons CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
+  <style>
+    table tfoot {
+      position: sticky;
+      bottom: 0;
+      background-color: #f8f9fa; /* Light grey */
+      z-index: 1;
+    }
+  </style>
+  <!-- DataTables core CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+  <!-- DataTables Buttons CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
 {% endblock %}
 {% block title %}
   {% trans 'ERP :: Dashboard' %}
@@ -28,9 +35,8 @@
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
-
         <div class="table-responsive p-4">
-          <table class="table align-items-center" id="mcc-data-table">
+          <table class="table align-items-center table-stripped" id="mcc-data-table">
             <thead>
               <tr>
                 <th>MCC</th>
@@ -40,66 +46,88 @@
                 <th>Installed %</th>
               </tr>
             </thead>
-            <tbody id="mcc-table-body">
-            </tbody>
+            <tbody id="mcc-table-body"></tbody>
+            <tfoot id="mcc-data-footer"></tfoot>
           </table>
         </div>
-        
       </div>
     </div>
   </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<!-- DataTables Buttons -->
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<!-- JSZip (for Excel export) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script>
-  function fetchAndRenderData() {
-    $.ajax({
-      url: "{% url 'app-installed-data' %}",
-      type: "GET",
-      dataType: "json",
-      beforeSend: function () {
-        $('#mcc-table-body').html('<tr><td colspan="6">Loading...</td></tr>');
-      },
-      success: function (data) {
-        let tbody = "";
-        data.forEach(function (item) {
-          tbody += `
-            <tr>
-              <td>${item.mcc.mcc_name}</td>
-              <td>${item.total_members}</td>
-              <td>${item.no_of_pourers}</td>
-              <td>${item.app_installed_by_member}</td>
-              <td>${item.installed_percentage}%</td>
-            </tr>`;
-        });
-        $("#mcc-table-body").html(tbody);
-
-        // Initialize DataTable only once
-        if (!$.fn.DataTable.isDataTable("#mcc-data-table")) {
-          $("#mcc-data-table").DataTable({
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <!-- DataTables Buttons -->
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <!-- JSZip (for Excel export) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+  <script>
+    function fetchAndRenderData() {
+      const $table = $('#mcc-data-table')
+      const $tbody = $('#mcc-table-body')
+      const $tfoot = $('#mcc-data-footer')
+    
+      $.ajax({
+        url: "{% url 'app-installed-data' %}",
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function () {
+          $tbody.html('<tr><td colspan="5">Loading...</td></tr>')
+          $tfoot.html('') // Clear footer on reload
+        },
+        success: function (data) {
+          let rows = ''
+          let totalRow = ''
+    
+          data.forEach(function (item) {
+            if (item.is_total) {
+              totalRow = `
+                  <tr class="table-secondary fw-bold">
+                    <td>Grand Total</td>
+                    <td>${item.total_members}</td>
+                    <td>${item.no_of_pourers}</td>
+                    <td>${item.app_installed_by_member}</td>
+                    <td>${item.installed_percentage}%</td>
+                  </tr>`
+            } else {
+              rows += `
+                  <tr>
+                    <td>${item.mcc.mcc_name}</td>
+                    <td>${item.total_members}</td>
+                    <td>${item.no_of_pourers}</td>
+                    <td>${item.app_installed_by_member}</td>
+                    <td>${item.installed_percentage}%</td>
+                  </tr>`
+            }
+          })
+    
+          $tbody.html(rows)
+          $tfoot.html(totalRow)
+    
+          // Destroy existing DataTable before reinitializing
+          if ($.fn.DataTable.isDataTable($table)) {
+            $table.DataTable().destroy()
+          }
+    
+          $table.DataTable({
             dom: 'Bfrtip',
-            buttons: ['excel', 'print']
-          });
+            buttons: ['excel', 'print'],
+            responsive: true
+          })
+        },
+        error: function () {
+          $tbody.html('<tr><td colspan="5">Failed to load data.</td></tr>')
+          $tfoot.html('')
         }
-      },
-      error: function () {
-        $("#mcc-table-body").html('<tr><td colspan="6">Failed to load data.</td></tr>');
-      }
-    });
-  }
-
-  // Fetch data on page load
-  $(document).ready(function () {
-    fetchAndRenderData();
-  });
-</script>
-
+      })
+    }
+    
+    // Fetch data on page load
+    $(document).ready(function () {
+      fetchAndRenderData()
+    })
+  </script>
 {% endblock %}
