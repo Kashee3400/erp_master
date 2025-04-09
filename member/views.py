@@ -1145,12 +1145,9 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchyViewSerializer
     pagination_class = CustomPagination
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_class = MemberHeirarchyFilter
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = [DjangoFilterBackend ]
     search_fields = ["member_name", "member_code", "member_tr_code"]
     ordering_fields = ["member_name"]
 
@@ -1158,6 +1155,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
+        mpp = Mpp.objects.filter(mpp_ex_code="1008").last()
         if not mpp:
             return MemberHierarchyView.objects.none()
         return queryset.filter(mpp_code=mpp.mpp_code).order_by("member_name")
