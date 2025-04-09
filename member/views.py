@@ -1145,7 +1145,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchyViewSerializer
     pagination_class = CustomPagination
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     filterset_class = MemberHeirarchyFilter
     filter_backends = [DjangoFilterBackend ]
     search_fields = ["member_name", "member_code", "member_tr_code"]
