@@ -1155,7 +1155,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
-        mpp = Mpp.objects.filter(mpp_ex_code="1008").last()
+        # mpp = Mpp.objects.filter(mpp_ex_code="1008").last()
         if not mpp:
             return MemberHierarchyView.objects.none()
         return queryset.filter(mpp_code=mpp.mpp_code).order_by("member_name")
