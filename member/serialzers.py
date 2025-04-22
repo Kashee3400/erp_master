@@ -469,3 +469,10 @@ class MppDispatchTxnSerializer(serializers.ModelSerializer):
     class Meta:
         model = MppDispatchTxn
         fields = ["qty", "fat", "snf", "amount"]
+
+
+class MppCollectionIncentiveSerializer(serializers.Serializer):
+    fat = serializers.DecimalField(max_digits=18, decimal_places=2)
+    snf = serializers.DecimalField(max_digits=18, decimal_places=2)
+    qty = serializers.DecimalField(max_digits=18, decimal_places=2)
+    incentive = serializers.DecimalField(max_digits=18, decimal_places=2)

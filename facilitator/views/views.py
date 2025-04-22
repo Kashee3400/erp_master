@@ -10,7 +10,7 @@ from erp_app.models import (
     RmrdMilkCollection,
     MppDispatchTxn,
 )
-from django.db.models import Sum, F, FloatField,Avg
+from django.db.models import Sum, F, FloatField, Avg
 from django.db.models.functions import Coalesce, Cast
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
@@ -246,6 +246,7 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
 
 from django.db.models import Sum, OuterRef, Subquery, FloatField
 
+
 class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -276,7 +277,8 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             MppCollection.objects.filter(
                 references__collection_date__date=created_date,
                 references__mpp_code=OuterRef("mpp_code"),
-            ).select_related("references")
+            )
+            .select_related("references")
             .values("references__mpp_code")
             .annotate(amount=Sum("amount"))
             .values("amount")
@@ -423,7 +425,9 @@ class DashboardDetailAPI(APIView):
         shift_dict = dict(shifts)
         return shift_dict.get("M"), shift_dict.get("E")
 
+
 from django.utils.dateparse import parse_date
+
 
 class LocalSaleViewSet(viewsets.ModelViewSet):
     queryset = LocalSaleTxn.objects.all()
@@ -439,7 +443,7 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         start_date = self.request.query_params.get("start_date", None)
-        mpp_codes = self.request.GET.get("mpp_code",None)
+        mpp_codes = self.request.GET.get("mpp_code", None)
         end_date = self.request.query_params.get("end_date", None)
         if not mpp_codes:
             mpp_codes = list(
@@ -468,23 +472,26 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         end_date = self.request.query_params.get("end_date", None)
         # 🟢 Product-wise Summary (Group by product_code)
         product_summary = []
-        products = queryset.values("product_code", "product_code__product_name").distinct()
+        products = queryset.values(
+            "product_code", "product_code__product_name"
+        ).distinct()
 
         for product in products:
             product_id = product["product_code"]
             product_name = product["product_code__product_name"]
             product_data = queryset.filter(product_code=product_id)
-            
+
             # Get all MPP data for this product
-            mpp_data = product_data.values(
-                "local_sale_code__mpp_code", 
-                "local_sale_code"
-            ).annotate(
-                total_qty=Sum("qty"),
-                total_amount=Sum("amount"),
-                avg_rate=Avg("rate"),
-            ).order_by("local_sale_code__mpp_code")
-            
+            mpp_data = (
+                product_data.values("local_sale_code__mpp_code", "local_sale_code")
+                .annotate(
+                    total_qty=Sum("qty"),
+                    total_amount=Sum("amount"),
+                    avg_rate=Avg("rate"),
+                )
+                .order_by("local_sale_code__mpp_code")
+            )
+
             # Group by mpp_code and aggregate
             mpp_groups = {}
             for item in mpp_data:
@@ -495,85 +502,53 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
                         "local_sale_codes": [],
                         "total_qty": 0,
                         "total_amount": 0,
-                        "rate_values": []
+                        "rate_values": [],
                     }
-                
-                mpp_groups[mpp_code]["local_sale_codes"].append(str(item["local_sale_code"]))
+
+                mpp_groups[mpp_code]["local_sale_codes"].append(
+                    str(item["local_sale_code"])
+                )
                 mpp_groups[mpp_code]["total_qty"] += item["total_qty"]
                 mpp_groups[mpp_code]["total_amount"] += item["total_amount"]
                 mpp_groups[mpp_code]["rate_values"].append(item["avg_rate"])
-            
+
             # Prepare the final mpp_summary
             mpp_summary = []
             for mpp_code, data in mpp_groups.items():
-                # Calculate weighted average rate
                 total_amount = data["total_amount"]
                 total_qty = data["total_qty"]
                 avg_rate = total_amount / total_qty if total_qty != 0 else 0
-                
-                mpp_summary.append({
-                    "local_sale_code__mpp_code": mpp_code,
-                    "local_sale_code": ", ".join(data["local_sale_codes"]),  # Comma separated string
-                    "total_qty": data["total_qty"],
-                    "total_amount": data["total_amount"],
-                    "avg_rate": avg_rate
-                })
-            
-            product_summary.append({
-                "product_id": product_id,
-                "product_name": product_name,
-                "from_date": start_date,
-                "to_date": end_date,
-                "total_qty": product_data.aggregate(Sum("qty"))["qty__sum"] or 0,
-                "total_amount": product_data.aggregate(Sum("amount"))["amount__sum"] or 0,
-                "avg_rate": product_data.aggregate(Avg("rate"))["rate__avg"] or 0,
-                "mpp_summary": mpp_summary,
-            })
+                mpp_summary.append(
+                    {
+                        "local_sale_code__mpp_code": mpp_code,
+                        "local_sale_code": ", ".join(data["local_sale_codes"]),
+                        "total_qty": data["total_qty"],
+                        "total_amount": data["total_amount"],
+                        "avg_rate": avg_rate,
+                    }
+                )
 
-        return Response({
-            "status": "success",
-            "message": "Data fetched successfully",
-            "product_summary": product_summary,
-        })
+            product_summary.append(
+                {
+                    "product_id": product_id,
+                    "product_name": product_name,
+                    "from_date": start_date,
+                    "to_date": end_date,
+                    "total_qty": product_data.aggregate(Sum("qty"))["qty__sum"] or 0,
+                    "total_amount": product_data.aggregate(Sum("amount"))["amount__sum"]
+                    or 0,
+                    "avg_rate": product_data.aggregate(Avg("rate"))["rate__avg"] or 0,
+                    "mpp_summary": mpp_summary,
+                }
+            )
 
-        # def list(self, request, *args, **kwargs):
-        #     queryset = self.get_queryset()
-        #     start_date = self.request.query_params.get("start_date", None)
-        #     end_date = self.request.query_params.get("end_date", None)
-        #     # 🟢 Product-wise Summary (Group by product_code)
-        #     product_summary = []
-        #     products = queryset.values("product_code", "product_code__product_name").distinct()
-
-        #     for product in products:
-        #         product_id = product["product_code"]
-        #         product_name = product["product_code__product_name"]
-        #         product_data = queryset.filter(product_code=product_id)
-        #         mpp_summary = (
-        #             product_data.values("local_sale_code__mpp_code", "local_sale_code")  # Include Local Sale Code
-        #             .annotate(
-        #                 total_qty=Sum("qty"),
-        #                 total_amount=Sum("amount"),
-        #                 avg_rate=Avg("rate"),  # You can replace this with the latest rate if needed
-        #             )
-        #             .order_by("local_sale_code__mpp_code")  # Sort by MPP
-        #         )
-                
-        #         product_summary.append({
-        #             "product_id": product_id,
-        #             "product_name": product_name,
-        #             "from_date":start_date,
-        #             "to_date":end_date,
-        #             "total_qty": product_data.aggregate(Sum("qty"))["qty__sum"] or 0,
-        #             "total_amount": product_data.aggregate(Sum("amount"))["amount__sum"] or 0,
-        #             "avg_rate": product_data.aggregate(Avg("rate"))["rate__avg"] or 0,
-        #             "mpp_summary": list(mpp_summary),
-        #         })
-
-        #     return Response({
-        #         "status": "success",
-        #         "message": "Data fetched successfully",
-        #         "product_summary": product_summary,
-        #     })
+        return Response(
+            {
+                "status": "success",
+                "message": "Data fetched successfully",
+                "product_summary": product_summary,
+            }
+        )
 
 
 class ShiftViewSet(viewsets.ModelViewSet):
@@ -638,7 +613,7 @@ from django.core.cache import cache
 
 class RequestOTPPasswordResetView(APIView):
     def post(self, request):
-        username = request.data.get("username")  # Or phone number
+        username = request.data.get("username")
         if not username:
             return Response(
                 {"message": _("Username is required")},
@@ -685,3 +660,244 @@ class VerifyOTPResetPasswordView(APIView):
         return Response(
             {"message": _("Password reset successfully.")}, status=status.HTTP_200_OK
         )
+
+
+class GetPouredMembersData(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Get collection date from query params, default to today's date
+        collection_date_str = request.GET.get("collection_date")
+        collection_date = (
+            timezone.now().date()
+            if collection_date_str is None
+            else collection_date_str
+        )
+
+        # Get mpp codes assigned to the user
+        mpp_codes = list(self.get_mpps(user))
+
+        # Get all members under those mpp codes
+        all_members = MemberHierarchyView.objects.filter(mpp_code__in=mpp_codes)
+
+        # Get only their member codes
+        member_codes = all_members.values_list("member_code", flat=True)
+
+        # Filter collections for today and matching members
+        filtered_collection = (
+            MppCollection.objects.filter(
+                references__collection_date__date=collection_date,
+                member_code__in=member_codes,
+            )
+            .values("member_code", "references__collection_date")
+            .distinct()
+        )
+
+        total_active_member = all_members.filter(
+            is_active=True, is_default=True
+        ).count()
+        poured_members = filtered_collection.count()
+
+        data = {
+            "key": "poured_member",
+            "title": "Poured Members",
+            "data": [
+                {"title": "Poured", "value": poured_members, "color": "#5bcceb"},
+                {
+                    "title": "Active",
+                    "value": total_active_member,
+                    "color": "#29859e",
+                },
+            ],
+        }
+
+        return Response(
+            data={"message": "success", "status": "success", "data": data},
+            status=status.HTTP_200_OK,
+        )
+
+    def get_mpps(self, user):
+        queryset = AssignedMppToFacilitator.objects.all()
+        if user.is_authenticated:
+            queryset = queryset.filter(sahayak=user)
+        return queryset.values_list("mpp_code", flat=True)
+
+
+class GetTotalMembersData(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        mpp_codes = list(self.get_mpps(user))
+        all_members = MemberHierarchyView.objects.filter(mpp_code__in=mpp_codes)
+        active_member = all_members.filter(is_active=True, is_default=True).count()
+        total_members = all_members.filter(is_default=True).count()
+        data = {
+            "key": "total_members",
+            "title": "Total Members",
+            "data": [
+                {"title": "Active", "value": active_member, "color": "#5bcceb"},
+                {"title": "Total", "value": total_members, "color": "#29859e"},
+            ],
+        }
+
+        return Response(
+            data={"message": "success", "status": "success", "data": data},
+            status=status.HTTP_200_OK,
+        )
+
+    def get_mpps(self, user):
+        queryset = AssignedMppToFacilitator.objects.all()
+        if user.is_authenticated:
+            queryset = queryset.filter(sahayak=user)
+        return queryset.values_list("mpp_code", flat=True)
+
+
+class GetHighPourerData(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        collection_date_str = request.GET.get("collection_date")
+        collection_date = (
+            timezone.now().date()
+            if collection_date_str is None
+            else collection_date_str
+        )
+        mpp_codes = list(self.get_mpps(user))
+        all_members = MemberHierarchyView.objects.filter(mpp_code__in=mpp_codes)
+        member_codes = all_members.values_list("member_code", flat=True)
+        aggregated = (
+            MppCollection.objects.filter(
+                references__collection_date__date=collection_date,
+                member_code__in=member_codes,
+            )
+            .values("member_code", "references__collection_date")
+            .annotate(total_qty=Sum("qty"))
+        )
+        high_pourers_count = aggregated.filter(total_qty__gt=49).count()
+        low_pourers_count = aggregated.filter(total_qty__lte=49).count()
+        data = {
+            "key": "poured_member",
+            "title": "Poured Members",
+            "data": [
+                {
+                    "title": "High Pourers",
+                    "value": high_pourers_count,
+                    "color": "#27ae60",
+                },
+                {
+                    "title": "Low Pourers",
+                    "value": low_pourers_count,
+                    "color": "#f39c12",
+                },
+            ],
+        }
+
+        return Response(
+            data={"message": "success", "status": "success", "data": data},
+            status=status.HTTP_200_OK,
+        )
+
+    def get_mpps(self, user):
+        queryset = AssignedMppToFacilitator.objects.all()
+        if user.is_authenticated:
+            queryset = queryset.filter(sahayak=user)
+        return queryset.values_list("mpp_code", flat=True)
+
+class GetDailyMppCollections(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        collection_date = request.GET.get("collection_date", str(timezone.now().date()))
+
+        # Step 1: Get allowed MPPs
+        mpp_codes = self.get_mpps(user)
+
+        # Step 2: Filter collections for today by allowed MPPs
+        mpp_collection = (
+            MppCollection.objects
+            .filter(
+                references__mpp_code__in=list(mpp_codes),
+                references__collection_date__date=collection_date
+            )
+            .values("references__mpp_code")
+            .annotate(total_qty=Sum("qty"))
+        )
+
+        # Step 3: Fetch MPP info
+        mpp_map = {
+            mpp.mpp_code: {
+                "mpp_code": mpp.mpp_code,
+                "mpp_ex_code": mpp.mpp_ex_code,
+                "mpp_name": mpp.mpp_name or mpp.mpp_short_name,
+            }
+            for mpp in Mpp.objects.filter(mpp_code__in=[m["references__mpp_code"] for m in mpp_collection])
+        }
+
+        # Step 4: Combine MPP info + qty
+        data = {
+            "key": "daily_collections",
+            "title": "Mpp Collection Daily Stats",
+            "data": []
+        }
+
+        for item in mpp_collection:
+            mpp_code = item["references__mpp_code"]
+            total_qty = item["total_qty"]
+            mpp_info = mpp_map.get(mpp_code, {})
+            data["data"].append({
+                "mpp": mpp_info,
+                "qty": float(total_qty),
+            })
+
+        return Response(
+            data={"message": "success", "status": "success", "data": data},
+            status=status.HTTP_200_OK,
+        )
+
+    def get_mpps(self, user):
+        if user.is_authenticated:
+            return AssignedMppToFacilitator.objects.filter(
+                sahayak=user
+            ).values_list("mpp_code", flat=True)
+        return AssignedMppToFacilitator.objects.all()[:10].values_list("mpp_code", flat=True)
+
+class GetTotalQtyForToday(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        collection_date = self.request.GET.get("collection_date", str(timezone.now().date()))
+        mpp_codes = list(self.get_mpps(user))
+
+        total_qty = (
+            MppCollection.objects.filter(
+                references__mpp_code__in=mpp_codes,
+                references__collection_date__date=collection_date
+            )
+            .aggregate(total_qty=Sum("qty"))["total_qty"] or 0
+        )
+        return Response(
+            data={
+                "message": "success",
+                "status": "success",
+                "total_qty": float(total_qty)
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def get_mpps(self, user):
+        if user.is_authenticated:
+            return AssignedMppToFacilitator.objects.filter(
+                sahayak=user
+            ).values_list("mpp_code", flat=True)
+        return AssignedMppToFacilitator.objects.all()[:10].values_list("mpp_code", flat=True)

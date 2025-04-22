@@ -1896,3 +1896,86 @@ class ShiftViewSet(viewsets.ModelViewSet):
         instance = get_object_or_404(self.queryset, pk=kwargs["pk"])
         serializer = self.get_serializer(instance)
         return JsonResponse(serializer.data)
+
+class MppIncentiveSummaryAPIView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        mpp_code = request.GET.get('mpp_code')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        # Validate mpp_code
+        if not mpp_code:
+            return JsonResponse({
+                "status": "error",
+                "message": "Please select MPP code.",
+                "results": []
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate start_date and end_date
+        if not start_date or not end_date:
+            return JsonResponse({
+                "status": "error",
+                "message": "Start date and end date are required.",
+                "results": []
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Parse dates
+        start_date_parsed = parse_date(start_date)
+        end_date_parsed = parse_date(end_date)
+
+        if not start_date_parsed or not end_date_parsed:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid date format. Use YYYY-MM-DD.",
+                "results": []
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter records in date range
+        collections = MppCollection.objects.filter(
+            references__mpp_code=mpp_code,
+            references__collection_date__date__range=(start_date_parsed, end_date_parsed)
+        )
+
+        # Weighted aggregation
+        aggregation = collections.aggregate(
+            qty=Sum('qty'),
+            fat=Coalesce(
+                Cast(
+                    Sum(F('qty') * F('fat'), output_field=FloatField()),
+                    FloatField()
+                ) / Cast(Sum('qty'), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(
+                    Sum(F('qty') * F('snf'), output_field=FloatField()),
+                    FloatField()
+                ) / Cast(Sum('qty'), FloatField()),
+                0.0,
+            ),
+        )
+
+        qty = aggregation['qty'] or 0
+        fat = round(aggregation['fat'], 2) or 0
+        snf = round(aggregation['snf'], 2) or 0
+
+        # Calculate incentive
+        efu = fat + (snf * 2 / 3)
+        rupee_per_ltr = efu * 0.096
+        incentive = rupee_per_ltr * float(qty)
+
+        # Build response
+        data = {
+            "status": "success",
+            "message": "Incentive calculated successfully.",
+            "results": {
+                'fat': round(fat, 2),
+                'snf': round(snf, 2),
+                'qty': round(qty, 2),
+                'incentive': round(incentive, 2),
+            }
+        }
+
+        return Response(data)

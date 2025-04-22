@@ -26,6 +26,7 @@ from .views import (
     SahayakDashboardAPI,
     ShiftViewSet,
     AppInstalledData,
+    MppIncentiveSummaryAPIView,
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
@@ -50,7 +51,6 @@ router.register(r'billing-member-master', BillingMemberMasterViewSet)
 router.register(r'shifts', ShiftViewSet,basename="shifts")
 
 
-
 urlpatterns = [
     path('api/otp/generate/', GenerateOTPView.as_view(), name='generate-otp'),
     path('api/otp/verify/', VerifyOTPView.as_view(), name='verify-otp'),
@@ -62,6 +62,7 @@ urlpatterns = [
     path('api/mpp-collection/', MppCollectionAggregationListView.as_view(), name='mpp-collection-list'),
     path('api/mpp-collection-detail/', MppCollectionDetailView.as_view(), name='mpp-collection-detail'),
     path('api/member-share-final-info/', MemberShareFinalInfoView.as_view(), name='member-share-final-info'),
+    path('api/mpp-incentive-summary/', MppIncentiveSummaryAPIView.as_view()),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='logout'),

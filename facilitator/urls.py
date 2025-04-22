@@ -36,4 +36,10 @@ urlpatterns = [
     path("password/change/", views.ChangePasswordView.as_view(), name="password_change"),
     path("dashboard-detail-data/", views.DashboardDetailAPI.as_view(), name="dashboard_detail_data"),
     path("monthly-assignment/", m_view.MonthlyDataView.as_view(), name="monthly_assignment"),
+    path("poured-members/", views.GetPouredMembersData.as_view(), name="poured_members"),
+    path("high-pourers/", views.GetHighPourerData.as_view(), name="high_pourers"),
+    path("daily-mpp-collection/", views.GetDailyMppCollections.as_view(), name="daily_mpp_collection"),
+    path("total-collection-qty/", views.GetTotalQtyForToday.as_view(), name="total_collection_qty"),
+    path("total-members/", views.GetTotalMembersData.as_view(), name="total_collection_qty"),
+    
 ] + router.urls

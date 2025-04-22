@@ -89,7 +89,6 @@ class MemberMasterAdmin(admin.ModelAdmin):
         'member_ex_code',
         'member_middle_name',
         'member_surname', 
-        'mobile_no',
         'member_relation',
         'mobile_no',
         'is_active',
