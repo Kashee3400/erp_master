@@ -794,7 +794,7 @@ class GetPouredMppView(APIView):
                 references__mpp_code__in=mpp_codes,
                 references__collection_date__date=collection_date,
             )
-            .values("references__mpp_code").order_by("-references__mpp_code__mpp_name")
+            .values("references__mpp_code").order_by("references__mpp_code__mpp_name")
             .annotate(total_qty=Sum("qty"))
         )
 
