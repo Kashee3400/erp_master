@@ -11,15 +11,18 @@ from erp_app.models import (
     Unit,
     BillingMemberMaster,
     BillingMemberDetail,
+    MemberMasterHistory,
     Bank,
-    Mpp,MemberHierarchyView,
+    Mpp,
+    MemberHierarchyView,
 )
 from erp_app.serializers import (
     BinLocationSerializer,
     ProductCategorySerializer,
-    BrandSerializer,MemberHierarchyViewSerializer
+    BrandSerializer,
+    MemberHierarchyViewSerializer,
 )
-from member.models import OTP,SahayakIncentives
+from member.models import OTP, SahayakIncentives
 
 from rest_framework import serializers
 from ..models.facilitator_model import AssignedMppToFacilitator
@@ -28,15 +31,28 @@ from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
+
 class AssignedMppToFacilitatorSerializer(serializers.ModelSerializer):
     sahayak = serializers.StringRelatedField()
+
     class Meta:
         model = AssignedMppToFacilitator
         fields = [
-            'id', 'sahayak', 'mpp_code','mpp_ex_code', 'mpp_name', 'mpp_short_name',
-            'mpp_type', 'mpp_logo', 'mpp_icon', 'mpp_punch_line',
-            'mpp_opening_date', 'created_at', 'updated_at',
+            "id",
+            "sahayak",
+            "mpp_code",
+            "mpp_ex_code",
+            "mpp_name",
+            "mpp_short_name",
+            "mpp_type",
+            "mpp_logo",
+            "mpp_icon",
+            "mpp_punch_line",
+            "mpp_opening_date",
+            "created_at",
+            "updated_at",
         ]
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,6 +91,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "refresh": data["refresh"],
             "access": data["access"],
         }
+
 
 class MemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -116,15 +133,15 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         """
         try:
             member = MemberHierarchyView.objects.get(member_code=obj.module_code)
-            return MemberHierarchyViewSerializer(member,context=self.context).data
+            return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
             return None
+
 
 class DeductionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale
-        fields = ['module_code','local_sale_no']
-
+        fields = ["module_code", "local_sale_no"]
 
 
 class UnitSerializer(serializers.ModelSerializer):
@@ -175,6 +192,7 @@ class DeductionTxnSerializer(serializers.ModelSerializer):
         model = LocalSaleTxn
         fields = "__all__"
 
+
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
     # product = ERProductSerializer(source="product_code", read_only=True)
     local_sale_code = LocalSaleSerializer(read_only=True)
@@ -187,8 +205,7 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
             "qty",
             "rate",
             "amount",
-            ]
-
+        ]
 
 
 class CdaAggregationDaywiseMilktypeSerializer(serializers.ModelSerializer):
@@ -227,7 +244,7 @@ class SahayakIncentivesSerializer(serializers.ModelSerializer):
 
 
 from rest_framework import serializers
-from member.models import SahayakFeedback,News
+from member.models import SahayakFeedback, News
 
 
 class SahayakFeedbackSerializer(serializers.ModelSerializer):
@@ -249,8 +266,6 @@ class SahayakFeedbackSerializer(serializers.ModelSerializer):
             validated_data["mpp_code"] = request.user.device.mpp_code
 
         return super().create(validated_data)
-
-
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -396,6 +411,7 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
         except MemberHierarchyView.DoesNotExist:
             return None
 
+
 class BillingMemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingMemberMaster
@@ -423,6 +439,7 @@ class BillingMemberMasterSerializer(serializers.ModelSerializer):
             "status",
         ]
 
+
 class MemberHierarchySerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberHierarchyView
@@ -446,7 +463,9 @@ class MemberHierarchySerializer(serializers.ModelSerializer):
             "ex_member_code",
         ]
 
+
 from django.urls import reverse
+
 
 class TopPourerSerializer(serializers.Serializer):
     member_code = serializers.CharField()
@@ -454,10 +473,13 @@ class TopPourerSerializer(serializers.Serializer):
     detail_url = serializers.SerializerMethodField()
 
     def get_detail_url(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
-            return request.build_absolute_uri(reverse('members-detail', args=[obj['member_code']]))
-        return reverse('members-detail', args=[obj['member_code']])
+            return request.build_absolute_uri(
+                reverse("members-detail", args=[obj["member_code"]])
+            )
+        return reverse("members-detail", args=[obj["member_code"]])
+
 
 class MonthAssignmentSerializer(serializers.Serializer):
     mpp_code = serializers.CharField()
@@ -469,3 +491,19 @@ class MonthAssignmentSerializer(serializers.Serializer):
     pourers_25_days = serializers.IntegerField()
     zero_days_pourers = serializers.IntegerField()
     top_pourers = TopPourerSerializer(many=True)
+
+
+class MemberMasterHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberMasterHistory
+        fields = [
+            "history_created_at",
+            "operation_type",
+            "member_code",
+            "operation_type",
+            "member_code",
+            "member_name",
+            "member_ex_code",
+            "mobile_no",
+            "is_active",
+        ]

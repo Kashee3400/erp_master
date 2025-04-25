@@ -26,6 +26,7 @@ router.register(r'vcg-meetings', api_view.VCGMeetingViewSet,basename="vcg-meetin
 router.register(r'dashboard-summary-data', views.DashboardSummaryViewSet,basename="dashboard-summary-data")
 router.register(r'members', m_view.MemberHierarchyViewSet,basename="members")
 router.register(r'local-sales', views.LocalSaleViewSet,basename="local_sales")
+router.register(r'member-sales', views.SaleToMembersViewSet,basename="member_sales")
 router.register(r'vcg-groups', api_view.VCGroupViewSet,basename="vcg-groups")
 
 
@@ -37,9 +38,13 @@ urlpatterns = [
     path("dashboard-detail-data/", views.DashboardDetailAPI.as_view(), name="dashboard_detail_data"),
     path("monthly-assignment/", m_view.MonthlyDataView.as_view(), name="monthly_assignment"),
     path("poured-members/", views.GetPouredMembersData.as_view(), name="poured_members"),
+    path('poured-mpp-list/',views.GetPouredMppView.as_view(),name="poured_mpp_list"),
+    path('mpp-poured-members-list/',views.GetPouredMembersForMppView.as_view(),name="mpp_poured_members_list"),
     path("high-pourers/", views.GetHighPourerData.as_view(), name="high_pourers"),
+    path("highest-poured-members/", views.GetHighPourerMembers.as_view(), name="highest_poured_members"),
     path("daily-mpp-collection/", views.GetDailyMppCollections.as_view(), name="daily_mpp_collection"),
     path("total-collection-qty/", views.GetTotalQtyForToday.as_view(), name="total_collection_qty"),
-    path("total-members/", views.GetTotalMembersData.as_view(), name="total_collection_qty"),
+    path("total-members/", views.GetTotalMembersData.as_view(), name="total_members"),
+    path("total-cancelled-members/", views.GetTotalCancelledMembers.as_view(), name="total_cancelled_members"),
     
 ] + router.urls

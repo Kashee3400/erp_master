@@ -204,7 +204,7 @@ class LocalSaleTxnAdmin(admin.ModelAdmin):
 class LocalSaleAdmin(admin.ModelAdmin):
     # Dynamically get all fields from the model
     list_display = [field.name for field in LocalSale._meta.fields]
-    search_fields = ["module_code"]
+    search_fields = ["module_code","local_sale_code"]
     list_filter = ['local_sale_date', 'transaction_date', 'status']  # Add fields to filter by
     readonly_fields = ['created_at', 'updated_at']  # Example of read-only fields
 
@@ -276,4 +276,15 @@ class MppDispatchTxnAdmin(admin.ModelAdmin):
     search_fields = ('mpp_dispatch_code__mpp_code',)
     list_filter = ('created_at',)
 
+class MemberMasterHistoryAdmin(admin.ModelAdmin):
+    # Fields to display in the admin panel list view
+    list_display = (
+        'member_code', 'member_name', 'operation_type', 
+        'history_created_by', 'history_created_at', 
+        'is_active', 'created_at'
+    )
+    search_fields = ('member_code', 'member_name', 'member_ex_code', 'member_surname')
+    list_filter = ('operation_type', 'is_active', 'created_at', 'updated_at', 'history_created_at')
+    ordering = ('-history_created_at',)
 
+admin.site.register(MemberMasterHistory, MemberMasterHistoryAdmin)

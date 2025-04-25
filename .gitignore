@@ -15,3 +15,5 @@ sqlite3.db
 
 # Ignore web configuration for development
 web.config-devep
+
+cache

@@ -126,7 +126,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
                 to_date = billing_master_instance.to_date
 
                 local_sales_queryset = LocalSale.objects.using('sarthak_kashee').filter(
-                    module_code=instance.member_code,
+                    module_code=instance.member_code,status__in=['Pending','Approved'],
                 installment_start_date__range=[from_date, to_date]
                 )
                 for local_sale in local_sales_queryset:

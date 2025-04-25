@@ -16,7 +16,7 @@ class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'created_at',
         'updated_at',
     )
-
+    # list_editable = ["sahayak"]
     search_fields = (
         'mpp_code',
         'mpp_ex_code',

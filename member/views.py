@@ -60,6 +60,12 @@ from django.utils.timezone import make_aware, now
 from django.db.models.functions import TruncDate
 from datetime import datetime, timedelta
 
+from django.db.models import Sum, F, FloatField, DecimalField
+from django.db.models.functions import Coalesce, Cast
+
+from django.utils.translation import gettext as _
+from django.core.cache import cache
+
 from member.models import UserDevice
 
 User = get_user_model()
@@ -1075,7 +1081,7 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
-        return queryset.filter(local_sale_code__mpp_code=mpp.mpp_code)
+        return queryset.filter(local_sale_code__mpp_code=mpp.mpp_code,local_sale_code__status__in=["Pending","Approved"])
 
     def list(self, request, *args, **kwargs):
         product_id = request.query_params.get("product_id", None)
@@ -1743,6 +1749,7 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(local_sale_code__status__in=["Pending","Approved"])
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -1770,12 +1777,6 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
             }
         )
 
-
-from django.db.models import Sum, F, FloatField, DecimalField
-from django.db.models.functions import Coalesce, Cast
-
-from django.utils.translation import gettext as _
-from django.core.cache import cache
 
 
 class SahayakDashboardAPI(APIView):
