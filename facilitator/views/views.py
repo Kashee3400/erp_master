@@ -692,6 +692,76 @@ class VerifyOTPResetPasswordView(APIView):
         )
 
 
+# class GetPouredMembersData(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         user = request.user
+
+#         # Get collection date from query params, default to today's date
+#         collection_date_str = request.GET.get("collection_date")
+#         collection_date = (
+#             timezone.now().date()
+#             if collection_date_str is None
+#             else collection_date_str
+#         )
+
+#         # Get mpp codes assigned to the user
+#         mpp_codes = list(self.get_mpps(user))
+
+#         # Get all members under those mpp codes
+#         all_active_members = MemberHierarchyView.objects.filter(
+#             mpp_code__in=mpp_codes,
+#             is_active=True, is_default=True
+#             ).only("member_code")
+
+#         # Get only their member codes
+#         member_codes = all_active_members.values_list("member_code", flat=True)
+
+#         # Filter collections for today and matching members
+#         filtered_collection = (
+#             MppCollection.objects.filter(
+#                 references__collection_date__date=collection_date,
+#                 member_code__in=member_codes,
+#             )
+#             .values("member_code")
+#             .distinct()
+#         )
+
+#         total_active_member = all_active_members.filter(
+            
+#         ).count()
+#         poured_members = filtered_collection.count()
+
+#         data = {
+#             "key": "poured_member",
+#             "title": "Poured Members",
+#             "data": [
+#                 {
+#                     "title": "Poured",
+#                     "value": poured_members,
+#                     "color": "#7cddf7",
+#                     "text_color": "#29859e",
+#                 },
+#                 {
+#                     "title": "Active",
+#                     "value": total_active_member,
+#                     "color": "#29859e",
+#                     "text_color": "#7cddf7",
+#                 },
+#             ],
+#         }
+
+#         return Response(
+#             data={"message": "success", "status": "success", "data": data},
+#             status=status.HTTP_200_OK,
+#         )
+
+#     def get_mpps(self, user):
+#         if user.is_authenticated:
+#             return user.mpps.all().values_list("mpp_code", flat=True)
+
 class GetPouredMembersData(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -699,38 +769,46 @@ class GetPouredMembersData(APIView):
     def get(self, request):
         user = request.user
 
-        # Get collection date from query params, default to today's date
+        # Get collection date from query params, default to today
         collection_date_str = request.GET.get("collection_date")
         collection_date = (
-            timezone.now().date()
-            if collection_date_str is None
-            else collection_date_str
+            now().date() if collection_date_str is None else collection_date_str
         )
 
-        # Get mpp codes assigned to the user
+        # Cache key specific to user and date
+        cache_key = f"poured_members_{user.id}_{collection_date}"
+        cached_response = cache.get(cache_key)
+        if cached_response:
+            return Response(cached_response, status=status.HTTP_200_OK)
+
+        # Get mpp codes assigned to user
         mpp_codes = list(self.get_mpps(user))
 
-        # Get all members under those mpp codes
-        all_members = MemberHierarchyView.objects.filter(mpp_code__in=mpp_codes)
+        # Fetch only active members under those mpps
+        all_active_members = MemberHierarchyView.objects.filter(
+            mpp_code__in=mpp_codes,
+            is_active=True,
+            is_default=True
+        ).only("member_code")
 
-        # Get only their member codes
-        member_codes = all_members.values_list("member_code", flat=True)
+        # Get their member codes
+        member_codes = all_active_members.values_list("member_code", flat=True)
 
-        # Filter collections for today and matching members
-        filtered_collection = (
+        # Count of poured members (who have collection on given date)
+        poured_members = (
             MppCollection.objects.filter(
                 references__collection_date__date=collection_date,
                 member_code__in=member_codes,
             )
-            .values("member_code", "references__collection_date")
+            .values("member_code")
             .distinct()
+            .count()
         )
 
-        total_active_member = all_members.filter(
-            is_active=True, is_default=True
-        ).count()
-        poured_members = filtered_collection.count()
+        # Total count of active members
+        total_active_member = all_active_members.count()
 
+        # Response payload
         data = {
             "key": "poured_member",
             "title": "Poured Members",
@@ -750,14 +828,21 @@ class GetPouredMembersData(APIView):
             ],
         }
 
-        return Response(
-            data={"message": "success", "status": "success", "data": data},
-            status=status.HTTP_200_OK,
-        )
+        response_data = {
+            "message": "success",
+            "status": "success",
+            "data": data,
+        }
+
+        # Set cache
+        cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def get_mpps(self, user):
         if user.is_authenticated:
             return user.mpps.all().values_list("mpp_code", flat=True)
+        return []
 
 class GetPouredMppView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -1021,7 +1106,6 @@ class GetTotalCancelledMembers(APIView):
         if user.is_authenticated:
             return user.mpps.all().values_list("mpp_code", flat=True)
         return []
-
 class GetHighPourerData(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -1030,35 +1114,57 @@ class GetHighPourerData(APIView):
         user = request.user
         collection_date_str = request.GET.get("collection_date")
         collection_date = (
-            timezone.now().date()
-            if collection_date_str is None
-            else collection_date_str
+            timezone.now().date() if collection_date_str is None else collection_date_str
         )
+
+        # Optional: Enable caching if needed
+        cache_key = f"high_pourer_counts_{user.id}_{collection_date}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        # Get assigned MPP codes
         mpp_codes = list(self.get_mpps(user))
-        all_members = MemberHierarchyView.objects.filter(mpp_code__in=mpp_codes)
-        member_codes = all_members.values_list("member_code", flat=True)
+        if not mpp_codes:
+            return Response(
+                {"message": "No MPPs assigned", "status": "error"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get active/default members under user's MPPs
+        member_codes = MemberHierarchyView.objects.filter(
+            mpp_code__in=mpp_codes,
+            is_active=True,
+            is_default=True
+        ).only("member_code").values_list("member_code", flat=True)
+
+        # Aggregate total quantity per member for the given date
         aggregated = (
             MppCollection.objects.filter(
                 references__collection_date__date=collection_date,
                 member_code__in=member_codes,
             )
-            .values("member_code", "references__collection_date")
+            .values("member_code")
             .annotate(total_qty=Sum("qty"))
         )
+
+        # Count high and low pourers
         high_pourers_count = aggregated.filter(total_qty__gt=49).count()
         low_pourers_count = aggregated.filter(total_qty__lte=49).count()
+
+        # Prepare the response data
         data = {
             "key": "high_pourers",
             "title": "High Pourers",
             "data": [
                 {
-                    "title": " > 49 L",
+                    "title": "> 49 L",
                     "value": high_pourers_count,
                     "color": "#27ae60",
                     "text_color": "#0b2d36",
                 },
                 {
-                    "title": " < 49 L",
+                    "title": "<= 49 L",
                     "value": low_pourers_count,
                     "color": "#f39c12",
                     "text_color": "#ffffff",
@@ -1066,15 +1172,21 @@ class GetHighPourerData(APIView):
             ],
         }
 
-        return Response(
-            data={"message": "success", "status": "success", "data": data},
-            status=status.HTTP_200_OK,
-        )
+        response_data = {
+            "message": "success",
+            "status": "success",
+            "data": data,
+        }
+
+        # Optional: Cache result
+        cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def get_mpps(self, user):
         if user.is_authenticated:
-            return user.mpps.all().values_list("mpp_code", flat=True)
-
+            return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
+        return []
 
 class GetHighPourerMembers(APIView):
     authentication_classes = [JWTAuthentication]
