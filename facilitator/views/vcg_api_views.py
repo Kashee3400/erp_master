@@ -380,7 +380,7 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
 class VCGroupViewSet(viewsets.ModelViewSet):
     queryset = VCGroup.objects.all()
     serializer_class = VCGroupSerializer
-    # authentication_classes =[ApiKeyAuthentication]
+    authentication_classes =[ApiKeyAuthentication]
     permission_classes= [AllowAny]
 
     def create(self, request, *args, **kwargs):

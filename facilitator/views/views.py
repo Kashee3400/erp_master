@@ -436,7 +436,6 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     serializer_class = [LocalSaleTxnSerializer]
     permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_context(self):
@@ -481,8 +480,7 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
             product_id = product["product_code"]
             product_name = product["product_code__product_name"]
             product_data = queryset.filter(product_code=product_id)
-
-            # Get all MPP data for this product
+            
             mpp_data = (
                 product_data.values("local_sale_code__mpp_code", "local_sale_code")
                 .annotate(
@@ -690,77 +688,6 @@ class VerifyOTPResetPasswordView(APIView):
         return Response(
             {"message": _("Password reset successfully.")}, status=status.HTTP_200_OK
         )
-
-
-# class GetPouredMembersData(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-
-#         # Get collection date from query params, default to today's date
-#         collection_date_str = request.GET.get("collection_date")
-#         collection_date = (
-#             timezone.now().date()
-#             if collection_date_str is None
-#             else collection_date_str
-#         )
-
-#         # Get mpp codes assigned to the user
-#         mpp_codes = list(self.get_mpps(user))
-
-#         # Get all members under those mpp codes
-#         all_active_members = MemberHierarchyView.objects.filter(
-#             mpp_code__in=mpp_codes,
-#             is_active=True, is_default=True
-#             ).only("member_code")
-
-#         # Get only their member codes
-#         member_codes = all_active_members.values_list("member_code", flat=True)
-
-#         # Filter collections for today and matching members
-#         filtered_collection = (
-#             MppCollection.objects.filter(
-#                 references__collection_date__date=collection_date,
-#                 member_code__in=member_codes,
-#             )
-#             .values("member_code")
-#             .distinct()
-#         )
-
-#         total_active_member = all_active_members.filter(
-            
-#         ).count()
-#         poured_members = filtered_collection.count()
-
-#         data = {
-#             "key": "poured_member",
-#             "title": "Poured Members",
-#             "data": [
-#                 {
-#                     "title": "Poured",
-#                     "value": poured_members,
-#                     "color": "#7cddf7",
-#                     "text_color": "#29859e",
-#                 },
-#                 {
-#                     "title": "Active",
-#                     "value": total_active_member,
-#                     "color": "#29859e",
-#                     "text_color": "#7cddf7",
-#                 },
-#             ],
-#         }
-
-#         return Response(
-#             data={"message": "success", "status": "success", "data": data},
-#             status=status.HTTP_200_OK,
-#         )
-
-#     def get_mpps(self, user):
-#         if user.is_authenticated:
-#             return user.mpps.all().values_list("mpp_code", flat=True)
 
 class GetPouredMembersData(APIView):
     authentication_classes = [JWTAuthentication]

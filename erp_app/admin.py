@@ -288,3 +288,30 @@ class MemberMasterHistoryAdmin(admin.ModelAdmin):
     ordering = ('-history_created_at',)
 
 admin.site.register(MemberMasterHistory, MemberMasterHistoryAdmin)
+
+
+@admin.register(MppHistory)
+class MppHistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'history_created_by', 'history_created_at', 
+        'operation_type', 'mpp_code', 'mpp_name', 'created_at', 'updated_at'
+    )  # Fields to show in the table
+
+    search_fields = (
+        'history_created_by', 'operation_type', 
+        'mpp_code', 'mpp_ex_code', 'mpp_name', 'mpp_short_name'
+    )  # Fields searchable from the search box
+
+    list_filter = (
+        'operation_type', 'flg_sentbox_entry', 
+        'originating_type', 'created_by', 'updated_by'
+    )  # Right sidebar filters
+
+    readonly_fields = (
+        'history_created_at', 'created_at', 'updated_at'
+    )  # Make some fields read-only if needed
+
+    ordering = ('-history_created_at',)  # Newest history first
+
+    date_hierarchy = 'history_created_at'  # Add a nice date drilldown
+

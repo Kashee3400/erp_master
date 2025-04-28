@@ -82,7 +82,7 @@ class VCGMeetingAdmin(admin.ModelAdmin):
 
 
 # Admin Configuration
-class VCGroupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class VCGroupAdmin(ImportExportModelAdmin):
     list_display = ('member_name', 'whatsapp_num', 'member_code', 'created_at')
     search_fields = ('member_name', 'whatsapp_num', 'member_code')
     list_filter = ('created_at', 'updated_at')
