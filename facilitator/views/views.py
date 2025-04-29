@@ -32,7 +32,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 
-CACHE_TIMEOUT = 3600  # 10 minutes
+CACHE_TIMEOUT = 900
 
 
 class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):

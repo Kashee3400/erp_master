@@ -4,7 +4,7 @@ import random
 from rest_framework import viewsets
 from rest_framework import status
 from ..serializers.vcg_serializers import *
-from ..filters.api_filters import VCGMeetingFilter,MonthAssignmentFilter
+from ..filters.api_filters import VCGMeetingFilter, MonthAssignmentFilter
 from django.db.models import Count
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -22,7 +22,7 @@ class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
     queryset = VCGMemberAttendance.objects.all()
     serializer_class = VCGMemberAttendanceSerializer
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def mark_attendance(self, request):
         """
         Marks all given members as PRESENT for the specified meeting.
@@ -37,8 +37,10 @@ class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
 
         if not meeting_id or not isinstance(member_ids, list):
             return Response(
-                {"error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of ints)."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of ints)."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         responses = []
@@ -49,27 +51,33 @@ class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
                 attendance, created = VCGMemberAttendance.objects.update_or_create(
                     meeting=meeting,
                     member=member,
-                    defaults={"status": VCGMemberAttendance.PRESENT}
+                    defaults={"status": VCGMemberAttendance.PRESENT},
                 )
-                responses.append({
-                    "member_code": member_id,
-                    "status": VCGMemberAttendance.PRESENT,
-                    "created": created
-                })
+                responses.append(
+                    {
+                        "member_code": member_id,
+                        "status": VCGMemberAttendance.PRESENT,
+                        "created": created,
+                    }
+                )
             except Exception as e:
                 errors.append({"member_id": member_id, "error": str(e)})
         response_data = {"marked": responses}
         if errors:
             response_data["errors"] = errors
-        return Response(response_data, status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+        )
+
 
 class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
     queryset = ZeroDaysPouringReport.objects.all()
     serializer_class = ZeroDaysPouringReportSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-    
-    @action(detail=False, methods=['post'])
+
+    @action(detail=False, methods=["post"])
     def mark_zero_days(self, request):
         """
         Bulk marks Zero Days Pouring Report for the given meeting and members.
@@ -89,8 +97,10 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
 
         if not meeting_id or not isinstance(members, list) or not reason_id:
             return Response(
-                {"error": "Invalid data format. Provide 'meeting' (int), 'members' (list of dicts), and 'reason' (int)."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Invalid data format. Provide 'meeting' (int), 'members' (list of dicts), and 'reason' (int)."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         meeting = get_object_or_404(VCGMeeting, id=meeting_id)
@@ -106,21 +116,25 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
                 member_name = member.get("member_name")
 
                 if not member_code or not member_ex_code or not member_name:
-                    raise ValueError("Missing required member fields: 'member_code', 'member_ex_code', 'member_name'.")
+                    raise ValueError(
+                        "Missing required member fields: 'member_code', 'member_ex_code', 'member_name'."
+                    )
 
                 report, created = ZeroDaysPouringReport.objects.update_or_create(
                     meeting=meeting,
                     reason=reason,
                     member_code=member_code,
                     member_ex_code=member_ex_code,
-                    member_name=member_name
+                    member_name=member_name,
                 )
 
-                responses.append({
-                    "member_code": member_code,
-                    "status": "Report Created" if created else "Already Exists",
-                    "created": created
-                })
+                responses.append(
+                    {
+                        "member_code": member_code,
+                        "status": "Report Created" if created else "Already Exists",
+                        "created": created,
+                    }
+                )
             except Exception as e:
                 errors.append({"member": member, "error": str(e)})
 
@@ -128,12 +142,17 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
         if errors:
             response_data["errors"] = errors
 
-        return Response(response_data, status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+        )
+
 
 class MonthAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API to fetch Month Assignment data. This is read-only.
     """
+
     queryset = MonthAssignment.objects.all()
     serializer_class = MonthAssignmentSerializer
     permission_classes = [AllowAny]
@@ -146,13 +165,14 @@ class MonthAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ["month"]
     ordering = ["-month"]
 
+
 class MemberComplaintReportViewSet(viewsets.ModelViewSet):
     queryset = MemberComplaintReport.objects.all()
     serializer_class = MemberComplaintReportSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def mark_complaint(self, request):
         """
         Bulk marks Member Complaint Reports for the given meeting and members.
@@ -172,8 +192,10 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
 
         if not meeting_id or not isinstance(members, list) or not reason_id:
             return Response(
-                {"error": "Invalid data format. Provide 'meeting' (int), 'members' (list of dicts), and 'reason' (int)."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Invalid data format. Provide 'meeting' (int), 'members' (list of dicts), and 'reason' (int)."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         meeting = get_object_or_404(VCGMeeting, id=meeting_id)
@@ -189,10 +211,12 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
                 member_name = member_data.get("member_name")
 
                 if not member_code or not member_name:
-                    errors.append({
-                        "member_data": member_data,
-                        "error": "Missing required fields: 'member_code', 'member_name'."
-                    })
+                    errors.append(
+                        {
+                            "member_data": member_data,
+                            "error": "Missing required fields: 'member_code', 'member_name'.",
+                        }
+                    )
                     continue
 
                 report, created = MemberComplaintReport.objects.update_or_create(
@@ -201,16 +225,18 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
                     defaults={
                         "member_ex_code": member_ex_code,
                         "member_name": member_name,
-                        "reason": reason
-                    }
+                        "reason": reason,
+                    },
                 )
 
-                responses.append({
-                    "member_code": member_code,
-                    "member_name": member_name,
-                    "meeting": meeting.id,
-                    "status": "Report Created" if created else "Updated"
-                })
+                responses.append(
+                    {
+                        "member_code": member_code,
+                        "member_name": member_name,
+                        "meeting": meeting.id,
+                        "status": "Report Created" if created else "Updated",
+                    }
+                )
 
             except Exception as e:
                 errors.append({"member_data": member_data, "error": str(e)})
@@ -219,7 +245,11 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
         if errors:
             response_data["errors"] = errors
 
-        return Response(response_data, status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+        )
+
 
 class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
@@ -227,11 +257,13 @@ class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
     queryset = ZeroDaysPourerReason.objects.all()
     serializer_class = ZeroDaysReasonSerializer
 
+
 class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     authentication_classes = [ApiKeyAuthentication]
     queryset = MemberComplaintReason.objects.all()
     serializer_class = MemberComplaintReasonSerializer
+
 
 class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
     queryset = VCGMeetingImages.objects.all()
@@ -254,10 +286,16 @@ class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
         base64_images = request.data.get("images", [])
         selected_datetime = request.data.get("date_time")
 
-        if not meeting_id or not isinstance(base64_images, list) or not selected_datetime:
+        if (
+            not meeting_id
+            or not isinstance(base64_images, list)
+            or not selected_datetime
+        ):
             return Response(
-                {"error": "Invalid data format. Provide 'meeting_id' (int), 'images' (list of base64 strings), and 'date_time' (str)."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Invalid data format. Provide 'meeting_id' (int), 'images' (list of base64 strings), and 'date_time' (str)."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         uploaded_images = []
@@ -267,16 +305,14 @@ class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
                 image_data = base64.b64decode(base64_image)
                 image_file = ContentFile(
                     image_data,
-                    name=f"{random.randint(100, 999)}_{meeting_id}_{selected_datetime}.jpg"
+                    name=f"{random.randint(100, 999)}_{meeting_id}_{selected_datetime}.jpg",
                 )
                 meeting_image = VCGMeetingImages.objects.create(
-                    meeting=meeting,
-                    image=image_file
+                    meeting=meeting, image=image_file
                 )
-                uploaded_images.append({
-                    "id": meeting_image.id,
-                    "image_url": meeting_image.image.url
-                })
+                uploaded_images.append(
+                    {"id": meeting_image.id, "image_url": meeting_image.image.url}
+                )
             except Exception as e:
                 errors.append({"image": base64_image[:30], "error": str(e)})
         # Update meeting status
@@ -286,11 +322,14 @@ class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
         response_data = {
             "message": "Images uploaded successfully",
             "meeting_id": meeting.meeting_id,
-            "uploaded_images": uploaded_images
+            "uploaded_images": uploaded_images,
         }
         if errors:
             response_data["errors"] = errors
-        return Response(response_data, status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+        )
 
 
 class VCGMeetingViewSet(viewsets.ModelViewSet):
@@ -320,8 +359,8 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
         """
         mpp_code = request.data.get("mpp_code")
         started_at = request.data.get("started_at")
-        dt_obj = datetime.fromisoformat(started_at) 
-        exists, meeting = VCGMeeting.get_ongoing_meeting(mpp_code=mpp_code,date=dt_obj)
+        dt_obj = datetime.fromisoformat(started_at)
+        exists, meeting = VCGMeeting.get_ongoing_meeting(mpp_code=mpp_code, date=dt_obj)
         if exists:
             return Response(
                 {
@@ -345,7 +384,11 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            {"status": "error", "message": _("Invalid data"), "errors": serializer.errors},
+            {
+                "status": "error",
+                "message": _("Invalid data"),
+                "errors": serializer.errors,
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -373,53 +416,77 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            {"status": "error", "message": _("Invalid data"), "errors": serializer.errors},
+            {
+                "status": "error",
+                "message": _("Invalid data"),
+                "errors": serializer.errors,
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
+
 
 class VCGroupViewSet(viewsets.ModelViewSet):
     queryset = VCGroup.objects.all()
     serializer_class = VCGroupSerializer
-    authentication_classes =[JWTAuthentication]
-    permission_classes= [IsAuthenticated]
-    
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def list(self, request, *args, **kwargs):
         queryset = super().get_queryset()
         mpp_code = self.request.GET.get("mpp_code")
         if not mpp_code:
-            return Response({"status":"error","message":"mpp_code is required"},status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "error", "message": "mpp_code is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         queryset = queryset.filter(mpp__mpp_code=mpp_code)
         serializer = self.serializer_class(queryset, many=True)
-        return Response({"status":"success","message":"vcg group fetched","data":serializer.data},status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": "success",
+                "message": "vcg group fetched",
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "message": _( "VCG Member created successfully" ),
-                "data": serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            "error": _( "Invalid data" ),
-            "details": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "message": _("VCG Member created successfully"),
+                    "data": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            {"error": _("Invalid data"), "details": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "message": _( "VCG Member updated successfully" ),
-                "data": serializer.data
-            }, status=status.HTTP_200_OK)
-        return Response({
-            "error": _( "Invalid data" ),
-            "details": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "message": _("VCG Member updated successfully"),
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"error": _("Invalid data"), "details": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
-        return Response({"message": _( "VCG Member deleted successfully" )}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": _("VCG Member deleted successfully")},
+            status=status.HTTP_204_NO_CONTENT,
+        )
