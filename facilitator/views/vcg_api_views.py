@@ -40,20 +40,20 @@ class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
                 {"error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of ints)."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        meeting = get_object_or_404(VCGMeeting, id=meeting_id)
+        meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         responses = []
         errors = []
         for member_id in member_ids:
             try:
-                member = get_object_or_404(VCGroup, id=member_id)
+                member = get_object_or_404(VCGroup, member_code=member_id)
                 attendance, created = VCGMemberAttendance.objects.update_or_create(
                     meeting=meeting,
                     member=member,
                     defaults={"status": VCGMemberAttendance.PRESENT}
                 )
                 responses.append({
-                    "member_id": member_id,
-                    "status": "Present",
+                    "member_code": member_id,
+                    "status": VCGMemberAttendance.PRESENT,
                     "created": created
                 })
             except Exception as e:
@@ -380,8 +380,17 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
 class VCGroupViewSet(viewsets.ModelViewSet):
     queryset = VCGroup.objects.all()
     serializer_class = VCGroupSerializer
-    authentication_classes =[ApiKeyAuthentication]
-    permission_classes= [AllowAny]
+    authentication_classes =[JWTAuthentication]
+    permission_classes= [IsAuthenticated]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = super().get_queryset()
+        mpp_code = self.request.GET.get("mpp_code")
+        if not mpp_code:
+            return Response({"status":"error","message":"mpp_code is required"},status=status.HTTP_400_BAD_REQUEST)
+        queryset = queryset.filter(mpp__mpp_code=mpp_code)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response({"status":"success","message":"vcg group fetched","data":serializer.data},status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -414,12 +423,3 @@ class VCGroupViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response({"message": _( "VCG Member deleted successfully" )}, status=status.HTTP_204_NO_CONTENT)
-
-    @action(detail=True, methods=['get'])
-    def get_member(self, request, pk=None):
-        member = get_object_or_404(VCGroup, pk=pk)
-        serializer = self.get_serializer(member)
-        return Response({
-            "message": _( "VCG Member retrieved successfully" ),
-            "data": serializer.data
-        }, status=status.HTTP_200_OK)

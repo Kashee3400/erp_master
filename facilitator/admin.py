@@ -1,28 +1,25 @@
 from django.contrib import admin
 from .models.facilitator_model import AssignedMppToFacilitator,ApiKey
-from .models.vcg_model import VCGMeeting,VCGroup
-from .forms.base_form import AssignedMppToFacilitatorForm
+from .models.vcg_model import VCGMeeting,VCGroup,ZeroDaysPourerReason,ZeroDaysPouringReport,MemberComplaintReason,MemberComplaintReport
 from import_export.admin import ImportExportModelAdmin
+from .resources import FacilitatorResource,VCGroupResource
 
-class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    # form = AssignedMppToFacilitatorForm
+class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin):
+    
+    resource_class = FacilitatorResource
     list_display = (
+        'facilitator_name',
         'mpp_code',
-        'mpp_short_name',
         'mpp_ex_code',
         'mpp_name',
-        'mpp_type',
-        'sahayak',
         'created_at',
         'updated_at',
     )
-    # list_editable = ["sahayak"]
     search_fields = (
         'mpp_code',
         'mpp_ex_code',
         'mpp_name',
     )
-
     list_filter = (
         'sahayak',
         'mpp_type',
@@ -30,6 +27,31 @@ class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'updated_at',
     )
     readonly_fields = ('created_at', 'updated_at')
+    
+    save_as = True
+    save_on_top = True
+    actions_on_bottom = True
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['custom_message'] = "🚀 Assign MPPs carefully!"
+        return super().changeform_view(request, object_id, form_url, extra_context)
+
+
+    @admin.display(description='Facilitator')
+    def facilitator_name(self, obj):
+        if obj.sahayak:
+            full_name = f"{obj.sahayak.first_name} {obj.sahayak.last_name}".strip()
+            if full_name.strip():
+                return full_name
+            if obj.sahayak.username:
+                return obj.sahayak.username
+        return 'No Facilitator Assigned'
+
+
 
 admin.site.register(AssignedMppToFacilitator,AssignedMppToFacilitatorAdmin)
 
@@ -70,21 +92,31 @@ class VCGMeetingAdmin(admin.ModelAdmin):
         }),
     )
 
-    # # Customizing the Django admin interface
-    # def has_add_permission(self, request):
-    #     """Prevent adding new meetings from Django Admin."""
-    #     return False  # Meetings should be added via API or another process
-
-    # def has_delete_permission(self, request, obj=None):
-    #     """Prevent deletion of meetings from Django Admin."""
-    #     return False  # Prevent accidental deletion of meeting records
-
 
 
 # Admin Configuration
 class VCGroupAdmin(ImportExportModelAdmin):
-    list_display = ('member_name', 'whatsapp_num', 'member_code', 'created_at')
-    search_fields = ('member_name', 'whatsapp_num', 'member_code')
-    list_filter = ('created_at', 'updated_at')
+    resource_class = VCGroupResource
+    list_display = ('member_name','mpp', 'whatsapp_num', 'member_code', 'created_at')
+    search_fields = ('member_name', 'whatsapp_num', 'member_code',"mpp__mpp_code")
+    list_filter = ('mpp','created_at', 'updated_at')
 
 admin.site.register(VCGroup, VCGroupAdmin)
+
+
+class ZeroDaysReasonAdmin(ImportExportModelAdmin):
+    list_display = ('id', 'reason','created_at')
+    search_fields = ('reason',)
+    list_filter = ('created_at', 'updated_at')
+    date_hierarchy = 'created_at'
+
+admin.site.register(ZeroDaysPourerReason, ZeroDaysReasonAdmin)
+
+
+class MemberComplaintReasonAdmin(ImportExportModelAdmin):
+    list_display = ('id', 'reason','created_at')
+    search_fields = ('reason',)
+    list_filter = ('created_at', 'updated_at')
+    date_hierarchy = 'created_at'
+
+admin.site.register(MemberComplaintReason, MemberComplaintReasonAdmin)

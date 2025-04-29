@@ -132,7 +132,7 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         Fetch the member data from MemberMaster using module_code.
         """
         try:
-            member = MemberHierarchyView.objects.get(member_code=obj.module_code)
+            member = MemberHierarchyView.objects.filter(member_code=obj.module_code,is_default=True).last()
             return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
             return None
