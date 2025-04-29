@@ -24,6 +24,8 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
 
+from rest_framework.response import Response
+from rest_framework import status
 
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -32,14 +34,13 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     - `mpp_code`
     - `bmc_code`
     - `member_code`
-    
     """
     authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ['mcc_code', 'mpp_code', 'bmc_code','is_active',"is_default"]
+    filterset_fields = ['mcc_code', 'mpp_code', 'bmc_code', 'is_active', 'is_default']
     ordering_fields = ['created_at', 'member_name']
     search_fields = ['member_name', 'mobile_no']
     pagination_class = StandardResultsSetPagination
@@ -50,14 +51,26 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         Override retrieve to filter data based on `member_code`
         """
         member_code = self.kwargs.get(self.lookup_field)
-        queryset = self.get_queryset().filter(member_code=member_code,is_default=True)
+        queryset = self.get_queryset().filter(member_code=member_code, is_default=True)
         
         if not queryset.exists():
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"status": "error", "message": "Not found.", "data": None}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = self.get_serializer(queryset.first())
-        return Response(serializer.data)
+        return Response({"status": "success", "message": "Data retrieved successfully.", "data": serializer.data})
 
+    def list(self, request, *args, **kwargs):
+        """
+        Override list to format response with desired structure
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Data retrieved successfully.",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+        
 class MonthlyDataView(APIView):
     authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]

@@ -12,13 +12,23 @@ class VCGroupSerializer(serializers.ModelSerializer):
 class ZeroDaysReasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = ZeroDaysPourerReason
-        fields = '__all__'
+        fields = ('id', 'reason')
 
+    def validate_reason(self, value):
+        if not value.strip():  # Check if the value is blank
+            raise serializers.ValidationError("Reason cannot be blank.")
+        return value
+    
 class MemberComplaintReasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberComplaintReason
-        fields = '__all__'
-
+        fields = fields = ('id', 'reason')
+    
+    def validate_reason(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Reason cannot be blank.")
+        return value
+    
 class VCGMeetingImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = VCGMeetingImages
