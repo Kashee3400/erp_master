@@ -35,16 +35,13 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
-
         # Serialize MemberMaster data
         member_serializer = self.get_serializer(instance)
-
         # Fetch and serialize related MppCollectionAggregation data
         mpp_aggregations = MppCollectionAggregation.objects.filter(member_code=instance.member_code).first()
         if mpp_aggregations:
             mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
             mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
-                    # Prepare response
             response_data = member_serializer.data
             response_data['mcc_code'] = mcc.mcc_ex_code
             response_data['mcc_name'] = mcc.mcc_name
@@ -53,10 +50,9 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
             response_data['mpp_name'] = mpp.mpp_name
             response_data['mpp_code'] = mpp.mpp_ex_code
             response_data['mpp_tr_code'] = mpp_aggregations.mpp_tr_code
-
-        response_data['company_code'] = mpp_aggregations.company_code
-        response_data['company_name'] = mpp_aggregations.company_name
-        response_data['member_tr_code'] = mpp_aggregations.member_tr_code
+            response_data['company_code'] = mpp_aggregations.company_code
+            response_data['company_name'] = mpp_aggregations.company_name
+            response_data['member_tr_code'] = mpp_aggregations.member_tr_code
         billing_member_detail = BillingMemberDetail.objects.filter(member_code=instance.member_code).first()
         response_data['bank'] = billing_member_detail.bank_code.bank_name
         response_data['bank_branch'] = ""

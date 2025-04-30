@@ -40,6 +40,7 @@ urlpatterns = [
     path("poured-members/", views.GetPouredMembersData.as_view(), name="poured_members"),
     path('poured-mpp-list/',views.GetPouredMppView.as_view(),name="poured_mpp_list"),
     path('mpp-poured-members-list/',views.GetPouredMembersForMppView.as_view(),name="mpp_poured_members_list"),
+    path('mpp-poured-members-sql-list/',views.GetPouredMembersRawSQLView.as_view(),name="mpp_poured_members_sql_list"),
     path("high-pourers/", views.GetHighPourerData.as_view(), name="high_pourers"),
     path("highest-poured-members/", views.GetHighPourerMembers.as_view(), name="highest_poured_members"),
     path("daily-mpp-collection/", views.GetDailyMppCollections.as_view(), name="daily_mpp_collection"),

@@ -13,7 +13,7 @@ User = get_user_model()
 admin.site.unregister(User)
 
 @admin.register(User)
-class UserAdmin(ImportExportModelAdmin, DefaultUserAdmin):
+class UserAdmin(ImportExportModelAdmin,DefaultUserAdmin):
     resource_class = UserResource
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
 

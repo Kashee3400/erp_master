@@ -120,3 +120,4 @@ class MemberComplaintReasonAdmin(ImportExportModelAdmin):
     date_hierarchy = 'created_at'
 
 admin.site.register(MemberComplaintReason, MemberComplaintReasonAdmin)
+

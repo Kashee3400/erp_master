@@ -391,7 +391,7 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
 
     def get_member(self, obj):
         try:
-            member = MemberHierarchyView.objects.get(member_code=obj.member_code)
+            member = MemberHierarchyView.objects.filter(member_code=obj.member_code,is_default=True).last()
             return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
             

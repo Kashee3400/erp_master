@@ -315,3 +315,17 @@ class MppHistoryAdmin(admin.ModelAdmin):
 
     date_hierarchy = 'history_created_at'  # Add a nice date drilldown
 
+
+@admin.register(V_PouredMemberSummary)
+class V_PouredMemberSummaryAdmin(admin.ModelAdmin):
+    list_display = (
+        "member",   
+        "mpp", 
+        "collection_date",
+        "total_qty",
+        "avg_fat",
+        "avg_snf",
+    )
+    list_filter = ("collection_date", "mpp")
+    search_fields = ("member__member_name", "mpp__mpp_name")
+    date_hierarchy = 'collection_date'

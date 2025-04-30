@@ -159,7 +159,6 @@ class ERProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         from erp_app.models import Product
-
         model = Product
         fields = [
             "product_code",
@@ -194,9 +193,8 @@ class DeductionTxnSerializer(serializers.ModelSerializer):
 
 
 class LocalSaleTxnSerializer(serializers.ModelSerializer):
-    # product = ERProductSerializer(source="product_code", read_only=True)
+    product = ERProductSerializer(source="product_code", read_only=True)
     local_sale_code = LocalSaleSerializer(read_only=True)
-
     class Meta:
         model = LocalSaleTxn
         fields = [
@@ -205,6 +203,7 @@ class LocalSaleTxnSerializer(serializers.ModelSerializer):
             "qty",
             "rate",
             "amount",
+            "product",
         ]
 
 

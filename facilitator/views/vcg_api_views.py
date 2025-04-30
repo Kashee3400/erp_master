@@ -77,10 +77,9 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    @action(detail=False, methods=["post"])
-    def mark_zero_days(self, request):
+    def create(self, request, *args, **kwargs):
         """
-        Bulk marks Zero Days Pouring Report for the given meeting and members.
+        Handles bulk creation of ZeroDaysPouringReport.
         Expected request format:
         {
             "meeting": <meeting_id>,
@@ -103,8 +102,7 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        meeting = get_object_or_404(VCGMeeting, id=meeting_id)
-        reason = get_object_or_404(ZeroDaysPourerReason, id=reason_id)
+        meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
 
         responses = []
         errors = []
@@ -122,7 +120,7 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
 
                 report, created = ZeroDaysPouringReport.objects.update_or_create(
                     meeting=meeting,
-                    reason=reason,
+                    reason_id=reason_id,
                     member_code=member_code,
                     member_ex_code=member_ex_code,
                     member_name=member_name,
@@ -144,7 +142,7 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
 
         return Response(
             response_data,
-            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED,
         )
 
 
@@ -154,8 +152,7 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    @action(detail=False, methods=["post"])
-    def mark_complaint(self, request):
+    def create(self, request, *args, **kwargs):
         """
         Bulk marks Member Complaint Reports for the given meeting and members.
         Expected request format:
@@ -232,6 +229,7 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
             status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
         )
 
+
 class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
     authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
@@ -247,43 +245,37 @@ class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "message": "Resource created successfully",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(
                 {
                     "status": "success",
                     "message": "Resource updated successfully",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def retrieve(self, request, *args, **kwargs):
@@ -294,41 +286,34 @@ class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "message": "Resource retrieved successfully",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_404_NOT_FOUND
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset = self.filter_queryset(self.get_queryset().order_by('id'))
+            queryset = self.filter_queryset(self.get_queryset().order_by("id"))
             serializer = self.get_serializer(queryset, many=True)
             return Response(
                 {
                     "status": "success",
                     "message": "Resource list retrieved successfully",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
@@ -345,43 +330,37 @@ class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "message": "Member complaint reason created successfully.",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(
                 {
                     "status": "success",
                     "message": "Member complaint reason updated successfully.",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def retrieve(self, request, *args, **kwargs):
@@ -392,41 +371,33 @@ class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "message": "Member complaint reason retrieved successfully.",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_404_NOT_FOUND
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset = self.filter_queryset(self.get_queryset().order_by('id'))
+            queryset = self.filter_queryset(self.get_queryset().order_by("id"))
 
             serializer = self.get_serializer(queryset, many=True)
             return Response(
                 {
                     "status": "success",
                     "message": "Member complaint reasons retrieved successfully.",
-                    "data": serializer.data
+                    "data": serializer.data,
                 },
-                status=status.HTTP_200_OK
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -437,20 +408,17 @@ class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
                 {
                     "status": "success",
                     "message": "Member complaint reason deleted successfully.",
-                    "data": None
+                    "data": None,
                 },
-                status=status.HTTP_204_NO_CONTENT
+                status=status.HTTP_204_NO_CONTENT,
             )
         except Exception as e:
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e),
-                    "data": None
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e), "data": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            
+
+
 class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
     queryset = VCGMeetingImages.objects.all()
     serializer_class = VCGMeetingImagesSerializer

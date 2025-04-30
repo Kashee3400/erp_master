@@ -40,7 +40,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MemberHierarchyView.objects.all()
     serializer_class = MemberHierarchySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ['mcc_code', 'mpp_code', 'bmc_code', 'is_active', 'is_default']
+    filterset_fields = ['mcc_code', 'mpp_code','member_code', 'bmc_code', 'is_active', 'is_default']
     ordering_fields = ['created_at', 'member_name']
     search_fields = ['member_name', 'mobile_no']
     pagination_class = StandardResultsSetPagination
@@ -51,7 +51,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         Override retrieve to filter data based on `member_code`
         """
         member_code = self.kwargs.get(self.lookup_field)
-        queryset = self.get_queryset().filter(member_code=member_code, is_default=True)
+        queryset = self.get_queryset().filter(member_code=member_code)
         
         if not queryset.exists():
             return Response({"status": "error", "message": "Not found.", "data": None}, status=status.HTTP_404_NOT_FOUND)

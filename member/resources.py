@@ -54,13 +54,18 @@ class SahayakIncentivesResource(resources.ModelResource):
         import_id_fields = ("user", "month")
 
 
+from django.contrib.auth.hashers import make_password
 class UserResource(resources.ModelResource):
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name")
-
-        exclude = ("id",)
+        fields = ("username", "first_name", "last_name", "password")
         import_id_fields = ("username",)
+        exclude = ("id",)
+
+    def before_import_row(self, row, **kwargs):
+        raw_password = row.get("password")
+        if raw_password and not raw_password.startswith("pbkdf2_"):
+            row["password"] = make_password(raw_password)
 
 
 class UserDeviceResource(resources.ModelResource):
