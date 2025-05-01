@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import views , vcg_api_views as api_view,members_view as m_view
+from .views import views , vcg_api_views as api_view,members_view as m_view,auth as auth
 from django.urls import path, include, re_path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -47,5 +47,11 @@ urlpatterns = [
     path("total-collection-qty/", views.GetTotalQtyForToday.as_view(), name="total_collection_qty"),
     path("total-members/", views.GetTotalMembersData.as_view(), name="total_members"),
     path("total-cancelled-members/", views.GetTotalCancelledMembers.as_view(), name="total_cancelled_members"),
+    
+    # Auth URLs
+    path("send-otp/", auth.GenerateOTPView.as_view(), name="send_otp"),
+    path("verify-otp/", auth.VerifyOTPView.as_view(), name="verify_otp"),
+    path("verify-session/", auth.VerifySession.as_view(), name="verify_session"),
+    
     
 ] + router.urls
