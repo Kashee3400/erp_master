@@ -72,34 +72,33 @@ class VerifyOTPView(generics.GenericAPIView):
 
         if not device_id:
             return Response(
-                {"status": "error", "message": _("Device ID is required.")},
+                {"status": "error", "message": "Device ID is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
+            otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
         except OTP.DoesNotExist:
             return Response(
-                {"status": "error", "message": _("Invalid OTP.")},
+                {"status": "error", "message": "Invalid OTP."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not otp.is_valid():
             otp.delete()
             return Response(
-                {"status": "error", "message": _("OTP has expired.")},
+                {"status": "error", "message": "OTP has expired."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user, _ = User.objects.get_or_create(username=phone_number)
         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-        UserDevice.objects.create(user=user, device=device_id)
-        # Generate tokens
+        UserDevice.objects.create(user=user, device=device_id,module="facilitator")
         refresh = RefreshToken.for_user(user)
         otp.delete()
         return Response(
             {
                 "status": "success",
-                "message": _("Authentication successful."),
+                "message": "Authentication successful.",
                 "data": {
                     "phone_number": user.username,
                     "access_token": str(refresh.access_token),
