@@ -130,7 +130,7 @@ def send_sms_api(mobile, otp):
         response = requests.get(url, params=params)
         response.raise_for_status()
         data = response.json()
-        if data.get("ErrorCode") == "000":
+        if response.status_code == 200:
             return True, data
         return False, data
     except requests.RequestException as e:
