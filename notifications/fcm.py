@@ -79,7 +79,12 @@ def _build_common_message():
 
 def _send_device_specific_notification(device_token, notification):
     message = {"message": {"token": device_token, "notification": notification}}
-    _send_fcm_message(fcm_message=message)
+    sent,info = _send_fcm_message(fcm_message=message)
+    if sent:
+        print(F"Message {info} sent to user's device")
+    else:
+        print(f"Message Not Sent")
+        print(info)
 
 
 def _build_override_message():
@@ -103,27 +108,35 @@ def _build_override_message():
     return fcm_message
 
 
-# def main():
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("--message")
-#     args = parser.parse_args()
-#     if args.message and args.message == "common-message":
-#         common_message = _build_common_message()
-#         print("FCM request body for message using common notification object:")
-#         print(json.dumps(common_message, indent=2))
-#         _send_fcm_message(common_message)
-#     elif args.message and args.message == "override-message":
-#         override_message = _build_override_message()
-#         print("FCM request body for override message:")
-#         print(json.dumps(override_message, indent=2))
-#         _send_fcm_message(override_message)
-#     else:
-#         print(
-#             """Invalid command. Please use one of the following commands:
-# python messaging.py --message=common-message
-# python messaging.py --message=override-message"""
-#         )
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--message")
+    args = parser.parse_args()
+    if args.message and args.message == "common-message":
+        common_message = _build_common_message()
+        print("FCM request body for message using common notification object:")
+        print(json.dumps(common_message, indent=2))
+        _send_fcm_message(common_message)
+    elif args.message and args.message == "override-message":
+        override_message = _build_override_message()
+        print("FCM request body for override message:")
+        print(json.dumps(override_message, indent=2))
+        _send_fcm_message(override_message)
+    elif args.message and args.message == "device-message":
+        token = "fJQLRDRaTt2DcZhgn5nzrW:APA91bFb0htbcPcdbDn3WGYGnyech9exBeQYYKHzmPGefpS7WcIWBJ2QQfj672UGu-_slHvnmCO8sEIRsfADgn5m34S3CCgEt2bHb6OsBBn4cSOi2-KvLiw"
+        notification = {
+            "title":"Test Notification",
+            "body":"Test message",
+        }
+        _send_device_specific_notification(device_token=token,notification=notification)
+    else:
+        print(
+            """Invalid command. Please use one of the following commands:
+                python fcm.py --message=common-message
+                python fcm.py --message=override-message
+                python fcm.py --message=device-message"""
+        )
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

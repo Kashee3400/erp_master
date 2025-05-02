@@ -46,7 +46,9 @@ class UserDevice(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE, related_name='device', verbose_name=_('User'))
     device = models.CharField(max_length=255, unique=True, blank=True, null=True,verbose_name=_('Device'))
     mpp_code = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("MPP Code"))
+    fcm_token = models.TextField(blank=True,null=True,verbose_name=_("FCM Token"))
     module = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Module Code"))
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.user} - {self.device}'
