@@ -12,7 +12,7 @@ from erp_app.models import (
     MemberMasterHistory,
     V_PouredMemberSummary,
 )
-from django.db.models import Sum, F, FloatField, Avg
+from django.db.models import Sum, F, FloatField, Avg,Q
 from django.db.models.functions import Coalesce, Cast
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _

@@ -44,7 +44,7 @@ def _send_fcm_message(fcm_message):
     """Send HTTP request to FCM with given message.
 
     Args:
-      fcm_message: JSON object that will make up the body of the request.
+    fcm_message: JSON object that will make up the body of the request.
     """
     # [START use_access_token]
     headers = {
@@ -55,16 +55,13 @@ def _send_fcm_message(fcm_message):
     resp = requests.post(FCM_URL, data=json.dumps(fcm_message), headers=headers)
 
     if resp.status_code == 200:
-        print("Message sent to Firebase for delivery, response:")
-        print(resp.text)
+        return True,resp.text
     else:
-        print("Unable to send message to Firebase")
-        print(resp.text)
+        return False, resp.text
 
 
 def _build_common_message():
     """Construct common notifiation message.
-
     Construct a JSON object that will be used to define the
     common parts of a notification message that will be sent
     to any app instance subscribed to the news topic.
@@ -78,6 +75,11 @@ def _build_common_message():
             },
         }
     }
+
+
+def _send_device_specific_notification(device_token, notification):
+    message = {"message": {"token": device_token, "notification": notification}}
+    _send_fcm_message(fcm_message=message)
 
 
 def _build_override_message():
@@ -101,27 +103,27 @@ def _build_override_message():
     return fcm_message
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--message")
-    args = parser.parse_args()
-    if args.message and args.message == "common-message":
-        common_message = _build_common_message()
-        print("FCM request body for message using common notification object:")
-        print(json.dumps(common_message, indent=2))
-        _send_fcm_message(common_message)
-    elif args.message and args.message == "override-message":
-        override_message = _build_override_message()
-        print("FCM request body for override message:")
-        print(json.dumps(override_message, indent=2))
-        _send_fcm_message(override_message)
-    else:
-        print(
-            """Invalid command. Please use one of the following commands:
-python messaging.py --message=common-message
-python messaging.py --message=override-message"""
-        )
+# def main():
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("--message")
+#     args = parser.parse_args()
+#     if args.message and args.message == "common-message":
+#         common_message = _build_common_message()
+#         print("FCM request body for message using common notification object:")
+#         print(json.dumps(common_message, indent=2))
+#         _send_fcm_message(common_message)
+#     elif args.message and args.message == "override-message":
+#         override_message = _build_override_message()
+#         print("FCM request body for override message:")
+#         print(json.dumps(override_message, indent=2))
+#         _send_fcm_message(override_message)
+#     else:
+#         print(
+#             """Invalid command. Please use one of the following commands:
+# python messaging.py --message=common-message
+# python messaging.py --message=override-message"""
+#         )
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
