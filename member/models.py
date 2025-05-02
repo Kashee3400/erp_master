@@ -10,7 +10,8 @@ import uuid
 
 User = get_user_model()
 
-HARD_CODED_NUMBER = '6388952128'
+HARD_CODED_NUMBER1 = '6388952128'
+HARD_CODED_NUMBER2 = '7007105973'
 HARD_CODED_OTP = '112233'
 
 class OTP(models.Model):
@@ -20,7 +21,7 @@ class OTP(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.otp:
-            if self.phone_number == HARD_CODED_NUMBER:
+            if self.phone_number in [HARD_CODED_NUMBER1,HARD_CODED_NUMBER2]:
                 self.otp = HARD_CODED_OTP
             else:
                 # Generating a random OTP for other numbers
