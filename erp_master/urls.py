@@ -20,7 +20,9 @@ urlpatterns = [
     path('member/', include('member.urls')),
     path('mpms/', include('mpms.urls')),
     path('facilitator/', include('facilitator.urls')),
+    path('erp-fcm/', include('notifications.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('app-ads.txt', app_ads_txt, name='app_ads_txt'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -143,7 +143,7 @@ class VerifyOTPView(generics.GenericAPIView):
         response = {
             "status": status.HTTP_200_OK,
             "phone_number": user.username,
-            "message": _("Authentication successful"),
+            "message": "Authentication successful",
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
             "device_id": device_id,

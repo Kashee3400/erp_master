@@ -55,7 +55,7 @@ def _send_fcm_message(fcm_message):
     resp = requests.post(FCM_URL, data=json.dumps(fcm_message), headers=headers)
 
     if resp.status_code == 200:
-        return True,resp.text
+        return True, resp.text
     else:
         return False, resp.text
 
@@ -78,10 +78,13 @@ def _build_common_message():
 
 
 def _send_device_specific_notification(device_token, notification):
-    message = {"message": {"token": device_token, "notification": notification}}
-    sent,info = _send_fcm_message(fcm_message=message)
+    message = {
+        "message": {"token": device_token, "notification": notification},
+        "data": {"route": "sales", "id": "123", "customKey": "customValue"},
+    }
+    sent, info = _send_fcm_message(fcm_message=message)
     if sent:
-        print(F"Message {info} sent to user's device")
+        print(f"Message {info} sent to user's device")
     else:
         print(f"Message Not Sent")
         print(info)
@@ -108,6 +111,37 @@ def _build_override_message():
     return fcm_message
 
 
+def _build_device_specific_message():
+    notification = {
+        "title": "Test Notification",
+        "titleLocArgs": ["User"],
+        "titleLocKey": "notification_title_key",
+        "body": "Test message body goes here",
+        "bodyLocArgs": ["42"],
+        "bodyLocKey": "notification_body_key",
+        "android": {
+            "channelId": "default_channel",
+            "clickAction": "FLUTTER_NOTIFICATION_CLICK",
+            "color": "#FF0000",
+            "count": 1,
+            "imageUrl": "https://example.com/image.png",
+            "link": "https://kashee.com/details",
+            "priority": 1,
+            "smallIcon": "ic_stat_notification",
+            "sound": "default",
+            "ticker": "You have a new alert",
+            "tag": "test_tag",
+            "visibility": 1,
+        },
+        "apple": {"badge": 3, "sound": "default", "subtitle": "iOS only subtitle"},
+        "web": {
+            "image": "https://example.com/web-image.png",
+            "link": "https://kashee.com",
+        },
+    }
+    return notification
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--message")
@@ -123,12 +157,10 @@ def main():
         print(json.dumps(override_message, indent=2))
         _send_fcm_message(override_message)
     elif args.message and args.message == "device-message":
-        token = "fJQLRDRaTt2DcZhgn5nzrW:APA91bFb0htbcPcdbDn3WGYGnyech9exBeQYYKHzmPGefpS7WcIWBJ2QQfj672UGu-_slHvnmCO8sEIRsfADgn5m34S3CCgEt2bHb6OsBBn4cSOi2-KvLiw"
-        notification = {
-            "title":"Test Notification",
-            "body":"Test message",
-        }
-        _send_device_specific_notification(device_token=token,notification=notification)
+        token = "ey1AmNRmQOGBo9ZEA_2i21:APA91bF1InQN0Unug3BlK2vSqlNS1a9QMD99txQB1Xpgzr7eBOz-9yAq1s92NmTq-YrsvIHoSdUWJIJ5DlR0YjzSvxg00ahCrDLaDZ5u4760EDVdV_TidXo"
+        _send_device_specific_notification(
+            device_token=token, notification=_build_device_specific_message()
+        )
     else:
         print(
             """Invalid command. Please use one of the following commands:

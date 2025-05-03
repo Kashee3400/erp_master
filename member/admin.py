@@ -20,7 +20,7 @@ class UserAdmin(ImportExportModelAdmin,DefaultUserAdmin):
 @admin.register(UserDevice)
 class UserDeviceAdmin(ImportExportModelAdmin):
     resource_class = UserDeviceResource
-    list_display = ['user','mpp_code','module','device']
+    list_display = ['user','mpp_code','module','last_updated']
     search_fields = ("user__username","user__first_name","user__last_name","mpp_code")
     
 class UserOTPAdmin(admin.ModelAdmin):
