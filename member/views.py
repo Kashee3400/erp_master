@@ -198,6 +198,60 @@ class GenerateSahayakOTPView(APIView):
         )
 
 
+# class VerifySahayakOTPView(generics.GenericAPIView):
+#     serializer_class = VerifyOTPSerializer
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         phone_number = serializer.validated_data["phone_number"]
+#         otp_value = serializer.validated_data["otp"]
+#         device_id = request.data.get("device_id")
+
+#         if not device_id:
+#             return Response(
+#                 {"status": "error", "message": "Device ID is required."},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
+#         if not otp:
+#             return Response(
+#                 {"status": "error", "message": "Invalid OTP."},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         if not otp.is_valid():
+#             otp.delete()
+#             return Response(
+#                 {"status": "error", "message": "OTP has expired."},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+#         user, _ = User.objects.get_or_create(username=phone_number)
+#         user_device = UserDevice.objects.filter(
+#             Q(user=user) | Q(device=device_id)
+#         )
+#         if user_device.exists():
+#             user_device.delete()
+#         UserDevice.objects.create(user=user,fcm_token=device_id, device=device_id, module="sahayak")
+        
+#         refresh = RefreshToken.for_user(user)
+#         return Response(
+#             {
+#                 "status": "success",
+#                 "message": "Authentication successful.",
+#                 "data": {
+#                     "phone_number": user.username,
+#                     "access_token": str(refresh.access_token),
+#                     "refresh_token": str(refresh),
+#                     "device_id": device_id,
+#                 },
+#             },
+#             status=status.HTTP_200_OK,
+#         )
+
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -210,47 +264,35 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
 
-        if not device_id:
+        try:
+            otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
+        except OTP.DoesNotExist:
             return Response(
-                {"status": "error", "message": "Device ID is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
-        if not otp:
-            return Response(
-                {"status": "error", "message": "Invalid OTP."},
+                {"status": status.HTTP_400_BAD_REQUEST, "message": _("Invalid OTP")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not otp.is_valid():
             otp.delete()
             return Response(
-                {"status": "error", "message": "OTP has expired."},
+                {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        user, _ = User.objects.get_or_create(username=phone_number)
-        user_device = UserDevice.objects.filter(
-            Q(user=user) | Q(device=device_id)
+        user, created = User.objects.get_or_create(username=phone_number)
+        device, created = UserDevice.objects.update_or_create(
+            user=user, defaults={"device": device_id}
         )
-        if user_device.exists():
-            user_device.delete()
-        UserDevice.objects.create(user=user,fcm_token=device_id, device=device_id, module="sahayak")
         refresh = RefreshToken.for_user(user)
-        return Response(
-            {
-                "status": "success",
-                "message": "Authentication successful.",
-                "data": {
-                    "phone_number": user.username,
-                    "access_token": str(refresh.access_token),
-                    "refresh_token": str(refresh),
-                    "device_id": device_id,
-                },
-            },
-            status=status.HTTP_200_OK,
-        )
-
+        response = {
+            "status": status.HTTP_200_OK,
+            "phone_number": user.username,
+            "message": _("Authentication successful"),
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+            "device_id": device_id,
+            "mpp_code": device.mpp_code,
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 def send_sms_api(mobile, otp):
     url = "https://alerts.cbis.in/SMSApi/send"
