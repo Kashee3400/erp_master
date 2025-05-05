@@ -1,4 +1,4 @@
-from rest_framework import generics, status, viewsets, exceptions, decorators,filters
+from rest_framework import generics, status, viewsets, exceptions, decorators, filters
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -48,9 +48,9 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import *
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Sum, Avg,Q
+from django.db.models import Sum, Avg, Q
 from django.conf import settings
-from .filters import SahayakIncentivesFilter,MemberHeirarchyFilter
+from .filters import SahayakIncentivesFilter, MemberHeirarchyFilter
 from facilitator.authentication import ApiKeyAuthentication
 from datetime import date
 from django.utils.dateparse import parse_date
@@ -82,7 +82,7 @@ class GenerateOTPView(APIView):
             .exists()
         ):
             return Response(
-                {"status": 400, "message": _("Mobile number doest not exists")},
+                {"status": 400, "message": "Mobile number doest not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         otp = OTP.objects.filter(phone_number=phone_number)
@@ -94,16 +94,17 @@ class GenerateOTPView(APIView):
             return Response(
                 {
                     "status": "error",
-                    "message": _("Failed to send OTP. Please try again later."),
+                    "message": "Failed to send OTP. Please try again later.",
                     "details": info,
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
         return Response(
-            {"status": "success", "message": _("OTP sent successfully.")},
+            {"status": "success", "message": "OTP sent successfully."},
             status=status.HTTP_200_OK,
         )
+
 
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
@@ -120,18 +121,20 @@ class VerifyOTPView(generics.GenericAPIView):
             otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
         except OTP.DoesNotExist:
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": _("Invalid OTP")},
+                {"status": status.HTTP_400_BAD_REQUEST, "message": "Invalid OTP"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not otp.is_valid():
             otp.delete()
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
+                {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user, _ = User.objects.get_or_create(username=phone_number)
-        user_device = UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).first()
+        user_device = UserDevice.objects.filter(
+            Q(user=user) | Q(device=device_id)
+        ).first()
         if user_device:
             user_device.user = user
             user_device.device = device_id
@@ -150,6 +153,7 @@ class VerifyOTPView(generics.GenericAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+
 class GenerateSahayakOTPView(APIView):
     permission_classes = [AllowAny]
 
@@ -166,7 +170,7 @@ class GenerateSahayakOTPView(APIView):
             return Response(
                 {
                     "status": "error",
-                    "message": _("User does not exist. Please contact support."),
+                    "message": "User does not exist. Please contact support.",
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -182,14 +186,14 @@ class GenerateSahayakOTPView(APIView):
             return Response(
                 {
                     "status": "error",
-                    "message": _("Failed to send OTP. Please try again later."),
+                    "message": "Failed to send OTP. Please try again later.",
                     "details": info,
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
         return Response(
-            {"status": "success", "message": _("OTP sent successfully.")},
+            {"status": "success", "message": "OTP sent successfully."},
             status=status.HTTP_200_OK,
         )
 
@@ -205,7 +209,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
-        
+
         if not device_id:
             return Response(
                 {"status": "error", "message": "Device ID is required."},
@@ -227,7 +231,9 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user, _ = User.objects.get_or_create(username=phone_number)
-        user_device = UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).first()
+        user_device = UserDevice.objects.filter(
+            Q(user=user) | Q(device=device_id)
+        ).first()
         if user_device:
             user_device.user = user
             user_device.device = device_id
@@ -425,15 +431,18 @@ class ProductRateListView(generics.ListAPIView):
                 message=str(e),
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-            
+
+
 from .forms import DataFilterForm
+
+
 class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
     permission_required = "member_app.can_view_otp"
-    
+
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
-    
+
 
 # class AppInstalledData(APIView):
 #     permission_classes = [AllowAny]
@@ -501,6 +510,7 @@ class MyHomePage(LoginRequiredMixin, View):
 
 #         return Response(result, status=status.HTTP_200_OK)
 
+
 class AppInstalledData(APIView):
     permission_classes = [AllowAny]
 
@@ -510,7 +520,11 @@ class AppInstalledData(APIView):
         year = int(request.GET.get("year", now().year))
         month = int(request.GET.get("month", now().month))
 
-        mpp_codes = [code.strip() for code in mpp_codes_param.split(",")] if mpp_codes_param else None
+        mpp_codes = (
+            [code.strip() for code in mpp_codes_param.split(",")]
+            if mpp_codes_param
+            else None
+        )
 
         start_date = make_aware(datetime(year, month, 1))
         end_date = (
@@ -520,10 +534,14 @@ class AppInstalledData(APIView):
         )
 
         user_device_usernames = set(
-            UserDevice.objects.filter(module=None).values_list("user__username", flat=True)
+            UserDevice.objects.filter(module=None).values_list(
+                "user__username", flat=True
+            )
         )
 
-        mcc_queryset = Mcc.objects.filter(mcc_code=mcc_code) if mcc_code else Mcc.objects.all()
+        mcc_queryset = (
+            Mcc.objects.filter(mcc_code=mcc_code) if mcc_code else Mcc.objects.all()
+        )
         result = []
 
         # Grand totals
@@ -547,26 +565,34 @@ class AppInstalledData(APIView):
 
             total_members = members_qs.count()
             member_mobiles = members_qs.values_list("mobile_no", flat=True)
-            installed_count = sum(1 for mobile in member_mobiles if mobile in user_device_usernames)
-            installed_percentage = (installed_count / total_members * 100) if total_members else 0
+            installed_count = sum(
+                1 for mobile in member_mobiles if mobile in user_device_usernames
+            )
+            installed_percentage = (
+                (installed_count / total_members * 100) if total_members else 0
+            )
 
             member_codes = members_qs.values_list("member_code", flat=True)
             collections = MppCollection.objects.filter(
                 collection_date__range=(start_date, end_date),
                 member_code__in=member_codes,
             )
-            no_of_pourers = collections.values("member_code").annotate(
-                days=Count(TruncDate("collection_date"), distinct=True)
-            ).count()
+            no_of_pourers = (
+                collections.values("member_code")
+                .annotate(days=Count(TruncDate("collection_date"), distinct=True))
+                .count()
+            )
 
-            result.append({
-                "mcc": MccSerializer(mcc).data,
-                "mpp": serialized_mpps,
-                "total_members": total_members,
-                "app_installed_by_member": installed_count,
-                "installed_percentage": round(installed_percentage, 2),
-                "no_of_pourers": no_of_pourers,
-            })
+            result.append(
+                {
+                    "mcc": MccSerializer(mcc).data,
+                    "mpp": serialized_mpps,
+                    "total_members": total_members,
+                    "app_installed_by_member": installed_count,
+                    "installed_percentage": round(installed_percentage, 2),
+                    "no_of_pourers": no_of_pourers,
+                }
+            )
 
             # Accumulate totals
             total_members_all += total_members
@@ -574,18 +600,23 @@ class AppInstalledData(APIView):
             total_pourers_all += no_of_pourers
 
         # Append grand total row
-        grand_total_percentage = (installed_count_all / total_members_all * 100) if total_members_all else 0
-        result.append({
-            "mcc": {"name": "Grand Total"},
-            "mpp": None,
-            "total_members": total_members_all,
-            "app_installed_by_member": installed_count_all,
-            "installed_percentage": round(grand_total_percentage, 2),
-            "no_of_pourers": total_pourers_all,
-            "is_total": True  # Helps frontend to identify the total row
-        })
+        grand_total_percentage = (
+            (installed_count_all / total_members_all * 100) if total_members_all else 0
+        )
+        result.append(
+            {
+                "mcc": {"name": "Grand Total"},
+                "mpp": None,
+                "total_members": total_members_all,
+                "app_installed_by_member": installed_count_all,
+                "installed_percentage": round(grand_total_percentage, 2),
+                "no_of_pourers": total_pourers_all,
+                "is_total": True,  # Helps frontend to identify the total row
+            }
+        )
 
         return Response(result, status=status.HTTP_200_OK)
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -1142,7 +1173,10 @@ class LocalSaleViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         device = self.request.user.device
         mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
-        return queryset.filter(local_sale_code__mpp_code=mpp.mpp_code,local_sale_code__status__in=["Pending","Approved"])
+        return queryset.filter(
+            local_sale_code__mpp_code=mpp.mpp_code,
+            local_sale_code__status__in=["Pending", "Approved"],
+        )
 
     def list(self, request, *args, **kwargs):
         product_id = request.query_params.get("product_id", None)
@@ -1214,7 +1248,7 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]
     filterset_class = MemberHeirarchyFilter
-    filter_backends = [DjangoFilterBackend ]
+    filter_backends = [DjangoFilterBackend]
     search_fields = ["member_name", "member_code", "member_tr_code"]
     ordering_fields = ["member_name"]
 
@@ -1810,7 +1844,7 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(local_sale_code__status__in=["Pending","Approved"])
+        queryset = queryset.filter(local_sale_code__status__in=["Pending", "Approved"])
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -1837,7 +1871,6 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
-
 
 
 class SahayakDashboardAPI(APIView):
@@ -1959,69 +1992,78 @@ class ShiftViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return JsonResponse(serializer.data)
 
+
 class MppIncentiveSummaryAPIView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        mpp_code = request.GET.get('mpp_code')
-        start_date = request.GET.get('start_date')
-        end_date = request.GET.get('end_date')
+        mpp_code = request.GET.get("mpp_code")
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
 
         # Validate mpp_code
         if not mpp_code:
-            return JsonResponse({
-                "status": "error",
-                "message": "Please select MPP code.",
-                "results": []
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Please select MPP code.",
+                    "results": [],
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Validate start_date and end_date
         if not start_date or not end_date:
-            return JsonResponse({
-                "status": "error",
-                "message": "Start date and end date are required.",
-                "results": []
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Start date and end date are required.",
+                    "results": [],
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Parse dates
         start_date_parsed = parse_date(start_date)
         end_date_parsed = parse_date(end_date)
 
         if not start_date_parsed or not end_date_parsed:
-            return JsonResponse({
-                "status": "error",
-                "message": "Invalid date format. Use YYYY-MM-DD.",
-                "results": []
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Invalid date format. Use YYYY-MM-DD.",
+                    "results": [],
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Filter records in date range
         collections = MppCollection.objects.filter(
             references__mpp_code=mpp_code,
-            references__collection_date__date__range=(start_date_parsed, end_date_parsed)
+            references__collection_date__date__range=(
+                start_date_parsed,
+                end_date_parsed,
+            ),
         )
 
         # Weighted aggregation
         aggregation = collections.aggregate(
-            qty=Sum('qty'),
+            qty=Sum("qty"),
             fat=Coalesce(
-                Cast(
-                    Sum(F('qty') * F('fat'), output_field=FloatField()),
-                    FloatField()
-                ) / Cast(Sum('qty'), FloatField()),
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
                 0.0,
             ),
             snf=Coalesce(
-                Cast(
-                    Sum(F('qty') * F('snf'), output_field=FloatField()),
-                    FloatField()
-                ) / Cast(Sum('qty'), FloatField()),
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
                 0.0,
             ),
         )
 
-        qty = aggregation['qty'] or 0
-        fat = round(aggregation['fat'], 2) or 0
-        snf = round(aggregation['snf'], 2) or 0
+        qty = aggregation["qty"] or 0
+        fat = round(aggregation["fat"], 2) or 0
+        snf = round(aggregation["snf"], 2) or 0
 
         # Calculate incentive
         efu = fat + (snf * 2 / 3)
@@ -2033,11 +2075,11 @@ class MppIncentiveSummaryAPIView(generics.GenericAPIView):
             "status": "success",
             "message": "Incentive calculated successfully.",
             "results": {
-                'fat': round(fat, 2),
-                'snf': round(snf, 2),
-                'qty': round(qty, 2),
-                'incentive': round(incentive, 2),
-            }
+                "fat": round(fat, 2),
+                "snf": round(snf, 2),
+                "qty": round(qty, 2),
+                "incentive": round(incentive, 2),
+            },
         }
 
         return Response(data)
