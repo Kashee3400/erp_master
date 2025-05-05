@@ -235,10 +235,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             Q(user=user) | Q(device=device_id)
         ).first()
         if user_device:
-            user_device.user = user
-            user_device.device = device_id
-            user_device.module = "sahayak"
-            user_device.save()
+            user_device.delete()
         else:
             UserDevice.objects.create(user=user, device=device_id, module="sahayak")
         refresh = RefreshToken.for_user(user)
