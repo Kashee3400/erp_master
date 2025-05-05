@@ -117,15 +117,15 @@ class VerifyOTPView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
-        try:
-            otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
-        except OTP.DoesNotExist:
+
+        otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
+        if not otp:
             return Response(
                 {"status": status.HTTP_400_BAD_REQUEST, "message": "Invalid OTP"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not otp.is_valid():
+        if  not otp.is_valid():
             otp.delete()
             return Response(
                 {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
