@@ -235,8 +235,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         )
         if user_device.exists():
             user_device.delete()
-        else:
-            UserDevice.objects.create(user=user, device=device_id, module="sahayak")
+        UserDevice.objects.create(user=user,fcm_token=device_id, device=device_id, module="sahayak")
         refresh = RefreshToken.for_user(user)
         return Response(
             {
