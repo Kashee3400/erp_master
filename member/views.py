@@ -125,7 +125,7 @@ class VerifyOTPView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if  not otp.is_valid():
+        if not otp.is_valid():
             otp.delete()
             return Response(
                 {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
@@ -216,15 +216,14 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        try:
-            otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
-        except OTP.DoesNotExist:
+        otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
+        if not otp:
             return Response(
                 {"status": "error", "message": "Invalid OTP."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if otp and not otp.is_valid():
+        if not otp.is_valid():
             otp.delete()
             return Response(
                 {"status": "error", "message": "OTP has expired."},
@@ -233,13 +232,12 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         user, _ = User.objects.get_or_create(username=phone_number)
         user_device = UserDevice.objects.filter(
             Q(user=user) | Q(device=device_id)
-        ).first()
-        if user_device:
+        )
+        if user_device.exists():
             user_device.delete()
         else:
             UserDevice.objects.create(user=user, device=device_id, module="sahayak")
         refresh = RefreshToken.for_user(user)
-        otp.delete()
         return Response(
             {
                 "status": "success",
