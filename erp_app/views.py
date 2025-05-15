@@ -242,9 +242,6 @@ class MppCollectionDetailView(generics.GenericAPIView):
         provided_date = self.validate_date(date_str, today)
         if isinstance(provided_date, Response):
             return provided_date
-
-        # Fetch member by mobile number
-        # username = "6388952128"
         username = self.request.user.username
         cache_key_member = f"member_{username}"
         member = cache.get(cache_key_member)
@@ -269,9 +266,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
             date_queryset = list(MppCollection.objects.filter(
                 collection_date__date=provided_date, member_code=member_code
             ))
-            cache.set(cache_key_date, date_queryset, timeout=3600)  # Cache for 1 hour
-
-        # Cache key for fiscal year data
+            cache.set(cache_key_date, date_queryset, timeout=3600)
         cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
         fiscal_data = cache.get(cache_key_fy)
         if fiscal_data is None:
@@ -285,7 +280,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
                 total_qty=Sum('qty', default=0),
                 total_payment=Sum('amount', default=0)
             )
-            cache.set(cache_key_fy, fiscal_data, timeout=3600)  # Cache for 1 hour
+            cache.set(cache_key_fy, fiscal_data, timeout=3600)
 
         date_serializer = self.get_serializer(date_queryset, many=True)
 

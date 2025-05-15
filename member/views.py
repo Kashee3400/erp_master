@@ -197,61 +197,6 @@ class GenerateSahayakOTPView(APIView):
             status=status.HTTP_200_OK,
         )
 
-
-# class VerifySahayakOTPView(generics.GenericAPIView):
-#     serializer_class = VerifyOTPSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         phone_number = serializer.validated_data["phone_number"]
-#         otp_value = serializer.validated_data["otp"]
-#         device_id = request.data.get("device_id")
-
-#         if not device_id:
-#             return Response(
-#                 {"status": "error", "message": "Device ID is required."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
-#         if not otp:
-#             return Response(
-#                 {"status": "error", "message": "Invalid OTP."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         if not otp.is_valid():
-#             otp.delete()
-#             return Response(
-#                 {"status": "error", "message": "OTP has expired."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-#         user, _ = User.objects.get_or_create(username=phone_number)
-#         user_device = UserDevice.objects.filter(
-#             Q(user=user) | Q(device=device_id)
-#         )
-#         if user_device.exists():
-#             user_device.delete()
-#         UserDevice.objects.create(user=user,fcm_token=device_id, device=device_id, module="sahayak")
-        
-#         refresh = RefreshToken.for_user(user)
-#         return Response(
-#             {
-#                 "status": "success",
-#                 "message": "Authentication successful.",
-#                 "data": {
-#                     "phone_number": user.username,
-#                     "access_token": str(refresh.access_token),
-#                     "refresh_token": str(refresh),
-#                     "device_id": device_id,
-#                 },
-#             },
-#             status=status.HTTP_200_OK,
-#         )
-
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -469,82 +414,12 @@ class ProductRateListView(generics.ListAPIView):
             )
 
 
-from .forms import DataFilterForm
-
-
 class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
     permission_required = "member_app.can_view_otp"
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
-
-
-# class AppInstalledData(APIView):
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, *args, **kwargs):
-#         mcc_code = request.GET.get("mcc_code")
-#         mpp_codes_param = request.GET.get("mpp_codes")  # comma-separated list
-#         year = int(request.GET.get("year", now().year))
-#         month = int(request.GET.get("month", now().month))
-
-#         # Parse MPP codes if provided
-#         mpp_codes = [code.strip() for code in mpp_codes_param.split(",")] if mpp_codes_param else None
-
-#         # Date range for collection
-#         start_date = make_aware(datetime(year, month, 1))
-#         end_date = (
-#             make_aware(datetime(year + 1, 1, 1)) - timedelta(seconds=1)
-#             if month == 12
-#             else make_aware(datetime(year, month + 1, 1)) - timedelta(seconds=1)
-#         )
-
-#         user_device_usernames = set(
-#             UserDevice.objects.filter(module=None).values_list("user__username", flat=True)
-#         )
-
-#         mcc_queryset = Mcc.objects.filter(mcc_code=mcc_code) if mcc_code else Mcc.objects.all()
-#         result = []
-
-#         for mcc in mcc_queryset:
-#             members_qs = MemberHierarchyView.objects.filter(
-#                 mcc_code=mcc.mcc_code,
-#                 is_active=True,
-#                 is_default=True,
-#             )
-
-#             if mpp_codes:
-#                 members_qs = members_qs.filter(mpp_code__in=mpp_codes)
-#                 mpp_list = list(Mpp.objects.filter(mpp_code__in=mpp_codes))
-#                 serialized_mpps = MppSerializer(mpp_list, many=True).data
-#             else:
-#                 serialized_mpps = None
-
-#             total_members = members_qs.count()
-#             member_mobiles = members_qs.values_list("mobile_no", flat=True)
-#             installed_count = sum(1 for mobile in member_mobiles if mobile in user_device_usernames)
-#             installed_percentage = (installed_count / total_members * 100) if total_members else 0
-
-#             member_codes = members_qs.values_list("member_code", flat=True)
-#             collections = MppCollection.objects.filter(
-#                 collection_date__range=(start_date, end_date),
-#                 member_code__in=member_codes,
-#             )
-#             no_of_pourers = collections.values("member_code").annotate(
-#                 days=Count(TruncDate("collection_date"), distinct=True)
-#             ).count()
-
-#             result.append({
-#                 "mcc": MccSerializer(mcc).data,
-#                 "mpp": serialized_mpps,
-#                 "total_members": total_members,
-#                 "app_installed_by_member": installed_count,
-#                 "installed_percentage": round(installed_percentage, 2),
-#                 "no_of_pourers": no_of_pourers,
-#             })
-
-#         return Response(result, status=status.HTTP_200_OK)
 
 
 class AppInstalledData(APIView):

@@ -812,168 +812,6 @@ class GetPouredMembersData(APIView):
         return []
 
 
-# class GetPouredMppView(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-#         if not user.is_authenticated:
-#             return Response(
-#                 {"message": "unauthenticated", "status": "fail"},
-#                 status=status.HTTP_401_UNAUTHORIZED,
-#             )
-
-#         # Get collection_date
-#         collection_date_str = request.GET.get("collection_date")
-#         collection_date = (
-#             timezone.now().date() if not collection_date_str else collection_date_str
-#         )
-
-#         # Build a unique cache key
-#         cache_key = f"poured_mpp_{user.id}_{collection_date}"
-#         cached_data = cache.get(cache_key)
-#         if cached_data:
-#             return Response(
-#                 {"message": "success", "status": "success", "data": cached_data},
-#                 status=status.HTTP_200_OK,
-#             )
-
-#         # Query and aggregate
-#         mpp_codes = list(user.mpps.values_list("mpp_code", flat=True))
-#         aggregated_data = (
-#             MppCollection.objects.filter(
-#                 references__mpp_code__in=mpp_codes,
-#                 references__collection_date__date=collection_date,
-#             )
-#             .values("references__mpp_code")
-#             .order_by("references__mpp_code__mpp_name")
-#             .annotate(total_qty=Sum("qty"))
-#         )
-
-#         final_result = [
-#             {
-#                 "mpp_code": item["references__mpp_code"],
-#                 "total_qty": item["total_qty"] or 0,
-#             }
-#             for item in aggregated_data
-#         ]
-
-#         # Store in cache
-#         cache.set(cache_key, final_result, timeout=CACHE_TIMEOUT)
-
-#         return Response(
-#             {"message": "success", "status": "success", "data": final_result},
-#             status=status.HTTP_200_OK,
-#         )
-
-#     # class GetPouredMembersForMppView(APIView):
-#     # authentication_classes = [JWTAuthentication]
-#     # permission_classes = [IsAuthenticated]
-
-#     # def get(self, request):
-#     #     user = request.user
-#     #     mpp_code = request.GET.get("mpp_code")
-#     #     if not mpp_code:
-#     #         return Response(
-#     #             {"message": "mpp_code query param is required", "status": "error"},
-#     #             status=status.HTTP_400_BAD_REQUEST,
-#     #         )
-
-#     #     collection_date_str = request.GET.get("collection_date")
-#     #     collection_date = (
-#     #         timezone.now().date()
-#     #         if collection_date_str is None
-#     #         else collection_date_str
-#     #     )
-#     #     all_members = MemberHierarchyView.objects.filter(mpp_code=mpp_code)
-#     #     poured_member_codes = set(
-#     #         MppCollection.objects.filter(
-#     #             references__collection_date__date=collection_date,
-#     #             member_code__in=all_members.values_list("member_code", flat=True),
-#     #         )
-#     #         .values_list("member_code", flat=True)
-#     #         .distinct()
-#     #     )
-#     #     poured_members = all_members.filter(member_code__in=poured_member_codes)
-
-#     #     aggregated_data = (
-#     #         MppCollection.objects.filter(
-#     #             references__collection_date__date=collection_date,
-#     #             member_code__in=poured_member_codes,
-#     #         )
-#     #         .values("member_code")
-#     #         .annotate(
-#     #             total_qty=Sum("qty"),
-#     #             avg_fat=Coalesce(
-#     #                 Cast(
-#     #                     Sum(F("qty") * F("fat"), output_field=FloatField()),
-#     #                     FloatField(),
-#     #                 )
-#     #                 / Cast(Sum("qty"), FloatField()),
-#     #                 0.0,
-#     #             ),
-#     #             avg_snf=Coalesce(
-#     #                 Cast(
-#     #                     Sum(F("qty") * F("snf"), output_field=FloatField()),
-#     #                     FloatField(),
-#     #                 )
-#     #                 / Cast(Sum("qty"), FloatField()),
-#     #                 0.0,
-#     #             ),
-#     #         )
-#     #     )
-#     #     qty_per_member = {
-#     #         row["member_code"]: {
-#     #             "qty": row["total_qty"] or 0,
-#     #             "fat": row["avg_fat"] or 0,
-#     #             "snf": row["avg_snf"] or 0,
-#     #         }
-#     #         for row in aggregated_data
-#     #     }
-#     #     total_qty = sum(row["qty"] for row in qty_per_member.values())
-
-#     #     try:
-#     #         mpp = Mpp.objects.get(mpp_code=mpp_code)
-#     #         mpp_data = {
-#     #             "mpp_code": mpp.mpp_code,
-#     #             "mpp_ex_code": mpp.mpp_ex_code,
-#     #             "mpp_name": mpp.mpp_name or mpp.mpp_short_name,
-#     #         }
-#     #     except Mpp.DoesNotExist:
-#     #         mpp_data = {"mpp_code": mpp_code}
-
-#     #     members_data = [
-#     #         {
-#     #             "member_code": member.member_code,
-#     #             "member_tr_code": member.member_tr_code,
-#     #             "member_name": member.member_name,
-#     #             "mobile_no": member.mobile_no,
-#     #             "is_active": member.is_active,
-#     #             "is_default": member.is_default,
-#     #             "qty": qty_per_member.get(member.member_code, {}).get("qty", 0),
-#     #             "fat": qty_per_member.get(member.member_code, {}).get("fat", 0),
-#     #             "snf": qty_per_member.get(member.member_code, {}).get("snf", 0),
-#     #         }
-#     #         for member in poured_members
-#     #     ]
-
-#     #     return Response(
-#     #         data={
-#     #             "message": "success",
-#     #             "status": "success",
-#     #             "data": {
-#     #                 "mpp": mpp_data,
-#     #                 "poured_members": members_data,
-#     #                 "total_qty": total_qty,
-#     #                 "collection_date": collection_date,
-#     #                 "qty_per_member": qty_per_member,
-#     #             },
-#     #         },
-#     #         status=status.HTTP_200_OK,
-#     #     )
-
-
 class GetPouredMppView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -1487,19 +1325,24 @@ class GetTotalQtyForToday(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_mpps(self, user):
+        if user.is_authenticated:
+            return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
+        return []
+
     def get(self, request):
         user = request.user
         collection_date = request.GET.get("collection_date", str(timezone.now().date()))
 
         # Create a unique cache key based on user and date
         cache_key = f"total_qty_{user.id}_{collection_date}"
-        cached_total = cache.get(cache_key)
-        if cached_total is not None:
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
             return Response(
                 {
                     "message": "success (cached)",
                     "status": "success",
-                    "total_qty": float(cached_total),
+                    **cached_data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -1512,28 +1355,34 @@ class GetTotalQtyForToday(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Query for total qty
-        total_qty = (
-            MppCollection.objects.filter(
-                references__mpp_code__in=mpp_codes,
-                references__collection_date__date=collection_date,
-            ).aggregate(total_qty=Sum("qty"))["total_qty"]
-            or 0
-        )
+        base_filter = {
+            "references__mpp_code__in": mpp_codes,
+            "references__collection_date__date": collection_date,
+        }
+
+        # Total quantity across all shifts
+        total_qty = MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))["total_qty"] or 0
+
+        # Quantity for Morning shift (M)
+        qty_m = MppCollection.objects.filter(**base_filter, shift_code__shift_short_name="M").aggregate(qty=Sum("qty"))["qty"] or 0
+
+        # Quantity for Evening shift (E)
+        qty_e = MppCollection.objects.filter(**base_filter, shift_code__shift_short_name="E").aggregate(qty=Sum("qty"))["qty"] or 0
+
+        response_data = {
+            "total_qty": float(total_qty),
+            "qty_m": float(qty_m),
+            "qty_e": float(qty_e),
+        }
 
         # Cache the result
-        cache.set(cache_key, total_qty, timeout=CACHE_TIMEOUT)  # 10 minutes cache
+        cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
 
         return Response(
             {
                 "message": "success",
                 "status": "success",
-                "total_qty": float(total_qty),
+                **response_data,
             },
             status=status.HTTP_200_OK,
         )
-
-    def get_mpps(self, user):
-        if user.is_authenticated:
-            return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
-        return []

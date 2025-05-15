@@ -196,7 +196,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {
         "user": "1000/day",  # Allow 1000 requests per user per day
-        "anon": "100/day",  # Allow 100 requests per anonymous user per day
+        "anon": "1000/day",  # Allow 100 requests per anonymous user per day
     },
 }
 
@@ -226,28 +226,6 @@ SIMPLE_JWT = {
 }
 
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
-
-# def send_fcm_notification():
-#         data_payload = {
-#             "data": {
-#                 "title": "New Notification",
-#                 "body": {
-#                     "message":"Hello There",
-#                     "date": ""
-#                 },
-#             },
-#             "to": "d5W0JSvrQE6vBrBC_k06GV:APA91bHcVCJ3fr7PXqCAGxl_Pai1_b4_4mHawWVAcqBUKkEsikiJRPF9KV3mKPRKQtxfqLnK9JlxJMgbhCYbhUws33DirIJ8wkxumERN_SdfJo66CkbS0f1Pc98EPVjvnqcFEXBmOgaC"
-#         }
-#         url = "https://fcm.googleapis.com/fcm/send"
-#         headers = {
-#                 "Authorization": "key=AAAAI-hZouk:APA91bFOo-4zAELDwxbaZme6pt0wYrN3rp8fy98EGRntKbZoqEqupj8tpsWKSAGRToVEZkB5OK6tH7zmz4gEfMY1joi4weSupGPV9V4PPvAbDwV7ry68jq07c3OThWR8zsHHsk5XVQ3x",
-#                 "Content-Type": "application/json"
-#         }
-#         response = requests.post(url, headers=headers, json=data_payload)
-#         print(response)
-#         return response
-
-# send_fcm_notification()
 
 from .jazzmin_settings import *
 
@@ -434,13 +412,24 @@ CKEDITOR_5_CONFIGS = {
 }
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
 
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': os.path.join(BASE_DIR, 'cache'),
+#         'OPTIONS': {
+#             'MAX_ENTRIES': 1000,
+#             'CULL_FREQUENCY': 3,
+#         },
+#     }
+# }
+
+# settings.py
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
         'OPTIONS': {
-            'MAX_ENTRIES': 1000,
-            'CULL_FREQUENCY': 3,
-        },
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
