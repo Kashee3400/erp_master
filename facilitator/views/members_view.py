@@ -19,7 +19,7 @@ from django.utils.dateparse import parse_date
 from django.db.models import Sum, F, FloatField, Avg, Q
 from django.db.models.functions import Coalesce, Cast, Round
 
-CACHE_TIMEOUT = 900
+CACHE_TIMEOUT = 600
 from django.core.cache import cache
 
 
