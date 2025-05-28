@@ -142,7 +142,7 @@ class GenerateSahayakOTPView(APIView):
 
         if not phone_number:
             return Response(
-                {"status": "error", "message": _("Phone number is required.")},
+                {"status": "error", "message": "Phone number is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -195,7 +195,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             return Response(
                 {
                     "status": status.HTTP_400_BAD_REQUEST,
-                    "message": _("Invalid OTP. Try again."),
+                    "message": "Invalid OTP. Try again.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -203,7 +203,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         if not otp.is_valid():
             otp.delete()
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
+                {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
             # Ensure no duplicate device exists before associating
@@ -272,7 +272,7 @@ class LogoutView(APIView):
         refresh_token = request.data.get("refresh_token")
         if not refresh_token:
             return Response(
-                {"message": _("Refresh token is required")},
+                {"message": "Refresh token is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -280,13 +280,13 @@ class LogoutView(APIView):
             token = RefreshToken(refresh_token)
             token.blacklist()  # Ensure token blacklisting is enabled in settings
             return Response(
-                {"message": _("Logout successful")},
+                {"message": "Logout successful"},
                 status=status.HTTP_205_RESET_CONTENT,
             )
         except Exception as e:
             return Response(
                 {
-                    "message": _("Invalid refresh token or already blacklisted"),
+                    "message": "Invalid refresh token or already blacklisted",
                     "error": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
