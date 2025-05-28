@@ -82,7 +82,7 @@ class VerifyOTPView(generics.GenericAPIView):
             otp_value = serializer.validated_data["otp"]
             device_id = request.data.get("device_id")
             module = request.data.get("module","member")
-            if not device_id or not module or not otp_value:
+            if not device_id or not otp_value:
                 return Response(
                     {
                         "status": "error",
@@ -189,6 +189,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
+        module = request.data.get("module","sahayak")
 
         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
         if not otp:
