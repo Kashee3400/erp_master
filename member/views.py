@@ -1,4 +1,5 @@
 from all_imports import *
+from django.contrib.auth.models import update_last_login
 
 logger = logging.getLogger(__name__)
 
@@ -106,9 +107,12 @@ class VerifyOTPView(generics.GenericAPIView):
             # Clean up old device records
             UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
             # Register new device
-            UserDevice.objects.create(user=user, device=device_id, module=module)
+            device = UserDevice.objects.create(user=user, device=device_id, module=module)
             # Generate tokens
             refresh = RefreshToken.for_user(user)
+                    # After successful authentication
+            update_last_login(None, user)
+
             return Response(
                 {
                     "status": "success",
@@ -209,19 +213,47 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             )
             # Ensure no duplicate device exists before associating
         user, _ = User.objects.get_or_create(username=phone_number)
-        # Clean up old device records
+
+        # Step 1: Try fetching existing device object
+        existing_device_obj = UserDevice.objects.filter(user=user).first()
+
+        # Step 2: Retain mpp_code before deletion
+        existing_mpp_code = existing_device_obj.mpp_code if existing_device_obj else None
+
+        # Step 3: Handle missing mpp_code
+        if existing_mpp_code is None:
+            return Response(
+                {
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": "MPP code not assigned. Contact support.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Step 4: Clean up any device conflicts
         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-        # Register new device
-        UserDevice.objects.create(user=user, device=device_id, module=module)
-        # Generate tokens
+
+        # Step 5: Create new device with retained mpp_code
+        device = UserDevice.objects.create(
+            user=user,
+            device=device_id,
+            module=module,
+            mpp_code=existing_mpp_code
+        )
+
+        # Step 6: Generate tokens and send response
         refresh = RefreshToken.for_user(user)
+        
+        # After successful authentication
+        update_last_login(None, user)
+
         response = {
             "status": status.HTTP_200_OK,
             "phone_number": user.username,
             "message": "Authentication successful",
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
-            "device_id": device_id,
+            "device_id": device.device,
             "mpp_code": device.mpp_code,
         }
         return Response(response, status=status.HTTP_200_OK)

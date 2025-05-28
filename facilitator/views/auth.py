@@ -149,6 +149,8 @@ class VerifyOTPView(generics.GenericAPIView):
         UserDevice.objects.create(user=user, device=device_id, module=module)
         # Generate tokens
         refresh = RefreshToken.for_user(user)
+        # After successful authentication
+        update_last_login(None, user)
 
         # Delete OTP
         otp.delete()
