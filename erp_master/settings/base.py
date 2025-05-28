@@ -18,6 +18,7 @@ LOCAL_APPS = [
     "mpms",
     "erp_app",
     "facilitator",
+    "veterinary",
 ]
 
 THIRD_PARTY_APPS = [
@@ -33,6 +34,7 @@ THIRD_PARTY_APPS = [
     "django_ckeditor_5",
     "fontawesomefree",
     "import_export",
+    'corsheaders',
 ]
 
 ADMIN_APPS = [
@@ -54,6 +56,7 @@ THUMBNAIL_DEBUG = True
 THUMBNAIL_FORMAT = "JPEG"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

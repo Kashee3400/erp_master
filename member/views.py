@@ -1,109 +1,72 @@
-from rest_framework import generics, status, viewsets, exceptions, decorators, filters
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
-import requests
-from .serialzers import *
-from erp_app.models import (
-    MemberMaster,
-    Mpp,
-    LocalSaleTxn,
-    MemberHierarchyView,
-    BillingMemberDetail,
-    MppCollection,
-    MppCollectionReferences,
-    RmrdMilkCollection,
-    PriceBook,
-    PriceBookDetail,
-    Mcc,
-)
-from erp_app.serializers import (
-    MemberHierarchyViewSerializer,
-    MccSerializer,
-    MppSerializer,
-)
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from import_export.admin import ImportExportModelAdmin
-from import_export.forms import (
-    ImportForm,
-)
-from django_filters import FilterSet, DateFromToRangeFilter, DateTimeFromToRangeFilter
-from .resources import SahayakIncentivesResource
-import csv
-from django.core.exceptions import PermissionDenied
-from django.template.response import TemplateResponse
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django_filters import rest_framework as filters
-import os
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView, UpdateView
-from django.urls import reverse_lazy
-from django.contrib import messages
-from .forms import *
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Sum, Avg, Q
-from django.conf import settings
-from .filters import SahayakIncentivesFilter, MemberHeirarchyFilter
-from facilitator.authentication import ApiKeyAuthentication
-from datetime import date
-from django.utils.dateparse import parse_date
-from .serialzers import NewsSerializer
-from django.db.models import Sum, Count, Avg
-from django.utils.timezone import make_aware, now
-from django.db.models.functions import TruncDate
-from datetime import datetime, timedelta
+from all_imports import *
 
-from django.db.models import Sum, F, FloatField, DecimalField
-from django.db.models.functions import Coalesce, Cast
-
-from django.utils.translation import gettext as _
-from django.core.cache import cache
-
-from member.models import UserDevice
-
-User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        phone_number = request.data.get("phone_number")
-        if (
-            not MemberMaster.objects.using("sarthak_kashee")
-            .filter(mobile_no=phone_number)
-            .exists()
-        ):
-            return Response(
-                {"status": 400, "message": "Mobile number doest not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+        try:
+            phone_number = request.data.get("phone_number")
+
+            if (
+                not phone_number
+                or not phone_number.isdigit()
+                or len(phone_number) != 10
+            ):
+                return Response(
+                    {"status": "error", "message": "Invalid phone number format."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            member_exists = (
+                MemberMaster.objects.using("sarthak_kashee")
+                .filter(mobile_no=phone_number)
+                .exists()
             )
-        otp = OTP.objects.filter(phone_number=phone_number)
-        if otp:
-            otp.delete()
-        notp = OTP.objects.create(phone_number=phone_number)
-        sent, info = send_sms_api(mobile=phone_number, otp=notp)
-        if not sent:
+            if not member_exists:
+                return Response(
+                    {"status": "error", "message": "Mobile number does not exist in member data"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            # Delete any existing OTP
+            OTP.objects.filter(phone_number=phone_number).delete()
+            # Create new OTP entry
+            new_otp = OTP.objects.create(phone_number=phone_number)
+            # Send OTP
+            sent, info = send_sms_api(mobile=phone_number, otp=new_otp)
+            if not sent:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": "Failed to send OTP. Please try again later.",
+                        "details": info,
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
             return Response(
-                {
-                    "status": "error",
-                    "message": "Failed to send OTP. Please try again later.",
-                    "details": info,
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"status": "success", "message": "OTP sent successfully."},
+                status=status.HTTP_200_OK,
             )
 
-        return Response(
-            {"status": "success", "message": "OTP sent successfully."},
-            status=status.HTTP_200_OK,
-        )
+        except DatabaseError as db_err:
+            logger.error(f"Database error: {db_err}")
+            return Response(
+                {"status": "error", "message": "Database error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except ValidationError as val_err:
+            return Response(
+                {"status": "error", "message": str(val_err)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            logger.exception("Unexpected error while generating OTP")
+            return Response(
+                {"status": "error", "message": "An unexpected error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class VerifyOTPView(generics.GenericAPIView):
@@ -112,46 +75,67 @@ class VerifyOTPView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        phone_number = serializer.validated_data["phone_number"]
-        otp_value = serializer.validated_data["otp"]
-        device_id = request.data.get("device_id")
-
-        otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
-        if not otp:
-            return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": "Invalid OTP"},
-                status=status.HTTP_400_BAD_REQUEST,
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            phone_number = serializer.validated_data["phone_number"]
+            otp_value = serializer.validated_data["otp"]
+            device_id = request.data.get("device_id")
+            module = request.data.get("module","member")
+            if not device_id or not module or not otp_value:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": "OTP is required.",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
+            if not otp:
+                return Response(
+                    {"status": "error", "message": "Invalid OTP"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if not otp.is_valid():
+                otp.delete()
+                return Response(
+                    {"status": "error", "message": "OTP expired"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # Get or create the user
+            user, _ = User.objects.get_or_create(username=phone_number)
+            device, created = UserDevice.objects.update_or_create(
+                user=user,
+                defaults={
+                    "device": device_id,
+                    "fcm_token": device_id,
+                    "module": module,
+                },
             )
-
-        if not otp.is_valid():
-            otp.delete()
+            refresh = RefreshToken.for_user(user)
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {
+                    "status": "success",
+                    "message": "Authentication successful",
+                    "phone_number": user.username,
+                    "access_token": str(refresh.access_token),
+                    "refresh_token": str(refresh),
+                    "device_id": device.device,
+                },
+                status=status.HTTP_200_OK,
             )
-        user, _ = User.objects.get_or_create(username=phone_number)
-        user_device = UserDevice.objects.filter(
-            Q(user=user) | Q(device=device_id)
-        ).first()
-        if user_device:
-            user_device.user = user
-            user_device.device = device_id
-            user_device.module = "member"
-            user_device.save()
-        else:
-            UserDevice.objects.create(user=user, device=device_id, module="member")
-        refresh = RefreshToken.for_user(user)
-        response = {
-            "status": status.HTTP_200_OK,
-            "phone_number": user.username,
-            "message": "Authentication successful",
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh),
-            "device_id": device_id,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        except (DatabaseError, IntegrityError) as db_err:
+            logger.error(f"Database error during OTP verification: {db_err}")
+            return Response(
+                {"status": "error", "message": "Database error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            logger.exception("Unexpected error during OTP verification")
+            return Response(
+                {"status": "error", "message": "An unexpected error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class GenerateSahayakOTPView(APIView):
@@ -197,6 +181,7 @@ class GenerateSahayakOTPView(APIView):
             status=status.HTTP_200_OK,
         )
 
+
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -209,11 +194,13 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
 
-        try:
-            otp = OTP.objects.get(phone_number=phone_number, otp=otp_value)
-        except OTP.DoesNotExist:
+        otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
+        if not otp:
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": _("Invalid OTP")},
+                {
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": _("Invalid OTP. Try again."),
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -225,7 +212,8 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             )
         user, created = User.objects.get_or_create(username=phone_number)
         device, created = UserDevice.objects.update_or_create(
-            user=user, defaults={"device": device_id}
+            user=user,
+            defaults={"device": device_id, "fcm_token": device_id, "module": "sahayak"},
         )
         refresh = RefreshToken.for_user(user)
         response = {
@@ -238,6 +226,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             "mpp_code": device.mpp_code,
         }
         return Response(response, status=status.HTTP_200_OK)
+
 
 def send_sms_api(mobile, otp):
     url = "https://alerts.cbis.in/SMSApi/send"
@@ -427,7 +416,7 @@ class AppInstalledData(APIView):
 
     def get(self, request, *args, **kwargs):
         mcc_code = request.GET.get("mcc_code")
-        mpp_codes_param = request.GET.get("mpp_codes")  # comma-separated list
+        mpp_codes_param = request.GET.get("mpp_codes")
         year = int(request.GET.get("year", now().year))
         month = int(request.GET.get("month", now().month))
 
@@ -445,7 +434,7 @@ class AppInstalledData(APIView):
         )
 
         user_device_usernames = set(
-            UserDevice.objects.filter(module=None).values_list(
+            UserDevice.objects.filter(Q(module=None) | Q(module="member")).values_list(
                 "user__username", flat=True
             )
         )
@@ -1912,7 +1901,6 @@ class MppIncentiveSummaryAPIView(generics.GenericAPIView):
         start_date = request.GET.get("start_date")
         end_date = request.GET.get("end_date")
 
-        # Validate mpp_code
         if not mpp_code:
             return JsonResponse(
                 {
@@ -1949,9 +1937,9 @@ class MppIncentiveSummaryAPIView(generics.GenericAPIView):
             )
 
         # Filter records in date range
-        collections = MppCollection.objects.filter(
-            references__mpp_code=mpp_code,
-            references__collection_date__date__range=(
+        collections = RmrdMilkCollection.objects.filter(
+            module_code=mpp_code,
+            collection_date__date__range=(
                 start_date_parsed,
                 end_date_parsed,
             ),

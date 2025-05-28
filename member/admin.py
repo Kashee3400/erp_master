@@ -22,6 +22,7 @@ class UserDeviceAdmin(ImportExportModelAdmin):
     resource_class = UserDeviceResource
     list_display = ['user','mpp_code','module','last_updated']
     search_fields = ("user__username","user__first_name","user__last_name","mpp_code")
+    list_filter = ['module']
     
 class UserOTPAdmin(admin.ModelAdmin):
     list_display = ['phone_number','otp','created_at']
