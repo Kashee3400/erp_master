@@ -143,13 +143,10 @@ class VerifyOTPView(generics.GenericAPIView):
 
         # Authenticate or create user
         user, _ = User.objects.get_or_create(username=phone_number)
-
         # Clean up old device records
         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-
         # Register new device
         UserDevice.objects.create(user=user, device=device_id, module=module)
-
         # Generate tokens
         refresh = RefreshToken.for_user(user)
 

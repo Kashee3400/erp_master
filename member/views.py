@@ -102,16 +102,12 @@ class VerifyOTPView(generics.GenericAPIView):
                     {"status": "error", "message": "OTP expired"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            # Get or create the user
             user, _ = User.objects.get_or_create(username=phone_number)
-            device, created = UserDevice.objects.update_or_create(
-                user=user,
-                defaults={
-                    "device": device_id,
-                    "fcm_token": device_id,
-                    "module": module,
-                },
-            )
+            # Clean up old device records
+            UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
+            # Register new device
+            UserDevice.objects.create(user=user, device=device_id, module=module)
+            # Generate tokens
             refresh = RefreshToken.for_user(user)
             return Response(
                 {
@@ -210,11 +206,13 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 {"status": status.HTTP_400_BAD_REQUEST, "message": _("OTP expired")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        user, created = User.objects.get_or_create(username=phone_number)
-        device, created = UserDevice.objects.update_or_create(
-            user=user,
-            defaults={"device": device_id, "fcm_token": device_id, "module": "sahayak"},
-        )
+            # Ensure no duplicate device exists before associating
+        user, _ = User.objects.get_or_create(username=phone_number)
+        # Clean up old device records
+        UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
+        # Register new device
+        UserDevice.objects.create(user=user, device=device_id, module=module)
+        # Generate tokens
         refresh = RefreshToken.for_user(user)
         response = {
             "status": status.HTTP_200_OK,
