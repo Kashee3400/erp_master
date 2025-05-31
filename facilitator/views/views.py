@@ -11,8 +11,9 @@ from erp_app.models import (
     MppDispatchTxn,
     MemberMasterHistory,
     V_PouredMemberSummary,
+    FacilitatorDashboardSummary,
 )
-from django.db.models import Sum, F, FloatField, Avg,Q
+from django.db.models import Sum, F, FloatField, Avg, Q
 from django.db.models.functions import Coalesce, Cast
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
@@ -37,6 +38,12 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
 
+def custom_response(status_text, data=None, message=None, status_code=200):
+    return Response(
+        {"status": status_text, "message": message or "Success", "data": data},
+        status=status_code,
+    )
+
 
 CACHE_TIMEOUT = 600
 
@@ -46,7 +53,6 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
     serializer_class = AssignedMppToFacilitatorSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]
     lookup_field = "mpp_code"
 
     def get_queryset(self):
@@ -55,8 +61,6 @@ class AssignedMppToFacilitatorViewSet(viewsets.ModelViewSet):
         if the user is not a superuser or staff.
         """
         user = self.request.user
-        # if user.is_superuser or user.is_staff:
-        #     return AssignedMppToFacilitator.objects.all()
         return AssignedMppToFacilitator.objects.filter(sahayak=user).order_by(
             "mpp_name"
         )
@@ -277,7 +281,6 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             )
         else:
             mpp_codes = mpp_codes.split(",")
-        # Subquery for actual amount
         actual_subquery = (
             RmrdMilkCollection.objects.filter(
                 collection_date__date=created_date, module_code=OuterRef("mpp_code")
@@ -286,7 +289,6 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             .annotate(amount=Sum("amount"))
             .values("amount")
         )
-        # Subquery for composite amount
         composite_subquery = (
             MppCollection.objects.filter(
                 references__collection_date__date=created_date,
@@ -297,6 +299,7 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             .annotate(amount=Sum("amount"))
             .values("amount")
         )
+
         # Annotate actual and composite amounts
         return Mpp.objects.filter(mpp_code__in=mpp_codes).annotate(
             actual_amount=Subquery(actual_subquery, output_field=FloatField()),
@@ -327,59 +330,167 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         return paginator.get_paginated_response(paginated_data)
 
 
+import django_filters
+
+
+class DashboardSummaryFilter(django_filters.FilterSet):
+    mpp_code = django_filters.CharFilter(method="filter_by_mpp_code")
+    class Meta:
+        model = FacilitatorDashboardSummary
+        fields = ["collection_date", "mpp_code", "shift_code"]
+
+    def filter_by_mpp_code(self, queryset, name, value):
+        mpp_codes = [code.strip() for code in value.split(",") if code.strip()]
+        return queryset.filter(mpp_code__in=mpp_codes)
+
+
+from rest_framework import filters as rest_filter
+from math import ceil
+from collections import defaultdict
+
+class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = FacilitatorDashboardSummarySerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend, rest_filter.OrderingFilter]
+    filterset_class = DashboardSummaryFilter
+    ordering_fields = ["collection_date", "mpp_code", "shift_code"]
+
+    def get_queryset(self):
+        qs = FacilitatorDashboardSummary.objects.all().order_by('variation')
+        # Apply user-based filtering if no mpp_code explicitly provided
+        if not self.request.GET.get("mpp_code"):
+            assigned_mpps = AssignedMppToFacilitator.objects.filter(
+                sahayak=self.request.user
+            ).values_list("mpp_code", flat=True)
+            qs = qs.filter(mpp_code__in=list(assigned_mpps))
+        # Only return selected fields to optimize query
+        return qs.values(
+            "mpp_code",
+            "shift_code",
+            "actual_qty",
+            "actual_fat",
+            "actual_snf",
+            "new_actual_amount",
+            "composite_qty",
+            "composite_fat",
+            "composite_snf",
+            "composite_amount",
+            "variation",
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        date = self.request.GET.get("collection_date")
+
+        grouped_data = defaultdict(lambda: {
+            "mpp_code": "",
+            "collection_date": "",
+            "total_variation": float("0.0"),
+            "shifts": []
+        })
+
+        for item in queryset:
+            key = (item["mpp_code"], item.get("collection_date"))
+            group = grouped_data[key]
+            group["mpp_code"] = item["mpp_code"]
+            group["collection_date"] = date
+
+            # Set variation to 0 if actual_qty is 0
+            variation = item["composite_amount"] if item["actual_qty"] == 0 else item["variation"]
+            group["total_variation"] += variation
+
+            group["shifts"].append({
+                "shift_code": item["shift_code"],
+                "actual_qty": item["actual_qty"],
+                "actual_fat": item["actual_fat"],
+                "actual_snf": item["actual_snf"],
+                "composite_qty": item["composite_qty"],
+                "composite_fat": item["composite_fat"],
+                "composite_snf": item["composite_snf"],
+                "composite_amount": item["composite_amount"],
+                "new_actual_amount": item["new_actual_amount"],
+                "variation": variation,
+            })
+
+        grouped_list = list(grouped_data.values())
+        page = self.paginate_queryset(grouped_list)
+        return self.get_paginated_response(page or grouped_list)
+
+    def get_paginated_response(self, data):
+        page = self.paginator.page
+        page_size = self.request.GET.get("page_size", self.paginator.page_size)
+        total_items = page.paginator.count
+        current_page = page.number
+        total_pages = ceil(total_items / int(page_size))
+
+        return custom_response(
+            status_text="success",
+            message="Summary Loaded...",
+            data={
+                "count": total_items,
+                "next": self.paginator.get_next_link(),
+                "previous": self.paginator.get_previous_link(),
+                "current_page": current_page,
+                "total_pages": total_pages,
+                "page_size": int(page_size),
+                "has_next": page.has_next(),
+                "has_previous": page.has_previous(),
+                "results": data,
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
+
+
 class DashboardDetailAPI(APIView):
     authentication_classes = [JWTAuthentication]
-    # authentication_classes = [ApiKeyAuthentication]
-    # permission_classes = [AllowAny]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         created_date = request.GET.get("date", timezone.now().date())
         mpp_code = request.GET.get("mpp_code")
         shift_code = request.GET.get("shift_code")
-
         if not mpp_code:
             return Response(
                 {"message": "mpp_code required", "status": "error"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        actual, dispatch, composite = self.get_bulk_data(
+        dispatch = self.get_bulk_data(
             created_date, mpp_code, shift_code
         )
-
         response_data = {
+            "status":"success",
+            "message":"Dispatch Data Fetched Successfully...",
+            "data":{
             "mpp_code": mpp_code,
             "date": created_date,
             "shift_code": shift_code,
-            "data": {
-                "actual": actual,
-                "dispatch": dispatch,
-                "composite": composite,
-            },
+            "dispatch": dispatch,
+            }
         }
-
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get_bulk_data(self, created_date, mpp_code, shift_codes):
-        collections = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date,
-            module_code=mpp_code,
-            shift_code=shift_codes,
-        ).aggregate(
-            qty=Sum("qty"),
-            amount=Sum("amount"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-        )
+        # collections = RmrdMilkCollection.objects.filter(
+        #     collection_date__date=created_date,
+        #     module_code=mpp_code,
+        #     shift_code=shift_codes,
+        # ).aggregate(
+        #     qty=Sum("qty"),
+        #     amount=Sum("amount"),
+        #     fat=Coalesce(
+        #         Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+        #         / Cast(Sum("qty"), FloatField()),
+        #         0.0,
+        #     ),
+        #     snf=Coalesce(
+        #         Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+        #         / Cast(Sum("qty"), FloatField()),
+        #         0.0,
+        #     ),
+        # )
 
         dispatches = MppDispatchTxn.objects.filter(
             mpp_dispatch_code__mpp_code=mpp_code,
@@ -387,7 +498,7 @@ class DashboardDetailAPI(APIView):
             mpp_dispatch_code__from_shift=shift_codes,
         ).aggregate(
             qty=Sum("dispatch_qty"),
-            amount=Sum("amount"),
+            # amount=Sum("amount"),
             fat=Coalesce(
                 Cast(
                     Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
@@ -406,25 +517,25 @@ class DashboardDetailAPI(APIView):
             ),
         )
 
-        aggregated_data = MppCollection.objects.filter(
-            references__collection_date__date=created_date,
-            references__mpp_code=mpp_code,
-            shift_code=shift_codes,
-        ).aggregate(
-            qty=Sum("qty"),
-            amount=Sum("amount"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-        )
-        return collections, dispatches, aggregated_data
+        # aggregated_data = MppCollection.objects.filter(
+        #     references__collection_date__date=created_date,
+        #     references__mpp_code=mpp_code,
+        #     shift_code=shift_codes,
+        # ).aggregate(
+        #     qty=Sum("qty"),
+        #     amount=Sum("amount"),
+        #     fat=Coalesce(
+        #         Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+        #         / Cast(Sum("qty"), FloatField()),
+        #         0.0,
+        #     ),
+        #     snf=Coalesce(
+        #         Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+        #         / Cast(Sum("qty"), FloatField()),
+        #         0.0,
+        #     ),
+        # )
+        return dispatches
 
     def format_aggregates(self, aggregates):
         return {
@@ -569,7 +680,7 @@ class SaleToMembersViewSet(viewsets.ReadOnlyModelViewSet):
         start_date = self.request.query_params.get("start_date", None)
         mpp_codes = self.request.GET.get("mpp_code", None)
         end_date = self.request.query_params.get("end_date", None)
-        status = self.request.GET.get("status",None)
+        status = self.request.GET.get("status", None)
         if not mpp_codes:
             mpp_codes = list(
                 AssignedMppToFacilitator.objects.filter(
@@ -1361,13 +1472,28 @@ class GetTotalQtyForToday(APIView):
         }
 
         # Total quantity across all shifts
-        total_qty = MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))["total_qty"] or 0
+        total_qty = (
+            MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))[
+                "total_qty"
+            ]
+            or 0
+        )
 
         # Quantity for Morning shift (M)
-        qty_m = MppCollection.objects.filter(**base_filter, shift_code__shift_short_name="M").aggregate(qty=Sum("qty"))["qty"] or 0
+        qty_m = (
+            MppCollection.objects.filter(
+                **base_filter, shift_code__shift_short_name="M"
+            ).aggregate(qty=Sum("qty"))["qty"]
+            or 0
+        )
 
         # Quantity for Evening shift (E)
-        qty_e = MppCollection.objects.filter(**base_filter, shift_code__shift_short_name="E").aggregate(qty=Sum("qty"))["qty"] or 0
+        qty_e = (
+            MppCollection.objects.filter(
+                **base_filter, shift_code__shift_short_name="E"
+            ).aggregate(qty=Sum("qty"))["qty"]
+            or 0
+        )
 
         response_data = {
             "total_qty": float(total_qty),

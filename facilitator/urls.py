@@ -24,6 +24,7 @@ router.register(r'member-complaint-reasons', api_view.MemberComplaintReasonViewS
 router.register(r'upload-images', api_view.VCGMeetingImagesViewSet,basename="upload-images")
 router.register(r'vcg-meetings', api_view.VCGMeetingViewSet,basename="vcg-meetings-reasons")
 router.register(r'dashboard-summary-data', views.DashboardSummaryViewSet,basename="dashboard-summary-data")
+router.register(r'new-dashboard-summary-data', views.NewDashboardSummaryViewSet,basename="new-dashboard-summary-data")
 router.register(r'members', m_view.MemberHierarchyViewSet,basename="members")
 router.register(r'local-sales', views.LocalSaleViewSet,basename="local_sales")
 router.register(r'member-sales', views.SaleToMembersViewSet,basename="member_sales")

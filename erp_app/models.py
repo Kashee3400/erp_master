@@ -11050,6 +11050,36 @@ class MemberHierarchyView(models.Model):
         verbose_name = "Member Heirarchy"
         verbose_name_plural = "Member Heirarchies"
 
+from django.db import models
+
+class FacilitatorDashboardSummary(models.Model):
+    mpp_code = models.CharField(max_length=50, blank=True, null=True)
+    collection_date = models.CharField(blank=True, null=True)
+    shift_code = models.CharField(max_length=10, blank=True, null=True)
+    actual_qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    actual_fat = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    actual_snf = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    actual_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    composite_qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    composite_fat = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    composite_snf = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    composite_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    actual_efu = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    composite_efu = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    composite_rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    rate_per_efu_composite = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    adjusted_actual_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    new_actual_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    variation = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        app_label = 'erp_app'
+        db_table = 'dashboard_summary_cache'
+        managed = False
+        verbose_name = "Facilitator Dashboard Summary"
+        verbose_name_plural = "Facilitator Dashboard Summaries"
+        unique_together = ('mpp_code', 'collection_date', 'shift_code')
+
 class MemberMasterHistory(models.Model):
     history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     history_created_at = models.DateTimeField(blank=True, null=True)

@@ -15,6 +15,7 @@ from erp_app.models import (
     Bank,
     Mpp,
     MemberHierarchyView,
+    FacilitatorDashboardSummary
 )
 from erp_app.serializers import (
     BinLocationSerializer,
@@ -506,3 +507,31 @@ class MemberMasterHistorySerializer(serializers.ModelSerializer):
             "mobile_no",
             "is_active",
         ]
+
+class FacilitatorDashboardSummarySerializer(serializers.ModelSerializer):
+    actual_qty = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
+    actual_fat = serializers.DecimalField(max_digits=5, decimal_places=2, coerce_to_string=False)
+    actual_snf = serializers.DecimalField(max_digits=5, decimal_places=2, coerce_to_string=False)
+    composite_qty = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
+    composite_fat = serializers.DecimalField(max_digits=5, decimal_places=2, coerce_to_string=False)
+    composite_snf = serializers.DecimalField(max_digits=5, decimal_places=2, coerce_to_string=False)
+    composite_amount = serializers.DecimalField(max_digits=12, decimal_places=2, coerce_to_string=False)
+    new_actual_amount = serializers.DecimalField(max_digits=12, decimal_places=2, coerce_to_string=False)
+    variation = serializers.DecimalField(max_digits=12, decimal_places=2, coerce_to_string=False)
+
+    class Meta:
+        model = FacilitatorDashboardSummary
+        fields = [
+            "mpp_code",
+            "shift_code",
+            "actual_qty",
+            "actual_fat",
+            "actual_snf",
+            "composite_qty",
+            "composite_fat",
+            "composite_snf",
+            "composite_amount",
+            "new_actual_amount",
+            "variation",
+        ]
+        read_only_fields = ("mpp_code", "shift_code")

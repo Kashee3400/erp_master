@@ -1666,7 +1666,7 @@ class BillingMemberMasterViewSet(viewsets.ReadOnlyModelViewSet):
 class BillingMemberDetailViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BillingMemberDetail.objects.all()
     serializer_class = BillingMemberDetailSerializer
-    pagination_class = StandardResultsSetPagination
+    # pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["member_code", "billing_member_master_code"]
     permission_classes = [AllowAny]
@@ -1685,12 +1685,6 @@ class BillingMemberDetailViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(
-                page, many=True, context={"request": request}
-            )
-            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(
             queryset, many=True, context={"request": request}
