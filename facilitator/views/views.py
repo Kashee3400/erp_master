@@ -442,9 +442,118 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             status_code=status.HTTP_200_OK,
         )
 
-
-
 class DashboardDetailAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        created_date = request.GET.get("date", timezone.now().date())
+        mpp_code = request.GET.get("mpp_code")
+        shift_code = request.GET.get("shift_code")
+
+        if not mpp_code:
+            return Response(
+                {"message": "mpp_code required", "status": "error"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        actual, dispatch, composite = self.get_bulk_data(
+            created_date, mpp_code, shift_code
+        )
+
+        response_data = {
+            "mpp_code": mpp_code,
+            "date": created_date,
+            "shift_code": shift_code,
+            "data": {
+                "actual": actual,
+                "dispatch": dispatch,
+                "composite": composite,
+            },
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def get_bulk_data(self, created_date, mpp_code, shift_codes):
+        collections = RmrdMilkCollection.objects.filter(
+            collection_date__date=created_date,
+            module_code=mpp_code,
+            shift_code=shift_codes,
+        ).aggregate(
+            qty=Sum("qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+        )
+
+        dispatches = MppDispatchTxn.objects.filter(
+            mpp_dispatch_code__mpp_code=mpp_code,
+            mpp_dispatch_code__from_date__date=created_date,
+            mpp_dispatch_code__from_shift=shift_codes,
+        ).aggregate(
+            qty=Sum("dispatch_qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(
+                    Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum("dispatch_qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(
+                    Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum("dispatch_qty"), FloatField()),
+                0.0,
+            ),
+        )
+
+        aggregated_data = MppCollection.objects.filter(
+            references__collection_date__date=created_date,
+            references__mpp_code=mpp_code,
+            shift_code=shift_codes,
+        ).aggregate(
+            qty=Sum("qty"),
+            amount=Sum("amount"),
+            fat=Coalesce(
+                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
+                / Cast(Sum("qty"), FloatField()),
+                0.0,
+            ),
+        )
+        return collections, dispatches, aggregated_data
+
+    def format_aggregates(self, aggregates):
+        return {
+            key: round(value, 2) if value is not None else None
+            for key, value in aggregates.items()
+        }
+
+    def get_shifts(self):
+        shifts = Shift.objects.filter(shift_short_name__in=["M", "E"]).values_list(
+            "shift_short_name", "shift_code"
+        )
+        shift_dict = dict(shifts)
+        return shift_dict.get("M"), shift_dict.get("E")
+
+
+class DashboardNewDetailAPI(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -457,7 +566,7 @@ class DashboardDetailAPI(APIView):
                 {"message": "mpp_code required", "status": "error"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        dispatch = self.get_bulk_data(
+        dispatch= self.get_bulk_data(
             created_date, mpp_code, shift_code
         )
         response_data = {
@@ -473,24 +582,6 @@ class DashboardDetailAPI(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get_bulk_data(self, created_date, mpp_code, shift_codes):
-        # collections = RmrdMilkCollection.objects.filter(
-        #     collection_date__date=created_date,
-        #     module_code=mpp_code,
-        #     shift_code=shift_codes,
-        # ).aggregate(
-        #     qty=Sum("qty"),
-        #     amount=Sum("amount"),
-        #     fat=Coalesce(
-        #         Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-        #         / Cast(Sum("qty"), FloatField()),
-        #         0.0,
-        #     ),
-        #     snf=Coalesce(
-        #         Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-        #         / Cast(Sum("qty"), FloatField()),
-        #         0.0,
-        #     ),
-        # )
 
         dispatches = MppDispatchTxn.objects.filter(
             mpp_dispatch_code__mpp_code=mpp_code,
@@ -516,25 +607,6 @@ class DashboardDetailAPI(APIView):
                 0.0,
             ),
         )
-
-        # aggregated_data = MppCollection.objects.filter(
-        #     references__collection_date__date=created_date,
-        #     references__mpp_code=mpp_code,
-        #     shift_code=shift_codes,
-        # ).aggregate(
-        #     qty=Sum("qty"),
-        #     amount=Sum("amount"),
-        #     fat=Coalesce(
-        #         Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-        #         / Cast(Sum("qty"), FloatField()),
-        #         0.0,
-        #     ),
-        #     snf=Coalesce(
-        #         Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-        #         / Cast(Sum("qty"), FloatField()),
-        #         0.0,
-        #     ),
-        # )
         return dispatches
 
     def format_aggregates(self, aggregates):

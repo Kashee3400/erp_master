@@ -37,6 +37,7 @@ urlpatterns = [
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("password/change/", views.ChangePasswordView.as_view(), name="password_change"),
     path("dashboard-detail-data/", views.DashboardDetailAPI.as_view(), name="dashboard_detail_data"),
+    path("new-dashboard-detail-data/", views.DashboardNewDetailAPI.as_view(), name="new-dashboard_detail_data"),
     path("monthly-assignment/", m_view.MonthlyDataView.as_view(), name="monthly_assignment"),
     path("poured-members/", views.GetPouredMembersData.as_view(), name="poured_members"),
     path("poured-member-cda/", m_view.MemberCDADetailView.as_view(), name="poured_member_cda"),
