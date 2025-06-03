@@ -10,7 +10,6 @@ from datetime import datetime
 User = get_user_model()
 
 
-
 class VCGroup(models.Model):
     phone_validator = RegexValidator(
         regex=r"^\+?\d{10,15}$",
@@ -21,9 +20,17 @@ class VCGroup(models.Model):
     mpp = models.ForeignKey(
         AssignedMppToFacilitator,
         on_delete=models.SET_NULL,
-        blank=True,null=True,
+        blank=True,
+        null=True,
         verbose_name=_("MPP"),
         help_text=_("Member related to  mpp"),
+    )
+    mpp_code = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name=_("Mpp Code"),
+        help_text=_("Unique mpp code."),
     )
     whatsapp_num = models.CharField(
         max_length=20,
@@ -69,7 +76,7 @@ class VCGroup(models.Model):
     )
 
     def __str__(self):
-        return f"{self.member_name} ({self.whatsapp_num}, {self.mpp.mpp_code})"
+        return f"{self.member_name} ({self.whatsapp_num})"
 
     class Meta:
         db_table = "tbl_vcg_member"

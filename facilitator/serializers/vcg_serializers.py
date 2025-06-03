@@ -51,13 +51,13 @@ class ZeroDaysPouringReportSerializer(serializers.ModelSerializer):
     reason = serializers.StringRelatedField()
     class Meta:
         model = ZeroDaysPouringReport
-        fields = ['member_code', 'member_ex_code','member_name','reason']
+        fields = ['member_code', 'member_ex_code','member_name','reason','meeting']
         
 class MemberComplaintReportSerializer(serializers.ModelSerializer):
     reason = serializers.StringRelatedField()
     class Meta:
         model = MemberComplaintReport
-        fields = ['member_code', 'member_ex_code','member_name','reason']
+        fields = ['member_code', 'member_ex_code','member_name','reason','meeting']
 
 
 from rest_framework import serializers

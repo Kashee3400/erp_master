@@ -4,18 +4,56 @@ import random
 from rest_framework import viewsets
 from rest_framework import status
 from ..serializers.vcg_serializers import *
-from ..filters.api_filters import VCGMeetingFilter, MonthAssignmentFilter
 from django.db.models import Count
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.utils import timezone
 from ..authentication import ApiKeyAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import SearchFilter, OrderingFilter,api_settings
+from rest_framework import status, viewsets, exceptions
+from rest_framework.pagination import PageNumberPagination
+
+from rest_framework import filters as rest_filter
+from math import ceil
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        total_items = self.page.paginator.count
+        current_page = self.page.number
+        per_page = self.page.paginator.per_page
+        total_pages = ceil(total_items / int(per_page))
+
+        return custom_response(
+            status_text="success",
+            message="Summary Loaded...",
+            data={
+                "count": total_items,
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "current_page": current_page,
+                "total_pages": total_pages,
+                "page_size":int(per_page),
+                "has_next": self.page.has_next(),
+                "has_previous": self.page.has_previous(),
+                "results": data,
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
+
+def custom_response(status_text, data=None, message=None, status_code=200):
+    return Response(
+        {"status": status_text, "message": message or "Success", "data": data},
+        status=status_code,
+    )
 
 
 class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
@@ -75,7 +113,32 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
     queryset = ZeroDaysPouringReport.objects.all()
     serializer_class = ZeroDaysPouringReportSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
     authentication_classes = [JWTAuthentication]
+    filter_backends = [
+        DjangoFilterBackend,
+        rest_filter.SearchFilter,
+        rest_filter.OrderingFilter,
+    ]
+    filterset_fields = ["meeting__meeting_id"]
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset().order_by("id"))
+
+        # 👇 This sets self.page and returns paginated queryset
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Fallback: if pagination is not applied
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="Zero days report loaded...",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     def create(self, request, *args, **kwargs):
         """
@@ -146,11 +209,19 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
         )
 
 
+
 class MemberComplaintReportViewSet(viewsets.ModelViewSet):
     queryset = MemberComplaintReport.objects.all()
     serializer_class = MemberComplaintReportSerializer
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    filter_backends = [
+        DjangoFilterBackend,
+        rest_filter.SearchFilter,
+        rest_filter.OrderingFilter,
+    ]
+    filterset_fields = ["meeting__meeting_id"]
 
     def create(self, request, *args, **kwargs):
         """
@@ -229,6 +300,24 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
             status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
         )
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset().order_by("id"))
+
+        # 👇 This sets self.page and returns paginated queryset
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Fallback: if pagination is not applied
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="Zero days report loaded...",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
 class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
     authentication_classes = [ApiKeyAuthentication]
@@ -492,7 +581,6 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_class = VCGMeetingFilter
 
     search_fields = ["mpp_name", "mpp_code"]
     ordering_fields = ["started_at", "completed_at"]
