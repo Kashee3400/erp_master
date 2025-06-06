@@ -97,9 +97,11 @@ class VCGroup(models.Model):
 class VCGMeeting(models.Model):
     STARTED = "started"
     COMPLETED = "completed"
+    DELETED = "deleted"
     STATUS_CHOICES = (
         (STARTED, _("Started")),
         (COMPLETED, _("Completed")),
+        (COMPLETED, _("Deleted")),
     )
 
     meeting_id = models.UUIDField(
@@ -181,6 +183,11 @@ class VCGMeeting(models.Model):
         default=True,
         verbose_name=_("Synced"),
         help_text=_("Indicated whether data is synced from mobile app or not."),
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_("deleted"),
+        help_text=_("Indicated whether data is deleted or not."),
     )
 
     # Methods
@@ -447,7 +454,7 @@ class ZeroDaysPouringReport(models.Model):
     )
 
     def __str__(self):
-        return f"{self.member} - {self.reason}"
+        return f"{self.member_name} - {self.reason.reason}"
 
     class Meta:
         db_table = "tbl_zerodays_report"

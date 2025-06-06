@@ -4,8 +4,13 @@ import random
 from rest_framework import viewsets
 from rest_framework import status
 from ..serializers.vcg_serializers import *
-from django.db.models import Count
-from rest_framework.permissions import AllowAny, IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAdminUser,
+    IsAuthenticatedOrReadOnly,
+)
+from error_formatter import format_exception, simplify_errors
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -13,12 +18,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ..authentication import ApiKeyAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter,api_settings
+from rest_framework.filters import SearchFilter, OrderingFilter, api_settings
 from rest_framework import status, viewsets, exceptions
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import ValidationError
 
-from rest_framework import filters as rest_filter
+
 from math import ceil
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -40,7 +47,7 @@ class StandardResultsSetPagination(PageNumberPagination):
                 "previous": self.get_previous_link(),
                 "current_page": current_page,
                 "total_pages": total_pages,
-                "page_size":int(per_page),
+                "page_size": int(per_page),
                 "has_next": self.page.has_next(),
                 "has_previous": self.page.has_previous(),
                 "results": data,
@@ -49,9 +56,14 @@ class StandardResultsSetPagination(PageNumberPagination):
         )
 
 
-def custom_response(status_text, data=None, message=None, status_code=200):
+def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
-        {"status": status_text, "message": message or "Success", "data": data},
+        {
+            "status": status_text,
+            "message": message or "Success",
+            "data": data,
+            "errors": errors,
+        },
         status=status_code,
     )
 
@@ -59,6 +71,34 @@ def custom_response(status_text, data=None, message=None, status_code=200):
 class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
     queryset = VCGMemberAttendance.objects.all()
     serializer_class = VCGMemberAttendanceSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+    authentication_classes = [JWTAuthentication]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+    filterset_fields = ["meeting__meeting_id"]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset().order_by("id"))
+
+        # 👇 This sets self.page and returns paginated queryset
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Fallback: if pagination is not applied
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="Member attendance loaded...",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["post"])
     def mark_attendance(self, request):
@@ -72,40 +112,70 @@ class VCGMemberAttendanceViewSet(viewsets.ModelViewSet):
         """
         meeting_id = request.data.get("meeting")
         member_ids = request.data.get("members", [])
-
         if not meeting_id or not isinstance(member_ids, list):
-            return Response(
-                {
-                    "error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of ints)."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return custom_response(
+                status_text="error",
+                message="Invalid data format. Provide 'meeting' (str) and 'members' (list of member_code).",
+                data={},
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
         meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         responses = []
         errors = []
         for member_id in member_ids:
             try:
-                member = get_object_or_404(VCGroup, member_code=member_id)
+                member = get_object_or_404(
+                    VCGroup, Q(member_code=member_id) | Q(member_ex_code=member_id)
+                )
                 attendance, created = VCGMemberAttendance.objects.update_or_create(
                     meeting=meeting,
-                    member=member,
+                    group_member=member,
                     defaults={"status": VCGMemberAttendance.PRESENT},
                 )
-                responses.append(
-                    {
-                        "member_code": member_id,
-                        "status": VCGMemberAttendance.PRESENT,
-                        "created": created,
-                    }
-                )
+                responses.append(VCGMemberAttendanceSerializer(attendance).data)
+            except ValidationError as exc:
+                friendly = simplify_errors(exc.detail)
+                errors.append(friendly)
             except Exception as e:
-                errors.append({"member_id": member_id, "error": str(e)})
-        response_data = {"marked": responses}
-        if errors:
-            response_data["errors"] = errors
-        return Response(
-            response_data,
-            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+                errors.append(format_exception(e))
+
+        return custom_response(
+            status_text="success",
+            message=(
+                "Some records failed to save."
+                if errors
+                else "All records saved successfully."
+            ),
+            data=responses,
+            errors=errors,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK
+            ),
+        )
+
+    def delete(self, request, *args, **kwargs):
+
+        ids = request.data.get("ids", [])
+
+        if not isinstance(ids, list):
+            return Response(
+                {"error": "Invalid data format. Provide 'attendances' (list of int)."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        attendances_obj = VCGMemberAttendance.objects.filter(pk__in=ids)
+        if attendances_obj:
+            attendances_obj.delete()
+            return custom_response(
+                status_text="success",
+                message=f"Successfully deleted {len(ids)} attendance(s)...",
+                data={},
+                status_code=status.HTTP_200_OK,
+            )
+        return custom_response(
+            status_text="error",
+            message="Attendances not found",
+            data={},
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -117,10 +187,11 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     filter_backends = [
         DjangoFilterBackend,
-        rest_filter.SearchFilter,
-        rest_filter.OrderingFilter,
+        SearchFilter,
+        OrderingFilter,
     ]
     filterset_fields = ["meeting__meeting_id"]
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset().order_by("id"))
 
@@ -141,18 +212,6 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
         )
 
     def create(self, request, *args, **kwargs):
-        """
-        Handles bulk creation of ZeroDaysPouringReport.
-        Expected request format:
-        {
-            "meeting": <meeting_id>,
-            "members": [
-                {"member_code": "M001", "member_ex_code": "EX001", "member_name": "John Doe"},
-                {"member_code": "M002", "member_ex_code": "EX002", "member_name": "Jane Doe"}
-            ],
-            "reason": <reason_id>
-        }
-        """
         meeting_id = request.data.get("meeting")
         members = request.data.get("members", [])
         reason_id = request.data.get("reason")
@@ -170,47 +229,147 @@ class ZeroDaysPouringReportViewSet(viewsets.ModelViewSet):
         responses = []
         errors = []
 
-        for member in members:
+        for member_data in members:
+            data = {**member_data, "meeting": meeting.pk, "reason": reason_id}
+
+            serializer = ZeroDaysPouringReportSerializer(data=data)
             try:
-                member_code = member.get("member_code")
-                member_ex_code = member.get("member_ex_code")
-                member_name = member.get("member_name")
+                serializer.is_valid(raise_exception=True)
 
-                if not member_code or not member_ex_code or not member_name:
-                    raise ValueError(
-                        "Missing required member fields: 'member_code', 'member_ex_code', 'member_name'."
-                    )
-
-                report, created = ZeroDaysPouringReport.objects.update_or_create(
-                    meeting=meeting,
-                    reason_id=reason_id,
-                    member_code=member_code,
-                    member_ex_code=member_ex_code,
-                    member_name=member_name,
-                )
-
+                report, created = serializer.create_or_update(serializer.validated_data)
+                serializer.instance = report
+                serializer.save()
                 responses.append(
                     {
-                        "member_code": member_code,
-                        "status": "Report Created" if created else "Already Exists",
+                        **serializer.data,
+                        "status": "Report Created" if created else "Updated",
                         "created": created,
                     }
                 )
+            except ValidationError as exc:
+                friendly = simplify_errors(exc.detail)
+                errors.append(friendly)
             except Exception as e:
-                errors.append({"member": member, "error": str(e)})
+                errors.append(format_exception(e))
 
-        response_data = {"marked": responses}
-        if errors:
-            response_data["errors"] = errors
+        return custom_response(
+            status_text="success",
+            message=(
+                "Some records failed to save."
+                if errors
+                else "All records saved successfully."
+            ),
+            data=responses,
+            errors=errors,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED
+            ),
+        )
 
-        return Response(
-            response_data,
-            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED,
+    def delete(self, request, *args, **kwargs):
+        """
+        Bulk delete member complaint reports for a given meeting.
+
+        **Method**: DELETE
+        **Endpoint**: `/member-complaint-reports/`
+
+        **Request Body**:
+        ```json
+        {
+        "meeting": 1,
+        "members": [
+            {"member_code": "M001"},
+            {"member_code": "M002"}
+        ]
+        }
+        ```
+
+        **Response (200/207)**:
+        ```json
+        {
+        "status": "success",
+        "message": "Successfully deleted 2 member(s)",
+        "data": {
+            "deleted": [
+            {"member_code": "M001", "status": "Deleted"}
+            ],
+            "not_found": [
+            {"member_code": "M002", "error": "Not found"}
+            ]
+        }
+        }
+        ```
+
+        - Returns 207 if some deletions fail (e.g., member not found).
+        """
+
+        meeting_id = request.data.get("meeting")
+        members = request.data.get("members", [])
+
+        if not meeting_id or not isinstance(members, list):
+            return Response(
+                {
+                    "error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of dicts with 'member_code')."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
+
+        deleted = []
+        not_found = []
+        count = 0
+        delete_count = 0
+        for member_data in members:
+            member_code = member_data.get("member_code")
+            if not member_code:
+                not_found.append(
+                    {"member_data": member_data, "error": "Missing 'member_code'."}
+                )
+                continue
+
+            try:
+                obj = ZeroDaysPouringReport.objects.get(
+                    meeting=meeting, member_code=member_code
+                )
+                obj.delete()
+                deleted.append({"member_code": member_code, "status": "Deleted"})
+                count += 1
+            except ZeroDaysPouringReport.DoesNotExist:
+                not_found.append({"member_code": member_code, "error": "Not found"})
+                delete_count -= 1
+
+        response_data = {"deleted": deleted}
+        status_text = "success"
+        message_text = f"Successfully deleted {count} member(s)"
+        if not_found:
+            response_data["not_found"] = not_found
+            status_text = "error"
+            message_text = f"failed to delete {delete_count} member(s)"
+
+        return custom_response(
+            status_text=status_text,
+            message=message_text,
+            data=response_data,
+            errors=not_found,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if not_found else status.HTTP_200_OK
+            ),
         )
 
 
-
 class MemberComplaintReportViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing member complaint reports linked to a meeting.
+
+    **Available Methods:**
+    - `POST /member-complaint-reports/`: Bulk create or update complaint reports.
+    - `GET /member-complaint-reports/`: List complaint reports with filtering and pagination.
+    - `DELETE /member-complaint-reports/`: Bulk delete complaint reports by meeting and member codes.
+
+    **Authentication**: JWT required.
+    """
+
     queryset = MemberComplaintReport.objects.all()
     serializer_class = MemberComplaintReportSerializer
     pagination_class = StandardResultsSetPagination
@@ -218,24 +377,54 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     filter_backends = [
         DjangoFilterBackend,
-        rest_filter.SearchFilter,
-        rest_filter.OrderingFilter,
+        SearchFilter,
+        OrderingFilter,
     ]
     filterset_fields = ["meeting__meeting_id"]
 
     def create(self, request, *args, **kwargs):
         """
-        Bulk marks Member Complaint Reports for the given meeting and members.
-        Expected request format:
+        Bulk create or update member complaint reports for a specific meeting.
+
+        **Method**: POST
+        **Endpoint**: `/member-complaint-reports/`
+
+        **Request Body**:
+        ```json
         {
-            "meeting": <meeting_id>,
-            "members": [
-                {"member_code": "M101", "member_ex_code": "EX101", "member_name": "John Doe"},
-                {"member_code": "M102", "member_ex_code": "EX102", "member_name": "Jane Doe"}
-            ],
-            "reason": <reason_id>
+        "meeting": 1,
+        "reason": 2,
+        "members": [
+            {"member_code": "M001", "member_ex_code": "EX001", "member_name": "John Doe"},
+            {"member_code": "M002", "member_ex_code": "EX002", "member_name": "Jane Doe"}
+        ]
         }
+        ```
+
+        **Response (200/207)**:
+        ```json
+        {
+        "status": "success",
+        "message": "Report created successfully...",
+        "data": [
+            {
+            "member_code": "M001",
+            "status": "Report Created",
+            "created": true
+            }
+        ],
+        "errors": [
+            {
+            "member_data": { ... },
+            "error": "Duplicate entry"
+            }
+        ]
+        }
+        ```
+
+        - Returns HTTP 200 on success, or 207 if partial failures occurred.
         """
+
         meeting_id = request.data.get("meeting")
         members = request.data.get("members", [])
         reason_id = request.data.get("reason")
@@ -248,59 +437,89 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        meeting = get_object_or_404(VCGMeeting, id=meeting_id)
+        meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         reason = get_object_or_404(MemberComplaintReason, id=reason_id)
 
         responses = []
         errors = []
 
         for member_data in members:
+            data = {**member_data, "meeting": meeting.pk, "reason": reason.pk}
+
+            serializer = MemberComplaintReportSerializer(data=data)
             try:
-                member_code = member_data.get("member_code")
-                member_ex_code = member_data.get("member_ex_code")
-                member_name = member_data.get("member_name")
+                serializer.is_valid(raise_exception=True)
 
-                if not member_code or not member_name:
-                    errors.append(
-                        {
-                            "member_data": member_data,
-                            "error": "Missing required fields: 'member_code', 'member_name'.",
-                        }
-                    )
-                    continue
-
-                report, created = MemberComplaintReport.objects.update_or_create(
-                    meeting=meeting,
-                    member_code=member_code,
-                    defaults={
-                        "member_ex_code": member_ex_code,
-                        "member_name": member_name,
-                        "reason": reason,
-                    },
-                )
-
+                report, created = serializer.create_or_update(serializer.validated_data)
+                serializer.instance = report  # needed for serializer.data to work
+                serializer.save()
                 responses.append(
                     {
-                        "member_code": member_code,
-                        "member_name": member_name,
-                        "meeting": meeting.id,
+                        **serializer.data,
                         "status": "Report Created" if created else "Updated",
+                        "created": created,
                     }
                 )
-
+            except ValidationError as exc:
+                friendly = simplify_errors(exc.detail)
+                errors.append(friendly)
             except Exception as e:
-                errors.append({"member_data": member_data, "error": str(e)})
+                errors.append(format_exception(e))
 
-        response_data = {"reports": responses}
-        if errors:
-            response_data["errors"] = errors
-
-        return Response(
-            response_data,
-            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+        return custom_response(
+            status_text="success",
+            message=(
+                "Some records failed to save."
+                if errors
+                else "All records saved successfully."
+            ),
+            data=responses,
+            errors=errors,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED
+            ),
         )
 
     def list(self, request, *args, **kwargs):
+        """
+        List all complaint reports with optional filtering, search, ordering, and pagination.
+
+        **Method**: GET
+        **Endpoint**: `/member-complaint-reports/`
+
+        ---
+        ### 🔍 Query Parameters:
+        - `meeting__meeting_id`: *(uud)* Filter reports by related meeting ID.
+        - `search`: *(string)* Search by default fields (configure in `SearchFilter`).
+        - `ordering`: *(string)* Order results by fields. E.g., `ordering=created_at` or `ordering=-id`.
+        - `page_size`: *(int)* Number of results per page (pagination).
+        - `page`: *(int)* Start index for pagination.
+
+        ---
+        ### ✅ Example:
+        ```
+        GET /member-complaint-reports/?meeting__meeting_id=12&ordering=-id&limit=20&offset=0
+        ```
+
+        ---
+        ### 🔁 Response (200):
+        ```json
+        {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+            "id": 1,
+            "member_code": "M001",
+            "meeting": 12,
+            "reason": 3,
+            ...
+            }
+        ]
+        }
+        ```
+        """
         queryset = self.filter_queryset(self.get_queryset().order_by("id"))
 
         # 👇 This sets self.page and returns paginated queryset
@@ -318,6 +537,97 @@ class MemberComplaintReportViewSet(viewsets.ModelViewSet):
             data=serializer.data,
             status_code=status.HTTP_200_OK,
         )
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Bulk delete member complaint reports for a given meeting.
+
+        **Method**: DELETE
+        **Endpoint**: `/member-complaint-reports/`
+
+        **Request Body**:
+        ```json
+        {
+        "meeting": 1,
+        "members": [
+            {"member_code": "M001"},
+            {"member_code": "M002"}
+        ]
+        }
+        ```
+
+        **Response (200/207)**:
+        ```json
+        {
+        "status": "success",
+        "message": "Successfully deleted 2 member(s)",
+        "data": {
+            "deleted": [
+            {"member_code": "M001", "status": "Deleted"}
+            ],
+            "not_found": [
+            {"member_code": "M002", "error": "Not found"}
+            ]
+        }
+        }
+        ```
+
+        - Returns 207 if some deletions fail (e.g., member not found).
+        """
+
+        meeting_id = request.data.get("meeting")
+        members = request.data.get("members", [])
+
+        if not meeting_id or not isinstance(members, list):
+            return Response(
+                {
+                    "error": "Invalid data format. Provide 'meeting' (int) and 'members' (list of dicts with 'member_code')."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
+
+        deleted = []
+        not_found = []
+        count = 0
+        delete_count = 0
+        for member_data in members:
+            member_code = member_data.get("member_code")
+            if not member_code:
+                not_found.append(
+                    {"member_data": member_data, "error": "Missing 'member_code'."}
+                )
+                continue
+
+            try:
+                obj = MemberComplaintReport.objects.get(
+                    meeting=meeting, member_code=member_code
+                )
+                obj.delete()
+                deleted.append({"member_code": member_code, "status": "Deleted"})
+                count += 1
+            except MemberComplaintReport.DoesNotExist:
+                delete_count += 1
+                not_found.append({"member_code": member_code, "error": "Not found"})
+
+        response_data = {"deleted": deleted}
+        status_text = "success"
+        message_text = f"Successfully deleted {count} member(s)"
+        if not_found:
+            response_data["not_found"] = not_found
+            status_text = "error"
+            message_text = f"failed to delete {delete_count} member(s)"
+
+        return custom_response(
+            status_text=status_text,
+            message=message_text,
+            data=response_data,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if not_found else status.HTTP_200_OK
+            ),
+        )
+
 
 class ZeroDaysReasonViewSet(viewsets.ModelViewSet):
     authentication_classes = [ApiKeyAuthentication]
@@ -508,47 +818,117 @@ class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
             )
 
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+
+
 class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
     queryset = VCGMeetingImages.objects.all()
     serializer_class = VCGMeetingImagesSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @extend_schema(
+        methods=["POST"],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "meeting_id": {
+                        "type": "integer",
+                        "description": "ID of the meeting",
+                        "example": 123,
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "byte",
+                            "example": "/9j/4AAQSkZJRgABAQAAAQABAAD...",
+                        },
+                        "description": "List of base64 encoded image strings",
+                    },
+                },
+                "required": ["meeting_id", "images"],
+            }
+        },
+        responses={
+            200: OpenApiExample(
+                "Success Response",
+                value={
+                    "status": "success",
+                    "message": "All images saved successfully.",
+                    "data": {
+                        "meeting_id": 123,
+                        "uploaded_images": [
+                            {"id": 1, "image_url": "/media/meeting/1.jpg"}
+                        ],
+                    },
+                    "errors": [],
+                },
+                response_only=True,
+            ),
+            207: OpenApiExample(
+                "Partial Success",
+                value={
+                    "status": "success",
+                    "message": "Some images failed to save.",
+                    "data": {
+                        "meeting_id": 123,
+                        "uploaded_images": [
+                            {"id": 2, "image_url": "/media/meeting/2.jpg"}
+                        ],
+                    },
+                    "errors": [
+                        {
+                            "image": "/9j/4AAQSk...",
+                            "error": "Traceback (most recent call last): ...",
+                        }
+                    ],
+                },
+                response_only=True,
+            ),
+        },
+        tags=["Meetings"],
+        description="Uploads one or more base64 encoded images to a specific meeting. "
+        "Returns URLs of successfully saved images and details of failed ones if any.",
+    )
     @action(detail=False, methods=["post"])
     def upload_images(self, request):
         """
-        Uploads images for a specific meeting.
-        Expected request format:
-        {
-            "meeting_id": <meeting_id>,
-            "images": [<base64_string1>, <base64_string2>, ...],
-            "date_time": "YYYY-MM-DD HH:MM:SS"
-        }
+        Upload base64-encoded images for a specific meeting.
+
+        Request Body:
+        - `meeting_id` (int): ID of the meeting.
+        - `images` (List[str]): List of base64-encoded image strings.
+
+        Returns:
+        - HTTP 200 OK if all images are saved.
+        - HTTP 207 Multi-Status if some images fail.
+        - Includes uploaded image URLs and any errors encountered.
         """
+        from django.utils.timezone import now
+
         meeting_id = request.data.get("meeting_id")
         base64_images = request.data.get("images", [])
-        selected_datetime = request.data.get("date_time")
 
-        if (
-            not meeting_id
-            or not isinstance(base64_images, list)
-            or not selected_datetime
-        ):
+        if not meeting_id or not isinstance(base64_images, list):
             return Response(
                 {
-                    "error": "Invalid data format. Provide 'meeting_id' (int), 'images' (list of base64 strings), and 'date_time' (str)."
+                    "error": "Invalid data format. Provide 'meeting_id' (int), 'images' (list of base64 strings)"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         meeting = get_object_or_404(VCGMeeting, meeting_id=meeting_id)
         uploaded_images = []
         errors = []
+
         for base64_image in base64_images:
             try:
                 image_data = base64.b64decode(base64_image)
                 image_file = ContentFile(
                     image_data,
-                    name=f"{random.randint(100, 999)}_{meeting_id}_{selected_datetime}.jpg",
+                    name=f"{random.randint(100, 999)}_{meeting_id}.jpg",
                 )
                 meeting_image = VCGMeetingImages.objects.create(
                     meeting=meeting, image=image_file
@@ -557,42 +937,83 @@ class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
                     {"id": meeting_image.id, "image_url": meeting_image.image.url}
                 )
             except Exception as e:
-                errors.append({"image": base64_image[:30], "error": str(e)})
+                errors.append(
+                    {
+                        "image": base64_image[:30],
+                        "error": format_exception(exc=e),
+                    }
+                )
+
         # Update meeting status
-        meeting.end_datetime = selected_datetime
+        meeting.completed_at = now()
         meeting.status = VCGMeeting.COMPLETED
         meeting.save()
+
         response_data = {
-            "message": "Images uploaded successfully",
             "meeting_id": meeting.meeting_id,
             "uploaded_images": uploaded_images,
         }
-        if errors:
-            response_data["errors"] = errors
-        return Response(
-            response_data,
-            status=status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
+
+        return custom_response(
+            status_text="success",
+            message=(
+                "Some images failed to save."
+                if errors
+                else "All images saved successfully."
+            ),
+            data=response_data,
+            errors=errors,
+            status_code=(
+                status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK
+            ),
         )
 
 
 class VCGMeetingViewSet(viewsets.ModelViewSet):
-    queryset = VCGMeeting.objects.all()
     serializer_class = VCGMeetingSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-
+    filterset_fields = ["status", "is_deleted"]
     search_fields = ["mpp_name", "mpp_code"]
     ordering_fields = ["started_at", "completed_at"]
     ordering = ["-started_at"]
+    lookup_field = "meeting_id"
 
     def get_queryset(self):
         user = self.request.user
-        queryset = VCGMeeting.objects.annotate(num_images=Count("meeting_images"))
-
+        queryset = VCGMeeting.objects.all()
         if user.is_staff or user.is_superuser:
             return queryset
-        return queryset.filter(user=user, num_images=0)
+        return queryset.filter(user=user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset().order_by("id"))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="VCG meetings loaded...",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_deleted = True
+        instance.status = VCGMeeting.DELETED
+        instance.save(update_fields=["is_deleted", "status"])
+        return custom_response(
+            status_text="success",
+            message="VCG meeting deleted...",
+            data=None,
+            status_code=status.HTTP_200_OK,
+        )
 
     def create(self, request, *args, **kwargs):
         """
@@ -647,7 +1068,7 @@ class VCGMeetingViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
-            meeting = serializer.save()
+            serializer.save()
             return Response(
                 {
                     "status": "success",

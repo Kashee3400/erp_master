@@ -1319,9 +1319,10 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
 
 
 class NewsViewSet(viewsets.ModelViewSet):
+    from rest_framework.filters import OrderingFilter
     queryset = News.objects.all()
     serializer_class = NewsSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["is_published"]
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination

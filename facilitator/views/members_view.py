@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets, exceptions, filters
+from rest_framework import status, viewsets, exceptions
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from ..serializers.serializers import *
@@ -38,6 +38,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
+    from rest_framework.filters import OrderingFilter,SearchFilter
     """
     API endpoint for fetching Member Hierarchy with filtering on:
     - `mcc_code`
@@ -52,8 +53,8 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MemberHierarchySerializer
     filter_backends = [
         DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
+        OrderingFilter,
+        SearchFilter,
     ]
     filterset_fields = [
         "mcc_code",

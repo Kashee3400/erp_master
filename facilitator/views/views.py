@@ -269,7 +269,10 @@ class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
-
+    
+    def get_serializer_class(self):
+        return None
+    
     def get_queryset(self):
         created_date = self.request.GET.get("date", timezone.now().date())
         mpp_codes = self.request.GET.get("mpp_code")
@@ -344,7 +347,7 @@ class DashboardSummaryFilter(django_filters.FilterSet):
         return queryset.filter(mpp_code__in=mpp_codes)
 
 
-from rest_framework import filters as rest_filter
+from rest_framework.filters import OrderingFilter
 from math import ceil
 from collections import defaultdict
 
@@ -353,7 +356,7 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = FacilitatorDashboardSummarySerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend, rest_filter.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DashboardSummaryFilter
     ordering_fields = ["collection_date", "mpp_code", "shift_code"]
 

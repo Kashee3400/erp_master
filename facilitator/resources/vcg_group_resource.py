@@ -6,7 +6,7 @@ from import_export.widgets import ForeignKeyWidget
 
 class VCGroupResource(resources.ModelResource):
     mpp = fields.Field(column_name='mpp',attribute='mpp',
-        widget=ForeignKeyWidget(AssignedMppToFacilitator, 'mpp_code')
+        widget=ForeignKeyWidget(AssignedMppToFacilitator, 'mpp_ex_code')
     )
     class Meta:
         model = VCGroup

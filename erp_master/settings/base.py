@@ -201,8 +201,15 @@ REST_FRAMEWORK = {
         "user": "1000/day",  # Allow 1000 requests per user per day
         "anon": "1000/day",  # Allow 100 requests per anonymous user per day
     },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ERP API',
+    'DESCRIPTION': 'API documentation for your ERP platform',
+    'VERSION': '1.0.0',
+}
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=365 * 10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=150),

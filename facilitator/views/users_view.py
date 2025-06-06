@@ -25,7 +25,7 @@ def custom_response(status_text, data=None, message=None, status_code=200):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    from rest_framework import filters
+    from rest_framework.filters import SearchFilter,OrderingFilter
 
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
@@ -37,8 +37,8 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = ["username", "email", "date_joined", "last_login"]
     lookup_field = "pk"
     filter_backends = [
-        filters.SearchFilter,
-        filters.OrderingFilter,
+        SearchFilter,
+        OrderingFilter,
         DjangoFilterBackend,
     ]
 
@@ -396,7 +396,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
-    from rest_framework import filters
+    from rest_framework.filters import SearchFilter
 
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
@@ -405,7 +405,7 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
     lookup_field = "pk"
 
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [SearchFilter]
 
     search_fields = [
         "codename",

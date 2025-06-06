@@ -60,60 +60,6 @@ class GenerateOTPView(APIView):
         )
 
 
-# class VerifyOTPView(generics.GenericAPIView):
-#     serializer_class = VerifyOTPSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         phone_number = serializer.validated_data["phone_number"]
-#         otp_value = serializer.validated_data["otp"]
-#         device_id = request.data.get("device_id")
-#         module = request.data.get("module", "facilitator")
-
-#         if not device_id:
-#             return Response(
-#                 {"status": "error", "message": "Device ID is required."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
-#         if otp is None:
-#             return Response(
-#                 {"status": "error", "message": "Invalid OTP."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         if otp and not otp.is_valid():
-#             otp.delete()
-#             return Response(
-#                 {"status": "error", "message": "OTP has expired."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-#         user, _ = User.objects.get_or_create(username=phone_number)
-#         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-#         UserDevice.objects.create(user=user, device=device_id, module=module)
-#         refresh = RefreshToken.for_user(user)
-#         otp.delete()
-#         return Response(
-#             {
-#                 "status": "success",
-#                 "message": "Authentication successful.",
-#                 "data": {
-#                     "phone_number": user.username,
-#                     "access_token": str(refresh.access_token),
-#                     "refresh_token": str(refresh),
-#                     "device_id": device_id,
-#                     "user_id": user.pk,
-#                 },
-#             },
-#             status=status.HTTP_200_OK,
-#         )
-
-
-
 class VerifyOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = []
