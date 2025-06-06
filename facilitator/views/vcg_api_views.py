@@ -40,7 +40,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
         return custom_response(
             status_text="success",
-            message="Summary Loaded...",
+            message="Success",
             data={
                 "count": total_items,
                 "next": self.get_next_link(),
@@ -818,80 +818,46 @@ class MemberComplaintReasonViewSet(viewsets.ModelViewSet):
             )
 
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-
-
 class VCGMeetingImagesViewSet(viewsets.ModelViewSet):
     queryset = VCGMeetingImages.objects.all()
     serializer_class = VCGMeetingImagesSerializer
+    pagination_class =  StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["meeting__meeting_id"]
 
-    @extend_schema(
-        methods=["POST"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "meeting_id": {
-                        "type": "integer",
-                        "description": "ID of the meeting",
-                        "example": 123,
-                    },
-                    "images": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "byte",
-                            "example": "/9j/4AAQSkZJRgABAQAAAQABAAD...",
-                        },
-                        "description": "List of base64 encoded image strings",
-                    },
-                },
-                "required": ["meeting_id", "images"],
-            }
-        },
-        responses={
-            200: OpenApiExample(
-                "Success Response",
-                value={
-                    "status": "success",
-                    "message": "All images saved successfully.",
-                    "data": {
-                        "meeting_id": 123,
-                        "uploaded_images": [
-                            {"id": 1, "image_url": "/media/meeting/1.jpg"}
-                        ],
-                    },
-                    "errors": [],
-                },
-                response_only=True,
-            ),
-            207: OpenApiExample(
-                "Partial Success",
-                value={
-                    "status": "success",
-                    "message": "Some images failed to save.",
-                    "data": {
-                        "meeting_id": 123,
-                        "uploaded_images": [
-                            {"id": 2, "image_url": "/media/meeting/2.jpg"}
-                        ],
-                    },
-                    "errors": [
-                        {
-                            "image": "/9j/4AAQSk...",
-                            "error": "Traceback (most recent call last): ...",
-                        }
-                    ],
-                },
-                response_only=True,
-            ),
-        },
-        tags=["Meetings"],
-        description="Uploads one or more base64 encoded images to a specific meeting. "
-        "Returns URLs of successfully saved images and details of failed ones if any.",
-    )
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset().order_by("id"))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="VCG meetings images loaded...",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=['post'], url_path='bulk-delete')
+    def bulk_delete(self, request):
+        ids = request.data.get('ids', [])
+        if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
+            return custom_response(
+                status_text="error",
+                message="Invalid IDs list",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instances = self.queryset.filter(id__in=ids)
+        count = instances.count()
+        instances.delete()
+        return custom_response(status_text="success",message= f'{count} items deleted.', status_code=status.HTTP_200_OK)
+
+
     @action(detail=False, methods=["post"])
     def upload_images(self, request):
         """

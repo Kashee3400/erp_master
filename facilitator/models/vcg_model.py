@@ -6,7 +6,7 @@ import uuid
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from datetime import datetime
-
+import os
 User = get_user_model()
 
 
@@ -339,6 +339,22 @@ class VCGMeetingImages(models.Model):
         verbose_name=_("Updated At"),
         help_text=_("Timestamp of the last update to this record."),
     )
+    
+    def delete(self, *args, **kwargs):
+        if self.image and os.path.isfile(self.image.path):
+            os.remove(self.image.path)
+        super().delete(*args, **kwargs)
+        
+    def save(self, *args, **kwargs):
+        if self.pk:
+            try:
+                old = VCGMeetingImages.objects.get(pk=self.pk)
+                if old.image != self.image:
+                    if old.image and os.path.isfile(old.image.path):
+                        os.remove(old.image.path)
+            except VCGMeetingImages.DoesNotExist:
+                pass
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Image for Meeting {self.meeting.id if self.meeting else 'N/A'}"
