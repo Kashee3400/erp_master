@@ -76,8 +76,8 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
 class MemberProfileView(generics.RetrieveAPIView):
     serializer_class = MemberProfileSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_object(self):
         user = self.request.user

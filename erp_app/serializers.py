@@ -74,8 +74,10 @@ class MemberProfileSerializer(serializers.ModelSerializer):
         model = MemberHierarchyView
         fields = (
             "mcc_code",
+            "mcc_tr_code",
             "mcc_name",
             "mpp_code",
+            "mpp_tr_code",
             "mpp_name",
             "member_code",
             "member_tr_code",
