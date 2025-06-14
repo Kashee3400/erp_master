@@ -1326,6 +1326,8 @@ class NewsViewSet(viewsets.ModelViewSet):
     filterset_fields = ["is_published"]
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
+    authentication_classes = [ApiKeyAuthentication]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         """

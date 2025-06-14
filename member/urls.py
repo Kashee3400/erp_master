@@ -58,6 +58,7 @@ urlpatterns = [
     path('api/otp/sahayak/verify/', VerifySahayakOTPView.as_view(), name='verify-sahayak-otp'),
     path('api/verify/session/', VerifySession.as_view(), name='verify-session'),
     path('api/members/phone/', MemberByPhoneNumberView.as_view(), name='member-by-phone'),
+    path('api/member-profile/', MemberProfileView.as_view(), name='member-profile'),
     path('api/members/billing-history/', BillingMemberDetailView.as_view(), name='member-billing-history'),
     path('api/mpp-collection/', MppCollectionAggregationListView.as_view(), name='mpp-collection-list'),
     path('api/mpp-collection-detail/', MppCollectionDetailView.as_view(), name='mpp-collection-detail'),

@@ -1,273 +1,6 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 
 from django.db import models
 from django.utils.translation import gettext as _
-
-
-class TblUserLogin(models.Model):
-    login_id = models.AutoField(db_column='Login_ID', primary_key=True)  # Field name made lowercase.
-    username = models.CharField(db_column='UserName', max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)  # Field name made lowercase.
-    pwd = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
-    bmccode = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Tbl_User_Login'
-
-
-
-class Addressbook(models.Model):
-    destinations = models.IntegerField(blank=True, null=True)
-    flag_entry = models.IntegerField(blank=True, null=True)
-    organization_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    organization_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    source_org_type = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    table_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    to_child = models.IntegerField(blank=True, null=True)
-    to_parent = models.IntegerField(blank=True, null=True)
-    type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=2000, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    priority = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'addressbook'
-
-
-class AddressbookPortal(models.Model):
-    destinations = models.IntegerField(blank=True, null=True)
-    flag_entry = models.IntegerField(blank=True, null=True)
-    organization_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    organization_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    source_org_type = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    table_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    to_child = models.IntegerField(blank=True, null=True)
-    to_parent = models.IntegerField(blank=True, null=True)
-    type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_type = models.CharField(max_length=2000, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    priority = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'addressbook_portal'
-
-
-class Adulteration(models.Model):
-    adulteration_code = models.AutoField(primary_key=True)
-    adulteration_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_for = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    is_active = models.BooleanField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    control_type = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration'
-
-
-class AdulterationHistory(models.Model):
-    id = models.IntegerField(primary_key=True)
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_code = models.IntegerField(blank=True, null=True)
-    adulteration_name = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_for = models.CharField(max_length=15, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    is_active = models.BooleanField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    control_type = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration_history'
-
-
-class AdulterationResult(models.Model):
-    adulteration_result_code = models.AutoField(primary_key=True)
-    adulteration_code = models.IntegerField(blank=True, null=True)
-    adulteration_result = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    is_active = models.BooleanField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration_result'
-
-
-class AdulterationResultHistory(models.Model):
-    id = models.IntegerField(primary_key=True)
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_result_code = models.IntegerField(blank=True, null=True)
-    adulteration_code = models.IntegerField(blank=True, null=True)
-    adulteration_result = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    is_active = models.BooleanField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration_result_history'
-
-
-class AdulterationTxn(models.Model):
-    adulteration_txn_code = models.CharField(primary_key=True, max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS')
-    adulteration_code = models.IntegerField(blank=True, null=True)
-    adulteration_result_code = models.IntegerField(blank=True, null=True)
-    adulteration_result = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    transaction_date = models.DateTimeField(blank=True, null=True)
-    shift_code = models.IntegerField(blank=True, null=True)
-    adulteration_for = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    trip_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    destination_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    destination_type = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration_txn'
-
-
-class AdulterationTxnHistory(models.Model):
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_txn_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    adulteration_code = models.IntegerField(blank=True, null=True)
-    adulteration_result_code = models.IntegerField(blank=True, null=True)
-    adulteration_result = models.CharField(max_length=255, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    transaction_date = models.DateTimeField(blank=True, null=True)
-    shift_code = models.IntegerField(blank=True, null=True)
-    adulteration_for = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_code = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    module_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    trip_code = models.CharField(max_length=10, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'adulteration_txn_history'
-
-
-class AgeingType(models.Model):
-    ageing_key = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    ageing_value = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    ageing_from = models.IntegerField(blank=True, null=True)
-    ageing_to = models.IntegerField(blank=True, null=True)
-    sequence_number = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ageing_type'
-
-
-class AgeingTypeHistory(models.Model):
-    ageing_type_history_id = models.AutoField(primary_key=True)
-    history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    history_created_at = models.DateTimeField(blank=True, null=True)
-    operation_type = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    id = models.IntegerField(blank=True, null=True)
-    ageing_key = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    ageing_value = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    ageing_from = models.IntegerField(blank=True, null=True)
-    ageing_to = models.IntegerField(blank=True, null=True)
-    sequence_number = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=14, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ageing_type_history'
-
-
-class AggregationUnlock(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    department_code = models.IntegerField(blank=True, null=True)
-    process_name = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    payment_cycle_code = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_org_code = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    flg_sentbox_entry = models.CharField(max_length=1, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    originating_type = models.IntegerField(blank=True, null=True)
-    bmc_code = models.CharField(max_length=6, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'aggregation_unlock'
 
 
 class AlertNotification(models.Model):
@@ -11050,8 +10783,6 @@ class MemberHierarchyView(models.Model):
         verbose_name = "Member Heirarchy"
         verbose_name_plural = "Member Heirarchies"
 
-from django.db import models
-
 class FacilitatorDashboardSummary(models.Model):
     mpp_code = models.CharField(max_length=50, blank=True, null=True)
     collection_date = models.CharField(blank=True, null=True)
@@ -11179,8 +10910,10 @@ class MemberSahayakBankDetail(models.Model):
     accountant_name = models.CharField(max_length=100, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     bank_account_no = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     ifsc = models.CharField(max_length=30, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
-    bank_code = models.IntegerField(blank=True, null=True)
-    branch_code = models.IntegerField(blank=True, null=True)
+    # bank_code = models.IntegerField(blank=True, null=True)
+    bank = models.ForeignKey(Bank, verbose_name=_("Bank"), on_delete=models.SET_NULL,blank=True, null=True,db_column="bank_code")
+    # branch_code = models.IntegerField(blank=True, null=True)
+    branch = models.ForeignKey(Branch, verbose_name=_("Bank Branch"), on_delete=models.SET_NULL,blank=True, null=True,db_column="branch_code")
     upi = models.CharField(max_length=50, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
     wef_date = models.DateField(blank=True, null=True)
     module_code = models.CharField(max_length=25, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
@@ -11198,8 +10931,7 @@ class MemberSahayakBankDetail(models.Model):
     class Meta:
         managed = False
         db_table = 'member_sahayak_bank_detail'
-
-
+        
 class MemberSahayakBankDetailHistory(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
     history_created_by = models.CharField(max_length=20, db_collation='SQL_Latin1_General_CP1_CI_AS', blank=True, null=True)
