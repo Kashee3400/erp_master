@@ -52,7 +52,7 @@ class MemberBankSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberSahayakBankDetail
         fields = "__all__"
-    
+
 class MccSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mcc
@@ -66,7 +66,9 @@ class MppSerializer(serializers.ModelSerializer):
 
 class MemberProfileSerializer(serializers.ModelSerializer):
     mcc_name = serializers.SerializerMethodField()
+    mcc_tr_code = serializers.SerializerMethodField()
     mpp_name = serializers.SerializerMethodField()
+    mpp_tr_code = serializers.SerializerMethodField()
 
     class Meta:
         model = MemberHierarchyView
@@ -91,16 +93,27 @@ class MemberProfileSerializer(serializers.ModelSerializer):
             "is_default",
             "created_at",
             "folio_no",
+            "application_no",
+            "application_date",
+            "member_master_relation",
+            "ex_member_code",
         )
 
     def get_mcc_name(self, obj):
         mcc = Mcc.objects.filter(mcc_code=obj.mcc_code).last()
         return mcc.mcc_name if mcc else "-"
 
+    def get_mcc_tr_code(self, obj):
+        mcc = Mcc.objects.filter(mcc_code=obj.mcc_code).last()
+        return mcc.mcc_ex_code if mcc else "-"
+
     def get_mpp_name(self, obj):
         mpp = Mpp.objects.filter(mpp_code=obj.mpp_code).last()
         return mpp.mpp_name if mpp else "-"
 
+    def get_mpp_tr_code(self, obj):
+        mpp = Mpp.objects.filter(mpp_code=obj.mpp_code).last()
+        return mpp.mpp_ex_code if mpp else "-"
 
 class ShiftSerializer(serializers.ModelSerializer):
 
