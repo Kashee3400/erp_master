@@ -12,11 +12,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 
-class TAGTypeViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
-    queryset = TAGType.objects.all()
-    serializer_class = TAGTypeSerializer
-
 
 class CattleCaseTypeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]

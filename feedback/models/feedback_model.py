@@ -1,0 +1,316 @@
+from django.db import models
+import random
+import string
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+import uuid
+from django.conf import settings
+from django.core.files.base import ContentFile
+import base64
+from django.utils.translation import gettext_lazy as _, get_language
+
+# ------------------------------
+# STATUS: Internal codes + labels
+# ------------------------------
+STATUS_CHOICES = [
+    ("open", _("Open")),
+    ("assigned", _("Assigned")),
+    ("in_progress", _("In Progress")),
+    ("resolved", _("Resolved")),
+    ("closed", _("Closed")),
+    ("reopened", _("Reopened")),
+]
+
+# ------------------------------
+# Priority Choices
+# ------------------------------
+PRIORITY_CHOICES = (
+    ("low", _("Low")),
+    ("medium", _("Medium")),
+    ("high", _("High")),
+    ("critical", _("Critical")),
+)
+
+# ------------------------------
+# ALLOWED STATUS TRANSITIONS
+# ------------------------------
+ALLOWED_TRANSITIONS = {
+    "open": ["assigned", "closed", "reopened"],
+    "assigned": ["in_progress", "closed"],
+    "in_progress": ["resolved", "closed"],
+    "resolved": ["reopened", "closed"],
+    "closed": ["reopened"],
+    "reopened": ["assigned", "closed"],
+}
+
+
+def is_valid_transition(current, new):
+    return new in ALLOWED_TRANSITIONS.get(current, [])
+
+
+# ------------------------------
+# MAIN MODEL
+# ------------------------------
+from django.core.exceptions import ValidationError
+
+
+class Feedback(models.Model):
+    feedback_id = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        editable=False,
+        verbose_name=_("Feedback ID"),
+        help_text=_("Unique identifier for this feedback entry. Auto-generated."),
+    )
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_sent_feedbacks",
+        verbose_name=_("Sender"),
+        help_text=_("User who submitted the feedback."),
+    )
+
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_assigned_feedbacks",
+        verbose_name=_("Assigned To"),
+        help_text=_("User assigned to review or resolve this feedback."),
+    )
+
+    assigned_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Assigned At"),
+        help_text=_("Timestamp when the feedback was assigned."),
+    )
+
+    mpp_code = models.CharField(
+        max_length=9,
+        blank=True,
+        null=True,
+        verbose_name=_("MPP Code"),
+        help_text=_("MPP Code related to the feedback. Must be exactly 9 characters."),
+    )
+
+    mcc_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_("MCC Code"),
+        help_text=_("Milk Collection Center code linked to this feedback."),
+    )
+
+    member_code = models.CharField(
+        blank=True,
+        null=True,
+        max_length=50,
+        verbose_name=_("Member Code"),
+        help_text=_("Unique identifier for the member associated with this feedback."),
+    )
+
+    member_tr_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_("Member Transaction Code"),
+        help_text=_("Transaction code related to the member, if applicable."),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_("Member Name"),
+        help_text=_("Full name of the member."),
+    )
+
+    mobile_no = models.CharField(
+        max_length=15,
+        blank=True,
+        null=True,
+        verbose_name=_("Mobile Number"),
+        help_text=_("Contact mobile number of the member."),
+    )
+
+    status = models.CharField(
+        max_length=100,
+        choices=STATUS_CHOICES,
+        default="open",
+        verbose_name=_("Feedback Status"),
+        help_text=_("Current status of the feedback."),
+    )
+
+    priority = models.CharField(
+        max_length=10,
+        choices=PRIORITY_CHOICES,
+        default="medium",
+        verbose_name=_("Priority"),
+        help_text=_("Priority level of the feedback."),
+    )
+
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_("Category"),
+        help_text=_("Category or type of feedback."),
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+        help_text=_("Timestamp when the feedback was created."),
+    )
+
+    resolved_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Resolved At"),
+        help_text=_("Timestamp when the feedback was marked as resolved."),
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Last Updated At"),
+        help_text=_("Timestamp of the most recent update to the feedback."),
+    )
+
+    message = models.TextField(
+        verbose_name=_("Message"),
+        help_text=_("Detailed description or content of the feedback."),
+    )
+
+    deleted = models.BooleanField(
+        default=False,
+        verbose_name=_("Is Deleted"),
+        help_text=_("Indicates whether this feedback is deleted (soft delete)."),
+    )
+
+    class Meta:
+        verbose_name = _("Sahayak Feedback")
+        verbose_name_plural = _("Sahayak Feedbacks")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Feedback #{self.feedback_id or 'Unassigned'} by {self.sender}"
+
+    def clean(self):
+        super().clean()
+
+        # Validate MPP Code length if provided
+        if self.mpp_code and len(self.mpp_code) != 9:
+            raise ValidationError(
+                {"mpp_code": _("MPP Code must be exactly 9 characters long.")}
+            )
+
+        # Prevent resolved_at if status is not resolved or closed
+        if self.resolved_at and self.status not in ["resolved", "closed"]:
+            raise ValidationError(
+                {
+                    "resolved_at": _(
+                        "Cannot set resolved time if feedback is not resolved or closed."
+                    )
+                }
+            )
+
+        # Prevent assigning without assigned_to
+        if self.assigned_at and not self.assigned_to:
+            raise ValidationError(
+                {
+                    "assigned_to": _(
+                        "Assigned to cannot be empty when assigned time is set."
+                    )
+                }
+            )
+
+    def __str__(self):
+        return f"{self.feedback_id} - {self.status}"
+
+    def save(self, *args, **kwargs):
+        if not self.feedback_id:
+            self.feedback_id = "FEED" + uuid.uuid4().hex[:6].upper()
+        super().save(*args, **kwargs)
+
+    def update_status(self, new_status, user, reason=""):
+        """
+        Validates and updates feedback status with logging and timestamp updates.
+        """
+        if not is_valid_transition(self.status, new_status):
+            raise ValueError(
+                _(f"Invalid status transition from '{self.status}' to '{new_status}'")
+            )
+
+        previous_status = self.status
+        self.status = new_status
+
+        if new_status in ["resolved", "closed"]:
+            self.resolved_at = timezone.now()
+
+        self.save()
+
+        FeedbackLog.objects.create(
+            feedback=self,
+            user=user,
+            previous_status=previous_status,
+            new_status=new_status,
+            reason=reason,
+        )
+
+
+# ------------------------------
+# LOG MODEL
+# ------------------------------
+class FeedbackLog(models.Model):
+    feedback = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="feedbacklogs"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_feedback_logs"
+    )
+    previous_status = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Previous Status")
+    )
+    new_status = models.CharField(max_length=100, verbose_name=_("New Status"))
+    reason = models.TextField(blank=True, verbose_name=_("Log Remark"))
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.feedback.feedback_id} → {self.new_status}"
+
+
+class FeedbackFile(models.Model):
+    feedback = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="attachments"
+    )
+    file = models.FileField(upload_to="feedback_files/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"File for {self.feedback.feedback_id}"
+
+
+class FeedbackComment(models.Model):
+    feedback = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="comments"
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    # Save the name as it was at the time of comment
+    commented_by = models.CharField(max_length=150)
+
+    comment = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Auto-fill commented_by if not already set
+        if not self.commented_by:
+            self.commented_by = str(self.user.get_full_name() or self.user.username)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Comment by {self.commented_by} on {self.feedback.feedback_id}"

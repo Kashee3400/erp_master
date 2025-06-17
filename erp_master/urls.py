@@ -44,10 +44,14 @@ urlpatterns = [
     path("mpms/", include("mpms.urls")),
     path("facilitator/", include("facilitator.urls")),
     path("management/api/", include("facilitator.user_urls")),
-    path("veterinary/", include("facilitator.user_urls")),
+    path("veterinary/", include("veterinary.urls")),
+    path("feedback/", include("feedback.urls")),
     path("erp-fcm/", include("notifications.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
     path("app-ads.txt", app_ads_txt, name="app_ads_txt"),
+    
+    
+    
     # API Documentation
     path("openapi/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

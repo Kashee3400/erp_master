@@ -3,10 +3,10 @@ from .models.models import *
 
 
 
-class TAGTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TAGType
-        fields = '__all__'
+# class TAGTypeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TAGType
+#         fields = '__all__'
 
 
 class CattleCaseTypeSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class CattleTaggingSerializer(serializers.ModelSerializer):
 
         
 from rest_framework import serializers
-from .models.models import Cattle, AnimalBreed, TAGType, AnimalType
+from .models.models import Cattle, AnimalBreed,  AnimalType
 
 class AnimalTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,18 +63,18 @@ class AnimalBreedSerializer(serializers.ModelSerializer):
         model = AnimalBreed
         fields = ['breed', 'created_at', 'sync', 'animal_type_data']
 
-class TAGTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TAGType
-        fields = '__all__'
+# class TAGTypeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TAGType
+#         fields = '__all__'
 
 class CattleSerializer(serializers.ModelSerializer):
     breed_data = AnimalBreedSerializer(source='breed', read_only=True)
-    tag_type_data = TAGTypeSerializer(source='tag_type', read_only=True)
+    # tag_type_data = TAGTypeSerializer(source='tag_type', read_only=True)
 
     class Meta:
         model = Cattle
-        fields = ['id', 'tag_type_data', 'breed_data', 'tag_number', 'gender', 'sync', 'farmer']
+        fields = ['id','breed_data', 'tag_number', 'gender', 'sync', 'farmer']
 
     def get_animal_type_data(self, obj):
         return AnimalTypeSerializer(obj.breed.animal_type).data

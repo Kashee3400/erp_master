@@ -19,6 +19,7 @@ LOCAL_APPS = [
     "erp_app",
     "facilitator",
     "veterinary",
+    "feedback",
 ]
 
 THIRD_PARTY_APPS = [
