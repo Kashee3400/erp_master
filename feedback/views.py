@@ -72,7 +72,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["status", "priority","assigned_to"]
+    filterset_fields = ["status", "priority", "assigned_to","deleted"]
+    
     search_fields = [
         "mpp_code",
         "mcc_code",
@@ -246,7 +247,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         instance.save()
         return custom_response(
             status_text="success",
-            status_code=status.HTTP_204_NO_CONTENT,
+            status_code=status.HTTP_200_OK,
             message="Feedback deleted successfully.",
         )
 
