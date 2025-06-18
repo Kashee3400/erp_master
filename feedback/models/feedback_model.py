@@ -1,14 +1,9 @@
 from django.db import models
-import random
-import string
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 import uuid
 from django.conf import settings
-from django.core.files.base import ContentFile
-import base64
 from django.utils.translation import gettext_lazy as _, get_language
-
+from datetime import timedelta
 # ------------------------------
 # STATUS: Internal codes + labels
 # ------------------------------
@@ -184,7 +179,27 @@ class Feedback(models.Model):
         verbose_name=_("Message"),
         help_text=_("Detailed description or content of the feedback."),
     )
+    @property
+    def response_time(self) -> timedelta | None:
+        """Time between creation and assignment if assigned; else None"""
+        if self.assigned_at and self.created_at:
+            return self.assigned_at - self.created_at
+        return None
 
+    @property
+    def resolution_time(self) -> timedelta | None:
+        """Time between assignment and resolution"""
+        if self.assigned_at and self.resolved_at:
+            return self.resolved_at - self.assigned_at
+        return None
+
+    @property
+    def full_resolution_time(self) -> timedelta | None:
+        """Time from creation to resolution"""
+        if self.created_at and self.resolved_at:
+            return self.resolved_at - self.created_at
+        return None
+    
     deleted = models.BooleanField(
         default=False,
         verbose_name=_("Is Deleted"),

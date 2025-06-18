@@ -4,12 +4,19 @@ from django.utils import timezone
 import base64
 from django.core.files.base import ContentFile
 
-
 class FeedbackCommentSerializer(serializers.ModelSerializer):
+    is_mine = serializers.SerializerMethodField()
+
     class Meta:
         model = FeedbackComment
-        fields = ("id","user", "comment", "timestamp", "commented_by")
-        read_only_fields = ("id", "timestamp", "commented_by")
+        fields = ("id", "user", "comment", "timestamp", "commented_by", "is_mine")
+        read_only_fields = ("id", "timestamp", "commented_by", "is_mine")
+
+    def get_is_mine(self, obj):
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            return obj.user == request.user
+        return False
 
 class FeedbackFileSerializer(serializers.ModelSerializer):
     class Meta:

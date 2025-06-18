@@ -72,8 +72,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["status", "priority", "assigned_to","deleted"]
-    
+    filterset_fields = ["status", "priority", "assigned_to", "deleted"]
+
     search_fields = [
         "mpp_code",
         "mcc_code",
@@ -82,6 +82,56 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         "name",
         "mobile_no",
     ]
+
+    @action(detail=False, methods=["get"], url_path="stats")
+    def stats(self, request):
+        """
+        Return feedback statistics: total count, by status, priority, and avg response time.
+        Applies global filtering (e.g., excludes deleted feedbacks).
+        """
+        user_filter = {} if request.user.is_superuser else {"sender": request.user}
+        global_filter = {**user_filter, "deleted": False}
+
+        total = Feedback.objects.filter(**global_filter).count()
+        by_status = (
+            Feedback.objects.filter(**global_filter)
+            .values("status")
+            .annotate(count=Count("id"))
+        )
+        by_priority = (
+            Feedback.objects.filter(**global_filter)
+            .values("priority")
+            .annotate(count=Count("id"))
+        )
+
+        avg_response_time = None
+        if hasattr(Feedback, "resolved_at") and hasattr(Feedback, "created_at"):
+            resolved_feedbacks = Feedback.objects.filter(
+                resolved_at__isnull=False, **global_filter
+            ).annotate(
+                response_time=ExpressionWrapper(
+                    F("resolved_at") - F("created_at"), output_field=DurationField()
+                )
+            )
+            avg_response_time = resolved_feedbacks.aggregate(avg=Avg("response_time"))[
+                "avg"
+            ]
+
+        response_data = {
+            "total": total,
+            "by_status": list(by_status),
+            "by_priority": list(by_priority),
+            "average_response_time": (
+                avg_response_time.total_seconds() if avg_response_time else None
+            ),
+        }
+
+        return custom_response(
+            status_text="success",
+            message="Stats loaded",
+            data=response_data,
+            status_code=status.HTTP_200_OK,
+        )
 
     def get_queryset(self):
         """
@@ -96,54 +146,6 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         Automatically set the authenticated user as the sender during feedback creation.
         """
         serializer.save(sender=self.request.user)
-
-    @action(detail=False, methods=["get"], url_path="stats")
-    def stats(self, request):
-        """
-        Return feedback statistics: total count, by status, priority, and avg response time.
-        """
-        user_filter = {} if request.user.is_superuser else {"sender": request.user}
-
-        # Aggregate counts
-        total = Feedback.objects.filter(**user_filter).count()
-        by_status = (
-            Feedback.objects.filter(**user_filter)
-            .values("status")
-            .annotate(count=Count("id"))
-        )
-        by_priority = (
-            Feedback.objects.filter(**user_filter)
-            .values("priority")
-            .annotate(count=Count("id"))
-        )
-
-        # Optional: average response time (if you track resolution/updated timestamp)
-        avg_response_time = None
-        if hasattr(Feedback, "resolved_at") and hasattr(Feedback, "created_at"):
-            resolved_feedbacks = Feedback.objects.filter(
-                resolved_at__isnull=False, **user_filter
-            ).annotate(
-                response_time=ExpressionWrapper(
-                    F("resolved_at") - F("created_at"), output_field=DurationField()
-                )
-            )
-            avg_response_time = resolved_feedbacks.aggregate(avg=Avg("response_time"))[
-                "avg"
-            ]
-            response_data = {
-                "total": total,
-                "by_status": list(by_status),
-                "by_priority": list(by_priority),
-                "average_response_time": (
-                    avg_response_time.total_seconds() if avg_response_time else None
-                ),
-            }
-        return custom_response(
-            status_text="success",
-            message="Stats loaded",
-            data=response_data,
-            status_code=status.HTTP_200_OK,
-        )
 
     def list(self, request, *args, **kwargs):
         """
