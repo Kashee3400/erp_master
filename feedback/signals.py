@@ -32,8 +32,8 @@ def feedback_post_save(sender, instance, created, **kwargs):
         "route": "feedback-details",
         "id": str(instance.pk),
         "customKey": "feedbackNotification",
+        "is_subroute": True,
     }
-
     # -------------------------
     # 1. New Feedback Created
     # -------------------------
