@@ -211,7 +211,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=f"{simplify_errors(error_detail=e)}",
+                message=f"{format_exception(e)}",
                 data={},
             )
 
@@ -251,7 +251,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message="Something went wrong while updating feedback. Please try again.",
                 data={},
-                errors={"non_field_errors": [str(exc)]},
+                errors=format_exception(exc=exc),
             )
 
     def destroy(self, request, *args, **kwargs):
