@@ -22,7 +22,6 @@ FCM_ENDPOINT = "v1/projects/" + PROJECT_ID + "/messages:send"
 FCM_URL = BASE_URL + "/" + FCM_ENDPOINT
 SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"]
 
-
 # [START retrieve_access_token]
 def _get_access_token():
     """Retrieve a valid access token that can be used to authorize requests.
@@ -30,7 +29,7 @@ def _get_access_token():
     :return: Access token.
     """
     credentials = service_account.Credentials.from_service_account_file(
-        "K:\service-account-file.json", scopes=SCOPES
+        "service-account-file.json", scopes=SCOPES
     )
     request = google.auth.transport.requests.Request()
     credentials.refresh(request)
@@ -111,37 +110,6 @@ def _build_override_message():
     fcm_message["message"]["apns"] = apns_override
 
     return fcm_message
-
-
-def _build_device_specific_message():
-    notification = {
-        "title": "Test Notification",
-        "titleLocArgs": ["User"],
-        "titleLocKey": "notification_title_key",
-        "body": "Test message body goes here",
-        "bodyLocArgs": ["42"],
-        "bodyLocKey": "notification_body_key",
-        "android": {
-            "channelId": "default_channel",
-            "clickAction": "FLUTTER_NOTIFICATION_CLICK",
-            "color": "#FF0000",
-            "count": 1,
-            "imageUrl": "https://example.com/image.png",
-            "link": "https://kashee.com/details",
-            "priority": 1,
-            "smallIcon": "ic_stat_notification",
-            "sound": "default",
-            "ticker": "You have a new alert",
-            "tag": "test_tag",
-            "visibility": 1,
-        },
-        "apple": {"badge": 3, "sound": "default", "subtitle": "iOS only subtitle"},
-        "web": {
-            "image": "https://example.com/web-image.png",
-            "link": "https://kashee.com",
-        },
-    }
-    return notification
 
 
 def main():
