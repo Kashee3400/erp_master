@@ -12,20 +12,54 @@ from ..serializers.users_serializers import (
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import ValidationError
 
+
 class CustomPageNumberPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
-def custom_response(status_text, data=None, message=None, status_code=200):
+def custom_response(status_text, data=None, message=None, status_code=200, errors=None):
     return Response(
-        {"status": status_text, "message": message or "Success", "data": data},
+        {
+            "status": status_text,
+            "message": message or "Success",
+            "data": data,
+            "errors": errors,
+        },
         status=status_code,
     )
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        total_items = self.page.paginator.count
+        current_page = self.page.number
+        per_page = self.page.paginator.per_page
+        total_pages = ceil(total_items / int(per_page))
+
+        return custom_response(
+            status_text="success",
+            message="Success",
+            data={
+                "count": total_items,
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "current_page": current_page,
+                "total_pages": total_pages,
+                "page_size": int(per_page),
+                "has_next": self.page.has_next(),
+                "has_previous": self.page.has_previous(),
+                "results": data,
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
 
 class UserViewSet(viewsets.ModelViewSet):
-    from rest_framework.filters import SearchFilter,OrderingFilter
+    from rest_framework.filters import SearchFilter, OrderingFilter
 
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
@@ -203,13 +237,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return custom_response("success", message="User deleted", data=None)
 
 
-def custom_response(status_text, data=None, message=None, status_code=200):
-    return Response(
-        {"status": status_text, "message": message or "Success", "data": data},
-        status=status_code,
-    )
-
-
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -263,7 +290,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             )
 
         except Exception as e:
-            
+
             return custom_response(
                 status_text="error",
                 message="An unexpected error occurred: " + str(e),
@@ -428,3 +455,166 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
             data=serializer.data,
             status_code=status.HTTP_200_OK,
         )
+
+
+from ..serializers.profile_serializer import UserProfile, UserProfileSerializer
+from error_formatter import *
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    from rest_framework.filters import SearchFilter, OrderingFilter
+    pagination_class = StandardResultsSetPagination
+    queryset = UserProfile.objects.select_related("user").all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "pk"
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+    filterset_fields = ["department", "user__id", "is_verified", "designation"]
+    search_fields = [
+        "phone_number",
+        "user__username",
+        "user__first_name",
+        "user__email",
+    ]
+    @action(detail=False, methods=["get"], url_path="me")
+    def get_authenticated_profile(self, request):
+        try:
+            profile = get_object_or_404(UserProfile, user=request.user)
+            serializer = self.get_serializer(profile)
+            return Response({
+                "status": "success",
+                "message": "Authenticated user profile fetched successfully.",
+                "data": serializer.data,
+                "errors": {},
+            }, status=status.HTTP_200_OK)
+
+        except Exception as exc:
+            return Response({
+                "status": "error",
+                "message": "Failed to retrieve authenticated user profile.",
+                "data": {},
+                "errors": {"non_field_errors": [str(exc)]},
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page or queryset, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        try:
+            instance = get_object_or_404(self.get_queryset(), pk=pk)
+            serializer = self.get_serializer(instance)
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="User profile retrieved successfully.",
+                data=serializer.data,
+            )
+        except ValidationError as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=simplify_errors(exc.detail),
+            )
+
+        except Exception as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=format_exception(str(exc)),
+            )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return custom_response(
+                status_code=status.HTTP_201_CREATED,
+                status_text="success",
+                message="User profile created successfully.",
+                data=serializer.data,
+            )
+        except (IntegrityError, DatabaseError) as db_err:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=format_exception(str(db_err)),
+            )
+        except ValidationError as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=simplify_errors(exc.detail),
+            )
+
+        except Exception as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=format_exception(str(exc)),
+            )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial
+            )
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="User profile updated successfully.",
+                data=serializer.data,
+            )
+        except ValidationError as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=simplify_errors(exc.detail),
+            )
+
+        except (IntegrityError, DatabaseError) as db_err:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=format_exception(str(db_err)),
+            )
+        except Exception as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=format_exception(str(exc)),
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="User profile deleted successfully.",
+            )
+        except ValidationError as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=simplify_errors(exc.detail),
+            )
+
+        except Exception as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=format_exception(str(exc)),
+            )

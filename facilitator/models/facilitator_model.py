@@ -265,3 +265,19 @@ class AssignedMppToFacilitator(models.Model):
 
     def __str__(self):
         return f"{self.mpp_code} - {self.mpp_name}"
+
+
+# class SessionAudit(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     device_id = models.CharField(max_length=255, blank=True, null=True)
+#     ip_address = models.GenericIPAddressField(blank=True, null=True)
+#     user_agent = models.TextField(blank=True, null=True)
+#     refresh_jti = models.CharField(max_length=255, unique=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     expired_at = models.DateTimeField(blank=True, null=True)
+#     is_active = models.BooleanField(default=True)
+#     module = models.CharField(max_length=50, default='member')
+#     revoked_by_admin = models.BooleanField(default=False)
+
+#     def __str__(self):
+#         return f"{self.user.username} @ {self.device_id or 'unknown'}"

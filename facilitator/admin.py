@@ -8,13 +8,16 @@ from .models.vcg_model import (
     MemberComplaintReason,
     MemberComplaintReport,
 )
+from .models.user_profile_model import UserProfile
 from import_export.admin import ImportExportModelAdmin
 from .resources import FacilitatorResource, VCGroupResource
 from .forms import base_form
+from django.utils.translation import gettext_lazy as _
+
 
 
 class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin):
-    form = base_form.AssignedMppToFacilitatorForm
+    # form = base_form.AssignedMppToFacilitatorForm
     resource_class = FacilitatorResource
     list_display = (
         "facilitator_name",
@@ -75,9 +78,6 @@ class ApiKeyAdmin(admin.ModelAdmin):
     )
     search_fields = ("key", "user__username")
     list_filter = ("is_active", "expires_at")
-
-
-from django.utils.translation import gettext_lazy as _
 
 
 @admin.register(VCGMeeting)
@@ -197,3 +197,10 @@ class MemberComplaintReportAdmin(admin.ModelAdmin):
             "fields": ("reason", "meeting")
         }),
     )
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'department', 'designation', 'phone_number', 'is_verified')
+    list_filter = ('department', 'is_verified', 'created_at')
+    search_fields = ('user__username', 'user__email', 'phone_number', 'designation')
+    readonly_fields = ('created_at', 'updated_at')

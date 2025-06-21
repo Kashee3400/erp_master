@@ -51,6 +51,26 @@ class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6)
 
 
+
+class LogoutSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField(required=True)
+
+    def validate_refresh_token(self, value):
+        from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+        try:
+            self.token = RefreshToken(value)
+        except TokenError as e:
+            raise serializers.ValidationError("Invalid or expired refresh token.")
+        return value
+
+    def save(self, **kwargs):
+        try:
+            self.token.blacklist()
+        except Exception:
+            raise serializers.ValidationError("Token could not be blacklisted.")
+
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 

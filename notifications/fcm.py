@@ -77,17 +77,19 @@ def _build_common_message():
     }
 
 
-def _send_device_specific_notification(device_token, notification):
+def _send_device_specific_notification(device_token, data_payload={}):
     message = {
-        "message": {"token": device_token, "notification": notification},
-        "data": {"route": "sales", "id": "123", "customKey": "customValue"},
+        "message": {
+            "token": device_token,
+            "data": data_payload
+        }
     }
+
     sent, info = _send_fcm_message(fcm_message=message)
-    if sent:
-        print(f"Message {info} sent to user's device")
-    else:
-        print(f"Message Not Sent")
-        print(info)
+    # if sent:
+    #     print(f"[FCM] Message sent to {device_token}")
+    # else:
+    #     print("[FCM] Failed to send message:", info)
 
 
 def _build_override_message():
@@ -157,10 +159,20 @@ def main():
         print(json.dumps(override_message, indent=2))
         _send_fcm_message(override_message)
     elif args.message and args.message == "device-message":
-        token = "ey1AmNRmQOGBo9ZEA_2i21:APA91bF1InQN0Unug3BlK2vSqlNS1a9QMD99txQB1Xpgzr7eBOz-9yAq1s92NmTq-YrsvIHoSdUWJIJ5DlR0YjzSvxg00ahCrDLaDZ5u4760EDVdV_TidXo"
+        data_payload = {
+        "route": "feedback-details",
+        "id": str(4),
+        "customKey": "feedbackNotification",
+    }
+        token = "ewS0HpC0Rr6tP548CvMa83:APA91bGjb2ELGKEiteMnoaeg5tH_7V0YhcnboijYTtDPl2Qw01oOE0xYQ798rE2JilRRQiZo6E9WUCavbVC-kjnG5JgGUf574_pPMzJsI8hUoAJF7qwvgLw"
         _send_device_specific_notification(
-            device_token=token, notification=_build_device_specific_message()
-        )
+                token,
+                {
+                    "title": "New Feedback Submitted",
+                    "body": f"Thank you for your feedback (ID: {'FEEDA9071TCV'})",
+                },
+                data_payload=data_payload,
+            )
     else:
         print(
             """Invalid command. Please use one of the following commands:

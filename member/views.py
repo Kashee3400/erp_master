@@ -1,5 +1,6 @@
 from all_imports import *
 from django.contrib.auth.models import update_last_login
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,10 @@ class GenerateOTPView(APIView):
             )
             if not member_exists:
                 return Response(
-                    {"status": "error", "message": "Mobile number does not exist in member data"},
+                    {
+                        "status": "error",
+                        "message": "Mobile number does not exist in member data",
+                    },
                     status=status.HTTP_404_NOT_FOUND,
                 )
             # Delete any existing OTP
@@ -57,7 +61,7 @@ class GenerateOTPView(APIView):
                 {"status": "error", "message": "Database error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        except ValidationError as val_err:
+        except serializers.ValidationError as val_err:
             return Response(
                 {"status": "error", "message": str(val_err)},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -82,15 +86,14 @@ class VerifyOTPView(generics.GenericAPIView):
             phone_number = serializer.validated_data["phone_number"]
             otp_value = serializer.validated_data["otp"]
             device_id = request.data.get("device_id")
-            module = request.data.get("module","member")
+            module = request.data.get("module", "member")
+
             if not device_id or not otp_value:
                 return Response(
-                    {
-                        "status": "error",
-                        "message": "OTP is required.",
-                    },
+                    {"status": "error", "message": "OTP and device ID are required."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
             otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).last()
             if not otp:
                 return Response(
@@ -103,27 +106,41 @@ class VerifyOTPView(generics.GenericAPIView):
                     {"status": "error", "message": "OTP expired"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
             user, _ = User.objects.get_or_create(username=phone_number)
-            # Clean up old device records
+
+            # 🔐 Blacklist all outstanding tokens for this user
+            try:
+                for token in OutstandingToken.objects.filter(user=user):
+                    BlacklistedToken.objects.get_or_create(token=token)
+            except Exception as e:
+                logger.warning(f"Token blacklisting failed for {user}: {e}")
+
+            # 🧹 Remove old device entries
             UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-            # Register new device
+
+            # 🆕 Register new device
             device = UserDevice.objects.create(user=user, device=device_id, module=module)
-            # Generate tokens
+
+            # 🔁 Generate new token pair
             refresh = RefreshToken.for_user(user)
-                    # After successful authentication
             update_last_login(None, user)
+
+            otp.delete()
 
             return Response(
                 {
                     "status": "success",
                     "message": "Authentication successful",
                     "phone_number": user.username,
+                    "user_id": user.pk,
                     "access_token": str(refresh.access_token),
                     "refresh_token": str(refresh),
                     "device_id": device.device,
                 },
                 status=status.HTTP_200_OK,
             )
+
         except (DatabaseError, IntegrityError) as db_err:
             logger.error(f"Database error during OTP verification: {db_err}")
             return Response(
@@ -193,7 +210,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
-        module = request.data.get("module","sahayak")
+        module = request.data.get("module", "sahayak")
 
         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
         if not otp:
@@ -218,7 +235,9 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         existing_device_obj = UserDevice.objects.filter(user=user).first()
 
         # Step 2: Retain mpp_code before deletion
-        existing_mpp_code = existing_device_obj.mpp_code if existing_device_obj else None
+        existing_mpp_code = (
+            existing_device_obj.mpp_code if existing_device_obj else None
+        )
 
         # Step 3: Handle missing mpp_code
         if existing_mpp_code is None:
@@ -235,15 +254,12 @@ class VerifySahayakOTPView(generics.GenericAPIView):
 
         # Step 5: Create new device with retained mpp_code
         device = UserDevice.objects.create(
-            user=user,
-            device=device_id,
-            module=module,
-            mpp_code=existing_mpp_code
+            user=user, device=device_id, module=module, mpp_code=existing_mpp_code
         )
 
         # Step 6: Generate tokens and send response
         refresh = RefreshToken.for_user(user)
-        
+
         # After successful authentication
         update_last_login(None, user)
 
@@ -302,28 +318,50 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        refresh_token = request.data.get("refresh_token")
-        if not refresh_token:
-            return Response(
-                {"message": "Refresh token is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+        serializer = LogoutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            logger.warning(
+                "Logout validation failed for user %s: %s",
+                request.user,
+                serializer.errors,
+            )
+            return custom_response(
+                status="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=serializer.errors.get("refresh_token", ["Invalid data"])[0],
             )
 
         try:
-            token = RefreshToken(refresh_token)
-            token.blacklist()  # Ensure token blacklisting is enabled in settings
-            return Response(
-                {"message": "Logout successful"},
-                status=status.HTTP_205_RESET_CONTENT,
+            serializer.save()
+        except serializers.ValidationError as e:
+            logger.warning(
+                "Logout blacklist failed for user %s: %s", request.user, str(e)
+            )
+            return custom_response(
+                status="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=str(e.detail[0]),
             )
         except Exception as e:
-            return Response(
-                {
-                    "message": "Invalid refresh token or already blacklisted",
-                    "error": str(e),
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            logger.error(
+                "Unexpected logout error for user %s: %s",
+                request.user,
+                str(e),
+                exc_info=True,
             )
+            return custom_response(
+                status="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message="An unexpected error occurred during logout.",
+            )
+
+        logger.info("User %s logged out successfully.", request.user)
+        return custom_response(
+            status="success",
+            status_code=status.HTTP_200_OK,
+            message="Logout successful.",
+        )
 
 
 class UserAPiView(viewsets.ModelViewSet):
@@ -1320,6 +1358,7 @@ class SahayakFeedbackViewSet(viewsets.ModelViewSet):
 
 class NewsViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import OrderingFilter
+
     queryset = News.objects.all()
     serializer_class = NewsSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]

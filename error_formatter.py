@@ -56,13 +56,20 @@ def format_exception(exc, context_data=None, context_label="context"):
 
     return error_response
 
-def simplify_errors(error_detail):
+def simplify_errors(error_dict):
     """
-    Converts DRF ErrorDetail or nested error lists/dicts into plain string messages.
+    Convert nested ValidationError dict into user-friendly string list.
     """
-    if isinstance(error_detail, dict):
-        return {k: simplify_errors(v) for k, v in error_detail.items()}
-    elif isinstance(error_detail, list):
-        return [str(e) for e in error_detail]
-    else:
-        return str(error_detail)
+    simplified = {}
+
+    def flatten(errors, parent_key=""):
+        if isinstance(errors, dict):
+            for field, value in errors.items():
+                flatten(value, f"{parent_key}.{field}" if parent_key else field)
+        elif isinstance(errors, list):
+            simplified[parent_key] = [str(e) for e in errors]
+        else:
+            simplified[parent_key] = [str(errors)]
+
+    flatten(error_dict)
+    return simplified

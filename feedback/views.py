@@ -8,6 +8,8 @@ from .serializers.feedback_serializer import (
     FeedbackFile,
     FeedbackFileSerializer,
 )
+from rest_framework.decorators import action
+from django.db.models import Count, Avg, DurationField, ExpressionWrapper, F
 
 
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
@@ -51,16 +53,6 @@ class StandardResultsSetPagination(PageNumberPagination):
         )
 
 
-# Create your views here.
-
-
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.db.models import Count, Avg, DurationField, ExpressionWrapper, F
-from django.utils.timezone import now
-from datetime import timedelta
-
-
 class FeedbackViewSet(viewsets.ModelViewSet):
     """
     ViewSet for handling Feedback operations with custom responses and pagination.
@@ -92,23 +84,26 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         user_filter = {} if request.user.is_superuser else {"sender": request.user}
         global_filter = {**user_filter, "deleted": False}
 
-        total = Feedback.objects.filter(**global_filter).count()
-        by_status = (
-            Feedback.objects.filter(**global_filter)
-            .values("status")
-            .annotate(count=Count("id"))
-        )
-        by_priority = (
-            Feedback.objects.filter(**global_filter)
-            .values("priority")
-            .annotate(count=Count("id"))
+        # ✅ Single queryset reused
+        qs = Feedback.objects.filter(**global_filter)
+
+        total = qs.count()
+
+        # Use annotations to compute required aggregations in one go
+        by_status = list(qs.values("status").annotate(count=Count("id")))
+        by_priority = list(qs.values("priority").annotate(count=Count("id")))
+
+        # Optional: assigned to this user
+        assigned_count = (
+            qs.filter(assigned_to=request.user).count()
+            if hasattr(request.user, "user_assigned_feedbacks")
+            else 0
         )
 
+        # ✅ Average response time
         avg_response_time = None
         if hasattr(Feedback, "resolved_at") and hasattr(Feedback, "created_at"):
-            resolved_feedbacks = Feedback.objects.filter(
-                resolved_at__isnull=False, **global_filter
-            ).annotate(
+            resolved_feedbacks = qs.filter(resolved_at__isnull=False).annotate(
                 response_time=ExpressionWrapper(
                     F("resolved_at") - F("created_at"), output_field=DurationField()
                 )
@@ -119,8 +114,9 @@ class FeedbackViewSet(viewsets.ModelViewSet):
 
         response_data = {
             "total": total,
-            "by_status": list(by_status),
-            "by_priority": list(by_priority),
+            "by_status": by_status,
+            "by_priority": by_priority,
+            "assigned_to": assigned_count,
             "average_response_time": (
                 avg_response_time.total_seconds() if avg_response_time else None
             ),
@@ -173,7 +169,20 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             else Response(response_data)
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        return custom_response(
+            status_text="success",
+            message=f"Feedback with id {getattr(instance, self.lookup_field, instance.pk)} retrieved.",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
+
     def create(self, request, *args, **kwargs):
+        from rest_framework.exceptions import ValidationError
+
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -189,8 +198,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_201_CREATED,
             )
-        except ValidationError:
-            friendly = simplify_errors(exc.detail)
+        except ValidationError as exc:
+            friendly = simplify_errors(exc)
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -202,42 +211,47 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=f"{format_exception(e)}",
+                message=f"{simplify_errors(error_detail=e)}",
                 data={},
             )
 
     def update(self, request, *args, **kwargs):
+        from rest_framework.exceptions import ValidationError
+
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial, context={"request": request}
         )
+
         try:
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
-            return Response(
-                {
-                    "status": "success",
-                    "status_code": status.HTTP_200_OK,
-                    "message": "Feedback updated successfully.",
-                    "results": serializer.data,
-                }
+
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="Feedback updated successfully.",
+                data=serializer.data,
             )
-        except ValidationError:
-            friendly = simplify_errors(exc.detail)
+
+        except ValidationError as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=f"{friendly}",
+                message="Validation failed while updating the feedback.",
                 data={},
+                errors=simplify_errors(exc.detail),
             )
 
-        except Exception as e:
+        except Exception as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=f"{format_exception(e)}",
+                message="Something went wrong while updating feedback. Please try again.",
                 data={},
+                errors={"non_field_errors": [str(exc)]},
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -260,7 +274,6 @@ class FeedbackFileViewsets(viewsets.ModelViewSet):
     serializer_class = FeedbackFileSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
@@ -290,5 +303,5 @@ class FeedbackFileViewsets(viewsets.ModelViewSet):
         return (
             self.get_paginated_response(serializer.data)
             if page is not None
-            else Response(response_data)
+            else Response(response_data, status=status.HTTP_200_OK)
         )

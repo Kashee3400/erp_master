@@ -4,6 +4,7 @@ from django.utils import timezone
 import base64
 from django.core.files.base import ContentFile
 
+
 class FeedbackCommentSerializer(serializers.ModelSerializer):
     is_mine = serializers.SerializerMethodField()
 
@@ -18,10 +19,12 @@ class FeedbackCommentSerializer(serializers.ModelSerializer):
             return obj.user == request.user
         return False
 
+
 class FeedbackFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FeedbackFile
-        fields = '__all__'
+        fields = "__all__"
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     assigned_to_name = serializers.SerializerMethodField()
@@ -42,7 +45,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
             "assigned_to",
             "assigned_to_name",
             "status",
-            "priority",            
+            "priority",
             "category",
             "message",
             "created_at",
@@ -50,6 +53,8 @@ class FeedbackSerializer(serializers.ModelSerializer):
             "resolved_at",
             "assigned_at",
             "comments",
+            "rating",
+            "progress",
             "new_comments",
             "base64_files",
             "mpp_code",
@@ -127,7 +132,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         user = request.user
         comments = validated_data.pop("new_comments", [])
         base64_files = validated_data.pop("base64_files", [])
-
+        print(validated_data.get("assigned_to"))
         # Handle assignment time
         if validated_data.get("assigned_to") and not instance.assigned_at:
             validated_data["assigned_at"] = timezone.now()
@@ -137,13 +142,9 @@ class FeedbackSerializer(serializers.ModelSerializer):
         if new_status and new_status != instance.status:
             # Remove status from validated_data so .update() doesn't overwrite directly
             validated_data.pop("status")
-            try:
-                instance.update_status(
-                    new_status, user=user, reason="Status updated via API"
-                )
-            except ValueError as e:
-                raise serializers.ValidationError({"status": str(e)})
-
+            instance.update_status(
+                new_status, user=user, reason="Status updated via API"
+            )
         # Apply remaining updates
         instance = super().update(instance, validated_data)
 

@@ -211,11 +211,13 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API documentation for your ERP platform',
     'VERSION': '1.0.0',
 }
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=365 * 10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=150),
-    "ROTATE_REFRESH_TOKENS": False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=180),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
     "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ROTATE_REFRESH_TOKENS": True,
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
@@ -422,3 +424,23 @@ CKEDITOR_5_CONFIGS = {
     },
 }
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
+
+
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
+# Email Configuration
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'HRMS <hrms@kasheemilk.com>'
+HRMS_DEFAULT_FROM_EMAIL = 'HRMS <hrms@kasheemilk.com>'
+
+
+SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")

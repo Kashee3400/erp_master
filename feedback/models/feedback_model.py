@@ -4,13 +4,14 @@ import uuid
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _, get_language
 from datetime import timedelta
+from django.core.validators import MaxValueValidator, MinValueValidator
 # ------------------------------
 # STATUS: Internal codes + labels
 # ------------------------------
 STATUS_CHOICES = [
     ("open", _("Open")),
     ("assigned", _("Assigned")),
-    ("in_progress", _("In Progress")),
+    ("in progress", _("In Progress")),
     ("resolved", _("Resolved")),
     ("closed", _("Closed")),
     ("reopened", _("Reopened")),
@@ -29,14 +30,23 @@ PRIORITY_CHOICES = (
 # ------------------------------
 # ALLOWED STATUS TRANSITIONS
 # ------------------------------
+# ALLOWED_TRANSITIONS = {
+#     "open": ["assigned", "closed", "reopened"],
+#     "assigned": ["in_progress", "closed"],
+#     "in progress": ["resolved", "closed"],
+#     "resolved": ["reopened", "closed"],
+#     "closed": ["reopened"],
+#     "reopened": ["assigned", "closed"],
+# }
 ALLOWED_TRANSITIONS = {
-    "open": ["assigned", "closed", "reopened"],
-    "assigned": ["in_progress", "closed"],
-    "in_progress": ["resolved", "closed"],
-    "resolved": ["reopened", "closed"],
-    "closed": ["reopened"],
-    "reopened": ["assigned", "closed"],
+    "open": ["assigned"],  # Must be assigned first
+    "assigned": ["in_progress", "reopened"],  # Start work or reopen due to rejection
+    "in_progress": ["resolved", "reopened"],  # Work done or need re-evaluation
+    "resolved": ["closed", "reopened"],  # Verification leads to closure or reopen
+    "closed": ["reopened"],  # If problem resurfaces
+    "reopened": ["assigned"],  # Must reassign to begin the loop again
 }
+
 
 
 def is_valid_transition(current, new):
@@ -168,7 +178,20 @@ class Feedback(models.Model):
         verbose_name=_("Resolved At"),
         help_text=_("Timestamp when the feedback was marked as resolved."),
     )
+    progress = models.FloatField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name=_("Progress"),
+        help_text=_("Progress of feedback resolution in percentage."),
+    )
 
+    rating = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name=_("Rating"),
+        help_text=_("Rating given by the user after feedback resolution."),
+    )
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Last Updated At"),
@@ -207,8 +230,8 @@ class Feedback(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Sahayak Feedback")
-        verbose_name_plural = _("Sahayak Feedbacks")
+        verbose_name = _("Feedback")
+        verbose_name_plural = _("Feedbacks")
         ordering = ["-created_at"]
 
     def __str__(self):
@@ -216,12 +239,8 @@ class Feedback(models.Model):
 
     def clean(self):
         super().clean()
-
-        # Validate MPP Code length if provided
-        if self.mpp_code and len(self.mpp_code) != 9:
-            raise ValidationError(
-                {"mpp_code": _("MPP Code must be exactly 9 characters long.")}
-            )
+        if self.rating and self.status != 'resolved':
+            raise ValidationError("Rating can only be given when the feedback is resolved.")
 
         # Prevent resolved_at if status is not resolved or closed
         if self.resolved_at and self.status not in ["resolved", "closed"]:
@@ -246,9 +265,31 @@ class Feedback(models.Model):
     def __str__(self):
         return f"{self.feedback_id} - {self.status}"
 
+
     def save(self, *args, **kwargs):
+        # Auto-generate feedback_id on first save
         if not self.feedback_id:
             self.feedback_id = "FEED" + uuid.uuid4().hex[:6].upper()
+
+        # Check if object exists already
+        if self.pk:
+            # Fetch previous instance from DB
+            previous = Feedback.objects.filter(pk=self.pk).first()
+
+            # If assigned_to is set now but was not before
+            if self.assigned_to and not previous.assigned_to:
+                self.assigned_at = timezone.now()
+
+            # If status is being changed to resolved
+            if self.status == "resolved" and previous.status != "resolved":
+                self.resolved_at = timezone.now()
+        else:
+            # New instance, set if applicable
+            if self.assigned_to:
+                self.assigned_at = timezone.now()
+            if self.status == "resolved":
+                self.resolved_at = timezone.now()
+
         super().save(*args, **kwargs)
 
     def update_status(self, new_status, user, reason=""):
@@ -329,3 +370,5 @@ class FeedbackComment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.commented_by} on {self.feedback.feedback_id}"
+
+
