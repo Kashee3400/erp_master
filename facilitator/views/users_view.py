@@ -464,7 +464,6 @@ from error_formatter import *
 class UserProfileViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import SearchFilter, OrderingFilter
     pagination_class = StandardResultsSetPagination
-    queryset = UserProfile.objects.select_related("user").all()
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "pk"
@@ -480,6 +479,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         "user__first_name",
         "user__email",
     ]
+    def get_queryset(self):
+        queryset = UserProfile.objects.select_related("user").all().exclude(user=self.request.user)
+        
+        return queryset
+    
     @action(detail=False, methods=["get"], url_path="me")
     def get_authenticated_profile(self, request):
         try:
