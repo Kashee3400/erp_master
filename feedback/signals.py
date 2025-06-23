@@ -1,13 +1,9 @@
 import logging
 from django.dispatch import receiver
-from django.conf import settings
 from .models import Feedback
 from django.db.models.signals import pre_save, post_save
-from notifications.fcm import _send_device_specific_notification
-
 logger = logging.getLogger(__name__)
-from .tasks import send_feedback_email
-
+from notifications.models import AppNotification,NotificationMedium,NotificationType
 
 @receiver(pre_save, sender=Feedback)
 def feedback_pre_save(sender, instance, **kwargs):
@@ -27,39 +23,27 @@ def feedback_pre_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Feedback)
 def feedback_post_save(sender, instance, created, **kwargs):
-    # Common FCM payload base
-    base_payload = {
-        "route": "feedback-details",
-        "id": str(instance.pk),
-        "customKey": "feedbackNotification",
-        "is_subroute": "true",
-        "function_type":"push_named"
-    }
     # -------------------------
     # 1. New Feedback Created
     # -------------------------
     if created:
         logger.info(f"[Feedback] New feedback created: {instance.feedback_id}")
 
-        # Email to support/admin
-        send_feedback_email.delay(
-            subject=f"New Feedback Submitted: {instance.feedback_id}",
+        AppNotification.objects.create(
+            sender=instance.sender,
+            recipient=instance.sender,
+            title="New Feedback Submitted",
+            body=f"Thank you for your feedback (ID: {instance.feedback_id})",
             message=f"Feedback by {instance.sender} has been created with status: {instance.status}.",
-            recipient_list=[settings.SUPPORT_TEAM_EMAIL],
+            model="feedback",
+            object_id=instance.pk,
+            route="feedback-details",
+            custom_key="feedbackNotification",
+            is_subroute=True,
+            allowed_email=True,
+            notification_type=NotificationType.INFO,
+            sent_via=NotificationMedium.SYSTEM,
         )
-
-        # FCM to sender
-        if hasattr(instance.sender, "device") and instance.sender.device:
-            payload = base_payload.copy()
-            payload["title"] = "New Feedback Submitted"
-            payload["body"] = (
-                f"Thank you for your feedback (ID: {instance.feedback_id})"
-            )
-
-            _send_device_specific_notification(
-                instance.sender.device.device,
-                data_payload=payload,
-            )
         return
 
     # -------------------------
@@ -68,30 +52,25 @@ def feedback_post_save(sender, instance, created, **kwargs):
     if getattr(instance, "_assigned_to_changed", False) and instance.assigned_to:
         logger.info(f"[Feedback] Reassigned to: {instance.assigned_to}")
 
-        # Email to assigned user
-        if instance.assigned_to.email:
-            send_feedback_email.delay(
-                subject=f"You have been assigned Feedback: {instance.feedback_id}",
-                message=(
-                    f"You've been assigned a new feedback.\n"
-                    f"Priority: {instance.priority}, Status: {instance.status}."
-                ),
-                recipient_list=[instance.assigned_to.email],
-            )
-
-        # FCM to assigned user
-        if hasattr(instance.assigned_to, "device") and instance.assigned_to.device:
-            payload = base_payload.copy()
-            payload["title"] = "New Feedback Assigned"
-            # payload["route"] = "assigned-feedbacks"
-            payload["body"] = (
-                f"ID: {instance.feedback_id}, Priority: {instance.priority}"
-            )
-
-            _send_device_specific_notification(
-                instance.assigned_to.device.device,
-                data_payload=payload,
-            )
+        AppNotification.objects.create(
+            sender=instance.sender,
+            recipient=instance.assigned_to,
+            title="New Feedback Assigned",
+            body=f"{instance.sender.get_full_name()} Assigned you a feedback({instance.feedback_id}), Priority: {instance.priority}",
+            message=(
+                f"You've been assigned a new feedback.\n"
+                f"By: {instance.sender.get_full_name()}.\n"
+                f"Priority: {instance.priority}, Status: {instance.status}."
+            ),
+            model="feedback",
+            object_id=instance.pk,
+            route="feedback-details",
+            custom_key="feedbackNotification",
+            is_subroute=True,
+            notification_type=NotificationType.INFO,
+            sent_via=NotificationMedium.SYSTEM,
+            allowed_email=True,
+        )
 
     # -------------------------
     # 3. Status Changed
@@ -105,25 +84,22 @@ def feedback_post_save(sender, instance, created, **kwargs):
             f"[Feedback] Feedback {instance.feedback_id} status changed: {old_status} → {new_status}"
         )
 
-        # Email to sender
-        if instance.sender.email:
-            send_feedback_email.delay(
-                subject=f"Feedback {status_label}: {instance.feedback_id}",
-                message=(
-                    f"Your feedback has been marked as '{status_label}' "
-                    f"by {instance.assigned_to or 'System'}."
-                ),
-                recipient_list=[instance.sender.email],
-            )
-
-        # FCM to sender
-        if hasattr(instance.sender, "device") and instance.sender.device:
-            payload = base_payload.copy()
-            payload["title"] = f"Feedback {status_label}"
-            payload["body"] = (
-                f"Your feedback ID {instance.feedback_id} is now '{status_label}'."
-            )
-            _send_device_specific_notification(
-                instance.sender.device.device,
-                data_payload=payload,
-            )
+        AppNotification.objects.create(
+            sender=instance.assigned_to or None,
+            recipient=instance.sender,
+            title=f"Feedback {status_label}",
+            body=f"Your feedback ID {instance.feedback_id} is now '{status_label}'.",
+            message=(
+                f"Your feedback has been marked as '{status_label}' "
+                f"by {instance.assigned_to or 'System'}."
+            ),
+            model="feedback",
+            object_id=instance.pk,
+            route="feedback-details",
+            custom_key="feedbackNotification",
+            is_subroute=True,
+            notification_type=NotificationType.INFO,
+            sent_via=NotificationMedium.SYSTEM,
+            allowed_email=True,
+            
+        )

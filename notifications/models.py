@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxLengthValidator
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.db.models import JSONField
+import json
 
 User = get_user_model()
 
@@ -13,6 +15,11 @@ class NotificationType(models.TextChoices):
     ALERT = "alert", _("Alert")
     SUCCESS = "success", _("Success")
 
+class DeliveryStatus(models.TextChoices):
+    PENDING = "pending", _("Pending")
+    SENT = "sent", _("Sent")
+    FAILED = "failed", _("Failed")
+
 
 class NotificationMedium(models.TextChoices):
     SYSTEM = "system", _("System")
@@ -21,6 +28,15 @@ class NotificationMedium(models.TextChoices):
 
 
 class AppNotification(models.Model):
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sent_notifications",
+        verbose_name=_("Sender"),
+        help_text=_("User who triggered the notification."),
+    )
     recipient = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -32,6 +48,13 @@ class AppNotification(models.Model):
         max_length=255,
         verbose_name=_("Title"),
         help_text=_("Title or heading for the notification."),
+    )
+    body = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_("Body"),
+        help_text=_("Short summary or preview for the notification."),
     )
     message = models.TextField(
         verbose_name=_("Message"),
@@ -85,6 +108,11 @@ class AppNotification(models.Model):
         verbose_name=_("Is Read"),
         help_text=_("Indicates whether the user has read the notification."),
     )
+    allowed_email = models.BooleanField(
+        default=False,
+        verbose_name=_("Allowed Email"),
+        help_text=_("Used to handle if email notification allowed or not."),
+    )
     read_at = models.DateTimeField(
         blank=True,
         null=True,
@@ -100,6 +128,25 @@ class AppNotification(models.Model):
         default=False,
         help_text=_("Indicates whether this object has been deleted or not."),
         verbose_name=_("Deleted"),
+    )
+    delivery_status = models.CharField(
+        max_length=20,
+        choices=DeliveryStatus.choices,
+        default=DeliveryStatus.PENDING,
+        verbose_name=_("Delivery Status"),
+        help_text=_("Tracks whether the notification was successfully delivered."),
+    )
+    delivery_response = JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_("Delivery Response"),
+        help_text=_("Raw response from the notification delivery system (e.g., FCM)."),
+    )
+    delivery_attempted_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_("Delivery Attempted At"),
+        help_text=_("Timestamp of the last delivery attempt."),
     )
 
     class Meta:
@@ -119,10 +166,17 @@ class AppNotification(models.Model):
             self.save(update_fields=["is_read", "read_at"])
 
     def to_payload(self) -> dict:
-        """Convert the notification to a dictionary payload for frontend."""
+        """Return flat dict suitable for FCM data payload."""
         return {
             "title": self.title,
+            "body": self.body or "",
+            "sender": self.sender.get_full_name() if self.sender else "N/A",
+            "recipient": self.recipient.get_full_name() if self.recipient else "N/A",
+            "status": self.delivery_status,
+            "via": self.sent_via,
             "message": self.message,
+            "read": str(self.is_read).lower(),
+            "read_at": self.read_at.isoformat() if self.read_at else "",
             "route": self.route,
             "id": str(self.object_id),
             "model": self.model,
@@ -131,5 +185,12 @@ class AppNotification(models.Model):
             "notification_type": self.notification_type,
         }
 
+        
+    def mark_delivery_result(self, status: str, response: dict = None):
+        self.delivery_status = status
+        self.delivery_response = response
+        self.delivery_attempted_at = timezone.now()
+        self.save(update_fields=["delivery_status", "delivery_response", "delivery_attempted_at"])
+
     def __str__(self):
-        return f"[{self.notification_type.upper()}] {self.title} -> {self.recipient}"
+        return f"[{self.notification_type.upper()}] {self.title} → {self.recipient}"

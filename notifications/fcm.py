@@ -89,7 +89,7 @@ def _send_device_specific_notification(device_token, data_payload={}):
     }
 
     sent, info = _send_fcm_message(fcm_message=message)
-
+    return sent,info
 
 def _build_override_message():
     """Construct common notification message with overrides.
