@@ -20,6 +20,7 @@ LOCAL_APPS = [
     "facilitator",
     "veterinary",
     "feedback",
+    "notifications",
 ]
 
 THIRD_PARTY_APPS = [
