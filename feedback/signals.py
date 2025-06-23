@@ -32,7 +32,8 @@ def feedback_post_save(sender, instance, created, **kwargs):
         "route": "feedback-details",
         "id": str(instance.pk),
         "customKey": "feedbackNotification",
-        "is_subroute": True,
+        "is_subroute": "true",
+        "function_type":"push_named"
     }
     # -------------------------
     # 1. New Feedback Created
@@ -51,7 +52,9 @@ def feedback_post_save(sender, instance, created, **kwargs):
         if hasattr(instance.sender, "device") and instance.sender.device:
             payload = base_payload.copy()
             payload["title"] = "New Feedback Submitted"
-            payload["body"] = f"Thank you for your feedback (ID: {instance.feedback_id})"
+            payload["body"] = (
+                f"Thank you for your feedback (ID: {instance.feedback_id})"
+            )
 
             _send_device_specific_notification(
                 instance.sender.device.device,
@@ -81,7 +84,9 @@ def feedback_post_save(sender, instance, created, **kwargs):
             payload = base_payload.copy()
             payload["title"] = "New Feedback Assigned"
             # payload["route"] = "assigned-feedbacks"
-            payload["body"] = f"ID: {instance.feedback_id}, Priority: {instance.priority}"
+            payload["body"] = (
+                f"ID: {instance.feedback_id}, Priority: {instance.priority}"
+            )
 
             _send_device_specific_notification(
                 instance.assigned_to.device.device,
@@ -115,7 +120,9 @@ def feedback_post_save(sender, instance, created, **kwargs):
         if hasattr(instance.sender, "device") and instance.sender.device:
             payload = base_payload.copy()
             payload["title"] = f"Feedback {status_label}"
-            payload["body"] = f"Your feedback ID {instance.feedback_id} is now '{status_label}'."
+            payload["body"] = (
+                f"Your feedback ID {instance.feedback_id} is now '{status_label}'."
+            )
             _send_device_specific_notification(
                 instance.sender.device.device,
                 data_payload=payload,
