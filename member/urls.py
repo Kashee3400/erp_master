@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/member-profile/', MemberProfileView.as_view(), name='member-profile'),
     path('api/members/billing-history/', BillingMemberDetailView.as_view(), name='member-billing-history'),
     path('api/mpp-collection/', MppCollectionAggregationListView.as_view(), name='mpp-collection-list'),
+    path('api/new-mpp-collection/', NewMppCollectionAggregationListView.as_view(), name='new-mpp-collection-list'),
     path('api/mpp-collection-detail/', MppCollectionDetailView.as_view(), name='mpp-collection-detail'),
     path('api/member-share-final-info/', MemberShareFinalInfoView.as_view(), name='member-share-final-info'),
     path('api/mpp-incentive-summary/', MppIncentiveSummaryAPIView.as_view()),
