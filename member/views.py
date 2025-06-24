@@ -4,6 +4,12 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 
 logger = logging.getLogger(__name__)
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 
 class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
@@ -443,6 +449,7 @@ def custom_response(status, data=None, message=None, status_code=200):
 
 
 class ProductRateListView(generics.ListAPIView):
+    pagination_class = StandardResultsSetPagination
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -585,12 +592,6 @@ class AppInstalledData(APIView):
         )
 
         return Response(result, status=status.HTTP_200_OK)
-
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
 
 
 class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):

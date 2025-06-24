@@ -13,6 +13,48 @@ from django.db.models.functions import TruncDate, Cast
 from rest_framework.pagination import PageNumberPagination
 from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import ValidationError
+from math import ceil
+
+
+def custom_response(status_text, data=None, message=None, status_code=200, errors=None):
+    return Response(
+        {
+            "status": status_text,
+            "message": message or "Success",
+            "data": data,
+            "errors": errors,
+        },
+        status=status_code,
+    )
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        total_items = self.page.paginator.count
+        current_page = self.page.number
+        per_page = self.page.paginator.per_page
+        total_pages = ceil(total_items / int(per_page))
+
+        return custom_response(
+            status_text="success",
+            message="Success",
+            data={
+                "count": total_items,
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "current_page": current_page,
+                "total_pages": total_pages,
+                "page_size": int(per_page),
+                "has_next": self.page.has_next(),
+                "has_previous": self.page.has_previous(),
+                "results": data,
+            },
+            status_code=status.HTTP_200_OK,
+        )
 
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
@@ -81,7 +123,7 @@ class MemberProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         user = self.request.user
-        phone_number =  user.username if user.is_authenticated else "8896629134"
+        phone_number = user.username if user.is_authenticated else "8896629134"
         return MemberHierarchyView.objects.filter(
             mobile_no=phone_number, is_default=True
         ).last()
@@ -102,9 +144,7 @@ class MemberProfileView(generics.RetrieveAPIView):
             bank_data = MemberSahayakBankDetail.objects.filter(
                 module_code=instance.member_code
             ).last()
-            bank_detail = (
-                MemberBankSerializer(bank_data).data if bank_data else {}
-            )
+            bank_detail = MemberBankSerializer(bank_data).data if bank_data else {}
             return Response(
                 {
                     "status": "success",
@@ -126,6 +166,7 @@ class MemberProfileView(generics.RetrieveAPIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class BillingMemberDetailView(generics.RetrieveAPIView):
     """
@@ -233,12 +274,6 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         return Response(response)
 
 
-class CustomPageNumberPagination(PageNumberPagination):
-    page_size = 20  # Default page size
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-
 class MppCollectionAggregationListView(generics.ListAPIView):
     """
     This class provides the latest payments of cycle
@@ -247,7 +282,7 @@ class MppCollectionAggregationListView(generics.ListAPIView):
     serializer_class = MppCollectionAggregationSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         queryset = MppCollectionAggregation.objects.all()
@@ -315,24 +350,21 @@ class MppCollectionAggregationListView(generics.ListAPIView):
             # Prepare paginated response
             paginated_response = paginator.get_paginated_response(serializer.data)
             paginated_response.data["totals"] = totals
-            paginated_response.data["status"] = status.HTTP_200_OK
-            paginated_response.data["message"] = "success"
-
             return paginated_response
 
         except ValidationError as e:
-            return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": str(e), "data": []},
-                status=status.HTTP_400_BAD_REQUEST,
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=e.default_detail,
+                data={},
             )
         except Exception as e:
-            return Response(
-                {
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": f"An unexpected error occurred: {str(e)}",
-                    "data": [],
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=f"An unexpected error occurred: {str(e)}",
+                data={},
             )
 
 

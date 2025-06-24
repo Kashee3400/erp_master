@@ -1,8 +1,6 @@
 from pathlib import Path
-from django.conf import settings
 import os
 from decouple import config
-from typing import Any, Dict
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 

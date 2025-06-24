@@ -59,7 +59,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             body=f"{instance.sender.get_full_name()} Assigned you a feedback({instance.feedback_id}), Priority: {instance.priority}",
             message=(
                 f"You've been assigned a new feedback.\n"
-                f"By: {instance.sender.get_full_name()}.\n"
+                f"By: {instance.sender.get_full_name()}.\n" if instance.sender else ""
                 f"Priority: {instance.priority}, Status: {instance.status}."
             ),
             model="feedback",
@@ -91,7 +91,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             body=f"Your feedback ID {instance.feedback_id} is now '{status_label}'.",
             message=(
                 f"Your feedback has been marked as '{status_label}' "
-                f"by {instance.assigned_to or 'System'}."
+                f"by {instance.sender.get_full_name() or 'System'}."
             ),
             model="feedback",
             object_id=instance.pk,
