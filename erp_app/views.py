@@ -387,7 +387,7 @@ class MppCollectionAggregationListView(generics.ListAPIView):
 
 class NewMppCollectionAggregationListView(generics.ListAPIView):
     """
-    This class provides the latest payments of cycle
+    Provides the latest MPP collection aggregation list with totals and pagination.
     """
 
     serializer_class = MppCollectionAggregationSerializer
@@ -396,27 +396,26 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = MppCollectionAggregation.objects.all()
+        mobile_no = self.request.user.username
+        member = MemberMaster.objects.filter(mobile_no=mobile_no).first()
 
-        if not MemberMaster.objects.filter(
-            mobile_no=self.request.user.username
-        ).exists():
+        if not member:
             return MppCollectionAggregation.objects.none()
 
-        member = MemberMaster.objects.get(mobile_no=self.request.user.username)
-        year = self.request.query_params.get("year")
-        queryset = queryset.filter(member_code=member.member_code).order_by(
-            "-created_at"
-        )
+        queryset = MppCollectionAggregation.objects.filter(
+            member_code=member.member_code
+        ).order_by("-created_at")
 
+        year = self.request.query_params.get("year")
         if year:
             try:
                 year = int(year)
                 start_date = f"{year}-04-01"
                 end_date = f"{year + 1}-03-31"
+
                 queryset = queryset.filter(
-                    Q(from_date__gte=start_date, from_date__lte=end_date)
-                    | Q(to_date__gte=start_date, to_date__lte=end_date)
+                    Q(from_date__range=(start_date, end_date))
+                    | Q(to_date__range=(start_date, end_date))
                     | Q(from_date__lte=start_date, to_date__gte=end_date)
                 )
             except ValueError:
@@ -428,18 +427,21 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
         try:
             queryset = self.get_queryset()
 
-            # Perform pagination
+            # Setup pagination
             paginator = self.pagination_class()
             paginated_queryset = paginator.paginate_queryset(queryset, request)
 
-            # Calculate totals
-            duplicate_count = (
+            # Compute duplicates efficiently
+            duplicate_periods = (
                 queryset.values("from_date", "to_date")
                 .annotate(count=Count("id"))
                 .filter(count__gt=1)
-                .count()
             )
-            total_pouring_days = Sum("no_of_pouring_days") - duplicate_count
+            duplicate_count = sum(item["count"] - 1 for item in duplicate_periods)
+
+            total_days_expr = Sum("no_of_pouring_days") or 0
+            effective_days = (queryset.aggregate(days=total_days_expr)["days"] or 0) - duplicate_count
+
             totals = queryset.aggregate(
                 total_qty=Sum("qty"),
                 avg_fat=Cast(
@@ -451,34 +453,32 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
                     output_field=models.DecimalField(decimal_places=3, max_digits=18),
                 ),
                 total_amount=Sum("amount"),
-                total_days=total_pouring_days,
-                total_shift=total_pouring_days * 2,
             )
+            totals.update({
+                "total_days": effective_days,
+                "total_shift": effective_days * 2
+            })
 
-            # Serialize data for the current page
+            # Serialize and respond
             serializer = self.get_serializer(paginated_queryset, many=True)
-
-            # Prepare paginated response
-            paginated_response = paginator.get_paginated_response(serializer.data)
-            paginator.extra_data = {"total":totals}
-            return paginated_response
+            paginator.extra_data = {"totals": totals}  # ✅ set before calling get_paginated_response
+            return paginator.get_paginated_response(serializer.data)
 
         except ValidationError as e:
             return custom_response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 status_text="error",
                 message="Validation Failed",
-                errors=e.default_detail,
+                errors=e.detail,
             )
 
         except Exception as e:
             return custom_response(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 status_text="error",
-                message=f"An unexpected error occurred:",
+                message="An unexpected error occurred.",
                 errors=str(e),
             )
-
 
 from django.core.cache import cache
 
