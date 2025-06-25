@@ -12,7 +12,6 @@ urlpatterns = [
 
 urlpatterns = [
     path('api/register-device/', views.register_device, name='register_device'),
-    path('api/send-notification/', views.send_user_notification, name='send_user_notification'),
     path('api/', include(router.urls)),
     
 ]
