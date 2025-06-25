@@ -53,6 +53,9 @@ class StandardResultsSetPagination(PageNumberPagination):
         )
 
 
+from rest_framework.decorators import action
+from django.utils import timezone
+
 class AppNotificationViewSet(viewsets.ModelViewSet):
     serializer_class = AppNotificationSerializer
     permission_classes = [permissions.IsAuthenticated, IsNotificationOwner]
@@ -62,6 +65,47 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return AppNotification.objects.filter(recipient=self.request.user)
+
+    @action(detail=False, methods=["post"], url_path="mark-read")
+    def mark_bulk_as_read(self, request):
+        """
+        Mark a list of notification IDs as read.
+        """
+        ids = request.data.get("ids", [])
+        if not isinstance(ids, list):
+            return custom_response(
+                status_text="error",
+                message="Expected a list of IDs under `ids` key.",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        updated_count = AppNotification.objects.filter(
+            recipient=request.user,
+            id__in=ids,
+            is_read=False
+        ).update(is_read=True, read_at=timezone.now())
+        unread_count = AppNotification.objects.filter(is_read=False).count()
+        return custom_response(
+            status_text="success",
+            message=f"{updated_count} notifications marked as read.",
+            data={"updated_count": updated_count,"unread_count":unread_count}
+        )
+
+    @action(detail=False, methods=["post"], url_path="mark-all-read")
+    def mark_all_as_read(self, request):
+        """
+        Mark all unread notifications as read.
+        """
+        updated_count = AppNotification.objects.filter(
+            recipient=request.user,
+            is_read=False
+        ).update(is_read=True, read_at=timezone.now())
+        unread_count = AppNotification.objects.filter(is_read=False).count()
+        return custom_response(
+            status_text="success",
+            message=f"All notifications ({updated_count}) marked as read.",
+            data={"updated_count": updated_count,"unread_count":unread_count}
+        )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
