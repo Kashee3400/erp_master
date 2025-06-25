@@ -7,7 +7,8 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.core.exceptions import ObjectDoesNotExist
 from .models import AppNotification
 from .serializers import AppNotificationSerializer
-from error_formatter import simplify_errors,format_exception
+from error_formatter import simplify_errors, format_exception
+
 
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
@@ -64,17 +65,30 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = self.get_serializer(
+                page, many=True, context={"request": request}
+            )
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
-        return custom_response(status_text="success", data=serializer.data,status_code=status.HTTP_200_OK,message="Sucess")
+        serializer = self.get_serializer(
+            queryset, many=True, context={"request": request}
+        )
+        return custom_response(
+            status_text="success",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+            message="Sucess",
+        )
 
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return custom_response(status_text="success", message="Notification retrieved successfully",data=serializer.data)
+            serializer = self.get_serializer(instance, context={"request": request})
+            return custom_response(
+                status_text="success",
+                message="Notification retrieved successfully",
+                data=serializer.data,
+            )
         except ObjectDoesNotExist:
             return custom_response(
                 status_text="error",
@@ -84,7 +98,9 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save(recipient=request.user)
@@ -105,7 +121,9 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial, context={"request": request}
+        )
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
