@@ -8,7 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import AppNotification
 from .serializers import AppNotificationSerializer
 from error_formatter import simplify_errors, format_exception
-
+from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
@@ -148,4 +149,17 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
             message="Notification deleted successfully.",
             data=None,
             status_code=status.HTTP_204_NO_CONTENT,
+        )
+
+
+class UnreadNotificationCountView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargsl̥):
+        user = request.user
+        count = AppNotification.objects.filter(recipient=user, is_read=False).count()
+        return custom_response(
+            status_text="success",
+            data={"unread_count": count},
+            message=_("Unread notification count retrieved successfully."),
         )
