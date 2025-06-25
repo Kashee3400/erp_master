@@ -84,7 +84,7 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
             id__in=ids,
             is_read=False
         ).update(is_read=True, read_at=timezone.now())
-        unread_count = AppNotification.objects.filter(is_read=False).count()
+        unread_count = AppNotification.objects.filter(recipient=request.user,is_read=False).count()
         return custom_response(
             status_text="success",
             message=f"{updated_count} notifications marked as read.",
@@ -100,7 +100,7 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
             recipient=request.user,
             is_read=False
         ).update(is_read=True, read_at=timezone.now())
-        unread_count = AppNotification.objects.filter(is_read=False).count()
+        unread_count = AppNotification.objects.filter(recipient=request.user,is_read=False).count()
         return custom_response(
             status_text="success",
             message=f"All notifications ({updated_count}) marked as read.",
