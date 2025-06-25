@@ -11,6 +11,7 @@ from error_formatter import simplify_errors, format_exception
 from rest_framework.views import APIView
 from django.utils.translation import gettext_lazy as _
 
+
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
         {
@@ -155,7 +156,7 @@ class AppNotificationViewSet(viewsets.ModelViewSet):
 class UnreadNotificationCountView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargsl̥):
+    def get(self, request, *args, **kwargs):
         user = request.user
         count = AppNotification.objects.filter(recipient=user, is_read=False).count()
         return custom_response(
