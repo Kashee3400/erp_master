@@ -1,9 +1,11 @@
 import logging
 from django.dispatch import receiver
-from .models import Feedback
+from .models import Feedback, FeedbackComment
 from django.db.models.signals import pre_save, post_save
+
 logger = logging.getLogger(__name__)
-from notifications.models import AppNotification,NotificationMedium,NotificationType
+from notifications.models import AppNotification, NotificationMedium, NotificationType
+
 
 @receiver(pre_save, sender=Feedback)
 def feedback_pre_save(sender, instance, **kwargs):
@@ -19,6 +21,26 @@ def feedback_pre_save(sender, instance, **kwargs):
         instance._new_status = instance.status
     except Feedback.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=FeedbackComment)
+def feedback_comment_post_save(sender, instance, created, **kwargs):
+    if created:
+        AppNotification.objects.create(
+            sender=instance.user,
+            recipient=instance.feedback.assigned_to,
+            title="New Message",
+            body=instance.comment,
+            message=instance.comment,
+            model="feedback",
+            object_id=instance.feedback.pk,
+            route="feedback-details",
+            custom_key="feedbackNotification",
+            is_subroute=True,
+            allowed_email=True,
+            notification_type=NotificationType.INFO,
+            sent_via=NotificationMedium.SYSTEM,
+        )
 
 
 @receiver(post_save, sender=Feedback)
@@ -59,8 +81,9 @@ def feedback_post_save(sender, instance, created, **kwargs):
             body=f"{instance.sender.get_full_name()} Assigned you a feedback({instance.feedback_id}), Priority: {instance.priority}",
             message=(
                 f"You've been assigned a new feedback.\n"
-                f"By: {instance.sender.get_full_name()}.\n" if instance.sender else ""
-                f"Priority: {instance.priority}, Status: {instance.status}."
+                f"By: {instance.sender.get_full_name()}.\n"
+                if instance.sender
+                else "" f"Priority: {instance.priority}, Status: {instance.status}."
             ),
             model="feedback",
             object_id=instance.pk,
@@ -101,5 +124,4 @@ def feedback_post_save(sender, instance, created, **kwargs):
             notification_type=NotificationType.INFO,
             sent_via=NotificationMedium.SYSTEM,
             allowed_email=True,
-            
         )
