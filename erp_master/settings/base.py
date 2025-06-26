@@ -430,6 +430,21 @@ CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
+CELERY_TASK_DEFAULT_QUEUE = 'erp_master_queue'
+
+CELERY_TASK_QUEUES = {
+    'erp_master_queue': {
+        'exchange': 'erp_exchange',
+        'routing_key': 'erp_task',
+    }
+}
+
+CELERY_TASK_ROUTES = {
+    'feedback.tasks.*': {'queue': 'erp_master_queue', 'routing_key': 'erp_task'},
+    'notifications.tasks.*': {'queue': 'erp_master_queue', 'routing_key': 'erp_task'},
+}
+
+
 # Email Configuration
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
