@@ -25,22 +25,40 @@ def feedback_pre_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=FeedbackComment)
 def feedback_comment_post_save(sender, instance, created, **kwargs):
-    if created:
-        AppNotification.objects.create(
-            sender=instance.user,
-            recipient=instance.feedback.assigned_to,
-            title="New Message",
-            body=instance.comment,
-            message=instance.comment,
-            model="feedback",
-            object_id=instance.feedback.pk,
-            route="feedback-details",
-            custom_key="feedbackNotification",
-            is_subroute=True,
-            allowed_email=True,
-            notification_type=NotificationType.INFO,
-            sent_via=NotificationMedium.SYSTEM,
-        )
+    if not created:
+        return
+
+    feedback = instance.feedback
+    comment_user = instance.user
+
+    # Determine recipient
+    if comment_user == feedback.assigned_to:
+        recipient = feedback.sender
+    elif comment_user == feedback.sender:
+        recipient = feedback.assigned_to
+    else:
+        # Optional: fallback or skip if user is neither
+        return
+
+    # Avoid notifying self
+    if recipient == comment_user:
+        return
+
+    AppNotification.objects.create(
+        sender=comment_user,
+        recipient=recipient,
+        title="New Feedback Message",
+        body=instance.comment,
+        message=instance.comment,
+        model="feedback",
+        object_id=feedback.pk,
+        route="feedback-details",
+        custom_key="feedbackNotification",
+        is_subroute=True,
+        allowed_email=True,
+        notification_type=NotificationType.INFO,
+        sent_via=NotificationMedium.SYSTEM,
+    )
 
 
 @receiver(post_save, sender=Feedback)
