@@ -74,7 +74,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             recipient=instance.sender,
             title="New Feedback Submitted",
             body=f"Thank you for your feedback (ID: {instance.feedback_id})",
-            message=f"Feedback by {instance.sender} has been created with status: {instance.status}.",
+            message=f"Feedback by {instance.sender.get_full_name() or instance.sender.username} has been created with status: {instance.status}.",
             model="feedback",
             object_id=instance.pk,
             route="feedback-details",
@@ -131,8 +131,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             title=f"Feedback {status_label}",
             body=f"Your feedback ID {instance.feedback_id} is now '{status_label}'.",
             message=(
-                f"Your feedback has been marked as '{status_label}' "
-                f"by {instance.sender.get_full_name() or 'System'}."
+                f"Your feedback has been '{status_label}' "
             ),
             model="feedback",
             object_id=instance.pk,
