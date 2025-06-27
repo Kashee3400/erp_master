@@ -12,7 +12,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = [
             "id", "user", "username", "email", "name",
             "department", "avatar", "phone_number",
-            "address", "designation", "is_verified",
+            "address", "designation", "is_verified","is_email_verified",
             "created_at", "updated_at"
         ]
         read_only_fields = ["id", "created_at", "updated_at"]

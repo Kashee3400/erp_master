@@ -64,6 +64,11 @@ class UserProfile(models.Model):
         verbose_name=_("Verified"),
         help_text=_("Indicates whether the user's profile is verified.")
     )
+    is_email_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Email Verified"),
+        help_text=_("Indicates whether the user's email is verified.")
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")

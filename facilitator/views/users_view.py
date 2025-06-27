@@ -7,6 +7,8 @@ from ..serializers.users_serializers import (
     UserSerializer,
     GroupSerializer,
     PermissionSerializer,
+    VerifyOTPSerializer,
+    SendOTPSerializer,
 )
 
 from rest_framework.pagination import PageNumberPagination
@@ -28,6 +30,7 @@ def custom_response(status_text, data=None, message=None, status_code=200, error
         },
         status=status_code,
     )
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -463,6 +466,7 @@ from error_formatter import *
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import SearchFilter, OrderingFilter
+
     pagination_class = StandardResultsSetPagination
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -479,31 +483,42 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         "user__first_name",
         "user__email",
     ]
+
     def get_queryset(self):
-        queryset = UserProfile.objects.select_related("user").all().exclude(user=self.request.user)
-        
+        queryset = (
+            UserProfile.objects.select_related("user")
+            .all()
+            .exclude(user=self.request.user)
+        )
+
         return queryset
-    
+
     @action(detail=False, methods=["get"], url_path="me")
     def get_authenticated_profile(self, request):
         try:
             profile = get_object_or_404(UserProfile, user=request.user)
             serializer = self.get_serializer(profile)
-            return Response({
-                "status": "success",
-                "message": "Authenticated user profile fetched successfully.",
-                "data": serializer.data,
-                "errors": {},
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "status": "success",
+                    "message": "Authenticated user profile fetched successfully.",
+                    "data": serializer.data,
+                    "errors": {},
+                },
+                status=status.HTTP_200_OK,
+            )
 
         except Exception as exc:
-            return Response({
-                "status": "error",
-                "message": "Failed to retrieve authenticated user profile.",
-                "data": {},
-                "errors": {"non_field_errors": [str(exc)]},
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Failed to retrieve authenticated user profile.",
+                    "data": {},
+                    "errors": {"non_field_errors": [str(exc)]},
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -622,3 +637,118 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message=format_exception(str(exc)),
             )
+
+
+from django.core.cache import cache
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+
+import random
+
+
+class SendOTPView(APIView):
+    def post(self, request):
+        serializer = SendOTPSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data["email"]
+
+            otp = f"{random.randint(100000, 999999)}"
+            cache_key = f"otp:{email}"
+            cache.set(cache_key, otp, timeout=300)  # 5 minutes
+
+            try:
+                send_mail(
+                    subject="Your Email Verification OTP",
+                    message=f"Your OTP is: {otp}",
+                    from_email=settings.HRMS_DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            except serializers.ValidationError as err_dict:
+                return custom_response(
+                    status_text="error",
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    message=f"Failed to send email:",
+                    errors=simplify_errors(error_dict=err_dict.detail),
+                )
+            except Exception as e:
+                return custom_response(
+                    status_text="error",
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    message=f"Failed to send email: {str(e)}",
+                )
+
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="OTP sent successfully.",
+            )
+
+        return custom_response(
+            status_text="error",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message=serializer.errors,
+        )
+
+
+
+class VerifyOTPView(APIView):
+    def post(self, request):
+        serializer = VerifyOTPSerializer(data=request.data)
+        if serializer.is_valid():
+            user_id = serializer.validated_data["user_id"]
+            email = serializer.validated_data["email"]
+            otp = serializer.validated_data["otp"]
+
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return custom_response(
+                    status_text="error",
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    message="User not found.",
+                )
+
+            if user.profile.is_email_verified and user.email == email:
+                return custom_response(
+                    status_text="success",
+                    status_code=status.HTTP_200_OK,
+                    message="This email is already verified.",
+                )
+
+            cache_key = f"otp:{email}"
+            cached_otp = cache.get(cache_key)
+
+            if cached_otp is None:
+                return custom_response(
+                    status_text="error",
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    message="OTP has expired or was not requested.",
+                )
+
+            if str(cached_otp) != str(otp):
+                return custom_response(
+                    status_text="error",
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    message="Invalid OTP provided.",
+                )
+            user.email = email
+            try:
+                profile = user.profile
+            except UserProfile.DoesNotExist:
+                profile = UserProfile.objects.create(user=user)
+            profile.is_email_verified = True
+            profile.save()
+            user.save()
+            cache.delete(cache_key)
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="Email verified and updated successfully.",
+            )
+
+        return custom_response(
+            status_text="error",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message=serializer.errors,
+        )

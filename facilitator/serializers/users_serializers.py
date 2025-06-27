@@ -4,7 +4,57 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+import re
 
+EMAIL_REGEX = re.compile(
+    r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+)
+
+class SendOTPSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not EMAIL_REGEX.match(value):
+            raise serializers.ValidationError("Invalid email format.")
+
+        # Optionally disallow disposable or personal domains
+        disallowed_domains = {"mailinator.com", "tempmail.com", "example.com"}
+        domain = value.split("@")[-1].lower()
+        if domain in disallowed_domains:
+            raise serializers.ValidationError("Disposable or invalid email domains are not allowed.")
+
+        return value
+
+
+import re
+from rest_framework import serializers
+
+EMAIL_REGEX = re.compile(
+    r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+)
+
+class VerifyOTPSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    email = serializers.EmailField()
+    otp = serializers.CharField(min_length=6, max_length=6)
+
+    def validate_email(self, value):
+        if not EMAIL_REGEX.match(value):
+            raise serializers.ValidationError("Invalid email format.")
+
+        disallowed_domains = {"mailinator.com", "tempmail.com", "example.com"}
+        domain = value.split("@")[-1].lower()
+        if domain in disallowed_domains:
+            raise serializers.ValidationError("Disposable email domains are not allowed.")
+        return value
+
+    def validate_otp(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only digits.")
+        if len(value) != 6:
+            raise serializers.ValidationError("OTP must be exactly 6 digits.")
+        return value
 
 class UserSerializer(serializers.ModelSerializer):
     module = serializers.SerializerMethodField(read_only=True)
