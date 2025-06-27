@@ -619,7 +619,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message="Error Occurred",
-                errors=format_exception(str(db_err)),
+                errors=format_exception(str(exc)),
             )
 
     def destroy(self, request, *args, **kwargs):
