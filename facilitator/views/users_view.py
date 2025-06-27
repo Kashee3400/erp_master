@@ -462,6 +462,7 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
 
 from ..serializers.profile_serializer import UserProfile, UserProfileSerializer
 from error_formatter import *
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -470,6 +471,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
     lookup_field = "pk"
     filter_backends = [
         DjangoFilterBackend,
@@ -535,7 +537,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 message="User profile retrieved successfully.",
                 data=serializer.data,
             )
-        except ValidationError as exc:
+        except serializers.ValidationError as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -566,18 +568,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 message=format_exception(str(db_err)),
             )
-        except ValidationError as exc:
+        except serializers.ValidationError as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=simplify_errors(exc.detail),
+                message="Failed to create user profile",
+                errors=simplify_errors(exc.detail),
             )
 
         except Exception as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=format_exception(str(exc)),
+                message="Something error occurred",
+                errors=format_exception(str(exc)),
             )
 
     def update(self, request, *args, **kwargs):
@@ -595,24 +599,27 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 message="User profile updated successfully.",
                 data=serializer.data,
             )
-        except ValidationError as exc:
+        except serializers.ValidationError as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=simplify_errors(exc.detail),
+                message="Failed update",
+                errors=simplify_errors(exc.detail),
             )
 
         except (IntegrityError, DatabaseError) as db_err:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=format_exception(str(db_err)),
+                message="Error Occurred",
+                errors=format_exception(str(db_err)),
             )
         except Exception as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=format_exception(str(exc)),
+                message="Error Occurred",
+                errors=format_exception(str(db_err)),
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -624,18 +631,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_code=status.HTTP_200_OK,
                 message="User profile deleted successfully.",
             )
-        except ValidationError as exc:
+        except serializers.ValidationError as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=simplify_errors(exc.detail),
+                message="Failed to delete the object",
+                errors=simplify_errors(exc.detail)
             )
 
         except Exception as exc:
             return custom_response(
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=format_exception(str(exc)),
+                message="Something error occurred",
+                errors=format_exception(str(exc))
             )
 
 
@@ -651,10 +660,9 @@ class SendOTPView(APIView):
         serializer = SendOTPSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data["email"]
-
             otp = f"{random.randint(100000, 999999)}"
             cache_key = f"otp:{email}"
-            cache.set(cache_key, otp, timeout=300)  # 5 minutes
+            cache.set(cache_key, otp, timeout=300)
 
             try:
                 send_mail(
@@ -667,7 +675,7 @@ class SendOTPView(APIView):
             except serializers.ValidationError as err_dict:
                 return custom_response(
                     status_text="error",
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    status_code=status.HTTP_400_BAD_REQUEST,
                     message=f"Failed to send email:",
                     errors=simplify_errors(error_dict=err_dict.detail),
                 )
@@ -675,7 +683,8 @@ class SendOTPView(APIView):
                 return custom_response(
                     status_text="error",
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    message=f"Failed to send email: {str(e)}",
+                    message=f"Failed to send email",
+                    errors= str(e)
                 )
 
             return custom_response(
@@ -687,9 +696,9 @@ class SendOTPView(APIView):
         return custom_response(
             status_text="error",
             status_code=status.HTTP_400_BAD_REQUEST,
-            message=serializer.errors,
+            message="OTP request failed",
+            errors=serializer.errors,
         )
-
 
 
 class VerifyOTPView(APIView):
@@ -750,5 +759,6 @@ class VerifyOTPView(APIView):
         return custom_response(
             status_text="error",
             status_code=status.HTTP_400_BAD_REQUEST,
-            message=serializer.errors,
+            message="Invalid request data",
+            errors=serializer.errors
         )
