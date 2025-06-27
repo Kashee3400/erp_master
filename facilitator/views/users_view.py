@@ -487,12 +487,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     ]
 
     def get_queryset(self):
-        queryset = (
-            UserProfile.objects.select_related("user")
-            .all()
-            .exclude(user=self.request.user)
-        )
-
+        queryset = UserProfile.objects.select_related("user").all()
+        if self.action == "list":
+            queryset = queryset.exclude(user=self.request.user)
         return queryset
 
     @action(detail=False, methods=["get"], url_path="me")
