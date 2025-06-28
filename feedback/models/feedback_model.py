@@ -30,14 +30,7 @@ PRIORITY_CHOICES = (
 # ------------------------------
 # ALLOWED STATUS TRANSITIONS
 # ------------------------------
-# ALLOWED_TRANSITIONS = {
-#     "open": ["assigned", "closed", "reopened"],
-#     "assigned": ["in_progress", "closed"],
-#     "in progress": ["resolved", "closed"],
-#     "resolved": ["reopened", "closed"],
-#     "closed": ["reopened"],
-#     "reopened": ["assigned", "closed"],
-# }
+
 ALLOWED_TRANSITIONS = {
     "open": ["assigned"],  # Must be assigned first
     "assigned": ["in_progress", "reopened"],  # Start work or reopen due to rejection

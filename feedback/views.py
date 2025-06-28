@@ -81,7 +81,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         Return feedback statistics: total count, by status, priority, and avg response time.
         Applies global filtering (e.g., excludes deleted feedbacks).
         """
-        user_filter = {} if request.user.is_superuser else {"sender": request.user}
+        user = self.request.user
+        user_filter = {} if user.is_superuser else {"sender": user}
         global_filter = {**user_filter, "deleted": False}
 
         # ✅ Single queryset reused
@@ -95,8 +96,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
 
         # Optional: assigned to this user
         assigned_count = (
-            qs.filter(assigned_to=request.user).count()
-            if hasattr(request.user, "user_assigned_feedbacks")
+            qs.filter(assigned_to=user).count()
+            if hasattr(user, "user_assigned_feedbacks")
             else 0
         )
 
@@ -133,7 +134,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         """
         Restrict to feedbacks created by the authenticated user unless superuser.
         """
-        if not self.request.user.is_superuser:
+        if not (self.request.user.is_superuser or self.request.user.is_staff):
             return self.queryset.filter(sender=self.request.user)
         return self.queryset
 
