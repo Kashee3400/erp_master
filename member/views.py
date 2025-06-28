@@ -16,23 +16,19 @@ class GenerateOTPView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            phone_number = request.data.get("phone_number")
+            phone_number = request.data.get("phone_number", "").strip()
 
-            if (
-                not phone_number
-                or not phone_number.isdigit()
-                or len(phone_number) != 10
-            ):
+            if not phone_number.isdigit() or len(phone_number) != 10:
                 return Response(
                     {"status": "error", "message": "Invalid phone number format."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            member_exists = (
-                MemberMaster.objects.using("sarthak_kashee")
+
+            members = (
+                MemberHierarchyView.objects.using("sarthak_kashee")
                 .filter(mobile_no=phone_number)
-                .exists()
             )
-            if not member_exists:
+            if not members.exists():
                 return Response(
                     {
                         "status": "error",
@@ -40,6 +36,15 @@ class GenerateOTPView(APIView):
                     },
                     status=status.HTTP_404_NOT_FOUND,
                 )
+            if members.count() > 1:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": f"{members.count()} found with this number",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete any existing OTP
             OTP.objects.filter(phone_number=phone_number).delete()
             # Create new OTP entry

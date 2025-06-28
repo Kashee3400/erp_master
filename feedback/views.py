@@ -79,29 +79,21 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     def stats(self, request):
         """
         Return feedback statistics: total count, by status, priority, and avg response time.
-        Applies global filtering (e.g., excludes deleted feedbacks).
+        Applies global filtering and reuses get_queryset.
         """
-        user = self.request.user
-        user_filter = {} if user.is_superuser else {"sender": user}
-        global_filter = {**user_filter, "deleted": False}
-
-        # ✅ Single queryset reused
-        qs = Feedback.objects.filter(**global_filter)
+        user = request.user
+        qs = self.get_queryset().filter(deleted=False)
 
         total = qs.count()
-
-        # Use annotations to compute required aggregations in one go
         by_status = list(qs.values("status").annotate(count=Count("id")))
         by_priority = list(qs.values("priority").annotate(count=Count("id")))
 
-        # Optional: assigned to this user
-        assigned_count = (
-            qs.filter(assigned_to=user).count()
-            if hasattr(user, "user_assigned_feedbacks")
-            else 0
-        )
+        # ❗ Assigned count uses only 'deleted=False' — not get_queryset()
+        assigned_count = Feedback.objects.filter(
+            deleted=False, assigned_to=user
+        ).count()
 
-        # ✅ Average response time
+        # Avg response time
         avg_response_time = None
         if hasattr(Feedback, "resolved_at") and hasattr(Feedback, "created_at"):
             resolved_feedbacks = qs.filter(resolved_at__isnull=False).annotate(
@@ -109,9 +101,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
                     F("resolved_at") - F("created_at"), output_field=DurationField()
                 )
             )
-            avg_response_time = resolved_feedbacks.aggregate(avg=Avg("response_time"))[
-                "avg"
-            ]
+            avg_response_time = resolved_feedbacks.aggregate(avg=Avg("response_time"))["avg"]
 
         response_data = {
             "total": total,
