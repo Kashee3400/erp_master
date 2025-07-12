@@ -44,3 +44,24 @@ def send_fcm_notification_task(self, token, title, body, data=None):
         return {"status": "sent", "info": info}
     except Exception as e:
         self.retry(exc=e)
+
+
+
+from celery import shared_task
+import subprocess
+import platform
+
+@shared_task
+def scan_file_virus(file_path):
+    try:
+        if platform.system() == 'Windows':
+            result = subprocess.run(['clamscan.exe', file_path], stdout=subprocess.PIPE)
+        else:
+            result = subprocess.run(['clamscan', file_path], stdout=subprocess.PIPE)
+
+        output = result.stdout.decode()
+        if "Infected files: 0" in output:
+            return "clean"
+        return "infected"
+    except Exception as e:
+        return str(e)

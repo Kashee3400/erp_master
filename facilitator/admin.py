@@ -65,19 +65,58 @@ class AssignedMppToFacilitatorAdmin(ImportExportModelAdmin):
 
 admin.site.register(AssignedMppToFacilitator, AssignedMppToFacilitatorAdmin)
 
+from django.utils.html import format_html
+from django.utils.timezone import now
 
 @admin.register(ApiKey)
 class ApiKeyAdmin(admin.ModelAdmin):
     list_display = (
-        "user",
-        "key",
-        "created_at",
-        "expires_at",
-        "is_active",
-        "description",
+        "key_short", "user", "is_active", "is_revoked",
+        "created_at", "expires_at", "usage_count", "last_used_at",
     )
-    search_fields = ("key", "user__username")
-    list_filter = ("is_active", "expires_at")
+    list_filter = ("is_active", "is_revoked", "created_at", "expires_at")
+    search_fields = ("key", "user__username", "description", "permissions")
+    readonly_fields = ("key", "created_at", "last_used_at", "usage_count", "failed_attempts")
+    autocomplete_fields = ("user", "created_by", "last_used_by", "revoked_by")
+    actions = ["revoke_api_keys", "activate_api_keys", "reset_usage_count"]
+
+    fieldsets = (
+        ("Basic Info", {
+            "fields": ("key", "user", "description", "permissions")
+        }),
+        ("Validity & State", {
+            "fields": ("is_active", "valid_from", "expires_at", "is_revoked", "revoked_at", "revoked_by")
+        }),
+        ("Security Restrictions", {
+            "fields": ("allowed_ips", "allowed_urls")
+        }),
+        ("Usage Limits", {
+            "fields": ("usage_count", "max_usage_limit", "requests_per_day", "requests_per_hour", "usage_reset_time")
+        }),
+        ("Audit", {
+            "fields": ("created_at", "created_by", "last_used_at", "last_used_by", "failed_attempts")
+        }),
+    )
+
+    def key_short(self, obj):
+        return format_html('<code>{}</code>', obj.key[:8] + '…')
+    key_short.short_description = "API Key"
+
+    @admin.action(description="Revoke selected API keys")
+    def revoke_api_keys(self, request, queryset):
+        queryset.update(is_revoked=True, revoked_at=now(), revoked_by=request.user)
+
+    @admin.action(description="Activate selected API keys")
+    def activate_api_keys(self, request, queryset):
+        queryset.update(is_active=True, is_revoked=False, revoked_at=None, revoked_by=None)
+
+    @admin.action(description="Reset usage count to zero")
+    def reset_usage_count(self, request, queryset):
+        queryset.update(usage_count=0, failed_attempts=0)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("user", "created_by", "last_used_by", "revoked_by")
 
 
 @admin.register(VCGMeeting)

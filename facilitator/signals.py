@@ -1,5 +1,5 @@
 import logging
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save,post_delete
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models.user_profile_model import UserProfile
@@ -7,6 +7,7 @@ from .models.facilitator_model import AssignedMppToFacilitator
 from notifications.models import AppNotification, NotificationMedium, NotificationType
 from import_export.signals import post_import
 from .utils.import_flag import set_importing,is_importing
+from facilitator.models.file_models import  UploadedFile, FileActionLog
 
 
 User = get_user_model()
@@ -43,4 +44,23 @@ def mpp_post_save(sender, instance, created, **kwargs):
         is_subroute=True,
         notification_type=NotificationType.INFO,
         sent_via=NotificationMedium.SYSTEM,
+    )
+
+@receiver(post_save, sender=UploadedFile)
+def log_file_upload(sender, instance, created, **kwargs):
+    if created:
+        FileActionLog.objects.create(
+            uploaded_file=instance,
+            action='uploaded',
+            performed_by=instance.uploaded_by,
+            ip_address=instance.ip_address,
+        )
+
+@receiver(post_delete, sender=UploadedFile)
+def log_file_delete(sender, instance, **kwargs):
+    FileActionLog.objects.create(
+        uploaded_file=instance,
+        action='deleted',
+        performed_by=instance.uploaded_by,
+        ip_address=instance.ip_address,
     )

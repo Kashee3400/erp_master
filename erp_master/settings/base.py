@@ -11,6 +11,9 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 SECRET_KEY = config("SECRET_KEY", None)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+
+
 LOCAL_APPS = [
     "member",
     "mpms",
@@ -19,6 +22,8 @@ LOCAL_APPS = [
     "veterinary",
     "feedback",
     "notifications",
+    "django_cleanup.apps.CleanupConfig",
+    'taggit',
 ]
 
 THIRD_PARTY_APPS = [

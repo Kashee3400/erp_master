@@ -44,6 +44,7 @@ urlpatterns = [
     path("mpms/", include("mpms.urls")),
     path("facilitator/", include("facilitator.urls")),
     path("management/api/", include("facilitator.user_urls")),
+    path("storage/api/", include("facilitator.file_urls")),
     path("veterinary/", include("veterinary.urls")),
     path("feedback/", include("feedback.urls")),
     path("erp-fcm/", include("notifications.urls")),

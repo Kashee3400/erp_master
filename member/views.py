@@ -26,7 +26,7 @@ class GenerateOTPView(APIView):
 
             members = (
                 MemberHierarchyView.objects.using("sarthak_kashee")
-                .filter(mobile_no=phone_number)
+                .filter(mobile_no=phone_number,is_default=True,is_active=True)
             )
             if not members.exists():
                 return Response(
@@ -36,11 +36,12 @@ class GenerateOTPView(APIView):
                     },
                     status=status.HTTP_404_NOT_FOUND,
                 )
+            
             if members.count() > 1:
                 return Response(
                     {
                         "status": "error",
-                        "message": f"{members.count()} found with this number",
+                        "message": f"{members.count()} member found with this number",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
