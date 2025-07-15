@@ -31,18 +31,18 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
     feedback = instance.feedback
     comment_user = instance.user
 
-    # Determine recipient
-    if comment_user == feedback.assigned_to:
-        recipient = feedback.sender
-    elif comment_user == feedback.sender:
-        recipient = feedback.assigned_to
-    else:
-        # Optional: fallback or skip if user is neither
-        return
+    recipient = None
 
-    # Avoid notifying self
-    if recipient == comment_user:
-        return
+    # Determine recipient only if fields are not None
+    if feedback.assigned_to and feedback.sender:
+        if comment_user == feedback.assigned_to:
+            recipient = feedback.sender
+        elif comment_user == feedback.sender:
+            recipient = feedback.assigned_to
+
+    # Validate recipient
+    if not recipient or recipient == comment_user:
+        return  # Skip if recipient is None or same as sender
 
     AppNotification.objects.create(
         sender=comment_user,
