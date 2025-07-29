@@ -75,6 +75,6 @@ class UserDeviceResource(resources.ModelResource):
 
     class Meta:
         model = UserDevice
-        fields = ("user", "mpp_code", "module")
+        fields = ("user", "mpp_code", "module","device")
         exclude = ("id",)
         import_id_fields = ("user",)

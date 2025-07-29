@@ -30,3 +30,11 @@ class AssignedMppToFacilitatorForm(forms.ModelForm):
 
         # Call the parent save method
         return super().save(commit)
+
+class ReasonForm(forms.Form):
+    reason = forms.CharField(
+        label="Reason",
+        widget=forms.Textarea(attrs={"rows": 3, "class": "vLargeTextField"}),
+        help_text="Please provide a reason for this action.",
+        required=True,
+    )

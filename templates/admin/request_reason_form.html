@@ -1,0 +1,36 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">{{ title }}</h2>
+      </div>
+      <div class="card-body">
+        <form method="post" class="form-horizontal">
+          {% csrf_token %}
+          <fieldset class="module aligned">
+            {% for field in form %}
+              <div class="form-row">
+                {{ field.errors }}
+                <div class="form-group">
+                  <label for="{{ field.id_for_label }}" class="required">{{ field.label }}</label>
+                  {{ field }}
+                  {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </fieldset>
+
+          <div class="submit-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <input type="submit" value="{{ action_label }}" class="{{ button_class }}" />
+            <a href="javascript:history.back()" class="btn btn-secondary">{% trans 'Cancel' %}</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

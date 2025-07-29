@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
 import os
-
+import uuid
 
 def get_geo_location(ip):
     try:
@@ -35,3 +35,41 @@ def get_geo_location(ip):
         return f"{r.city.name}, {r.country.name}"
     except:
         return "Unknown"
+
+
+
+
+def upload_passbook_path(instance, filename):
+    """Generate upload path for passbook documents"""
+    ext = filename.split(".")[-1]
+    filename = f"{instance.member_code}_{uuid.uuid4().hex}.{ext}"
+    return os.path.join(
+        "passbooks/",
+        str(instance.requested_at.year),
+        str(instance.requested_at.month),
+        filename,
+    )
+
+
+def upload_application_path(instance, filename):
+    """Generate upload path for application documents"""
+    ext = filename.split(".")[-1]
+    filename = f"{instance.member_code}_app_{uuid.uuid4().hex}.{ext}"
+    return os.path.join(
+        "applications/",
+        str(instance.requested_at.year),
+        str(instance.requested_at.month),
+        filename,
+    )
+
+
+def upload_affidavit_path(instance, filename):
+    """Generate upload path for affidavit documents"""
+    ext = filename.split(".")[-1]
+    filename = f"{instance.member_code}_affidavit_{uuid.uuid4().hex}.{ext}"
+    return os.path.join(
+        "affidavits/",
+        str(instance.requested_at.year),
+        str(instance.requested_at.month),
+        filename,
+    )

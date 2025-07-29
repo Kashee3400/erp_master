@@ -25,7 +25,7 @@
       <div class="card">
         <div class="card-header pb-0 p-3">
           <div class="d-flex justify-content-between">
-            <h6 class="mb-2">{% trans 'App Installed By MCCs' %}</h6>
+            <h6 class="mb-2">{% trans 'Kashee E-Dairy App Installation Report' %}</h6>
           </div>
         </div>
 
@@ -39,7 +39,11 @@
           <table class="table align-items-center table-stripped" id="mcc-data-table">
             <thead>
               <tr>
-                <th>MCC</th>
+                <th>MCC Name</th>
+                <th>MCC Code</th>
+                <th>Mpp Name</th>
+                <th>Mpp Code</th>
+                <th>Facilitator Name</th>
                 <th>Total Members</th>
                 <th>No. of Pourers</th>
                 <th>App Installed By Member</th>
@@ -48,6 +52,38 @@
             </thead>
             <tbody id="mcc-table-body"></tbody>
             <tfoot id="mcc-data-footer"></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 position-relative z-index-2 mt-5">
+      <div class="card">
+        <div class="card-header pb-0 p-3">
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-2">{% trans 'Sahayak Mitra Installed By MCCs' %}</h6>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="mcc-loader" class="text-center py-4 d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div class="table-responsive p-4">
+          <table class="table align-items-center table-stripped" id="sahayak-data-table">
+            <thead>
+              <tr>
+                <th>MCC Name</th>
+                <th>MCC Ex Code</th>
+                <th>MPP Name</th>
+                <th>MPP Ex Code</th>
+                <th>Facilitator</th>
+                <th>Installed</th>
+              </tr>
+            </thead>
+            <tbody id="sahayak-table-body"></tbody>
+            <tfoot id="sahayak-data-footer"></tfoot>
           </table>
         </div>
       </div>
@@ -85,22 +121,30 @@
           data.forEach(function (item) {
             if (item.is_total) {
               totalRow = `
-                  <tr class="table-secondary fw-bold">
-                    <td>Grand Total</td>
-                    <td>${item.total_members}</td>
-                    <td>${item.no_of_pourers}</td>
-                    <td>${item.app_installed_by_member}</td>
-                    <td>${item.installed_percentage}%</td>
-                  </tr>`
+                                                  <tr class="table-secondary fw-bold">
+                                                    <td>Grand Total</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>${item.total_members}</td>
+                                                    <td>${item.no_of_pourers}</td>
+                                                    <td>${item.app_installed_by_member}</td>
+                                                    <td>${item.installed_percentage}%</td>
+                                                  </tr>`
             } else {
               rows += `
-                  <tr>
-                    <td>${item.mcc.mcc_name}</td>
-                    <td>${item.total_members}</td>
-                    <td>${item.no_of_pourers}</td>
-                    <td>${item.app_installed_by_member}</td>
-                    <td>${item.installed_percentage}%</td>
-                  </tr>`
+                                                  <tr>
+                                                    <td>${item.mcc.name}</td>
+                                                    <td>${item.mcc.mcc_ex_code}</td>
+                                                    <td>${item.mpp.name}</td>
+                                                    <td>${item.mpp.mpp_ex_code}</td>
+                                                    <td>${item.fs_name}</td>
+                                                    <td>${item.total_members}</td>
+                                                    <td>${item.no_of_pourers}</td>
+                                                    <td>${item.app_installed_by_member}</td>
+                                                    <td>${item.installed_percentage}%</td>
+                                                  </tr>`
             }
           })
     
@@ -114,8 +158,10 @@
     
           $table.DataTable({
             dom: 'Bfrtip',
-            buttons: ['excel', 'print'],
-            responsive: true
+    
+            buttons: ['excel', 'csv'],
+            responsive: true,
+            pageLength: 50
           })
         },
         error: function () {
@@ -124,10 +170,55 @@
         }
       })
     }
+    function fetchAndSahayakRenderData() {
+      const $table = $('#sahayak-data-table')
+      const $tbody = $('#sahayak-table-body')
+    
+      $.ajax({
+        url: "{% url 'sahayak-app-installed-data' %}",
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function () {
+          $tbody.html('<tr><td colspan="6">Loading...</td></tr>')
+        },
+        success: function (data) {
+          let rows = ''
+    
+          data.forEach(function (item) {
+            rows += `
+                  <tr>
+                    <td>${item.mcc_name}</td>
+                    <td>${item.mcc_ex_code}</td>
+                    <td>${item.mpp_name}</td>
+                    <td>${item.mpp_ex_code}</td>
+                    <td>${item.fs_name}</td>
+                    <td>${item.installed}</td>
+                  </tr>`
+          })
+    
+          $tbody.html(rows)
+    
+          if ($.fn.DataTable.isDataTable($table)) {
+            $table.DataTable().destroy()
+          }
+    
+          $table.DataTable({
+            dom: 'Bfrtip',
+            buttons: ['excel', 'csv'],
+            responsive: true,
+            pageLength:50,
+          })
+        },
+        error: function () {
+          $tbody.html('<tr><td colspan="6">Failed to load data.</td></tr>')
+        }
+      })
+    }
     
     // Fetch data on page load
     $(document).ready(function () {
       fetchAndRenderData()
+      fetchAndSahayakRenderData()
     })
   </script>
 {% endblock %}

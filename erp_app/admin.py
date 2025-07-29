@@ -98,7 +98,7 @@ class MemberMasterAdmin(admin.ModelAdmin):
         'created_at',
         ]
     search_fields = ['member_code', 'member_name', 'mobile_no']
-    list_filter = ['is_active', 'member_type', 'application_date','created_at']
+    list_filter = ['is_active', 'member_type','created_at']
 
 from rangefilter.filters import DateRangeFilter
 @admin.register(MppCollection)
@@ -232,7 +232,7 @@ admin.site.register(Product, ProductAdmin)
 
 class MemberHierarchyViewAdmin(ImportExportModelAdmin,admin.ModelAdmin):
     list_display = [field.name for field in MemberHierarchyView._meta.fields]
-    search_fields = ('member_code',)
+    search_fields = ('member_code','mobile_no')
     list_filter = ('is_active', 'created_at')
 
 admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)

@@ -41,11 +41,22 @@ class BankSerializer(serializers.ModelSerializer):
         model = Bank
         fields = "__all__"
 
+class BankListSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Bank
+        fields = ["bank_code","bank_name","is_active","short_name","ac_no_length"]
+
+class BranchListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = ["branch_code","branch_name","ifsc","is_active","bank_code"]
+
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = "__all__"
-    
+
 class MemberBankSerializer(serializers.ModelSerializer):
     bank = BankSerializer()
     branch = BranchSerializer()

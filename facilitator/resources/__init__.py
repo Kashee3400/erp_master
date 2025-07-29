@@ -1,3 +1,4 @@
 from .vcg_group_resource import VCGroupResource
 from .assigned_mpp import FacilitatorResource
-__all__ = [VCGroupResource,FacilitatorResource]
+from .update_request_resource import UpdateRequestResource
+__all__ = [VCGroupResource,FacilitatorResource,UpdateRequestResource]
