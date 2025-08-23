@@ -112,36 +112,6 @@ def _build_override_message():
     return fcm_message
 
 
-def _build_device_specific_message():
-    notification = {
-        "title": "Test Notification",
-        "titleLocArgs": ["User"],
-        "titleLocKey": "notification_title_key",
-        "body": "Test message body goes here",
-        "bodyLocArgs": ["42"],
-        "bodyLocKey": "notification_body_key",
-        "android": {
-            "channelId": "default_channel",
-            "clickAction": "FLUTTER_NOTIFICATION_CLICK",
-            "color": "#FF0000",
-            "count": 1,
-            "imageUrl": "https://example.com/image.png",
-            "link": "https://kashee.com/details",
-            "priority": 1,
-            "smallIcon": "ic_stat_notification",
-            "sound": "default",
-            "ticker": "You have a new alert",
-            "tag": "test_tag",
-            "visibility": 1,
-        },
-        "apple": {"badge": 3, "sound": "default", "subtitle": "iOS only subtitle"},
-        "web": {
-            "image": "https://example.com/web-image.png",
-            "link": "https://kashee.com",
-        },
-    }
-    return notification
-
 
 def main():
     parser = argparse.ArgumentParser()

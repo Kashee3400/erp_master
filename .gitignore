@@ -15,7 +15,8 @@ sqlite3.db
 
 # Ignore web configuration for development
 web.config-devep
-
+ecommerce
+notifications/models
 cache
 script.py
 scripts.py

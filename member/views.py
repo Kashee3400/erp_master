@@ -603,15 +603,6 @@ class MyHomePage(LoginRequiredMixin, View):
 #         return Response(result, status=status.HTTP_200_OK)
 
 from collections import defaultdict, Counter
-from datetime import datetime, timedelta
-from django.db.models import Q, Count
-from django.db.models.functions import TruncDate
-from django.utils.timezone import make_aware, now
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
-
 
 class AppInstalledData(APIView):
     permission_classes = [AllowAny]
@@ -852,12 +843,7 @@ class SahayakAppInstalledData(APIView):
         for mpp_code in mpp_ex_codes:
             mpp_data = mpp_map.get(mpp_code, {})
             mcc_code = mcc_lookup.get(mpp_data.get("mpp_code"))
-            
-            mcc_data = mcc_map.get(mcc_code, {})
-            if str(mpp_code) == '248':
-                print(f"Mpp Data: {mpp_data}")
-                print(f"mcc_code: {mcc_code}")
-                
+            mcc_data = mcc_map.get(mcc_code, {})                
             result.append({
                 "mcc_code": mcc_code or "NA",
                 "mcc_name": mcc_data.get("name", "NA"),
@@ -2038,6 +2024,7 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["mpp_ex_code"]
+    search_fields = ["mpp_name","mpp_ex_code"]
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):

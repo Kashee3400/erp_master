@@ -11,7 +11,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 SECRET_KEY = config("SECRET_KEY", None)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
-GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+GEOIP_PATH = os.path.join(BASE_DIR, "geoip")
 
 
 LOCAL_APPS = [
@@ -23,7 +23,7 @@ LOCAL_APPS = [
     "feedback",
     "notifications",
     "django_cleanup.apps.CleanupConfig",
-    'taggit',
+    "taggit",
 ]
 
 THIRD_PARTY_APPS = [
@@ -39,7 +39,7 @@ THIRD_PARTY_APPS = [
     "django_ckeditor_5",
     "fontawesomefree",
     "import_export",
-    'corsheaders',
+    "corsheaders",
 ]
 
 ADMIN_APPS = [
@@ -54,14 +54,14 @@ ADMIN_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_APPS = ADMIN_APPS+LOCAL_APPS+THIRD_PARTY_APPS
+INSTALLED_APPS = ADMIN_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
 SITE_ID = 1
 THUMBNAIL_DEBUG = True
 THUMBNAIL_FORMAT = "JPEG"
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -141,14 +141,27 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-# LANGUAGE_CODE = 'hi-IN'
 LANGUAGE_CODE = "en-us"
 
+USE_I18N = True
 USE_L10N = True
+USE_TZ = True
 
 LANGUAGES = [
-    ("hi", "Hindi"),
-    ("en", "English"),
+    ("en", _("English")),
+    ("hi", _("Hindi")),
+    # ("as", _("Assamese")),  # <-- custom
+    # ("bn", _("Bengali")),
+    # ("gu", _("Gujarati")),
+    # ("kn", _("Kannada")),
+    # ("kok", _("Konkani")),
+    # ("ml", _("Malayalam")),
+    # ("mr", _("Marathi")),
+    # ("or", _("Odia")),
+    # ("pa", _("Punjabi")),
+    # ("ta", _("Tamil")),
+    # ("te", _("Telugu")),
+    ("ur", _("Urdu")),
 ]
 
 LOCALE_PATHS = [
@@ -156,10 +169,6 @@ LOCALE_PATHS = [
 ]
 
 TIME_ZONE = "Asia/Kolkata"
-
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -206,14 +215,13 @@ REST_FRAMEWORK = {
         "user": "1000/day",  # Allow 1000 requests per user per day
         "anon": "1000/day",  # Allow 100 requests per anonymous user per day
     },
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'ERP API',
-    'DESCRIPTION': 'API documentation for your ERP platform',
-    'VERSION': '1.0.0',
+    "TITLE": "ERP API",
+    "DESCRIPTION": "API documentation for your ERP platform",
+    "VERSION": "1.0.0",
 }
 
 SIMPLE_JWT = {
@@ -435,18 +443,18 @@ CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
-CELERY_TASK_DEFAULT_QUEUE = 'erp_master_queue'
+CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
 
 CELERY_TASK_QUEUES = {
-    'erp_master_queue': {
-        'exchange': 'erp_exchange',
-        'routing_key': 'erp_task',
+    "erp_master_queue": {
+        "exchange": "erp_exchange",
+        "routing_key": "erp_task",
     }
 }
 
 CELERY_TASK_ROUTES = {
-    'feedback.tasks.*': {'queue': 'erp_master_queue', 'routing_key': 'erp_task'},
-    'notifications.tasks.*': {'queue': 'erp_master_queue', 'routing_key': 'erp_task'},
+    "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+    "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
 }
 
 
@@ -458,8 +466,8 @@ EMAIL_PORT = config("EMAIL_PORT", cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = 'HRMS <hrms@kasheemilk.com>'
-HRMS_DEFAULT_FROM_EMAIL = 'HRMS <hrms@kasheemilk.com>'
+DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
+HRMS_DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
 
 
 SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")

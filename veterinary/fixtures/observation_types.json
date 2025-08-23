@@ -1,0 +1,170 @@
+[
+    {
+        "model": "veterinary.observationtype",
+        "pk": 1,
+        "fields": {
+            "name": "Animal In Heat",
+            "description": "Animal is in estrus (heat) cycle",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 2,
+        "fields": {
+            "name": "Anoestrous / Smooth Ovary",
+            "description": "Animal has inactive ovaries and is not cycling",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 3,
+        "fields": {
+            "name": "Cervicitis",
+            "description": "Inflammation of the cervix",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 4,
+        "fields": {
+            "name": "Cystic Ovary",
+            "description": "Presence of cysts on the ovary",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 5,
+        "fields": {
+            "name": "Metritis",
+            "description": "Inflammation of the uterus",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 6,
+        "fields": {
+            "name": "PD+Ve",
+            "description": "Pregnancy Diagnosis Positive",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 7,
+        "fields": {
+            "name": "PD-Ve",
+            "description": "Pregnancy Diagnosis Negative",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 8,
+        "fields": {
+            "name": "Pyometra",
+            "description": "Uterine infection characterized by pus accumulation",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 9,
+        "fields": {
+            "name": "Silent Heat",
+            "description": "Estrus without visible signs of heat",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 10,
+        "fields": {
+            "name": "Uterine Infection",
+            "description": "General infection of the uterus",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 11,
+        "fields": {
+            "name": "Uterine Weakness",
+            "description": "Weakness or poor uterine contractions",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "veterinary.observationtype",
+        "pk": 12,
+        "fields": {
+            "name": "Loss of Uterine Tone",
+            "description": "Loss of normal tone in the uterus",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "created_at": "2025-01-01T00:00:00Z",
+            "updated_at": "2025-01-01T00:00:00Z"
+        }
+    }
+]

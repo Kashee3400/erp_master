@@ -1,0 +1,162 @@
+[
+    {
+        "model": "veterinary.species",
+        "pk": 1,
+        "fields": {
+            "animal_type": "Cow",
+            "scientific_name": "Bos taurus",
+            "category": "DAIRY",
+            "description": "Domesticated dairy cattle",
+            "average_lifespan": 20,
+            "is_milk_producing": true,
+            "slug": "cow-en",
+            "created_at": "2025-07-29T10:05:00Z",
+            "updated_at": "2025-07-29T10:05:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 101,
+        "fields": {
+            "animal_type": "गाय",
+            "scientific_name": "Bos taurus",
+            "category": "DAIRY",
+            "description": "पालतू डेयरी गाय",
+            "average_lifespan": 20,
+            "is_milk_producing": true,
+            "slug": "cow-hi",
+            "created_at": "2025-07-29T10:05:00Z",
+            "updated_at": "2025-07-29T10:05:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 102,
+        "fields": {
+            "animal_type": "ગાય",
+            "scientific_name": "Bos taurus",
+            "category": "DAIRY",
+            "description": "પાલતુ ડેરી ગાય",
+            "average_lifespan": 20,
+            "is_milk_producing": true,
+            "slug": "cow-gu",
+            "created_at": "2025-07-29T10:05:00Z",
+            "updated_at": "2025-07-29T10:05:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "gu"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 103,
+        "fields": {
+            "animal_type": "ਗਾਂ",
+            "scientific_name": "Bos taurus",
+            "category": "DAIRY",
+            "description": "ਪਾਲਤੂ ਡੇਅਰੀ ਗਾਂ",
+            "average_lifespan": 20,
+            "is_milk_producing": true,
+            "slug": "cow-pa",
+            "created_at": "2025-07-29T10:05:00Z",
+            "updated_at": "2025-07-29T10:05:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "pa"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 2,
+        "fields": {
+            "animal_type": "Buffalo",
+            "scientific_name": "Bubalus bubalis",
+            "category": "DAIRY",
+            "description": "Domesticated water buffalo used in dairy",
+            "average_lifespan": 25,
+            "is_milk_producing": true,
+            "slug": "buffalo-en",
+            "created_at": "2025-07-29T10:06:00Z",
+            "updated_at": "2025-07-29T10:06:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 201,
+        "fields": {
+            "animal_type": "भैंस",
+            "scientific_name": "Bubalus bubalis",
+            "category": "DAIRY",
+            "description": "डेयरी में उपयोग की जाने वाली पालतू भैंस",
+            "average_lifespan": 25,
+            "is_milk_producing": true,
+            "slug": "buffalo-hi",
+            "created_at": "2025-07-29T10:06:00Z",
+            "updated_at": "2025-07-29T10:06:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 202,
+        "fields": {
+            "animal_type": "ભેંસ",
+            "scientific_name": "Bubalus bubalis",
+            "category": "DAIRY",
+            "description": "ડેરીમાં ઉપયોગમાં લેવાતી પालतુ ભેંસ",
+            "average_lifespan": 25,
+            "is_milk_producing": true,
+            "slug": "buffalo-gu",
+            "created_at": "2025-07-29T10:06:00Z",
+            "updated_at": "2025-07-29T10:06:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "gu"
+        }
+    },
+    {
+        "model": "veterinary.species",
+        "pk": 203,
+        "fields": {
+            "animal_type": "ਭੈਂਸ",
+            "scientific_name": "Bubalus bubalis",
+            "category": "DAIRY",
+            "description": "ਡੇਅਰੀ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਘਰੇਲੂ ਭੈਂਸ",
+            "average_lifespan": 25,
+            "is_milk_producing": true,
+            "slug": "buffalo-pa",
+            "created_at": "2025-07-29T10:06:00Z",
+            "updated_at": "2025-07-29T10:06:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "pa"
+        }
+    }
+]

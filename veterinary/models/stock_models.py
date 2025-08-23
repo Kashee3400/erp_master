@@ -4,6 +4,8 @@ from django.db import models
 from django.conf import settings
 from .common_models import BaseModel, User
 from django.utils import timezone
+from datetime import timedelta
+
 
 class Location(BaseModel):
     name = models.CharField(
@@ -336,259 +338,6 @@ class UserMedicineStock(BaseModel):
     sync = models.BooleanField(
         default=False, help_text="Indicates if this record has been synced"
     )
-
-    threshold_quantity = models.FloatField(
-        default=0,
-        help_text="Minimum required quantity for this user to trigger a refill reminder",
-    )
-
-    allocated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="stock_allocations_made",
-        help_text="User who made the allocation (admin or supervisor)",
-    )
-
-    def remaining_quantity(self):
-        return self.allocated_quantity - self.used_quantity
-
-    def is_below_threshold(self):
-        return self.remaining_quantity() <= self.min_threshold
-
-    def __str__(self):
-        return f"{self.user.username} - {self.medicine_stock.medicine.medicine} - {self.allocated_quantity} {self.medicine_stock.medicine.category.unit_of_quantity}"
-
-    class Meta:
-        db_table = "tbl_user_medicine_stock"
-        verbose_name = "User Medicine Allocation"
-        verbose_name_plural = "User Medicine Allocations"
-        ordering = ["-allocation_date"]
-        indexes = [
-            models.Index(fields=["user"]),
-            models.Index(fields=["medicine_stock"]),
-        ]
-
-
-from datetime import timedelta
-
-
-class MedicineStockTransferLog(models.Model):
-    from_location = models.ForeignKey(
-        "Location",
-        on_delete=models.CASCADE,
-        related_name="outgoing_transfers",
-        help_text=_("Location sending the medicine"),
-    )
-
-    to_location = models.ForeignKey(
-        "Location",
-        on_delete=models.CASCADE,
-        related_name="incoming_transfers",
-        help_text=_("Location receiving the medicine"),
-    )
-
-    medicine_stock = models.ForeignKey(
-        "MedicineStock",
-        on_delete=models.CASCADE,
-        help_text=_("The batch of medicine being transferred"),
-    )
-
-    quantity_transferred = models.FloatField(
-        help_text=_("Exact quantity of medicine transferred from stock")
-    )
-
-    transfer_type = models.CharField(
-        max_length=10,
-        choices=TransferTypeChoices.choices,
-        default=TransferTypeChoices.OUTWARD,
-        help_text=_("Type of transfer (inward, outward, return)"),
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=TransferStatusChoices.choices,
-        default=TransferStatusChoices.PENDING,
-        help_text=_("Current status of the stock transfer"),
-    )
-
-    batch_number = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        help_text=_("Snapshot of the batch number at the time of transfer"),
-    )
-
-    expiry_date = models.DateField(
-        blank=True,
-        null=True,
-        help_text=_("Snapshot of expiry date at time of transfer"),
-    )
-
-    transferred_by = models.ForeignKey(
-        "User",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="medicine_transfers_made",
-        help_text=_("User who initiated the stock transfer"),
-    )
-
-    received_by = models.ForeignKey(
-        "User",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="medicine_transfers_received",
-        help_text=_("User who received the stock at destination"),
-    )
-
-    transfer_date = models.DateTimeField(
-        auto_now_add=True,
-        help_text=_("Timestamp when the stock was transferred"),
-    )
-
-    received_at = models.DateTimeField(
-        blank=True,
-        null=True,
-        help_text=_("Timestamp when stock was received and confirmed"),
-    )
-
-    remarks = models.TextField(
-        blank=True,
-        null=True,
-        help_text=_("Optional comments or notes on the transfer"),
-    )
-
-    unit_cost = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text=_("Cost per unit for tracking valuation"),
-    )
-
-    total_cost = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text=_("Total cost of transferred quantity"),
-    )
-
-    class Meta:
-        db_table = "tbl_medicine_stock_transfer_log"
-        verbose_name = _("Medicine Stock Transfer Log")
-        verbose_name_plural = _("Medicine Stock Transfer Logs")
-        ordering = ["-transfer_date"]
-        indexes = [
-            models.Index(fields=["medicine_stock"]),
-            models.Index(fields=["from_location", "to_location"]),
-            models.Index(fields=["status"]),
-        ]
-
-    def __str__(self):
-        return f"Transfer {self.medicine_stock} from {self.from_location} to {self.to_location} ({self.quantity_transferred})"
-
-    def save(self, *args, **kwargs):
-        # Auto-populate batch and expiry snapshot
-        if self.medicine_stock:
-            if not self.batch_number:
-                self.batch_number = self.medicine_stock.batch_number
-            if not self.expiry_date:
-                self.expiry_date = self.medicine_stock.expiry_date
-
-        # Compute total cost if applicable
-        if self.unit_cost and self.quantity_transferred:
-            self.total_cost = self.unit_cost * self.quantity_transferred
-
-        super().save(*args, **kwargs)
-
-    @property
-    def is_expired(self):
-        return self.expiry_date and self.expiry_date <= timezone.now().date()
-
-    @classmethod
-    def get_expiring_transfers(cls, within_days=30):
-        """Get batches that are expiring within the given days"""
-        threshold_date = timezone.now().date() + timedelta(days=within_days)
-        return cls.objects.filter(expiry_date__lte=threshold_date)
-
-
-class MedicineStockAudit(models.Model):
-    medicine = models.ForeignKey(
-        Medicine, on_delete=models.CASCADE, related_name="audit_logs"
-    )
-
-    transaction_type = models.CharField(
-        max_length=10,
-        choices=TransactionTypeChoices.choices,
-        help_text="Type of stock transaction",
-    )
-
-    quantity = models.PositiveIntegerField(help_text="Quantity added/removed")
-
-    description = models.TextField(
-        null=True, blank=True, help_text="Optional notes for the stock change"
-    )
-
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="medicine_stock_changes",
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "tbl_medicine_stock_audit"
-        verbose_name = "Medicine Stock Audit"
-        verbose_name_plural = "Medicine Stock Audits"
-        ordering = ["-created_at"]
-        indexes = [
-            models.Index(fields=["medicine", "transaction_type"]),
-        ]
-
-    def __str__(self):
-        return f"{self.transaction_type} - {self.medicine.name} ({self.quantity})"
-
-
-class UserMedicineStock(BaseModel):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="medicine_stocks",
-        help_text="User (e.g., vet or worker) allocated with this medicine",
-    )
-    medicine_stock = models.ForeignKey(
-        MedicineStock,
-        on_delete=models.CASCADE,
-        related_name="user_allocations",
-        help_text="Batch and quantity of the medicine stock allocated",
-    )
-    allocated_quantity = models.FloatField(
-        default=0,
-        help_text="Quantity allocated from the stock (e.g., 10 tablets or 50 ml)",
-    )
-    allocation_date = models.DateField(
-        auto_now_add=True, help_text="Date on which the stock was allocated"
-    )
-    remarks = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Optional notes for the allocation (e.g., emergency supply)",
-    )
-    used_quantity = models.PositiveIntegerField(
-        default=0, help_text="Quantity already used by the user"
-    )
-    min_threshold = models.PositiveIntegerField(
-        default=0, help_text="Threshold value for reminder when stock is low"
-    )
-    sync = models.BooleanField(
-        default=False, help_text="Indicates if this record has been synced"
-    )
     threshold_quantity = models.FloatField(
         default=0,
         help_text="Minimum required quantity for this user to trigger a refill reminder",
@@ -670,6 +419,187 @@ class UserMedicineTransaction(models.Model):
 
     def __str__(self):
         return f"{self.user_medicine_stock.user.username} - {self.get_action_display()}"
+
+
+class MedicineStockAudit(models.Model):
+    medicine = models.ForeignKey(
+        Medicine, on_delete=models.CASCADE, related_name="audit_logs"
+    )
+
+    transaction_type = models.CharField(
+        max_length=10,
+        choices=TransactionTypeChoices.choices,
+        help_text="Type of stock transaction",
+    )
+
+    quantity = models.PositiveIntegerField(help_text="Quantity added/removed")
+
+    description = models.TextField(
+        null=True, blank=True, help_text="Optional notes for the stock change"
+    )
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="medicine_stock_changes",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "tbl_medicine_stock_audit"
+        verbose_name = "Medicine Stock Audit"
+        verbose_name_plural = "Medicine Stock Audits"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["medicine", "transaction_type"]),
+        ]
+
+    def __str__(self):
+        return f"{self.transaction_type} - {self.medicine.name} ({self.quantity})"
+
+
+class MedicineStockTransferLog(models.Model):
+    from_location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        related_name="outgoing_transfers",
+        help_text=_("Location sending the medicine"),
+    )
+
+    to_location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        related_name="incoming_transfers",
+        help_text=_("Location receiving the medicine"),
+    )
+
+    medicine_stock = models.ForeignKey(
+        MedicineStock,
+        on_delete=models.CASCADE,
+        help_text=_("The batch of medicine being transferred"),
+    )
+
+    quantity_transferred = models.FloatField(
+        help_text=_("Exact quantity of medicine transferred from stock")
+    )
+
+    transfer_type = models.CharField(
+        max_length=10,
+        choices=TransferTypeChoices.choices,
+        default=TransferTypeChoices.OUTWARD,
+        help_text=_("Type of transfer (inward, outward, return)"),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=TransferStatusChoices.choices,
+        default=TransferStatusChoices.PENDING,
+        help_text=_("Current status of the stock transfer"),
+    )
+
+    batch_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text=_("Snapshot of the batch number at the time of transfer"),
+    )
+
+    expiry_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text=_("Snapshot of expiry date at time of transfer"),
+    )
+
+    transferred_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="medicine_transfers_made",
+        help_text=_("User who initiated the stock transfer"),
+    )
+
+    received_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="medicine_transfers_received",
+        help_text=_("User who received the stock at destination"),
+    )
+
+    transfer_date = models.DateTimeField(
+        auto_now_add=True,
+        help_text=_("Timestamp when the stock was transferred"),
+    )
+
+    received_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text=_("Timestamp when stock was received and confirmed"),
+    )
+
+    remarks = models.TextField(
+        blank=True,
+        null=True,
+        help_text=_("Optional comments or notes on the transfer"),
+    )
+
+    unit_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text=_("Cost per unit for tracking valuation"),
+    )
+
+    total_cost = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text=_("Total cost of transferred quantity"),
+    )
+
+    class Meta:
+        db_table = "tbl_medicine_stock_transfer_log"
+        verbose_name = _("Medicine Stock Transfer Log")
+        verbose_name_plural = _("Medicine Stock Transfer Logs")
+        ordering = ["-transfer_date"]
+        indexes = [
+            models.Index(fields=["medicine_stock"]),
+            models.Index(fields=["from_location", "to_location"]),
+            models.Index(fields=["status"]),
+        ]
+
+    def __str__(self):
+        return f"Transfer {self.medicine_stock} from {self.from_location} to {self.to_location} ({self.quantity_transferred})"
+
+    def save(self, *args, **kwargs):
+        # Auto-populate batch and expiry snapshot
+        if self.medicine_stock:
+            if not self.batch_number:
+                self.batch_number = self.medicine_stock.batch_number
+            if not self.expiry_date:
+                self.expiry_date = self.medicine_stock.expiry_date
+
+        # Compute total cost if applicable
+        if self.unit_cost and self.quantity_transferred:
+            self.total_cost = self.unit_cost * self.quantity_transferred
+
+        super().save(*args, **kwargs)
+
+    @property
+    def is_expired(self):
+        return self.expiry_date and self.expiry_date <= timezone.now().date()
+
+    @classmethod
+    def get_expiring_transfers(cls, within_days=30):
+        """Get batches that are expiring within the given days"""
+        threshold_date = timezone.now().date() + timedelta(days=within_days)
+        return cls.objects.filter(expiry_date__lte=threshold_date)
 
 
 def transfer_stock_to_user(medicine, quantity, user, admin_user):

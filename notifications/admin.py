@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AppNotification
+from .model import AppNotification
 
 
 @admin.register(AppNotification)

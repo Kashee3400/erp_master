@@ -11,15 +11,6 @@ CACHES = {
         }
     }
 }
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://172.18.91.242:6379/1',
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
 
 DB_ENGINE = config("DB_ENGINE", None)
 

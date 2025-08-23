@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import AppNotification
+from .model import AppNotification
 from django.contrib.auth import get_user_model
+from .model import Notification, NotificationTemplate, NotificationPreferences
 
 User = get_user_model()
 
@@ -54,3 +55,61 @@ class AppNotificationSerializer(serializers.ModelSerializer):
         if validated_data.get("is_read") and not instance.is_read:
             instance.mark_as_read()
         return super().update(instance, validated_data)
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    """Serializer for notification instances"""
+
+    template_name = serializers.CharField(source="template.name", read_only=True)
+    category = serializers.CharField(source="template.category", read_only=True)
+    sender_name = serializers.CharField(source="sender.get_full_name", read_only=True)
+    time_since = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = [
+            "uuid",
+            "template_name",
+            "category",
+            "title",
+            "body",
+            "notification_type",
+            "priority",
+            "deep_link_url",
+            "app_route",
+            "is_read",
+            "read_at",
+            "created_at",
+            "sender_name",
+            "time_since",
+            "expires_at",
+            "status",
+        ]
+        read_only_fields = ["uuid", "created_at", "read_at"]
+
+    def get_time_since(self, obj):
+        """Get human-readable time since creation"""
+        from django.utils.timesince import timesince
+
+        return timesince(obj.created_at)
+
+
+class NotificationPreferencesSerializer(serializers.ModelSerializer):
+    """Serializer for notification preferences"""
+
+    template_name = serializers.CharField(source="template.name", read_only=True)
+
+    class Meta:
+        model = NotificationPreferences
+        fields = [
+            "id",
+            "template_name",
+            "category",
+            "allow_push",
+            "allow_email",
+            "allow_sms",
+            "allow_in_app",
+            "quiet_hours_start",
+            "quiet_hours_end",
+            "timezone",
+        ]

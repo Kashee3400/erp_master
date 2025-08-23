@@ -1,0 +1,3473 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-29 17:32+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\erp_app\apps.py:9
+msgid "Kashee ERP"
+msgstr "ಕಾಶೀ ಇಆರ್ಪಿ"
+
+#: .\erp_app\models.py:2336
+msgid "Billing Member Master Code"
+msgstr "ಬಿಲ್ಲಿಂಗ್ ಸದಸ್ಯ ಮಾಸ್ಟರ್ ಕೋಡ್"
+
+#: .\erp_app\models.py:2337
+msgid "Company Code"
+msgstr "ಕಂಪನಿ ಸಂಹಿತೆ"
+
+#: .\erp_app\models.py:2338
+msgid "Plant Code"
+msgstr "ಸಸ್ಯ ಸಂಕೇತ"
+
+#: .\erp_app\models.py:2339
+msgid "MCC CODE"
+msgstr "ಎಮ್‌ಸಿಸಿ ಸಂಹಿತೆ"
+
+#: .\erp_app\models.py:2340
+msgid "BMC CODE"
+msgstr "ಬಿಎಂಸಿ ಕೋಡ್"
+
+#: .\erp_app\models.py:2341
+msgid "MPP CODE"
+msgstr "ಎಂಪಿಪಿ ಕೋಡ್"
+
+#: .\erp_app\models.py:10914
+msgid "Bank"
+msgstr "ದಂಗ"
+
+#: .\erp_app\models.py:10916
+msgid "Bank Branch"
+msgstr "ಬ್ಯಾಂಕ್ ಶಾಖೆ"
+
+#: .\erp_app\models.py:13303 .\facilitator\models\vcg_model.py:25
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:100
+msgid "MPP"
+msgstr "ಎಂಪಿಪಿ"
+
+#: .\erp_app\models.py:13306
+msgid "Shift"
+msgstr "ಸ್ಥಳಾಂತರ"
+
+#: .\erp_app\models.py:13335
+msgid "Reference"
+msgstr "ಉಲ್ಲೇಖ"
+
+#: .\erp_app\models.py:14341
+msgid "From Shift"
+msgstr "ಶಿಫ್ಟ್‌ನಿಂದ"
+
+#: .\erp_app\models.py:14344
+msgid "To Shift"
+msgstr "ಸ್ಥಳಾಂತರಿಸಲು"
+
+#: .\erp_app\views.py:204
+#, python-brace-format
+msgid "No member found on this mobile no {self.request.user.username}"
+msgstr ""
+"ಈ ಮೊಬೈಲ್‌ನಲ್ಲಿ ಯಾವುದೇ ಸದಸ್ಯರು ಕಂಡುಬಂದಿಲ್ಲ {self.request.user.username}"
+
+#: .\erp_app\views.py:236
+msgid "No Data Found"
+msgstr "ಯಾವುದೇ ಡೇಟಾ ಕಂಡುಬಂದಿಲ್ಲ"
+
+#: .\erp_master\settings\base.py:151 .\member\models.py:132
+msgid "English"
+msgstr "ಇಂಗ್ಲಿಷ್"
+
+#: .\erp_master\settings\base.py:152 .\member\models.py:133
+msgid "Hindi"
+msgstr "ಹಿಂದಿ"
+
+#: .\erp_master\settings\base.py:164
+msgid "Urdu"
+msgstr "ಮರಿ"
+
+#: .\erp_master\settings\base.py:261 .\member\views.py:1330
+#: .\veterinary\choices\choices.py:71
+msgid "January"
+msgstr "ಜನವರಿ"
+
+#: .\erp_master\settings\base.py:262 .\member\views.py:1331
+#: .\veterinary\choices\choices.py:72
+msgid "February"
+msgstr "ಫೆಬ್ರವರಿ"
+
+#: .\erp_master\settings\base.py:263 .\member\views.py:1332
+#: .\veterinary\choices\choices.py:73
+msgid "March"
+msgstr "ಚಾಚು"
+
+#: .\erp_master\settings\base.py:264 .\member\views.py:1333
+#: .\veterinary\choices\choices.py:74
+msgid "April"
+msgstr "ಏಪ್ರಿಲ್"
+
+#: .\erp_master\settings\base.py:265 .\member\views.py:1334
+#: .\veterinary\choices\choices.py:75
+msgid "May"
+msgstr "ಮೇ"
+
+#: .\erp_master\settings\base.py:266 .\member\views.py:1335
+#: .\veterinary\choices\choices.py:76
+msgid "June"
+msgstr "ಜೂನ್"
+
+#: .\erp_master\settings\base.py:267 .\member\views.py:1336
+#: .\veterinary\choices\choices.py:77
+msgid "July"
+msgstr "ಜುಲೈ"
+
+#: .\erp_master\settings\base.py:268 .\member\views.py:1337
+#: .\veterinary\choices\choices.py:78
+msgid "August"
+msgstr "ಆಗಸ್ಟ್"
+
+#: .\erp_master\settings\base.py:269 .\member\views.py:1338
+#: .\veterinary\choices\choices.py:79
+msgid "September"
+msgstr "ಸೆಪ್ಟಾರಿ"
+
+#: .\erp_master\settings\base.py:270 .\member\views.py:1339
+#: .\veterinary\choices\choices.py:80
+msgid "October"
+msgstr "ಅಕ್ಟೋಬರ್"
+
+#: .\erp_master\settings\base.py:271 .\member\views.py:1340
+#: .\veterinary\choices\choices.py:81
+msgid "November"
+msgstr "ನವೆಂಬರ್"
+
+#: .\erp_master\settings\base.py:272 .\member\views.py:1341
+#: .\veterinary\choices\choices.py:82
+msgid "December"
+msgstr "ಡಿಸೆಂಬರ್"
+
+#: .\facilitator\admin.py:200
+msgid "Meeting Details"
+msgstr "ಸಭೆ ವಿವರಗಳು"
+
+#: .\facilitator\admin.py:214
+msgid "Location Details"
+msgstr "ಸ್ಥಳ ವಿವರಗಳು"
+
+#: .\facilitator\admin.py:221
+msgid "Timestamps"
+msgstr "ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್ಸ್"
+
+#: .\facilitator\admin.py:227
+msgid "Sync Information"
+msgstr "ಮಾಹಿತಿ ಮಾಹಿತಿ"
+
+#: .\facilitator\choices.py:8 .\facilitator\models\member_update_model.py:130
+#: .\feedback\models\feedback_model.py:134
+msgid "Mobile Number"
+msgstr "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ"
+
+#: .\facilitator\choices.py:9
+msgid "Bank Account Details"
+msgstr "ಬ್ಯಾಂಕ್ ಖಾತೆ ವಿವರಗಳು"
+
+#: .\facilitator\choices.py:13 .\member\models.py:78
+msgid "Sahayak"
+msgstr "ಸಹಕ"
+
+#: .\facilitator\choices.py:14
+msgid "Member"
+msgstr "ಸದಸ್ಯ"
+
+#: .\facilitator\choices.py:18 .\notifications\models.py:19
+#: .\veterinary\choices\choices.py:143 .\veterinary\choices\choices.py:165
+#: .\veterinary\choices\choices.py:177
+msgid "Pending"
+msgstr "ಬಾಕಿ ಉಳಿದಿದೆ"
+
+#: .\facilitator\choices.py:19
+msgid "Rejected"
+msgstr "ತಿರಸ್ಕರಿಸಿದ"
+
+#: .\facilitator\choices.py:20 .\facilitator\choices.py:25
+msgid "Updated"
+msgstr "ನವೀಕರಿಸಿದ"
+
+#: .\facilitator\choices.py:24
+msgid "Created"
+msgstr "ರಚಿಸಿದ"
+
+#: .\facilitator\choices.py:26 .\facilitator\models\member_update_model.py:44
+#: .\facilitator\models\vcg_model.py:104 .\notifications\models.py:130
+msgid "Deleted"
+msgstr "ಅಳಿಸಿದ"
+
+#: .\facilitator\choices.py:27
+msgid "Status Changed"
+msgstr "ಸ್ಥಿತಿ ಬದಲಾಗಿದೆ"
+
+#: .\facilitator\choices.py:28
+msgid "Reviewed"
+msgstr "ಪರಿಶೀಲಿಸಿದ"
+
+#: .\facilitator\choices.py:32
+msgid "Passbook Copy"
+msgstr "ಪಾಸ್ಬುಕ್ ನಕಲು"
+
+#: .\facilitator\choices.py:33
+msgid "Application Letter"
+msgstr "ಅರ್ಜಿ ಪತ್ರ"
+
+#: .\facilitator\choices.py:34
+msgid "Affidavit Copy"
+msgstr "ಅಫಿಡವಿಟ್ ಪ್ರತಿ"
+
+#: .\facilitator\models\facilitator_model.py:12
+#: .\facilitator\models\facilitator_model.py:160
+msgid "API Key"
+msgstr "ಎಪಿಐ ಕೀಲಿ"
+
+#: .\facilitator\models\facilitator_model.py:13
+msgid "Unique identifier for the API key."
+msgstr "API ಕೀಲಿಗಾಗಿ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\facilitator\models\facilitator_model.py:19
+#: .\facilitator\models\user_profile_model.py:24
+#: .\facilitator\models\vcg_model.py:119 .\member\models.py:49
+msgid "User"
+msgstr "ಉಪಾಧ್ಯಾಯ"
+
+#: .\facilitator\models\facilitator_model.py:20
+msgid "The user to whom this API key belongs."
+msgstr "ಈ API ಕೀ ಯಾರಿಗೆ ಸೇರಿದೆ."
+
+#: .\facilitator\models\facilitator_model.py:24
+#: .\facilitator\models\facilitator_model.py:245
+#: .\facilitator\models\user_profile_model.py:74
+#: .\facilitator\models\vcg_model.py:69 .\facilitator\models\vcg_model.py:285
+#: .\facilitator\models\vcg_model.py:333 .\facilitator\models\vcg_model.py:383
+#: .\facilitator\models\vcg_model.py:416 .\facilitator\models\vcg_model.py:578
+#: .\feedback\models\feedback_model.py:164 .\member\models.py:177
+#: .\member\models.py:230 .\notifications\models.py:124
+#: .\veterinary\models\common_models.py:23
+msgid "Created At"
+msgstr "ನಲ್ಲಿ ರಚಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:25
+msgid "The date and time when the API key was created."
+msgstr "ಎಪಿಐ ಕೀಲಿಯನ್ನು ರಚಿಸಿದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:30
+msgid "Expiration Date"
+msgstr "ಮುಕ್ತಾಯ ದಿನಾಂಕ"
+
+#: .\facilitator\models\facilitator_model.py:31
+msgid "The date and time when the API key expires."
+msgstr "ಎಪಿಐ ಕೀಲಿಯು ಮುಕ್ತಾಯಗೊಂಡ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:36
+msgid "Valid From"
+msgstr "ನಿಂದ ಮಾನ್ಯವಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:37
+msgid "The date and time from which the API key becomes valid."
+msgstr "ಎಪಿಐ ಕೀಲಿಯು ಮಾನ್ಯವಾಗುವ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:41
+#: .\veterinary\models\common_models.py:42
+msgid "Is Active"
+msgstr "ಸಕ್ರಿಯವಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:42
+msgid "Indicates whether the API key is active."
+msgstr "API ಕೀ ಸಕ್ರಿಯವಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\facilitator_model.py:47
+#: .\facilitator\models\member_update_model.py:370
+#: .\veterinary\models\case_models.py:681
+#: .\veterinary\models\stock_models.py:215
+msgid "Description"
+msgstr "ವಿವರಣೆ"
+
+#: .\facilitator\models\facilitator_model.py:48
+msgid "A description of the purpose or use case for the API key."
+msgstr "API ಕೀಲಿಗಾಗಿ ಉದ್ದೇಶ ಅಥವಾ ಬಳಕೆಯ ಪ್ರಕರಣದ ವಿವರಣೆ."
+
+#: .\facilitator\models\facilitator_model.py:54
+msgid "Usage Count"
+msgstr "ಬಳಕೆಯ ಲೆಕ್ಕ"
+
+#: .\facilitator\models\facilitator_model.py:55
+msgid "The number of times this API key has been used."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಎಷ್ಟು ಬಾರಿ ಬಳಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\facilitator_model.py:60
+msgid "Maximum Usage Limit"
+msgstr "ಗರಿಷ್ಠ ಬಳಕೆಯ ಮಿತಿ"
+
+#: .\facilitator\models\facilitator_model.py:61
+msgid "The maximum number of requests allowed for this API key."
+msgstr "ಈ API ಕೀಲಿಗಾಗಿ ಗರಿಷ್ಠ ಸಂಖ್ಯೆಯ ವಿನಂತಿಗಳನ್ನು ಅನುಮತಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\facilitator_model.py:66
+msgid "Usage Reset Time"
+msgstr "ಬಳಕೆ ಮರುಹೊಂದಿಸಿ ಸಮಯ"
+
+#: .\facilitator\models\facilitator_model.py:67
+msgid "The time at which the usage count will reset."
+msgstr "ಬಳಕೆಯ ಎಣಿಕೆ ಮರುಹೊಂದಿಸುವ ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:71
+msgid "Requests Per Day"
+msgstr "ದಿನಕ್ಕೆ ವಿನಂತಿಗಳು"
+
+#: .\facilitator\models\facilitator_model.py:72
+msgid "The maximum number of requests allowed per day for this API key."
+msgstr "ಈ API ಕೀಲಿಗಾಗಿ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ ಸಂಖ್ಯೆಯ ವಿನಂತಿಗಳನ್ನು ಅನುಮತಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\facilitator_model.py:76
+msgid "Requests Per Hour"
+msgstr "ಗಂಟೆಗೆ ವಿನಂತಿಗಳು"
+
+#: .\facilitator\models\facilitator_model.py:77
+msgid "The maximum number of requests allowed per hour for this API key."
+msgstr "ಈ API ಕೀಲಿಗಾಗಿ ಗಂಟೆಗೆ ಗರಿಷ್ಠ ಸಂಖ್ಯೆಯ ವಿನಂತಿಗಳನ್ನು ಅನುಮತಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\facilitator_model.py:85
+msgid "Permissions"
+msgstr "ಅನುಮತಿಸುವಿಕೆ"
+
+#: .\facilitator\models\facilitator_model.py:86
+msgid "The scope of actions allowed by this API key (e.g., 'read', 'write')."
+msgstr "ಈ API ಕೀಲಿಯಿಂದ ಅನುಮತಿಸಲಾದ ಕ್ರಿಯೆಗಳ ವ್ಯಾಪ್ತಿ (ಉದಾ., 'ಓದಿ', 'ಬರೆಯಿರಿ')."
+
+#: .\facilitator\models\facilitator_model.py:91
+msgid "Allowed IPs"
+msgstr "ಐಪಿಎಸ್ ಅನ್ನು ಅನುಮತಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:92
+msgid "Comma-separated list of IP addresses allowed to use this API key."
+msgstr ""
+"ಈ API ಕೀಲಿಯನ್ನು ಬಳಸಲು ಅನುಮತಿಸಲಾದ ಐಪಿ ವಿಳಾಸಗಳ ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಟ್ಟ ಪಟ್ಟಿ."
+
+#: .\facilitator\models\facilitator_model.py:97
+msgid "Allowed URLs"
+msgstr "ಅನುಮತಿಸಲಾದ URL ಗಳು"
+
+#: .\facilitator\models\facilitator_model.py:98
+msgid "Comma-separated list of URLs or endpoints this API key can access."
+msgstr ""
+"ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಟ್ಟ URL ಗಳು ಅಥವಾ ಅಂತಿಮ ಬಿಂದುಗಳ ಪಟ್ಟಿ ಈ API ಕೀಲಿಯು "
+"ಪ್ರವೇಶಿಸಬಹುದು."
+
+#: .\facilitator\models\facilitator_model.py:105
+msgid "Last Used At"
+msgstr "ಕೊನೆಯದಾಗಿ ಬಳಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:106
+msgid "The date and time when this API key was last used."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಕೊನೆಯದಾಗಿ ಬಳಸಿದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು."
+
+#: .\facilitator\models\facilitator_model.py:113 .\member\models.py:181
+msgid "Created By"
+msgstr "ರಚಿಸಿದ"
+
+#: .\facilitator\models\facilitator_model.py:114
+msgid "The user who created this API key."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ರಚಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\facilitator\models\facilitator_model.py:122
+msgid "Last Used By"
+msgstr "ಕೊನೆಯದಾಗಿ ಬಳಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:123
+msgid "The last user who used this API key."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಬಳಸಿದ ಕೊನೆಯ ಬಳಕೆದಾರ."
+
+#: .\facilitator\models\facilitator_model.py:127
+msgid "Is Revoked"
+msgstr "ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:128
+msgid "Indicates whether the API key has been revoked."
+msgstr "ಎಪಿಐ ಕೀಲಿಯನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\facilitator_model.py:133
+msgid "Revoked At"
+msgstr "ನಲ್ಲಿ ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:134
+msgid "The date and time when this API key was revoked."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳುವ ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು."
+
+#: .\facilitator\models\facilitator_model.py:142
+msgid "Revoked By"
+msgstr "ಮೂಲಕ ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:143
+msgid "The user who revoked this API key."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಹಿಂತೆಗೆದುಕೊಂಡ ಬಳಕೆದಾರ."
+
+#: .\facilitator\models\facilitator_model.py:147
+msgid "Failed Attempts"
+msgstr "ವಿಫಲ ಪ್ರಯತ್ನಗಳು"
+
+#: .\facilitator\models\facilitator_model.py:148
+msgid "The number of failed authentication attempts using this API key."
+msgstr "ಈ API ಕೀಲಿಯನ್ನು ಬಳಸಿಕೊಂಡು ವಿಫಲವಾದ ದೃ hentic ೀಕರಣ ಪ್ರಯತ್ನಗಳ ಸಂಖ್ಯೆ."
+
+#: .\facilitator\models\facilitator_model.py:161
+msgid "API Keys"
+msgstr "ಎಪಿಐ ಕೀಗಳು"
+
+#: .\facilitator\models\facilitator_model.py:177
+msgid "Facilitator"
+msgstr "ಸೌಕರ್ಯಕಾರ"
+
+#: .\facilitator\models\facilitator_model.py:180
+msgid "The user assigned as the facilitator for this MPP."
+msgstr "ಈ ಎಂಪಿಪಿಗೆ ಫೆಸಿಲಿಟೇಟರ್ ಆಗಿ ನಿಯೋಜಿಸಲಾದ ಬಳಕೆದಾರರು."
+
+#: .\facilitator\models\facilitator_model.py:185
+#: .\facilitator\models\member_update_model.py:75
+#: .\facilitator\models\vcg_model.py:143 .\facilitator\models\vcg_model.py:536
+#: .\feedback\models\feedback_model.py:94 .\member\models.py:55
+#: .\member\models.py:87 .\member\models.py:222
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:103
+msgid "MPP Code"
+msgstr "ಎಂಪಿಪಿ ಕೋಡ್"
+
+#: .\facilitator\models\facilitator_model.py:186
+#: .\facilitator\models\member_update_model.py:77
+msgid ""
+"A unique code assigned to the MPP. This code must be 9 characters long."
+msgstr "ಎಂಪಿಪಿಗೆ ನಿಯೋಜಿಸಲಾದ ಅನನ್ಯ ಕೋಡ್. ಈ ಕೋಡ್ 9 ಅಕ್ಷರಗಳಷ್ಟು ಉದ್ದವಾಗಿರಬೇಕು."
+
+#: .\facilitator\models\facilitator_model.py:192
+#: .\facilitator\models\member_update_model.py:84
+msgid "MPP External Code"
+msgstr "ಎಂಪಿಪಿ ಬಾಹ್ಯ ಕೋಡ್"
+
+#: .\facilitator\models\facilitator_model.py:193
+#: .\facilitator\models\member_update_model.py:85
+msgid "An external code for the MPP, if applicable."
+msgstr "ಅನ್ವಯವಾಗಿದ್ದರೆ ಎಂಪಿಪಿಗೆ ಬಾಹ್ಯ ಕೋಡ್."
+
+#: .\facilitator\models\facilitator_model.py:199
+#: .\facilitator\models\member_update_model.py:91
+msgid "MPP Short Name"
+msgstr "ಎಂಪಿಪಿ ಕಿರು ಹೆಸರು"
+
+#: .\facilitator\models\facilitator_model.py:200
+#: .\facilitator\models\member_update_model.py:92
+msgid "A short name or abbreviation for the MPP."
+msgstr "ಎಂಪಿಪಿಗೆ ಸಣ್ಣ ಹೆಸರು ಅಥವಾ ಸಂಕ್ಷೇಪಣ."
+
+#: .\facilitator\models\facilitator_model.py:206
+#: .\facilitator\models\member_update_model.py:98
+#: .\facilitator\models\vcg_model.py:128 .\facilitator\models\vcg_model.py:525
+#: .\member\models.py:90
+msgid "MPP Name"
+msgstr "ಎಂಪಿಪಿ ಹೆಸರು"
+
+#: .\facilitator\models\facilitator_model.py:207
+#: .\facilitator\models\member_update_model.py:99
+msgid "The full name of the MPP."
+msgstr "ಎಂಪಿಪಿಯ ಪೂರ್ಣ ಹೆಸರು."
+
+#: .\facilitator\models\facilitator_model.py:213
+msgid "MPP Type"
+msgstr "ಎಂಪಿಪಿ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\facilitator_model.py:214
+msgid "The type/category of the MPP."
+msgstr "ಎಂಪಿಪಿಯ ಪ್ರಕಾರ/ವರ್ಗ."
+
+#: .\facilitator\models\facilitator_model.py:220
+msgid "MPP Logo URL"
+msgstr "ಎಂಪಿಪಿ ಲೋಗೋ URL"
+
+#: .\facilitator\models\facilitator_model.py:221
+msgid "The URL or path to the logo image of the MPP."
+msgstr "ಎಂಪಿಪಿಯ ಲೋಗೋ ಚಿತ್ರದ URL ಅಥವಾ ಮಾರ್ಗ."
+
+#: .\facilitator\models\facilitator_model.py:227
+msgid "MPP Icon URL"
+msgstr "ಎಂಪಿಪಿ ಐಕಾನ್ URL"
+
+#: .\facilitator\models\facilitator_model.py:228
+msgid "The URL or path to the icon image of the MPP."
+msgstr "ಎಂಪಿಪಿಯ ಐಕಾನ್ ಚಿತ್ರಕ್ಕೆ URL ಅಥವಾ ಮಾರ್ಗ."
+
+#: .\facilitator\models\facilitator_model.py:234
+msgid "MPP Punch Line"
+msgstr "ಎಂಪಿಪಿ ಪಂಚ್ ಲೈನ್"
+
+#: .\facilitator\models\facilitator_model.py:235
+msgid "A catchy tagline or punch line associated with the MPP."
+msgstr "ಎಂಪಿಪಿಗೆ ಸಂಬಂಧಿಸಿದ ಆಕರ್ಷಕ ಟ್ಯಾಗ್‌ಲೈನ್ ಅಥವಾ ಪಂಚ್ ಲೈನ್."
+
+#: .\facilitator\models\facilitator_model.py:240
+msgid "MPP Opening Date"
+msgstr "ಎಂಪಿಪಿ ಆರಂಭಿಕ ದಿನಾಂಕ"
+
+#: .\facilitator\models\facilitator_model.py:241
+msgid "The date and time when the MPP is officially opened."
+msgstr "ಎಂಪಿಪಿ ಅಧಿಕೃತವಾಗಿ ತೆರೆದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:246
+msgid "The date and time when the MPP assignment was created."
+msgstr "ಎಂಪಿಪಿ ನಿಯೋಜನೆಯನ್ನು ರಚಿಸಿದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\facilitator\models\facilitator_model.py:250
+#: .\facilitator\models\user_profile_model.py:78
+#: .\facilitator\models\vcg_model.py:74 .\facilitator\models\vcg_model.py:291
+#: .\facilitator\models\vcg_model.py:339 .\facilitator\models\vcg_model.py:389
+#: .\facilitator\models\vcg_model.py:422 .\facilitator\models\vcg_model.py:579
+#: .\member\models.py:178 .\member\models.py:234
+#: .\veterinary\models\common_models.py:28
+msgid "Updated At"
+msgstr "ನಲ್ಲಿ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:251
+msgid "The date and time when the MPP assignment was last updated."
+msgstr "ಎಂಪಿಪಿ ನಿಯೋಜನೆಯನ್ನು ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಿದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು."
+
+#: .\facilitator\models\facilitator_model.py:257
+msgid "Assigned MPP to Facilitator"
+msgstr "ಫೆಸಿಲಿಟೇಟರ್ಗೆ ಎಂಪಿಪಿಯನ್ನು ನಿಯೋಜಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\facilitator_model.py:258
+msgid "Assigned MPPs to Facilitators"
+msgstr "ಫೆಸಿಲಿಟೇಟರ್‌ಗಳಿಗೆ ಎಂಪಿಪಿಗಳನ್ನು ನಿಯೋಜಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\member_update_model.py:43
+msgid "Indicates whether this entry has been deleted."
+msgstr "ಈ ನಮೂದನ್ನು ಅಳಿಸಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\member_update_model.py:59
+#: .\facilitator\models\vcg_model.py:17
+msgid "Enter a valid WhatsApp number with country code (e.g., +1234567890)."
+msgstr ""
+"ಕಂಟ್ರಿ ಕೋಡ್‌ನೊಂದಿಗೆ ಮಾನ್ಯ ವಾಟ್ಸಾಪ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ (ಉದಾ., +1234567890)."
+
+#: .\facilitator\models\member_update_model.py:65
+msgid "Request ID"
+msgstr "ವಿನಂತಿ ID"
+
+#: .\facilitator\models\member_update_model.py:66
+msgid "Auto-generated unique request identifier (e.g., REQ-2025-001234)"
+msgstr "ಸ್ವಯಂ-ರಚಿತ ಅನನ್ಯ ವಿನಂತಿ ಗುರುತಿಸುವಿಕೆ (ಉದಾ., REQ-2025-001234)"
+
+#: .\facilitator\models\member_update_model.py:105
+#: .\facilitator\models\vcg_model.py:48 .\facilitator\models\vcg_model.py:445
+#: .\facilitator\models\vcg_model.py:453 .\facilitator\models\vcg_model.py:486
+#: .\feedback\models\feedback_model.py:110
+msgid "Member Code"
+msgstr "ಸದಸ್ಯ ಸಂಹಿತೆ"
+
+#: .\facilitator\models\member_update_model.py:108
+#: .\facilitator\models\member_update_model.py:115
+msgid "Unique identifier for the member."
+msgstr "ಸದಸ್ಯರಿಗೆ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\facilitator\models\member_update_model.py:112
+#: .\facilitator\models\vcg_model.py:56
+msgid "Member Ex Code"
+msgstr "ಸದಸ್ಯ ಮಾಜಿ ಕೋಡ್"
+
+#: .\facilitator\models\member_update_model.py:120
+#: .\facilitator\models\vcg_model.py:63 .\facilitator\models\vcg_model.py:460
+#: .\facilitator\models\vcg_model.py:500
+#: .\feedback\models\feedback_model.py:126
+msgid "Member Name"
+msgstr "ಸದಸ್ಯರ ಹೆಸರು"
+
+#: .\facilitator\models\member_update_model.py:121
+#: .\feedback\models\feedback_model.py:127
+msgid "Full name of the member."
+msgstr "ಸದಸ್ಯರ ಪೂರ್ಣ ಹೆಸರು."
+
+#: .\facilitator\models\member_update_model.py:131
+msgid "Member's  contact number."
+msgstr "ಸದಸ್ಯರ ಸಂಪರ್ಕ ಸಂಖ್ಯೆ."
+
+#: .\facilitator\models\member_update_model.py:139
+msgid "Role Type"
+msgstr "ಪಾತ್ರದ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:143
+msgid "Update Type"
+msgstr "ನವೀಕರಿಸಿ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:150
+msgid "Status"
+msgstr "ಸ್ಥಾನಮಾನ"
+
+#: .\facilitator\models\member_update_model.py:192
+msgid "Reviewed By"
+msgstr "ಮೂಲಕ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\member_update_model.py:196
+msgid "Reviewed At"
+msgstr "ನಲ್ಲಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\member_update_model.py:199
+msgid "HO Comments"
+msgstr "ಹೋ ಪ್ರತಿಕ್ರಿಯೆಗಳು"
+
+#: .\facilitator\models\member_update_model.py:202
+msgid "Rejection Reason"
+msgstr "ತಿರಸ್ಕಾರ ಕಾರಣ"
+
+#: .\facilitator\models\member_update_model.py:206
+msgid "Update Request"
+msgstr "ನವೀಕರಿಸಿ ವಿನಂತಿ"
+
+#: .\facilitator\models\member_update_model.py:207
+msgid "Update Requests"
+msgstr "ವಿನಂತಿಗಳನ್ನು ನವೀಕರಿಸಿ"
+
+#: .\facilitator\models\member_update_model.py:255
+msgid "Approved requests must have a reviewer."
+msgstr "ಅನುಮೋದಿತ ವಿನಂತಿಗಳು ವಿಮರ್ಶಕರನ್ನು ಹೊಂದಿರಬೇಕು."
+
+#: .\facilitator\models\member_update_model.py:258
+msgid "Rejected requests must have a rejection reason."
+msgstr "ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿಗಳು ನಿರಾಕರಣೆಯ ಕಾರಣವನ್ನು ಹೊಂದಿರಬೇಕು."
+
+#: .\facilitator\models\member_update_model.py:289
+#: .\facilitator\models\member_update_model.py:408
+msgid "Field Name"
+msgstr "ಕ್ಷೇತ್ರ ಹೆಸರು"
+
+#: .\facilitator\models\member_update_model.py:291
+#: .\facilitator\models\member_update_model.py:411
+msgid "Old Value"
+msgstr "ಹಳೆಯ ಮೌಲ್ಯ"
+
+#: .\facilitator\models\member_update_model.py:293
+#: .\facilitator\models\member_update_model.py:413
+msgid "New Value"
+msgstr "ಹೊಸ ಮೌಲ್ಯ"
+
+#: .\facilitator\models\member_update_model.py:298
+msgid "Text"
+msgstr "ಪಠ್ಯ"
+
+#: .\facilitator\models\member_update_model.py:299
+msgid "Number"
+msgstr "ಸಂಖ್ಯೆ"
+
+#: .\facilitator\models\member_update_model.py:300
+msgid "File"
+msgstr "ಕಲೆ"
+
+#: .\facilitator\models\member_update_model.py:301
+msgid "JSON"
+msgstr "JSON"
+
+#: .\facilitator\models\member_update_model.py:304
+msgid "Data Type"
+msgstr "ದತ್ತಾಂಶಗಳ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:308
+#: .\facilitator\models\member_update_model.py:309
+msgid "Update Request Data"
+msgstr "ವಿನಂತಿ ಡೇಟಾವನ್ನು ನವೀಕರಿಸಿ"
+
+#: .\facilitator\models\member_update_model.py:355
+msgid "Document Type"
+msgstr "ಡಾಕ್ಯುಮೆಂಟ್ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:359
+msgid "Document File"
+msgstr "ಡಾಕ್ಯುಮೆಂಟ್ ಫೈಲ್"
+
+#: .\facilitator\models\member_update_model.py:363
+msgid "Original Filename"
+msgstr "ಮೂಲ ಫೈಲ್ ಹೆಸರು"
+
+#: .\facilitator\models\member_update_model.py:366
+msgid "File Size (bytes)"
+msgstr "ಫೈಲ್ ಗಾತ್ರ (ಬೈಟ್‌ಗಳು)"
+
+#: .\facilitator\models\member_update_model.py:368
+msgid "Content Type"
+msgstr "ವಿಷಯ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:373
+msgid "Update Request Document"
+msgstr "ವಿನಂತಿಯನ್ನು ನವೀಕರಿಸಿ ಡಾಕ್ಯುಮೆಂಟ್"
+
+#: .\facilitator\models\member_update_model.py:374
+msgid "Update Request Documents"
+msgstr "ವಿನಂತಿ ದಾಖಲೆಗಳನ್ನು ನವೀಕರಿಸಿ"
+
+#: .\facilitator\models\member_update_model.py:386
+msgid "File size cannot exceed 10MB."
+msgstr "ಫೈಲ್ ಗಾತ್ರವು 10MB ಮೀರಬಾರದು."
+
+#: .\facilitator\models\member_update_model.py:391
+msgid "Only PDF and image files are allowed."
+msgstr "ಪಿಡಿಎಫ್ ಮತ್ತು ಇಮೇಜ್ ಫೈಲ್‌ಗಳನ್ನು ಮಾತ್ರ ಅನುಮತಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\member_update_model.py:404
+msgid "Change Type"
+msgstr "ಬದಲಾವಣೆ ಪ್ರಕಾರ"
+
+#: .\facilitator\models\member_update_model.py:416
+msgid "Changed By"
+msgstr "ಮೂಲಕ ಬದಲಾಯಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\member_update_model.py:420
+msgid "Change Reason"
+msgstr "ಕಾರಣವನ್ನು ಬದಲಾಯಿಸಿ"
+
+#: .\facilitator\models\member_update_model.py:424
+msgid "IP Address"
+msgstr "ಐಪಿ ವಿಳಾಸ"
+
+#: .\facilitator\models\member_update_model.py:427
+msgid "User Agent"
+msgstr "ಬಳಕೆದಾರ"
+
+#: .\facilitator\models\member_update_model.py:430
+msgid "Additional Metadata"
+msgstr "ಹೆಚ್ಚುವರಿ ಮೆಟಾಡೇಟಾ"
+
+#: .\facilitator\models\member_update_model.py:434
+msgid "Update Request History"
+msgstr "ವಿನಂತಿ ಇತಿಹಾಸವನ್ನು ನವೀಕರಿಸಿ"
+
+#: .\facilitator\models\member_update_model.py:435
+msgid "Update Request Histories"
+msgstr "ವಿನಂತಿ ಇತಿಹಾಸಗಳನ್ನು ನವೀಕರಿಸಿ"
+
+#: .\facilitator\models\user_profile_model.py:12
+msgid "Support"
+msgstr "ಬೆಂಬಲ"
+
+#: .\facilitator\models\user_profile_model.py:13
+msgid "IT"
+msgstr "ಇದು"
+
+#: .\facilitator\models\user_profile_model.py:14
+msgid "PIB"
+msgstr "ಗಡಿ"
+
+#: .\facilitator\models\user_profile_model.py:15
+msgid "Sales"
+msgstr "ಮಾರಾಟ"
+
+#: .\facilitator\models\user_profile_model.py:16
+msgid "Human Resources"
+msgstr "ಮಾನವ ಸಂಪನ್ಮೂಲ"
+
+#: .\facilitator\models\user_profile_model.py:17
+msgid "Engineering"
+msgstr "ಎಂಜಿನಿಯರಿಂಗ್"
+
+#: .\facilitator\models\user_profile_model.py:18
+msgid "Administration"
+msgstr "ಆಡಳಿತ"
+
+#: .\facilitator\models\user_profile_model.py:25
+msgid "The user to whom this profile belongs."
+msgstr "ಈ ಪ್ರೊಫೈಲ್ ಯಾರಿಗೆ ಸೇರಿದೆ."
+
+#: .\facilitator\models\user_profile_model.py:32
+msgid "Department"
+msgstr "ವಿಭಾಗ"
+
+#: .\facilitator\models\user_profile_model.py:33
+msgid "Department or team of the user."
+msgstr "ಬಳಕೆದಾರರ ಇಲಾಖೆ ಅಥವಾ ತಂಡ."
+
+#: .\facilitator\models\user_profile_model.py:39
+msgid "Avatar"
+msgstr "ಅವತಾರ"
+
+#: .\facilitator\models\user_profile_model.py:40
+msgid "User profile picture."
+msgstr "ಬಳಕೆದಾರರ ಪ್ರೊಫೈಲ್ ಚಿತ್ರ."
+
+#: .\facilitator\models\user_profile_model.py:46 .\member\models.py:19
+msgid "Phone Number"
+msgstr "ದೂರವಾಣಿ ಸಂಖ್ಯೆ"
+
+#: .\facilitator\models\user_profile_model.py:47
+msgid "Contact number of the user."
+msgstr "ಬಳಕೆದಾರರ ಸಂಪರ್ಕ ಸಂಖ್ಯೆ."
+
+#: .\facilitator\models\user_profile_model.py:52
+#: .\veterinary\models\case_models.py:82
+#: .\veterinary\models\stock_models.py:34
+msgid "Address"
+msgstr "ಭಾಷಣ"
+
+#: .\facilitator\models\user_profile_model.py:53
+msgid "Residential or official address."
+msgstr "ವಸತಿ ಅಥವಾ ಅಧಿಕೃತ ವಿಳಾಸ."
+
+#: .\facilitator\models\user_profile_model.py:59
+msgid "Designation"
+msgstr "ಹುದ್ದೆ"
+
+#: .\facilitator\models\user_profile_model.py:60
+msgid "Official designation or title."
+msgstr "ಅಧಿಕೃತ ಹುದ್ದೆ ಅಥವಾ ಶೀರ್ಷಿಕೆ."
+
+#: .\facilitator\models\user_profile_model.py:64
+msgid "Verified"
+msgstr "ಪರಿಶೀಲಿಸಿದ"
+
+#: .\facilitator\models\user_profile_model.py:65
+msgid "Indicates whether the user's profile is verified."
+msgstr "ಬಳಕೆದಾರರ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\user_profile_model.py:69
+msgid "Email Verified"
+msgstr "ಇಮೇಲ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\user_profile_model.py:70
+msgid "Indicates whether the user's email is verified."
+msgstr "ಬಳಕೆದಾರರ ಇಮೇಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\user_profile_model.py:93
+msgid "User Profile"
+msgstr "ಬಳಕೆದಾರರ ಪ್ರೊಫೈಲ್"
+
+#: .\facilitator\models\user_profile_model.py:94
+msgid "User Profiles"
+msgstr "ಬಳಕೆದಾರರ ಪ್ರೊಫೈಲ್‌ಗಳು"
+
+#: .\facilitator\models\vcg_model.py:26
+msgid "Member related to  mpp"
+msgstr "ಎಂಪಿಪಿಗೆ ಸಂಬಂಧಿಸಿದ ಸದಸ್ಯ"
+
+#: .\facilitator\models\vcg_model.py:32
+msgid "Mpp Code"
+msgstr "ಎಂಪಿಪಿ ಕೋಡ್"
+
+#: .\facilitator\models\vcg_model.py:33
+msgid "Unique mpp code."
+msgstr "ವಿಶಿಷ್ಟ ಎಂಪಿಪಿ ಕೋಡ್."
+
+#: .\facilitator\models\vcg_model.py:40
+msgid "WhatsApp Number"
+msgstr "ವಾಟ್ಸಾಪ್ ಸಂಖ್ಯೆ"
+
+#: .\facilitator\models\vcg_model.py:41
+msgid "Member's WhatsApp contact number."
+msgstr "ಸದಸ್ಯರ ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಸಂಖ್ಯೆ."
+
+#: .\facilitator\models\vcg_model.py:49 .\facilitator\models\vcg_model.py:57
+#: .\facilitator\models\vcg_model.py:446 .\facilitator\models\vcg_model.py:454
+#: .\facilitator\models\vcg_model.py:487
+msgid "Unique identifier for the VCG member."
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯರಿಗೆ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\facilitator\models\vcg_model.py:64 .\facilitator\models\vcg_model.py:461
+#: .\facilitator\models\vcg_model.py:501
+msgid "Full name of the VCG member."
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯರ ಪೂರ್ಣ ಹೆಸರು."
+
+#: .\facilitator\models\vcg_model.py:70
+msgid "Timestamp when the member was added."
+msgstr "ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:75
+msgid "Timestamp when the member record was last updated."
+msgstr "ಸದಸ್ಯರ ದಾಖಲೆಯನ್ನು ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:83
+msgid "VCG Group"
+msgstr "ವಿಸಿಜಿ ಗುಂಪು"
+
+#: .\facilitator\models\vcg_model.py:84
+msgid "VCG Groups"
+msgstr "ವಿಸಿಜಿ ಗುಂಪುಗಳು"
+
+#: .\facilitator\models\vcg_model.py:102
+msgid "Started"
+msgstr "ಪ್ರಾರಂಭಿಸು"
+
+#: .\facilitator\models\vcg_model.py:103 .\veterinary\choices\choices.py:145
+#: .\veterinary\choices\choices.py:166
+msgid "Completed"
+msgstr "ಪೂರ್ಣಗೊಂಡ"
+
+#: .\facilitator\models\vcg_model.py:111
+msgid "Unique identifier for the meeting."
+msgstr "ಸಭೆಗೆ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\facilitator\models\vcg_model.py:120
+msgid "User who initiated the meeting."
+msgstr "ಸಭೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\facilitator\models\vcg_model.py:129 .\facilitator\models\vcg_model.py:526
+msgid "Name of the MPP associated with the meeting."
+msgstr "ಸಭೆಗೆ ಸಂಬಂಧಿಸಿದ ಎಂಪಿಪಿಯ ಹೆಸರು."
+
+#: .\facilitator\models\vcg_model.py:136 .\facilitator\models\vcg_model.py:531
+msgid "MPP EX Code"
+msgstr "ಎಂಪಿಪಿ ಮಾಜಿ ಕೋಡ್"
+
+#: .\facilitator\models\vcg_model.py:137 .\facilitator\models\vcg_model.py:532
+msgid "External MPP Code for reference."
+msgstr "ಉಲ್ಲೇಖಕ್ಕಾಗಿ ಬಾಹ್ಯ ಎಂಪಿಪಿ ಕೋಡ್."
+
+#: .\facilitator\models\vcg_model.py:144 .\facilitator\models\vcg_model.py:537
+msgid "Unique MPP code assigned."
+msgstr "ವಿಶಿಷ್ಟ ಎಂಪಿಪಿ ಕೋಡ್ ಅನ್ನು ನಿಯೋಜಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\vcg_model.py:151
+#: .\veterinary\models\stock_models.py:59
+msgid "Latitude"
+msgstr "ಅಕ್ಷಾಂಶ"
+
+#: .\facilitator\models\vcg_model.py:152
+msgid "Geographical latitude of the meeting location."
+msgstr "ಸಭೆಯ ಸ್ಥಳದ ಭೌಗೋಳಿಕ ಅಕ್ಷಾಂಶ."
+
+#: .\facilitator\models\vcg_model.py:158
+#: .\veterinary\models\stock_models.py:68
+msgid "Longitude"
+msgstr "ರೇಖಾಂಶ"
+
+#: .\facilitator\models\vcg_model.py:159
+msgid "Geographical longitude of the meeting location."
+msgstr "ಸಭೆಯ ಸ್ಥಳದ ಭೌಗೋಳಿಕ ರೇಖಾಂಶ."
+
+#: .\facilitator\models\vcg_model.py:165
+msgid "Started At"
+msgstr "ನಲ್ಲಿ ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\models\vcg_model.py:166
+msgid "Timestamp when the meeting started."
+msgstr "ಸಭೆ ಪ್ರಾರಂಭವಾದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:171
+msgid "Completed At"
+msgstr "ನಲ್ಲಿ ಪೂರ್ಣಗೊಂಡಿದೆ"
+
+#: .\facilitator\models\vcg_model.py:172
+msgid "Timestamp when the meeting was completed."
+msgstr "ಸಭೆ ಪೂರ್ಣಗೊಂಡಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:179
+msgid "Meeting Status"
+msgstr "ಸಭೆ"
+
+#: .\facilitator\models\vcg_model.py:180
+msgid "Current status of the meeting."
+msgstr "ಸಭೆಯ ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ."
+
+#: .\facilitator\models\vcg_model.py:184
+#: .\veterinary\models\common_models.py:52
+msgid "Synced"
+msgstr "ಸಿಪ್ಪಿ"
+
+#: .\facilitator\models\vcg_model.py:185
+msgid "Indicated whether data is synced from mobile app or not."
+msgstr ""
+"ಮೊಬೈಲ್ ಅಪ್ಲಿಕೇಶನ್‌ನಿಂದ ಡೇಟಾವನ್ನು ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆಯೆ ಅಥವಾ ಇಲ್ಲವೇ ಎಂಬುದನ್ನು "
+"ಸೂಚಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\vcg_model.py:189
+msgid "deleted"
+msgstr "ಅಳಿಸಿದ"
+
+#: .\facilitator\models\vcg_model.py:190
+msgid "Indicated whether data is deleted or not."
+msgstr "ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗಿದೆಯೆ ಅಥವಾ ಇಲ್ಲವೇ ಎಂಬುದನ್ನು ಸೂಚಿಸಲಾಗಿದೆ."
+
+#: .\facilitator\models\vcg_model.py:210
+msgid "VCG Meeting"
+msgstr "ವಿಸಿಜಿ ಸಭೆ"
+
+#: .\facilitator\models\vcg_model.py:211
+msgid "VCG Meetings"
+msgstr "ವಿಸಿಜಿ ಸಭೆಗಳು"
+
+#: .\facilitator\models\vcg_model.py:245
+msgid "Present"
+msgstr "ವರ್ತಿಸು"
+
+#: .\facilitator\models\vcg_model.py:246
+msgid "Absent"
+msgstr "ಗೈರು"
+
+#: .\facilitator\models\vcg_model.py:255 .\facilitator\models\vcg_model.py:321
+msgid "Meeting"
+msgstr "ಸಭೆ"
+
+#: .\facilitator\models\vcg_model.py:256
+msgid "The meeting to which this attendance record belongs."
+msgstr "ಈ ಹಾಜರಾತಿ ದಾಖಲೆ ಯಾವ ಸಭೆ ಸೇರಿದೆ."
+
+#: .\facilitator\models\vcg_model.py:265
+msgid "Group Member"
+msgstr "ಗುಂಪಿನ ಸದಸ್ಯ"
+
+#: .\facilitator\models\vcg_model.py:266
+msgid "The VCG member attending the meeting."
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯ ಸಭೆಯಲ್ಲಿ ಪಾಲ್ಗೊಂಡಿದ್ದಾರೆ."
+
+#: .\facilitator\models\vcg_model.py:273
+msgid "Attendance Status"
+msgstr "ಹಾಜರಾತಿ ಸ್ಥಿತಿ"
+
+#: .\facilitator\models\vcg_model.py:274
+msgid "Indicates whether the member was present or absent."
+msgstr "ಸದಸ್ಯರು ಹಾಜರಿದ್ದಾರೆಯೇ ಅಥವಾ ಇಲ್ಲವೇ ಎಂಬುದನ್ನು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\facilitator\models\vcg_model.py:279
+msgid "Attendance Date"
+msgstr "ಹಾಜರಾತಿ ದಿನಾಂಕ"
+
+#: .\facilitator\models\vcg_model.py:280
+msgid "Timestamp of when the attendance was recorded."
+msgstr "ಹಾಜರಾತಿ ದಾಖಲಾದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:286
+msgid "Timestamp of when this record was created."
+msgstr "ಈ ದಾಖಲೆಯನ್ನು ರಚಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:292 .\facilitator\models\vcg_model.py:340
+msgid "Timestamp of the last update to this record."
+msgstr "ಈ ದಾಖಲೆಗೆ ಕೊನೆಯ ನವೀಕರಣದ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:300
+msgid "VCG Member Attendance"
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯ ಹಾಜರಾತಿ"
+
+#: .\facilitator\models\vcg_model.py:301
+msgid "VCG Member Attendances"
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯ ಹಾಜರಾತಿಗಳು"
+
+#: .\facilitator\models\vcg_model.py:322
+msgid "The meeting associated with this image."
+msgstr "ಈ ಚಿತ್ರಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಸಭೆ."
+
+#: .\facilitator\models\vcg_model.py:327
+msgid "Meeting Image"
+msgstr "ಭೇಟಿಯ ಚಿತ್ರ"
+
+#: .\facilitator\models\vcg_model.py:328
+msgid "Upload an image related to the meeting."
+msgstr "ಸಭೆಗೆ ಸಂಬಂಧಿಸಿದ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."
+
+#: .\facilitator\models\vcg_model.py:334
+msgid "Timestamp of when this image was uploaded."
+msgstr "ಈ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:364
+msgid "VCG Meeting Image"
+msgstr "ವಿಸಿಜಿ ಸಭೆ ಚಿತ್ರ"
+
+#: .\facilitator\models\vcg_model.py:365
+msgid "VCG Meeting Images"
+msgstr "ವಿಸಿಜಿ ಸಭೆ ಚಿತ್ರಗಳು"
+
+#: .\facilitator\models\vcg_model.py:377 .\facilitator\models\vcg_model.py:410
+msgid "Reason"
+msgstr "ಕಾರಣ"
+
+#: .\facilitator\models\vcg_model.py:378
+msgid "Reason for zero days pouring."
+msgstr "ಶೂನ್ಯ ದಿನಗಳ ಸುರಿಯುವ ಕಾರಣ."
+
+#: .\facilitator\models\vcg_model.py:384 .\facilitator\models\vcg_model.py:417
+msgid "Timestamp when this reason was added."
+msgstr "ಈ ಕಾರಣವನ್ನು ಸೇರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:390 .\facilitator\models\vcg_model.py:423
+msgid "Timestamp when this reason was last updated."
+msgstr "ಈ ಕಾರಣವನ್ನು ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\facilitator\models\vcg_model.py:398
+msgid "Zero Days Pouring Reason"
+msgstr "ಶೂನ್ಯ ದಿನಗಳು ಕಾರಣವನ್ನು ಸುರಿಯುತ್ತವೆ"
+
+#: .\facilitator\models\vcg_model.py:399
+msgid "Zero Days Pouring Reasons"
+msgstr "ಶೂನ್ಯ ದಿನಗಳು ಕಾರಣಗಳನ್ನು ಸುರಿಯುತ್ತವೆ"
+
+#: .\facilitator\models\vcg_model.py:411
+msgid "Reason for a member complaint."
+msgstr "ಸದಸ್ಯರ ದೂರಿಗೆ ಕಾರಣ."
+
+#: .\facilitator\models\vcg_model.py:431
+msgid "Member Complaint Reason"
+msgstr "ಸದಸ್ಯ ದೂರು ಕಾರಣ"
+
+#: .\facilitator\models\vcg_model.py:432
+msgid "Member Complaint Reasons"
+msgstr "ಸದಸ್ಯ ದೂರು ಕಾರಣಗಳು"
+
+#: .\facilitator\models\vcg_model.py:493
+msgid "Member External Code"
+msgstr "ಸದಸ್ಯ ಬಾಹ್ಯ ಕೋಡ್"
+
+#: .\facilitator\models\vcg_model.py:494
+msgid "External identifier for the VCG member."
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯರಿಗೆ ಬಾಹ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\facilitator\models\vcg_model.py:541 .\member\models.py:92
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:109
+msgid "Month"
+msgstr "ತಿಂಗಳ"
+
+#: .\facilitator\models\vcg_model.py:542
+msgid "The month for which the assignment is created."
+msgstr "ನಿಯೋಜನೆಯನ್ನು ರಚಿಸಿದ ತಿಂಗಳು."
+
+#: .\facilitator\models\vcg_model.py:548
+msgid "Milk Collection (Liters/Day)"
+msgstr "ಹಾಲು ಸಂಗ್ರಹ (ದಿನ/ದಿನ)"
+
+#: .\facilitator\models\vcg_model.py:549
+msgid "Total milk collected per day in liters."
+msgstr "ದಿನಕ್ಕೆ ಒಟ್ಟು ಹಾಲು ಲೀಟರ್ನಲ್ಲಿ ಸಂಗ್ರಹಿಸಲಾಗುತ್ತದೆ."
+
+#: .\facilitator\models\vcg_model.py:552
+msgid "No of Members"
+msgstr "ಸದಸ್ಯರ ಇಲ್ಲ"
+
+#: .\facilitator\models\vcg_model.py:555
+msgid ">=15 Days Pourers"
+msgstr "> = 15 ದಿನಗಳು ಸುರಿಯುವವರು"
+
+#: .\facilitator\models\vcg_model.py:558
+msgid ">=25 Days Pourers"
+msgstr "> = 25 ದಿನಗಳ ಪೌರರ್ಸ್"
+
+#: .\facilitator\models\vcg_model.py:561
+msgid "Zero Days Pourers"
+msgstr "ಶೂನ್ಯ ದಿನಗಳ ಪೌರರ್ಸ್"
+
+#: .\facilitator\models\vcg_model.py:566
+msgid "Cattle Feed Sale (KG)"
+msgstr "ಜಾನುವಾರು ಆಹಾರ ಮಾರಾಟ (ಕೆಜಿ)"
+
+#: .\facilitator\models\vcg_model.py:571
+msgid "Mineral Mixture Sale (KG)"
+msgstr "ಖನಿಜ ಮಿಶ್ರಣ ಮಾರಾಟ (ಕೆಜಿ)"
+
+#: .\facilitator\models\vcg_model.py:576
+msgid "Sahayak Recovery (%)"
+msgstr "ಸಹಯಕ್ ಚೇತರಿಕೆ (%)"
+
+#: .\facilitator\models\vcg_model.py:586
+msgid "Month Assignment"
+msgstr "ತಿಂಗಳ ನಿಯೋಜನೆ"
+
+#: .\facilitator\models\vcg_model.py:587
+msgid "Month Assignments"
+msgstr "ತಿಂಗಳ ಕಾರ್ಯಯೋಜನೆಗಳು"
+
+#: .\facilitator\views\auth.py:27
+msgid "Phone number is required."
+msgstr "ಫೋನ್ ಸಂಖ್ಯೆ ಅಗತ್ಯವಿದೆ."
+
+#: .\facilitator\views\auth.py:35
+msgid "User does not exist. Please contact support."
+msgstr "ಬಳಕೆದಾರರು ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ."
+
+#: .\facilitator\views\auth.py:51
+msgid "Failed to send OTP. Please try again later."
+msgstr "ಒಟಿಪಿ ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: .\facilitator\views\auth.py:58 .\facilitator\views\views.py:886
+msgid "OTP sent successfully."
+msgstr "ಒಟಿಪಿ ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲ್ಪಟ್ಟಿದೆ."
+
+#: .\facilitator\views\auth.py:196
+msgid "Refresh token is required"
+msgstr "ರಿಫ್ರೆಶ್ ಟೋಕನ್ ಅಗತ್ಯವಿದೆ"
+
+#: .\facilitator\views\auth.py:204
+msgid "Logout successful"
+msgstr "ಲಾಗ್ out ಟ್ ಯಶಸ್ವಿಯಾಗಿದೆ"
+
+#: .\facilitator\views\auth.py:210
+msgid "Invalid refresh token or already blacklisted"
+msgstr "ಅಮಾನ್ಯ ರಿಫ್ರೆಶ್ ಟೋಕನ್ ಅಥವಾ ಈಗಾಗಲೇ ಕಪ್ಪುಪಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:99
+msgid "Update request created successfully"
+msgstr "ನವೀಕರಿಸಿ ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:106
+#: .\facilitator\views\member_update_view.py:189
+msgid "Validation failed"
+msgstr "ಮೌಲ್ಯಮಾಪನ ವಿಫಲವಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:113
+#: .\facilitator\views\member_update_view.py:120
+msgid "An error occurred while creating the request"
+msgstr "ವಿನಂತಿಯನ್ನು ರಚಿಸುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:133
+msgid "Request retrieved successfully"
+msgstr "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮರುಸಂಪಾದಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:140
+#: .\facilitator\views\member_update_view.py:196
+#: .\facilitator\views\member_update_view.py:240
+msgid "Request not found"
+msgstr "ವಿನಂತಿ ಕಂಡುಬಂದಿಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:146
+msgid "An error occurred while retrieving the request"
+msgstr "ವಿನಂತಿಯನ್ನು ಹಿಂಪಡೆಯುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:161
+msgid "You don't have permission to update this request"
+msgstr "ಈ ವಿನಂತಿಯನ್ನು ನವೀಕರಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:170
+msgid "Cannot update a request that has already been processed"
+msgstr "ಈಗಾಗಲೇ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾದ ವಿನಂತಿಯನ್ನು ನವೀಕರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:182
+msgid "Request updated successfully"
+msgstr "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:202
+msgid "An error occurred while updating the request"
+msgstr "ವಿನಂತಿಯನ್ನು ನವೀಕರಿಸುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:216
+msgid "You don't have permission to delete this request"
+msgstr "ಈ ವಿನಂತಿಯನ್ನು ಅಳಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:225
+msgid "Cannot delete a request that has already been processed"
+msgstr "ಈಗಾಗಲೇ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾದ ವಿನಂತಿಯನ್ನು ಅಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:234
+msgid "Request deleted successfully"
+msgstr "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:246
+msgid "An error occurred while deleting the request"
+msgstr "ವಿನಂತಿಯನ್ನು ಅಳಿಸುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:261
+msgid "You don't have permission to approve requests"
+msgstr "ವಿನಂತಿಗಳನ್ನು ಅನುಮೋದಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:269
+msgid "Only pending requests can be approved"
+msgstr "ಬಾಕಿ ಇರುವ ವಿನಂತಿಗಳನ್ನು ಮಾತ್ರ ಅನುಮೋದಿಸಬಹುದು"
+
+#: .\facilitator\views\member_update_view.py:283
+msgid "Request approved successfully"
+msgstr "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅನುಮೋದಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:290
+msgid "An error occurred while approving the request"
+msgstr "ವಿನಂತಿಯನ್ನು ಅನುಮೋದಿಸುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:305
+msgid "You don't have permission to reject requests"
+msgstr "ವಿನಂತಿಗಳನ್ನು ತಿರಸ್ಕರಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ"
+
+#: .\facilitator\views\member_update_view.py:313
+msgid "Only pending requests can be rejected"
+msgstr "ಬಾಕಿ ಇರುವ ವಿನಂತಿಗಳನ್ನು ಮಾತ್ರ ತಿರಸ್ಕರಿಸಬಹುದು"
+
+#: .\facilitator\views\member_update_view.py:322
+msgid "Rejection reason is required"
+msgstr "ನಿರಾಕರಣೆಯ ಕಾರಣ ಅಗತ್ಯವಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:323
+msgid "This field is required"
+msgstr "ಈ ಕ್ಷೇತ್ರದ ಅಗತ್ಯವಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:338
+msgid "Request rejected successfully"
+msgstr "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತಿರಸ್ಕರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:345
+msgid "An error occurred while rejecting the request"
+msgstr "ವಿನಂತಿಯನ್ನು ತಿರಸ್ಕರಿಸುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:379
+msgid "Statistics retrieved successfully"
+msgstr "ಅಂಕಿಅಂಶಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮರುಸಂಪಾದಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\member_update_view.py:386
+msgid "An error occurred while retrieving statistics"
+msgstr "ಅಂಕಿಅಂಶಗಳನ್ನು ಹಿಂಪಡೆಯುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ"
+
+#: .\facilitator\views\vcg_api_views.py:953
+msgid "A meeting with the same details already exists."
+msgstr "ಅದೇ ವಿವರಗಳೊಂದಿಗೆ ಸಭೆ ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ."
+
+#: .\facilitator\views\vcg_api_views.py:965
+msgid "Your meeting has started"
+msgstr "ನಿಮ್ಮ ಸಭೆ ಪ್ರಾರಂಭವಾಗಿದೆ"
+
+#: .\facilitator\views\vcg_api_views.py:974
+#: .\facilitator\views\vcg_api_views.py:1006
+#: .\facilitator\views\vcg_api_views.py:1050
+#: .\facilitator\views\vcg_api_views.py:1067
+msgid "Invalid data"
+msgstr "ಅಮಾನ್ಯ ಡೇಟಾ"
+
+#: .\facilitator\views\vcg_api_views.py:997
+msgid "Meeting updated successfully"
+msgstr "ಸಭೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\vcg_api_views.py:1044
+msgid "VCG Member created successfully"
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\vcg_api_views.py:1061
+msgid "VCG Member updated successfully"
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\vcg_api_views.py:1075
+msgid "VCG Member deleted successfully"
+msgstr "ವಿಸಿಜಿ ಸದಸ್ಯರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ"
+
+#: .\facilitator\views\views.py:837
+msgid "All fields are required."
+msgstr "ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳು ಅಗತ್ಯವಿದೆ."
+
+#: .\facilitator\views\views.py:843
+msgid "Passwords do not match."
+msgstr "ಪಾಸ್ವರ್ಡ್ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ."
+
+#: .\facilitator\views\views.py:849
+msgid "Old password is incorrect."
+msgstr "ಹಳೆಯ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ."
+
+#: .\facilitator\views\views.py:865
+msgid "Password changed successfully."
+msgstr "ಪಾಸ್ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಬದಲಾಗಿದೆ."
+
+#: .\facilitator\views\views.py:874
+msgid "Username is required"
+msgstr "ಬಳಕೆದಾರಹೆಸರು ಅಗತ್ಯವಿದೆ"
+
+#: .\facilitator\views\views.py:881 .\facilitator\views\views.py:910
+msgid "User not found"
+msgstr "ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ"
+
+#: .\facilitator\views\views.py:897
+msgid "All fields are required"
+msgstr "ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳು ಅಗತ್ಯವಿದೆ"
+
+#: .\facilitator\views\views.py:903
+msgid "Invalid or expired OTP"
+msgstr "ಅಮಾನ್ಯ ಅಥವಾ ಅವಧಿ ಮೀರಿದ ಒಟಿಪಿ"
+
+#: .\facilitator\views\views.py:916
+msgid "Password reset successfully."
+msgstr "ಪಾಸ್ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಮರುಹೊಂದಿಸಿ."
+
+#: .\feedback\models\feedback_model.py:12
+msgid "Open"
+msgstr "ತೆರೆ"
+
+#: .\feedback\models\feedback_model.py:13
+msgid "Assigned"
+msgstr "ನಿಯೋಜಿಸಲಾದ"
+
+#: .\feedback\models\feedback_model.py:14
+msgid "In Progress"
+msgstr "ಪ್ರಗತಿಯಲ್ಲಿದೆ"
+
+#: .\feedback\models\feedback_model.py:15
+msgid "Resolved"
+msgstr "ಪರಿಹರಿಸಿದ"
+
+#: .\feedback\models\feedback_model.py:16
+msgid "Closed"
+msgstr "ಮುಚ್ಚಿದ"
+
+#: .\feedback\models\feedback_model.py:17
+msgid "Reopened"
+msgstr "ಪುನಃ ತೆರೆ"
+
+#: .\feedback\models\feedback_model.py:24
+msgid "Low"
+msgstr "ಕಡಿಮೆ ಪ್ರಮಾಣದ"
+
+#: .\feedback\models\feedback_model.py:25
+msgid "Medium"
+msgstr "ಮಧ್ಯಮ"
+
+#: .\feedback\models\feedback_model.py:26
+msgid "High"
+msgstr "ಎತ್ತರದ"
+
+#: .\feedback\models\feedback_model.py:27 .\veterinary\choices\choices.py:160
+msgid "Critical"
+msgstr "ನಿರ್ಣಾಯಕ"
+
+#: .\feedback\models\feedback_model.py:61
+msgid "Feedback ID"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ ID"
+
+#: .\feedback\models\feedback_model.py:62
+msgid "Unique identifier for this feedback entry. Auto-generated."
+msgstr "ಈ ಪ್ರತಿಕ್ರಿಯೆ ಪ್ರವೇಶಕ್ಕಾಗಿ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ. ಸ್ವಯಂ-ರಚಿತ."
+
+#: .\feedback\models\feedback_model.py:69 .\notifications\models.py:37
+msgid "Sender"
+msgstr "ಕಳುಹಿಸುವವನು"
+
+#: .\feedback\models\feedback_model.py:70
+msgid "User who submitted the feedback."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಸಲ್ಲಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\feedback\models\feedback_model.py:79
+msgid "Assigned To"
+msgstr "ಗೆ ನಿಯೋಜಿಸಲಾಗಿದೆ"
+
+#: .\feedback\models\feedback_model.py:80
+msgid "User assigned to review or resolve this feedback."
+msgstr ""
+"ಈ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಪರಿಶೀಲಿಸಲು ಅಥವಾ ಪರಿಹರಿಸಲು ಬಳಕೆದಾರರನ್ನು ನಿಯೋಜಿಸಲಾಗಿದೆ."
+
+#: .\feedback\models\feedback_model.py:86
+msgid "Assigned At"
+msgstr "ನಲ್ಲಿ ನಿಯೋಜಿಸಲಾಗಿದೆ"
+
+#: .\feedback\models\feedback_model.py:87
+msgid "Timestamp when the feedback was assigned."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ನಿಯೋಜಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\feedback\models\feedback_model.py:95
+msgid "MPP Code related to the feedback. Must be exactly 9 characters."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಗೆ ಸಂಬಂಧಿಸಿದ ಎಂಪಿಪಿ ಕೋಡ್. ನಿಖರವಾಗಿ 9 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು."
+
+#: .\feedback\models\feedback_model.py:102 .\member\models.py:81
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:97
+msgid "MCC Code"
+msgstr "ಎಮ್‌ಸಿಸಿ ಸಂಹಿತೆ"
+
+#: .\feedback\models\feedback_model.py:103
+msgid "Milk Collection Center code linked to this feedback."
+msgstr "ಹಾಲು ಸಂಗ್ರಹ ಕೇಂದ್ರ ಕೋಡ್ ಈ ಪ್ರತಿಕ್ರಿಯೆಗೆ ಲಿಂಕ್ ಆಗಿದೆ."
+
+#: .\feedback\models\feedback_model.py:111
+msgid "Unique identifier for the member associated with this feedback."
+msgstr "ಈ ಪ್ರತಿಕ್ರಿಯೆಗೆ ಸಂಬಂಧಿಸಿದ ಸದಸ್ಯರಿಗೆ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\feedback\models\feedback_model.py:118
+msgid "Member Transaction Code"
+msgstr "ಸದಸ್ಯ ವಹಿವಾಟು ಕೋಡ್"
+
+#: .\feedback\models\feedback_model.py:119
+msgid "Transaction code related to the member, if applicable."
+msgstr "ಅನ್ವಯಿಸಿದರೆ ಸದಸ್ಯರಿಗೆ ಸಂಬಂಧಿಸಿದ ವಹಿವಾಟು ಕೋಡ್."
+
+#: .\feedback\models\feedback_model.py:135
+msgid "Contact mobile number of the member."
+msgstr "ಸದಸ್ಯರ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+
+#: .\feedback\models\feedback_model.py:142 .\member\models.py:227
+msgid "Feedback Status"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ ಸ್ಥಿತಿ"
+
+#: .\feedback\models\feedback_model.py:143
+msgid "Current status of the feedback."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯ ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ."
+
+#: .\feedback\models\feedback_model.py:150
+msgid "Priority"
+msgstr "ಆದ್ಯತೆ"
+
+#: .\feedback\models\feedback_model.py:151
+msgid "Priority level of the feedback."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯ ಆದ್ಯತೆಯ ಮಟ್ಟ."
+
+#: .\feedback\models\feedback_model.py:158
+#: .\veterinary\models\stock_models.py:171
+msgid "Category"
+msgstr "ವರ್ಗ"
+
+#: .\feedback\models\feedback_model.py:159
+msgid "Category or type of feedback."
+msgstr "ವರ್ಗ ಅಥವಾ ಪ್ರತಿಕ್ರಿಯೆಯ ಪ್ರಕಾರ."
+
+#: .\feedback\models\feedback_model.py:165
+msgid "Timestamp when the feedback was created."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ರಚಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\feedback\models\feedback_model.py:171 .\member\models.py:232
+msgid "Resolved At"
+msgstr "ನಲ್ಲಿ ಪರಿಹರಿಸಲಾಗಿದೆ"
+
+#: .\feedback\models\feedback_model.py:172
+msgid "Timestamp when the feedback was marked as resolved."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಪರಿಹರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\feedback\models\feedback_model.py:177
+msgid "Progress"
+msgstr "ಪ್ರಗತಿ"
+
+#: .\feedback\models\feedback_model.py:178
+msgid "Progress of feedback resolution in percentage."
+msgstr "ಶೇಕಡಾವಾರು ಪ್ರತಿಕ್ರಿಯೆ ರೆಸಲ್ಯೂಶನ್‌ನ ಪ್ರಗತಿ."
+
+#: .\feedback\models\feedback_model.py:185
+msgid "Rating"
+msgstr "ರೇಟಿಂಗ್"
+
+#: .\feedback\models\feedback_model.py:186
+msgid "Rating given by the user after feedback resolution."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ ರೆಸಲ್ಯೂಶನ್ ನಂತರ ಬಳಕೆದಾರರು ನೀಡಿದ್ದಾರೆ."
+
+#: .\feedback\models\feedback_model.py:190
+#: .\veterinary\models\case_models.py:23
+msgid "Last Updated At"
+msgstr "ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\feedback\models\feedback_model.py:191
+msgid "Timestamp of the most recent update to the feedback."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಗೆ ಇತ್ತೀಚಿನ ನವೀಕರಣದ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\feedback\models\feedback_model.py:195 .\member\models.py:236
+#: .\notifications\models.py:60
+msgid "Message"
+msgstr "ಸಂದೇಶ"
+
+#: .\feedback\models\feedback_model.py:196
+msgid "Detailed description or content of the feedback."
+msgstr "ಪ್ರತಿಕ್ರಿಯೆಯ ವಿವರವಾದ ವಿವರಣೆ ಅಥವಾ ವಿಷಯ."
+
+#: .\feedback\models\feedback_model.py:221
+#: .\veterinary\models\common_models.py:47
+msgid "Is Deleted"
+msgstr "ಅಳಿಸಲಾಗಿದೆ"
+
+#: .\feedback\models\feedback_model.py:222
+msgid "Indicates whether this feedback is deleted (soft delete)."
+msgstr "ಈ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಅಳಿಸಲಾಗಿದೆಯೆ ಎಂದು ಸೂಚಿಸುತ್ತದೆ (ಮೃದು ಅಳಿಸು)."
+
+#: .\feedback\models\feedback_model.py:226
+msgid "Feedback"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ"
+
+#: .\feedback\models\feedback_model.py:227
+msgid "Feedbacks"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ"
+
+#: .\feedback\models\feedback_model.py:243
+msgid "Cannot set resolved time if feedback is not resolved or closed."
+msgstr ""
+"ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಪರಿಹರಿಸದಿದ್ದರೆ ಅಥವಾ ಮುಚ್ಚದಿದ್ದರೆ ಪರಿಹರಿಸಿದ ಸಮಯವನ್ನು "
+"ಹೊಂದಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ."
+
+#: .\feedback\models\feedback_model.py:253
+msgid "Assigned to cannot be empty when assigned time is set."
+msgstr "ನಿಯೋಜಿಸಲಾದ ಸಮಯವನ್ನು ನಿಗದಿಪಡಿಸಿದಾಗ ಖಾಲಿಯಾಗಲು ಸಾಧ್ಯವಿಲ್ಲ."
+
+#: .\feedback\models\feedback_model.py:294
+#, python-brace-format
+msgid "Invalid status transition from '{self.status}' to '{new_status}'"
+msgstr "ಅಮಾನ್ಯ ಸ್ಥಿತಿ ಪರಿವರ್ತನೆ '{self.status}' ನಿಂದ '{new_status}' ಗೆ"
+
+#: .\feedback\models\feedback_model.py:325
+msgid "Previous Status"
+msgstr "ಹಿಂದಿನ ಸ್ಥಿತಿ"
+
+#: .\feedback\models\feedback_model.py:327
+msgid "New Status"
+msgstr "ಹೊಸ ಸ್ಥಿತಿ"
+
+#: .\feedback\models\feedback_model.py:328
+msgid "Log Remark"
+msgstr "ಲಾಗ್ ಹೇಳಿಕೆ"
+
+#: .\member\apps.py:8
+msgid "Kashee Member"
+msgstr "ಕಾಶೀ ಸದಸ್ಯ"
+
+#: .\member\models.py:21
+msgid "OTP"
+msgstr "ಒತ್ತು"
+
+#: .\member\models.py:22
+msgid "Created AT"
+msgstr "ನಲ್ಲಿ ರಚಿಸಲಾಗಿದೆ"
+
+#: .\member\models.py:43
+msgid "User OTP"
+msgstr "ಬಳಕೆದಾರ ಒಟಿಪಿ"
+
+#: .\member\models.py:44
+msgid "Users' OTPs"
+msgstr "ಬಳಕೆದಾರರ ಒಟಿಪಿಗಳು"
+
+#: .\member\models.py:52
+msgid "Device"
+msgstr "ಸಾಧನ"
+
+#: .\member\models.py:57
+msgid "FCM Token"
+msgstr "ಎಫ್‌ಸಿಎಂ ಟೋಕನ್"
+
+#: .\member\models.py:59
+msgid "Module Code"
+msgstr "ಮಾಡ್ಯೂಲ್ ಕೋಡ್"
+
+#: .\member\models.py:69
+msgid "User Device"
+msgstr "ಬಳಕೆದಾರ ಸಾಧನ"
+
+#: .\member\models.py:70
+msgid "Users' Devices"
+msgstr "ಬಳಕೆದಾರರ ಸಾಧನಗಳು"
+
+#: .\member\models.py:84
+msgid "MCC Name"
+msgstr "ಎಂಸಿಸಿ ಹೆಸರು"
+
+#: .\member\models.py:93
+msgid "Year"
+msgstr "ವರ್ಷ"
+
+#: .\member\models.py:94
+msgid "Opening Balance"
+msgstr "ತೆರೆಯುವ ಸಮತೋಲನ"
+
+#: .\member\models.py:95
+msgid "Milk Qty"
+msgstr "ಹಾಲು qty"
+
+#: .\member\models.py:96
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:115
+msgid "Milk Incentive"
+msgstr "ಹಾಲು ಪ್ರೋತ್ಸಾಹಕ"
+
+#: .\member\models.py:97
+msgid "TDS(%)"
+msgstr "ಟಿಡಿಎಸ್ (%)"
+
+#: .\member\models.py:98
+msgid "TDS (AMT)"
+msgstr "ಟಿಡಿಎಸ್ (ಎಎಮ್‌ಟಿ)"
+
+#: .\member\models.py:99
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:118
+msgid "Other Incentive"
+msgstr "ಇತರ ಪ್ರೋತ್ಸಾಹ"
+
+#: .\member\models.py:101
+msgid "Cattle Feed Incentive"
+msgstr "ಜಾನುವಾರು ಆಹಾರ ಪ್ರೋತ್ಸಾಹ"
+
+#: .\member\models.py:104
+msgid "Mineral Mixture Incentive"
+msgstr "ಖನಿಜ ಮಿಶ್ರಣ ಪ್ರೋತ್ಸಾಹ"
+
+#: .\member\models.py:106
+msgid "C.D.A Recovery"
+msgstr "ಸಿ.ಡಿ.ಎ ಚೇತರಿಕೆ"
+
+#: .\member\models.py:107
+msgid "Asset Recovery"
+msgstr "ಆಸ್ತಿ ಚೇತರಿಕೆ"
+
+#: .\member\models.py:109
+msgid "Milk Incentive Payable"
+msgstr "ಹಾಲು ಪ್ರೋತ್ಸಾಹವನ್ನು ಪಾವತಿಸಬೇಕಾಗುತ್ತದೆ"
+
+#: .\member\models.py:111
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:121
+msgid "Payable"
+msgstr "ಪಾವತಿಸಲಾಗುವ"
+
+#: .\member\models.py:112
+msgid "Closing Balance"
+msgstr "ಮುಕ್ತಾಯ ಸಮತೋಲನ"
+
+#: .\member\models.py:114
+msgid "Additional Data"
+msgstr "ಹೆಚ್ಚುವರಿ ಡೇಟಾ"
+
+#: .\member\models.py:117
+msgid "Add additional data to be shown in sahayak recovery"
+msgstr "ಸಹಯಕ್ ಚೇತರಿಕೆಯಲ್ಲಿ ತೋರಿಸಬೇಕಾದ ಹೆಚ್ಚುವರಿ ಡೇಟಾವನ್ನು ಸೇರಿಸಿ"
+
+#: .\member\models.py:126
+msgid "Sahayak Incentive"
+msgstr "ಸಹಕ್ ಪ್ರೋತ್ಸಾಹಕ"
+
+#: .\member\models.py:127
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:45
+msgid "Sahayak Incentives"
+msgstr "ಸಹಯಕ್ ಪ್ರೋತ್ಸಾಹಕಗಳು"
+
+#: .\member\models.py:138
+msgid "Product Name"
+msgstr "ಉತ್ಪನ್ನದ ಹೆಸರು"
+
+#: .\member\models.py:139
+msgid "The name of product"
+msgstr "ಉತ್ಪನ್ನದ ಹೆಸರು"
+
+#: .\member\models.py:144
+msgid "Product Price"
+msgstr "ಉತ್ಪನ್ನ ಬೆಲೆ"
+
+#: .\member\models.py:145
+msgid "Rate of the product"
+msgstr "ಉತ್ಪನ್ನದ ದರ"
+
+#: .\member\models.py:151
+msgid "Product Image"
+msgstr "ಉತ್ಪನ್ನ ಚಿತ್ರ"
+
+#: .\member\models.py:152
+msgid "Image of the product to display as icon, size should be 100x100"
+msgstr "ಐಕಾನ್ ಆಗಿ ಪ್ರದರ್ಶಿಸಲು ಉತ್ಪನ್ನದ ಚಿತ್ರ, ಗಾತ್ರವು 100x100 ಆಗಿರಬೇಕು"
+
+#: .\member\models.py:158 .\veterinary\models\common_models.py:58
+msgid "Locale"
+msgstr "ಸ್ಥಳ"
+
+#: .\member\models.py:159
+msgid "Locale of the product data (e.g., en for English, hi for Hindi)"
+msgstr "ಉತ್ಪನ್ನ ಡೇಟಾದ ಸ್ಥಳ (ಉದಾ., ಇಂಗ್ಲಿಷ್‌ಗೆ ಎನ್, ಹಿಂದಿಗಾಗಿ ಹಾಯ್)"
+
+#: .\member\models.py:166
+msgid "Translated Product Name"
+msgstr "ಅನುವಾದಿತ ಉತ್ಪನ್ನದ ಹೆಸರು"
+
+#: .\member\models.py:167
+msgid "Translated name of the product in the selected locale"
+msgstr "ಆಯ್ದ ಸ್ಥಳದಲ್ಲಿ ಉತ್ಪನ್ನದ ಅನುವಾದಿತ ಹೆಸರು"
+
+#: .\member\models.py:173
+msgid "Price Description"
+msgstr "ಬೆಲೆ ವಿವರಣೆ"
+
+#: .\member\models.py:174
+msgid "Description of the product price, e.g., price of 1 bag or 1 pill"
+msgstr "ಉತ್ಪನ್ನದ ಬೆಲೆಯ ವಿವರಣೆ, ಉದಾ., 1 ಚೀಲ ಅಥವಾ 1 ಮಾತ್ರೆ ಬೆಲೆ"
+
+#: .\member\models.py:189 .\veterinary\models\common_models.py:37
+msgid "Updated By"
+msgstr "ಯಿಂದ ನವೀಕರಿಸಲಾಗಿದೆ"
+
+#: .\member\models.py:202
+msgid "Product Rate"
+msgstr "ಉತ್ಪನ್ನ ದರ"
+
+#: .\member\models.py:203
+msgid "Product Rates"
+msgstr "ಉತ್ಪನ್ನ ದರಗಳು"
+
+#: .\member\models.py:235 .\veterinary\models\case_models.py:346
+msgid "Remark"
+msgstr "ಟೀಕಿಸು"
+
+#: .\member\models.py:240
+msgid "Files"
+msgstr "ಉಜ್ಜು"
+
+#: .\member\models.py:279
+msgid "Sahayak Feedback"
+msgstr "ಸಹಯಕ್ ಪ್ರತಿಕ್ರಿಯೆ"
+
+#: .\member\models.py:280
+msgid "Sahayak Feedbacks"
+msgstr "ಸಹಯಕ್ ಪ್ರತಿಕ್ರಿಯೆಗಳು"
+
+#: .\member\models.py:299
+msgid "Feedback Log"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ ಲಾಗ್"
+
+#: .\member\models.py:300
+msgid "Feedback Logs"
+msgstr "ಪ್ರತಿಕ್ರಿಯೆ ಲಾಗ್‌ಗಳು"
+
+#: .\member\views.py:1088
+msgid ""
+"No valid data to import. Ensure your file has the correct headers or data "
+"for import."
+msgstr ""
+"ಆಮದು ಮಾಡಲು ಮಾನ್ಯ ಡೇಟಾ ಇಲ್ಲ. ನಿಮ್ಮ ಫೈಲ್ ಆಮದು ಮಾಡಲು ಸರಿಯಾದ ಹೆಡರ್ ಅಥವಾ "
+"ಡೇಟಾವನ್ನು ಹೊಂದಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ."
+
+#: .\member\views.py:1123
+msgid "Import Sahayak Incentive Preview"
+msgstr "ಸಹಯಕ್ ಪ್ರೋತ್ಸಾಹಕ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ಆಮದು ಮಾಡಿ"
+
+#: .\member\views.py:1163 .\templates\member\form\confirm_excel_import.html:18
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:56
+msgid "Import"
+msgstr "ಆಮದು"
+
+#: .\member\views.py:1347
+msgid "Months retrieved successfully"
+msgstr "ತಿಂಗಳುಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮರುಸಂಪಾದಿಸಲಾಗಿದೆ"
+
+#: .\member\views.py:2180
+msgid "Data Retrieved"
+msgstr "ಡೇಟಾವನ್ನು ಮರುಸಂಪಾದಿಸಲಾಗಿದೆ"
+
+#: .\mpms\apps.py:10
+msgid "MPMS"
+msgstr "ಎಂಪಿಎಂಎಸ್"
+
+#: .\notifications\models.py:13
+msgid "Information"
+msgstr "ಮಾಹಿತಿ"
+
+#: .\notifications\models.py:14
+msgid "Warning"
+msgstr "ಎಚ್ಚರಿಕೆ"
+
+#: .\notifications\models.py:15
+msgid "Alert"
+msgstr "ಎಚ್ಚರಿಕೆ"
+
+#: .\notifications\models.py:16
+msgid "Success"
+msgstr "ಯಶಸ್ಸು"
+
+#: .\notifications\models.py:20
+msgid "Sent"
+msgstr "ಕಳುಹಿಸಿದ"
+
+#: .\notifications\models.py:21 .\veterinary\choices\choices.py:167
+msgid "Failed"
+msgstr "ವಿಫಲವಾದ"
+
+#: .\notifications\models.py:25 .\veterinary\models\case_models.py:235
+msgid "System"
+msgstr "ವ್ಯವಸ್ಥೆ"
+
+#: .\notifications\models.py:26
+msgid "Firebase Push"
+msgstr "ಅಗ್ನಿಶಾಮಕ"
+
+#: .\notifications\models.py:27
+msgid "Email"
+msgstr "ಇಮೇಲ್ ಕಳುಹಿಸು"
+
+#: .\notifications\models.py:38
+msgid "User who triggered the notification."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ಪ್ರಚೋದಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\notifications\models.py:44
+msgid "Recipient"
+msgstr "ಸ್ವೀಕರಿಸುವವನು"
+
+#: .\notifications\models.py:45
+msgid "User who will receive the notification."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ಸ್ವೀಕರಿಸುವ ಬಳಕೆದಾರ."
+
+#: .\notifications\models.py:49
+msgid "Title"
+msgstr "ಶೀರ್ಷಿಕೆ"
+
+#: .\notifications\models.py:50
+msgid "Title or heading for the notification."
+msgstr "ಶೀರ್ಷಿಕೆ ಅಥವಾ ಅಧಿಸೂಚನೆಗೆ ಹೋಗುವುದು."
+
+#: .\notifications\models.py:56
+msgid "Body"
+msgstr "ದೇಹ"
+
+#: .\notifications\models.py:57
+msgid "Short summary or preview for the notification."
+msgstr "ಅಧಿಸೂಚನೆಗಾಗಿ ಸಣ್ಣ ಸಾರಾಂಶ ಅಥವಾ ಪೂರ್ವವೀಕ್ಷಣೆ."
+
+#: .\notifications\models.py:61
+msgid "Detailed notification message to be shown."
+msgstr "ತೋರಿಸಬೇಕಾದ ವಿವರವಾದ ಅಧಿಸೂಚನೆ ಸಂದೇಶ."
+
+#: .\notifications\models.py:66
+msgid "Model Type"
+msgstr "ಮಾದರಿ ಪ್ರಕಾರ"
+
+#: .\notifications\models.py:68
+msgid ""
+"Name of the model related to this notification, e.g., 'feedback', 'report'."
+msgstr "ಈ ಅಧಿಸೂಚನೆಗೆ ಸಂಬಂಧಿಸಿದ ಮಾದರಿಯ ಹೆಸರು, ಉದಾ., 'ಪ್ರತಿಕ್ರಿಯೆ', 'ವರದಿ'."
+
+#: .\notifications\models.py:72
+msgid "Object ID"
+msgstr "ಆಬ್ಜೆಕ್ಟ್ ಐಡಿ"
+
+#: .\notifications\models.py:73
+msgid "Primary key of the related model instance."
+msgstr "ಸಂಬಂಧಿತ ಮಾದರಿ ನಿದರ್ಶನದ ಪ್ರಾಥಮಿಕ ಕೀ."
+
+#: .\notifications\models.py:77
+msgid "Route"
+msgstr "ಮಾರ್ಗ"
+
+#: .\notifications\models.py:78
+msgid "Frontend route name for redirection."
+msgstr "ಮರುನಿರ್ದೇಶನಕ್ಕಾಗಿ ಮುಂಭಾಗದ ಮಾರ್ಗದ ಹೆಸರು."
+
+#: .\notifications\models.py:84
+msgid "Custom Key"
+msgstr "ಕಸ್ಟಮ್ ಕೀಲಿ"
+
+#: .\notifications\models.py:85
+msgid "Optional key used for grouping or client-side logic."
+msgstr "ಗುಂಪು ಅಥವಾ ಕ್ಲೈಂಟ್-ಸೈಡ್ ತರ್ಕಕ್ಕಾಗಿ ಐಚ್ al ಿಕ ಕೀಲಿಯನ್ನು ಬಳಸಲಾಗುತ್ತದೆ."
+
+#: .\notifications\models.py:89
+msgid "Is Subroute"
+msgstr "ಸಬ್ರೊಟ್ ಆಗಿದೆ"
+
+#: .\notifications\models.py:90
+msgid "Indicates if the route is a sub-path or detail view."
+msgstr "ಮಾರ್ಗವು ಉಪ-ಮಾರ್ಗ ಅಥವಾ ವಿವರ ವೀಕ್ಷಣೆಯಾಗಿದೆಯೆ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\notifications\models.py:96
+msgid "Notification Type"
+msgstr "ಅಧಿಸೂಚನೆ ಪ್ರಕಾರ"
+
+#: .\notifications\models.py:97
+msgid "Classifies the type of notification."
+msgstr "ಅಧಿಸೂಚನೆಯ ಪ್ರಕಾರವನ್ನು ವರ್ಗೀಕರಿಸುತ್ತದೆ."
+
+#: .\notifications\models.py:103
+msgid "Sent Via"
+msgstr "ಮೂಲಕ ಕಳುಹಿಸಲಾಗಿದೆ"
+
+#: .\notifications\models.py:104
+msgid "Medium through which the notification was sent."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ಕಳುಹಿಸಿದ ಮಧ್ಯಮ."
+
+#: .\notifications\models.py:108
+msgid "Is Read"
+msgstr "ಓದಿ"
+
+#: .\notifications\models.py:109
+msgid "Indicates whether the user has read the notification."
+msgstr "ಬಳಕೆದಾರರು ಅಧಿಸೂಚನೆಯನ್ನು ಓದಿದ್ದಾರೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\notifications\models.py:113
+msgid "Allowed Email"
+msgstr "ಅನುಮತಿಸಲಾದ ಇಮೇಲ್"
+
+#: .\notifications\models.py:114
+msgid "Used to handle if email notification allowed or not."
+msgstr ""
+"ಇಮೇಲ್ ಅಧಿಸೂಚನೆಯನ್ನು ಅನುಮತಿಸಿದೆಯೆ ಅಥವಾ ಇಲ್ಲದಿದ್ದರೆ ಅದನ್ನು ನಿರ್ವಹಿಸಲು "
+"ಬಳಸಲಾಗುತ್ತದೆ."
+
+#: .\notifications\models.py:119
+msgid "Read At"
+msgstr "ನಲ್ಲಿ ಓದಿ"
+
+#: .\notifications\models.py:120
+msgid "Timestamp when the notification was read."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ಓದಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\notifications\models.py:125
+msgid "Timestamp when the notification was created."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ರಚಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\notifications\models.py:129
+msgid "Indicates whether this object has been deleted or not."
+msgstr "ಈ ವಸ್ತುವನ್ನು ಅಳಿಸಲಾಗಿದೆಯೆ ಅಥವಾ ಇಲ್ಲವೇ ಎಂಬುದನ್ನು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\notifications\models.py:136
+msgid "Delivery Status"
+msgstr "ವಿತರಣಾ ಸ್ಥಿತಿ"
+
+#: .\notifications\models.py:137
+msgid "Tracks whether the notification was successfully delivered."
+msgstr "ಅಧಿಸೂಚನೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತಲುಪಿಸಲಾಗಿದೆಯೇ ಎಂದು ಪತ್ತೆ ಮಾಡುತ್ತದೆ."
+
+#: .\notifications\models.py:142
+msgid "Delivery Response"
+msgstr "ವಿತರಣಾ ಪ್ರತಿಕ್ರಿಯೆ"
+
+#: .\notifications\models.py:143
+msgid "Raw response from the notification delivery system (e.g., FCM)."
+msgstr "ಅಧಿಸೂಚನೆ ವಿತರಣಾ ವ್ಯವಸ್ಥೆಯಿಂದ ಕಚ್ಚಾ ಪ್ರತಿಕ್ರಿಯೆ (ಉದಾ., ಎಫ್‌ಸಿಎಂ)."
+
+#: .\notifications\models.py:148
+msgid "Delivery Attempted At"
+msgstr "ವಿತರಣೆಯಲ್ಲಿ ಪ್ರಯತ್ನಿಸಲಾಗಿದೆ"
+
+#: .\notifications\models.py:149
+msgid "Timestamp of the last delivery attempt."
+msgstr "ಕೊನೆಯ ವಿತರಣಾ ಪ್ರಯತ್ನದ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\notifications\models.py:153
+msgid "App Notification"
+msgstr "ಅಪ್ಲಿಕೇಶನ್ ಅಧಿಸೂಚನೆ"
+
+#: .\notifications\models.py:154
+msgid "App Notifications"
+msgstr "ಅಪ್ಲಿಕೇಶನ್ ಅಧಿಸೂಚನೆಗಳು"
+
+#: .\notifications\views.py:209
+msgid "Unread notification count retrieved successfully."
+msgstr "ಓದದಿರುವ ಅಧಿಸೂಚನೆ ಎಣಿಕೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮರುಸಂಪಾದಿಸಲಾಗಿದೆ."
+
+#: .\templates\admin\request_reason_form.html:30
+msgid "Cancel"
+msgstr "ರದ್ದುಮಾಡು"
+
+#: .\templates\member\form\confirm_excel_import.html:42
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+"ಆಮದು ಮಾಡಬೇಕಾದ ಡೇಟಾದ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ. ಫಲಿತಾಂಶಗಳಲ್ಲಿ ನೀವು "
+"ತೃಪ್ತರಾಗಿದ್ದರೆ, 'ಆಮದು ದೃ irm ೀಕರಿಸಿ' ಕ್ಲಿಕ್ ಮಾಡಿ"
+
+#: .\templates\member\form\confirm_excel_import.html:45
+msgid "Confirm import"
+msgstr "ಆಮದು ದೃ irm ೀಕರಿಸಿ"
+
+#: .\templates\member\form\confirm_excel_import.html:53
+#: .\templates\member\form\confirm_excel_import.html:99
+msgid "Errors"
+msgstr "ದೋಷಗಳು"
+
+#: .\templates\member\form\confirm_excel_import.html:68
+msgid "Line number"
+msgstr "ಸಾಲು ಸಂಖ್ಯೆ"
+
+#: .\templates\member\form\confirm_excel_import.html:86
+msgid "Some rows failed to validate"
+msgstr "ಕೆಲವು ಸಾಲುಗಳು ಮೌಲ್ಯೀಕರಿಸಲು ವಿಫಲವಾಗಿವೆ"
+
+#: .\templates\member\form\confirm_excel_import.html:89
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+"ದಯವಿಟ್ಟು ನಿಮ್ಮ ಡೇಟಾದಲ್ಲಿ ಈ ದೋಷಗಳನ್ನು ಸಾಧ್ಯವಾದರೆ ಸರಿಪಡಿಸಿ, ನಂತರ ಮೇಲಿನ ಫಾರ್ಮ್ "
+"ಬಳಸಿ ಅದನ್ನು ಮರುಲೋಡ್ ಮಾಡಿ."
+
+#: .\templates\member\form\confirm_excel_import.html:96
+msgid "Row"
+msgstr "ಸಾಲು"
+
+#: .\templates\member\form\confirm_excel_import.html:126
+msgid "Non field specific"
+msgstr "ಕ್ಷೇತ್ರ ನಿರ್ದಿಷ್ಟವಲ್ಲದ"
+
+#: .\templates\member\form\confirm_excel_import.html:147
+msgid "Preview"
+msgstr "ಪೂರ್ವವೀಕ್ಷಣೆ"
+
+#: .\templates\member\form\confirm_excel_import.html:162
+msgid "New"
+msgstr "ಹೊಸದಾದ"
+
+#: .\templates\member\form\confirm_excel_import.html:164
+msgid "Skipped"
+msgstr "ಜಿಗಿಟ್ಟ"
+
+#: .\templates\member\form\confirm_excel_import.html:166
+msgid "Delete"
+msgstr "ಅಳಿಸು"
+
+#: .\templates\member\form\confirm_excel_import.html:168
+msgid "Update"
+msgstr "ನವೀಕರಿಸು"
+
+#: .\templates\member\form\export.html:17
+msgid "Export"
+msgstr "ರಫ್ತು"
+
+#: .\templates\member\form\export.html:44
+#, python-format
+msgid ""
+"\n"
+"                          Export %(len)s selected item.\n"
+"                          "
+msgid_plural ""
+"\n"
+"                          Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\member\form\export.html:71
+msgid "This exporter will export the following fields: "
+msgstr "ಈ ರಫ್ತುದಾರರು ಈ ಕೆಳಗಿನ ಕ್ಷೇತ್ರಗಳನ್ನು ರಫ್ತು ಮಾಡುತ್ತಾರೆ:"
+
+#: .\templates\member\form\export.html:105
+msgid "Submit"
+msgstr "ಸಲ್ಲಿಸು"
+
+#: .\templates\member\pages\dashboards\default.html:19
+msgid "ERP :: Dashboard"
+msgstr "ಇಆರ್ಪಿ :: ಡ್ಯಾಶ್‌ಬೋರ್ಡ್"
+
+#: .\templates\member\pages\dashboards\default.html:28
+msgid "Kashee E-Dairy App Installation Report"
+msgstr "ಕಾಶೀ ಇ-ಡೈರಿ ಅಪ್ಲಿಕೇಶನ್ ಸ್ಥಾಪನೆ ವರದಿ"
+
+#: .\templates\member\pages\dashboards\default.html:63
+msgid "Sahayak Mitra Installed By MCCs"
+msgstr "ಸಹಯಕ್ ಮಿತ್ರವನ್ನು ಎಂಸಿಸಿಗಳು ಸ್ಥಾಪಿಸಿದ್ದಾರೆ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:32
+msgid "Filter"
+msgstr "ಫಿಲ್ಟರ್"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:33
+#: .\templates\rangefilter\numeric_filter.html:65
+#: .\templates\rangefilter\numeric_filter_4_0.html:61
+msgid "Reset"
+msgstr "ಮರುಹೊಂದಿಸು"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:47
+msgid "Sahayak incentive data"
+msgstr "ಸಹಯಕ್ ಪ್ರೋತ್ಸಾಹಕ ಡೇಟಾ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:55
+msgid "Add"
+msgstr "ಸೇರಿಸು"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:72
+msgid "Choose Action"
+msgstr "ಕ್ರಿಯೆಯನ್ನು ಆರಿಸಿ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:83
+msgid "Total Rows"
+msgstr "ಒಟ್ಟು ಸಾಲುಗಳು"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:84
+msgid "Selected Rows"
+msgstr "ಆಯ್ದ ಸಾಲುಗಳು"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:94
+msgid "MCC"
+msgstr "ಎಂಸಿ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:106
+msgid "Sahayak Name"
+msgstr "ಸಹಕ್ ಹೆಸರು"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:112
+msgid "Opening"
+msgstr "ತೆರೆಯುವ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:190
+msgid "Import Excel To Populate the Data"
+msgstr "ಡೇಟಾವನ್ನು ಜನಪ್ರಿಯಗೊಳಿಸಲು ಎಕ್ಸೆಲ್ ಅನ್ನು ಆಮದು ಮಾಡಿ"
+
+#: .\templates\member\pages\sidebar.html:7
+msgid "ERP Dashboard"
+msgstr "ಇಆರ್ಪಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್"
+
+#: .\templates\member\pages\sidebar.html:17
+msgid "Dashboard"
+msgstr "ಬಿರಡೆದ ಹಲಗೆ"
+
+#: .\templates\rangefilter\date_filter.html:4
+#, python-format
+msgid "By %(filter_title)s "
+msgstr "%(ಫಿಲ್ಟರ್_ಟಿಟ್ಲ್) ಎಸ್"
+
+#: .\templates\rangefilter\numeric_filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr "%(ಫಿಲ್ಟರ್_ಟಿಟ್ಲ್) ಎಸ್"
+
+#: .\templates\rangefilter\numeric_filter.html:64
+#: .\templates\rangefilter\numeric_filter_4_0.html:60
+msgid "Search"
+msgstr "ಶೋಧನೆ"
+
+#: .\templates\registration\logged_out.html:4
+#: .\templates\registration\password_change_done.html:13
+#: .\templates\registration\password_change_form.html:14
+#: .\templates\registration\password_reset_complete.html:6
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_done.html:6
+#: .\templates\registration\password_reset_form.html:7
+msgid "Home"
+msgstr "ಮನೆ"
+
+#: .\templates\registration\logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr ""
+"ಇಂದು ವೆಬ್ ಸೈಟ್ನೊಂದಿಗೆ ಕೆಲವು ಗುಣಮಟ್ಟದ ಸಮಯವನ್ನು ಕಳೆದಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು."
+
+#: .\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr "ಮತ್ತೆ ಲಾಗ್ ಇನ್ ಮಾಡಿ"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Documentation"
+msgstr "ದಸ್ತಾವತಿ"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Change password"
+msgstr "ಪಾಸ್ವರ್ಡ್ ಬದಲಾಯಿಸಿ"
+
+#: .\templates\registration\password_change_done.html:7
+#: .\templates\registration\password_change_form.html:8
+msgid "Log out"
+msgstr "ಲಾಗ್ out ಟ್"
+
+#: .\templates\registration\password_change_done.html:14
+#: .\templates\registration\password_change_form.html:15
+msgid "Password change"
+msgstr "ಪಾಸ್ವರ್ಡ್ ಬದಲಾವಣೆ"
+
+#: .\templates\registration\password_change_done.html:19
+msgid "Your password was changed."
+msgstr "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಬದಲಾಯಿಸಲಾಗಿದೆ."
+
+#: .\templates\registration\password_change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\registration\password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new"
+" password twice so we can verify you typed it in correctly."
+msgstr ""
+"ಭದ್ರತೆಯ ಸಲುವಾಗಿ ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹಳೆಯ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ನಮೂದಿಸಿ, ತದನಂತರ ನಿಮ್ಮ "
+"ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಎರಡು ಬಾರಿ ನಮೂದಿಸಿ ಇದರಿಂದ ನೀವು ಅದನ್ನು ಸರಿಯಾಗಿ ಟೈಪ್ "
+"ಮಾಡಿರುವುದನ್ನು ನಾವು ಪರಿಶೀಲಿಸಬಹುದು."
+
+#: .\templates\registration\password_change_form.html:58
+#: .\templates\registration\password_reset_confirm.html:37
+msgid "Change my password"
+msgstr "ನನ್ನ ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಯಿಸಿ"
+
+#: .\templates\registration\password_reset_complete.html:7
+#: .\templates\registration\password_reset_done.html:7
+#: .\templates\registration\password_reset_form.html:8
+msgid "Password reset"
+msgstr "ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ"
+
+#: .\templates\registration\password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+"ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಹೊಂದಿಸಲಾಗಿದೆ.  ನೀವು ಮುಂದೆ ಹೋಗಿ ಈಗ ಲಾಗ್ ಇನ್ ಮಾಡಬಹುದು."
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Log in"
+msgstr "ಲಾಗ್ ಇನ್ ಮಾಡಿ"
+
+#: .\templates\registration\password_reset_confirm.html:8
+msgid "Password reset confirmation"
+msgstr "ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ ದೃ mation ೀಕರಣ"
+
+#: .\templates\registration\password_reset_confirm.html:16
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಎರಡು ಬಾರಿ ನಮೂದಿಸಿ ಆದ್ದರಿಂದ ನೀವು ಅದನ್ನು "
+"ಸರಿಯಾಗಿ ಟೈಪ್ ಮಾಡುವುದನ್ನು ಪರಿಶೀಲಿಸಬಹುದು."
+
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "New password:"
+msgstr "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್:"
+
+#: .\templates\registration\password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr "ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ದೃ irm ೀಕರಿಸಿ:"
+
+#: .\templates\registration\password_reset_confirm.html:43
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಅಮಾನ್ಯವಾಗಿದೆ, ಬಹುಶಃ ಇದನ್ನು ಈಗಾಗಲೇ ಬಳಸಲಾಗಿದೆ.  "
+"ದಯವಿಟ್ಟು ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಕೆಯನ್ನು ವಿನಂತಿಸಿ."
+
+#: .\templates\registration\password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"ನೀವು ನಮೂದಿಸಿದ ಇಮೇಲ್‌ನೊಂದಿಗೆ ಖಾತೆ ಅಸ್ತಿತ್ವದಲ್ಲಿದ್ದರೆ ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು "
+"ಹೊಂದಿಸುವ ಸೂಚನೆಗಳನ್ನು ನಾವು ನಿಮಗೆ ಇಮೇಲ್ ಮಾಡಿದ್ದೇವೆ. ನೀವು ಶೀಘ್ರದಲ್ಲೇ ಅವುಗಳನ್ನು "
+"ಸ್ವೀಕರಿಸಬೇಕು."
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"ನೀವು ಇಮೇಲ್ ಸ್ವೀಕರಿಸದಿದ್ದರೆ, ದಯವಿಟ್ಟು ನೀವು ನೋಂದಾಯಿಸಿದ ವಿಳಾಸವನ್ನು "
+"ನಮೂದಿಸಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ ಮತ್ತು ನಿಮ್ಮ ಸ್ಪ್ಯಾಮ್ ಫೋಲ್ಡರ್ ಅನ್ನು "
+"ಪರಿಶೀಲಿಸಿ."
+
+#: .\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"ನೀವು ಈ ಇಮೇಲ್ ಅನ್ನು ಸ್ವೀಕರಿಸುತ್ತಿದ್ದೀರಿ ಏಕೆಂದರೆ ನಿಮ್ಮ ಬಳಕೆದಾರ ಖಾತೆಗಾಗಿ "
+"ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸುವಿಕೆಯನ್ನು ನೀವು %(SITE_NAME) s ನಲ್ಲಿ ವಿನಂತಿಸಿದ್ದೀರಿ."
+
+#: .\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr "ದಯವಿಟ್ಟು ಮುಂದಿನ ಪುಟಕ್ಕೆ ಹೋಗಿ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಆಯ್ಕೆಮಾಡಿ:"
+
+#: .\templates\registration\password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr "ನಿಮ್ಮ ಬಳಕೆದಾರಹೆಸರು, ನೀವು ಮರೆತಿದ್ದರೆ:"
+
+#: .\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "ನಮ್ಮ ಸೈಟ್ ಬಳಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!"
+
+#: .\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "%(ಸೈಟ್_ಹೆಸರು) ಎಸ್ ತಂಡ"
+
+#: .\templates\registration\password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರೆತಿದ್ದೀರಾ? ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಕೆಳಗೆ ನಮೂದಿಸಿ, "
+"ಮತ್ತು ಹೊಸದನ್ನು ಹೊಂದಿಸಲು ನಾವು ಸೂಚನೆಗಳನ್ನು ಇಮೇಲ್ ಮಾಡುತ್ತೇವೆ."
+
+#: .\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr "ಇಮೇಲ್ ವಿಳಾಸ:"
+
+#: .\templates\registration\password_reset_form.html:27
+msgid "Reset my password"
+msgstr "ನನ್ನ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಿ"
+
+#: .\veterinary\choices\choices.py:7
+msgid "Online"
+msgstr "ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ"
+
+#: .\veterinary\choices\choices.py:8
+msgid "Cash"
+msgstr "ನಗದು"
+
+#: .\veterinary\choices\choices.py:20
+msgid "Dairy"
+msgstr "ಡೈರಿ"
+
+#: .\veterinary\choices\choices.py:21
+msgid "Beef"
+msgstr "ಗೋಮಾಂಸ"
+
+#: .\veterinary\choices\choices.py:22
+msgid "Dual Purpose"
+msgstr "ಉಭಯ ಉದ್ದೇಶ"
+
+#: .\veterinary\choices\choices.py:23 .\veterinary\choices\choices.py:45
+#: .\veterinary\choices\choices.py:60 .\veterinary\choices\choices.py:109
+msgid "Other"
+msgstr "ಬೇರೆ"
+
+#: .\veterinary\choices\choices.py:28
+msgid "Primarily used for milk production"
+msgstr "ಮುಖ್ಯವಾಗಿ ಹಾಲು ಉತ್ಪಾದನೆಗೆ ಬಳಸಲಾಗುತ್ತದೆ"
+
+#: .\veterinary\choices\choices.py:29
+msgid "Primarily used for meat production"
+msgstr "ಮುಖ್ಯವಾಗಿ ಮಾಂಸ ಉತ್ಪಾದನೆಗೆ ಬಳಸಲಾಗುತ್ತದೆ"
+
+#: .\veterinary\choices\choices.py:30
+msgid "Used for both dairy and beef purposes"
+msgstr "ಡೈರಿ ಮತ್ತು ಗೋಮಾಂಸ ಉದ್ದೇಶಗಳಿಗಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ"
+
+#: .\veterinary\choices\choices.py:31
+msgid "Uncategorized or other specific use"
+msgstr "ವರ್ಗೀಕರಿಸದ ಅಥವಾ ಇತರ ನಿರ್ದಿಷ್ಟ ಬಳಕೆ"
+
+#: .\veterinary\choices\choices.py:32 .\veterinary\models\case_models.py:302
+msgid "Unknown"
+msgstr "ಅಜ್ಞಾತ"
+
+#: .\veterinary\choices\choices.py:37
+msgid "Male"
+msgstr "ಪುರುಷ"
+
+#: .\veterinary\choices\choices.py:38
+msgid "Female"
+msgstr "ಹೆಣ್ಣು"
+
+#: .\veterinary\choices\choices.py:43
+msgid "Doctor"
+msgstr "ವೈದ್ಯ"
+
+#: .\veterinary\choices\choices.py:44
+msgid "MAT"
+msgstr "ಚಾಪೆ"
+
+#: .\veterinary\choices\choices.py:50
+msgid "Manual"
+msgstr "ಪ್ರಮಾಣಕ"
+
+#: .\veterinary\choices\choices.py:51
+msgid "RFID Tag"
+msgstr "Rfid ಟ್ಯಾಗ್"
+
+#: .\veterinary\choices\choices.py:52
+msgid "QR Code"
+msgstr "ಕ್ಯೂಆರ್ ಕೋಡ್"
+
+#: .\veterinary\choices\choices.py:57
+msgid "Left Ear"
+msgstr "ಎಡ ಕಿವಿ"
+
+#: .\veterinary\choices\choices.py:58
+msgid "Right Ear"
+msgstr "ಬಲ ಕಿವಿ"
+
+#: .\veterinary\choices\choices.py:59
+msgid "Neck"
+msgstr "ಕುತ್ತಿಗೆ"
+
+#: .\veterinary\choices\choices.py:65
+msgid "New Tag"
+msgstr "ಹೊಸ ಟ್ಯಾಗ್"
+
+#: .\veterinary\choices\choices.py:66
+msgid "Replaced"
+msgstr "ಬದಲಾಗಿ"
+
+#: .\veterinary\choices\choices.py:86
+msgid "Tablet"
+msgstr "ಟ್ಯಾಬ್ಲೆಟ್"
+
+#: .\veterinary\choices\choices.py:87
+msgid "Liquid"
+msgstr "ದ್ರವ"
+
+#: .\veterinary\choices\choices.py:88
+msgid "Injection"
+msgstr "ಚುಚ್ಚು"
+
+#: .\veterinary\choices\choices.py:89
+msgid "Capsule"
+msgstr "ಬಿಲ್ಲೆ"
+
+#: .\veterinary\choices\choices.py:90
+msgid "Ointment"
+msgstr "ಮುಲಾಮು"
+
+#: .\veterinary\choices\choices.py:91
+msgid "Powder"
+msgstr "ಪುಡಿ"
+
+#: .\veterinary\choices\choices.py:92
+msgid "Paste"
+msgstr "ಅಂಟಿಸು"
+
+#: .\veterinary\choices\choices.py:93
+msgid "Bolus"
+msgstr "ಬಾವೆ"
+
+#: .\veterinary\choices\choices.py:94
+msgid "Suspension"
+msgstr "ಅಮಾನತುಗೊಳಿಸುವುದು"
+
+#: .\veterinary\choices\choices.py:95
+msgid "Solution"
+msgstr "ಪರಿಹಾರ"
+
+#: .\veterinary\choices\choices.py:96
+msgid "Spray"
+msgstr "ತುಂತುರು"
+
+#: .\veterinary\choices\choices.py:97
+msgid "Eye/Ear/Nose Drops"
+msgstr "ಕಣ್ಣು/ಕಿವಿ/ಮೂಗು ಹನಿಗಳು"
+
+#: .\veterinary\choices\choices.py:98
+msgid "Cream"
+msgstr "ಕೆನೆ"
+
+#: .\veterinary\choices\choices.py:99
+msgid "Lotion"
+msgstr "ಗೀತೆ"
+
+#: .\veterinary\choices\choices.py:100
+msgid "Medicated Shampoo"
+msgstr "Ated ಷಧೀಯ ಶಾಂಪೂ"
+
+#: .\veterinary\choices\choices.py:101
+msgid "Feed Additive"
+msgstr "ಫೀಡ್ ಸಂಯೋಜಕ"
+
+#: .\veterinary\choices\choices.py:102
+msgid "Implant"
+msgstr "ಒಳಸೇರಿಸು"
+
+#: .\veterinary\choices\choices.py:103
+msgid "Inhalant"
+msgstr "ಉಸಿರುಮಾಡುವ"
+
+#: .\veterinary\choices\choices.py:104
+msgid "Transdermal Patch"
+msgstr "ಟ್ರಾನ್ಡರ್ಮಲ್ ಪ್ಯಾಚ್"
+
+#: .\veterinary\choices\choices.py:105
+msgid "Suppository"
+msgstr "ಸಪಾಸಿ"
+
+#: .\veterinary\choices\choices.py:106
+msgid "Drench"
+msgstr "ಹತ್ತು"
+
+#: .\veterinary\choices\choices.py:107
+msgid "Pour-On"
+msgstr "ಸುರಿಯುವ"
+
+#: .\veterinary\choices\choices.py:108
+msgid "Intramammary"
+msgstr "ಇಂಟ್ರಾಮಾಮಮ್ಮದ"
+
+#: .\veterinary\choices\choices.py:114
+msgid "Stock In"
+msgstr "ಸ್ಟಾಕ್ ಇನ್"
+
+#: .\veterinary\choices\choices.py:115
+msgid "Stock Out"
+msgstr "ಸ್ಟಾಕ್ .ಟ್"
+
+#: .\veterinary\choices\choices.py:116
+msgid "Adjustment"
+msgstr "ಹೊಂದುವುದು"
+
+#: .\veterinary\choices\choices.py:121
+msgid "Allocated"
+msgstr "ನಿಯೋಜಿಸಿದ"
+
+#: .\veterinary\choices\choices.py:122
+msgid "Used"
+msgstr "ಬಳಸಿದ"
+
+#: .\veterinary\choices\choices.py:123
+msgid "Returned"
+msgstr "ಹಿಂದಿರುಗಿದ"
+
+#: .\veterinary\choices\choices.py:128
+msgid "Normal Case"
+msgstr "ಸಾಮಾನ್ಯ ಪ್ರಕರಣ"
+
+#: .\veterinary\choices\choices.py:129
+msgid "Special Case"
+msgstr "ವಿಶೇಷ ಪ್ರಕರಣ"
+
+#: .\veterinary\choices\choices.py:130
+msgid "Operational Case"
+msgstr "ಕಾರ್ಯಾಚರಣಾ ಪ್ರಕರಣ"
+
+#: .\veterinary\choices\choices.py:135
+msgid "Morning"
+msgstr "ಬೆಳಿಗ್ಗೆ"
+
+#: .\veterinary\choices\choices.py:136
+msgid "Afternoon"
+msgstr "ಮಧ್ಯಾಹ್ನ"
+
+#: .\veterinary\choices\choices.py:137
+msgid "Evening"
+msgstr "ಸಂಜೆ"
+
+#: .\veterinary\choices\choices.py:138
+msgid "Night"
+msgstr "ರಾತ್ರಿ"
+
+#: .\veterinary\choices\choices.py:144
+msgid "Confirmed"
+msgstr "ದೃ confirmೀಕರಿಸಿದ"
+
+#: .\veterinary\choices\choices.py:150
+msgid "Dry"
+msgstr "ಒಣಗಿದ"
+
+#: .\veterinary\choices\choices.py:151
+msgid "Pregnant"
+msgstr "ಗರ್ಭಪಾತ"
+
+#: .\veterinary\choices\choices.py:152
+msgid "Milking"
+msgstr "ಹಾಲು"
+
+#: .\veterinary\choices\choices.py:153
+msgid "Milking & Pregnant"
+msgstr "ಹಾಲುಕರೆಯುವುದು ಮತ್ತು ಗರ್ಭಿಣಿ"
+
+#: .\veterinary\choices\choices.py:157
+msgid "Mild"
+msgstr "ಸೌಮ್ಯ"
+
+#: .\veterinary\choices\choices.py:158
+msgid "Moderate"
+msgstr "ಮಧ್ಯಮ"
+
+#: .\veterinary\choices\choices.py:159
+msgid "Severe"
+msgstr "ತೀವ್ರ"
+
+#: .\veterinary\choices\choices.py:168
+msgid "Refunded"
+msgstr "ಮರುಪಾವತಿ ಮಾಡಿದ"
+
+#: .\veterinary\choices\choices.py:172
+msgid "Inward"
+msgstr "ಒಳಕ್ಕೆ"
+
+#: .\veterinary\choices\choices.py:173
+msgid "Outward"
+msgstr "ಹೊರನೋಟ"
+
+#: .\veterinary\choices\choices.py:174
+msgid "Return"
+msgstr "ಮರಳಿ"
+
+#: .\veterinary\choices\choices.py:178
+msgid "Approved"
+msgstr "ಅನುಮೋದಿಸಿದ"
+
+#: .\veterinary\choices\choices.py:179
+msgid "Cancelled"
+msgstr "ರದ್ದುಮಾಡಿದ"
+
+#: .\veterinary\choices\choices.py:182
+msgid "Central Warehouse"
+msgstr "ಮಧ್ಯ ಗೋದಾಮಿನ"
+
+#: .\veterinary\choices\choices.py:183
+msgid "Field Office"
+msgstr "ಕ್ಷೇತ್ರ ಕಚೇರಿ"
+
+#: .\veterinary\choices\choices.py:184
+msgid "Mobile Veterinary Unit"
+msgstr "ಮೊಬೈಲ್ ಪಶುವೈದ್ಯಕೀಯ ಘಟಕ"
+
+#: .\veterinary\choices\choices.py:185
+msgid "Clinic"
+msgstr "ಕ್ಲಿನಿಕ್"
+
+#: .\veterinary\choices\choices.py:186
+msgid "Veterinarian"
+msgstr "ಪಶುವೈದ್ಯ"
+
+#: .\veterinary\models\case_models.py:16
+msgid "Diagnosis Route Name"
+msgstr "ರೋಗನಿರ್ಣಯ ಮಾರ್ಗ ಹೆಸರು"
+
+#: .\veterinary\models\case_models.py:18
+msgid ""
+"Short name or label of the diagnosis route, e.g., Oral, Injection, etc."
+msgstr ""
+"ರೋಗನಿರ್ಣಯದ ಮಾರ್ಗದ ಸಣ್ಣ ಹೆಸರು ಅಥವಾ ಲೇಬಲ್, ಉದಾ., ಮೌಖಿಕ, ಇಂಜೆಕ್ಷನ್, ಇತ್ಯಾದಿ."
+
+#: .\veterinary\models\case_models.py:24
+msgid "Timestamp of the last update. Automatically set on update."
+msgstr "ಕೊನೆಯ ನವೀಕರಣದ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್. ನವೀಕರಣದಲ್ಲಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹೊಂದಿಸಿ."
+
+#: .\veterinary\models\case_models.py:28
+msgid "Is Synced"
+msgstr "ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:30
+msgid "Flag to track if the record has been synced with external systems."
+msgstr ""
+"ದಾಖಲೆಯನ್ನು ಬಾಹ್ಯ ವ್ಯವಸ್ಥೆಗಳೊಂದಿಗೆ ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆಯೇ ಎಂದು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು "
+"ಫ್ಲ್ಯಾಗ್ ಮಾಡಿ."
+
+#: .\veterinary\models\case_models.py:39
+msgid "Diagnosis Route"
+msgstr "ರೋಗನಿರ್ಣಯ ಮಾರ್ಗ"
+
+#: .\veterinary\models\case_models.py:40
+msgid "Diagnosis Routes"
+msgstr "ರೋಗನಿರ್ಣಯ ಮಾರ್ಗಗಳು"
+
+#: .\veterinary\models\case_models.py:56
+msgid "The cattle associated with this case entry."
+msgstr "ಈ ಪ್ರಕರಣದ ಪ್ರವೇಶಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ದನಗಳು."
+
+#: .\veterinary\models\case_models.py:57 .\veterinary\models\models.py:357
+msgid "Cattle"
+msgstr "ದನ"
+
+#: .\veterinary\models\case_models.py:66
+msgid "User who applied or recorded this case."
+msgstr "ಈ ಪ್ರಕರಣವನ್ನು ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ ಅಥವಾ ದಾಖಲಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\veterinary\models\case_models.py:67
+msgid "Applied By"
+msgstr "ಮೂಲಕ ಅನ್ವಯಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:74
+msgid "Current status of the case."
+msgstr "ಪ್ರಕರಣದ ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ."
+
+#: .\veterinary\models\case_models.py:75
+#: .\veterinary\models\common_models.py:416
+msgid "Case Status"
+msgstr "ಪ್ರಕರಣದ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\case_models.py:81
+msgid "Address where the case occurred or was reported."
+msgstr "ಪ್ರಕರಣ ಸಂಭವಿಸಿದ ಅಥವಾ ವರದಿಯಾದ ವಿಳಾಸ."
+
+#: .\veterinary\models\case_models.py:88
+msgid "Additional notes or remarks about the case."
+msgstr "ಪ್ರಕರಣದ ಬಗ್ಗೆ ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿಗಳು ಅಥವಾ ಟೀಕೆಗಳು."
+
+#: .\veterinary\models\case_models.py:89
+#: .\veterinary\models\case_models.py:222
+msgid "Remarks"
+msgstr "ಟೀಕೆಗಳು"
+
+#: .\veterinary\models\case_models.py:96
+msgid "Unique identifier for the case."
+msgstr "ಪ್ರಕರಣಕ್ಕೆ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ."
+
+#: .\veterinary\models\case_models.py:97
+msgid "Case Number"
+msgstr "ಪ್ರಕರಣ ಸಂಖ್ಯೆ"
+
+#: .\veterinary\models\case_models.py:102
+msgid "Indicates whether the entry is synced with the server."
+msgstr "ಪ್ರವೇಶವನ್ನು ಸರ್ವರ್‌ನೊಂದಿಗೆ ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\veterinary\models\case_models.py:103
+msgid "Sync Status"
+msgstr "ಸಿಂಕ್ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\case_models.py:120
+msgid "Both 'case_no' and 'to_user' are required."
+msgstr "'CASE_NO' ಮತ್ತು 'TO_USER' ಎರಡೂ ಅಗತ್ಯವಿದೆ."
+
+#: .\veterinary\models\case_models.py:126
+#, python-brace-format
+msgid "Case with number '{case_no}' does not exist."
+msgstr "'{Case_no}' ಸಂಖ್ಯೆಯೊಂದಿಗಿನ ಪ್ರಕರಣ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ."
+
+#: .\veterinary\models\case_models.py:135
+msgid "The case is already assigned to this user."
+msgstr "ಈ ಪ್ರಕರಣವನ್ನು ಈಗಾಗಲೇ ಈ ಬಳಕೆದಾರರಿಗೆ ನಿಯೋಜಿಸಲಾಗಿದೆ."
+
+#: .\veterinary\models\case_models.py:146
+msgid "Assigned via system action."
+msgstr "ಸಿಸ್ಟಮ್ ಕ್ರಿಯೆಯ ಮೂಲಕ ನಿಯೋಜಿಸಲಾಗಿದೆ."
+
+#: .\veterinary\models\case_models.py:152
+#: .\veterinary\models\case_models.py:234
+#: .\veterinary\models\case_models.py:304
+#: .\veterinary\models\case_models.py:533
+#: .\veterinary\models\case_models.py:604
+msgid "N/A"
+msgstr "N/a"
+
+#: .\veterinary\models\case_models.py:157
+#: .\veterinary\models\case_models.py:197
+#: .\veterinary\models\case_models.py:259
+#: .\veterinary\models\case_models.py:381
+#: .\veterinary\models\case_models.py:451
+#: .\veterinary\models\case_models.py:559
+msgid "Case Entry"
+msgstr "ಕೇಸ್ ಪ್ರವೇಶ"
+
+#: .\veterinary\models\case_models.py:158
+msgid "Case Entries"
+msgstr "ಕೇಸ್ ನಮೂದುಗಳು"
+
+#: .\veterinary\models\case_models.py:198
+msgid "Reference to the case entry being transferred."
+msgstr "ಪ್ರಕರಣದ ಪ್ರವೇಶವನ್ನು ವರ್ಗಾಯಿಸಲಾಗುತ್ತಿದೆ."
+
+#: .\veterinary\models\case_models.py:207
+msgid "Transferred From"
+msgstr "ನಿಂದ ವರ್ಗಾಯಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:208
+msgid "User who previously handled the case."
+msgstr "ಈ ಹಿಂದೆ ಪ್ರಕರಣವನ್ನು ನಿರ್ವಹಿಸಿದ ಬಳಕೆದಾರ."
+
+#: .\veterinary\models\case_models.py:215
+msgid "Transferred To"
+msgstr "ಗೆ ವರ್ಗಾಯಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:216
+msgid "User who is receiving the case."
+msgstr "ಪ್ರಕರಣವನ್ನು ಸ್ವೀಕರಿಸುತ್ತಿರುವ ಬಳಕೆದಾರ."
+
+#: .\veterinary\models\case_models.py:223
+msgid "Optional remarks for the transfer."
+msgstr "ವರ್ಗಾವಣೆಗೆ ಐಚ್ al ಿಕ ಟೀಕೆಗಳು."
+
+#: .\veterinary\models\case_models.py:228
+msgid "Transferred At"
+msgstr "ನಲ್ಲಿ ವರ್ಗಾಯಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:229
+msgid "Timestamp of when the case was transferred."
+msgstr "ಪ್ರಕರಣವನ್ನು ವರ್ಗಾಯಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್."
+
+#: .\veterinary\models\case_models.py:233
+#, python-brace-format
+msgid "Case: {case_no} | {from_user} ➝ {to_user} @ {timestamp}"
+msgstr "ಪ್ರಕರಣ: {case_no} | {from_user} ➝ {to_user} @ {timeStamp}"
+
+#: .\veterinary\models\case_models.py:242
+msgid "Case Receiver Log"
+msgstr "ಕೇಸ್ ರಿಸೀವರ್ ಲಾಗ್"
+
+#: .\veterinary\models\case_models.py:243
+msgid "Case Receiver Logs"
+msgstr "ಕೇಸ್ ರಿಸೀವರ್ ಲಾಗ್‌ಗಳು"
+
+#: .\veterinary\models\case_models.py:260
+msgid "The case entry associated with this diagnosis."
+msgstr "ಈ ರೋಗನಿರ್ಣಯಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಕೇಸ್ ನಮೂದು."
+
+#: .\veterinary\models\case_models.py:268
+msgid "Disease"
+msgstr "ರೋಗ"
+
+#: .\veterinary\models\case_models.py:269
+msgid "Identified disease during the diagnosis."
+msgstr "ರೋಗನಿರ್ಣಯದ ಸಮಯದಲ್ಲಿ ರೋಗವನ್ನು ಗುರುತಿಸಲಾಗಿದೆ."
+
+#: .\veterinary\models\case_models.py:277
+msgid "Cattle Status"
+msgstr "ದನಗಳ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\case_models.py:278
+msgid "Current physiological or production status of the animal."
+msgstr "ಪ್ರಾಣಿಗಳ ಪ್ರಸ್ತುತ ಶಾರೀರಿಕ ಅಥವಾ ಉತ್ಪಾದನಾ ಸ್ಥಿತಿ."
+
+#: .\veterinary\models\case_models.py:285
+msgid "Milk Production"
+msgstr "ಹಾಲು ಉತ್ಪಾದನೆ"
+
+#: .\veterinary\models\case_models.py:286
+msgid "Optional note on milk production (e.g., '2.5L/day')."
+msgstr "ಹಾಲು ಉತ್ಪಾದನೆಯ ಬಗ್ಗೆ ಐಚ್ al ಿಕ ಟಿಪ್ಪಣಿ (ಉದಾ., '2.5 ಎಲ್/ದಿನ')."
+
+#: .\veterinary\models\case_models.py:294
+msgid "Case Type"
+msgstr "ಕೇಸ್ ಪ್ರಕಾರ"
+
+#: .\veterinary\models\case_models.py:296
+msgid "Type of the veterinary case (e.g., Normal, Special, Operational)."
+msgstr "ಪಶುವೈದ್ಯಕೀಯ ಪ್ರಕರಣದ ಪ್ರಕಾರ (ಉದಾ., ಸಾಮಾನ್ಯ, ವಿಶೇಷ, ಕಾರ್ಯಾಚರಣೆ)."
+
+#: .\veterinary\models\case_models.py:306
+msgid "Unknown Disease"
+msgstr "ಅಜ್ಞಾತ ರೋಗ"
+
+#: .\veterinary\models\case_models.py:307
+#, python-brace-format
+msgid "{tag} - {disease} @ {date}"
+msgstr "{ಟ್ಯಾಗ್} - {ರೋಗ} {{ದಿನಾಂಕ}"
+
+#: .\veterinary\models\case_models.py:315
+#: .\veterinary\models\case_models.py:339
+msgid "Animal Diagnosis"
+msgstr "ಪ್ರಾಣಿಗಳ ರೋಗನಿರ್ಣಯ"
+
+#: .\veterinary\models\case_models.py:316
+msgid "Animal Diagnoses"
+msgstr "ಪ್ರಾಣಿಗಳ ರೋಗನಿರ್ಣಯ"
+
+#: .\veterinary\models\case_models.py:331
+msgid "Symptom"
+msgstr "ರೋಗಲಕ್ಷಣ"
+
+#: .\veterinary\models\case_models.py:332
+msgid "Symptom associated with this diagnosis."
+msgstr "ಈ ರೋಗನಿರ್ಣಯಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ರೋಗಲಕ್ಷಣ."
+
+#: .\veterinary\models\case_models.py:340
+msgid "Diagnosis entry this symptom is related to."
+msgstr "ರೋಗನಿರ್ಣಯ ಪ್ರವೇಶ ಈ ರೋಗಲಕ್ಷಣವು ಸಂಬಂಧಿಸಿದೆ."
+
+#: .\veterinary\models\case_models.py:347
+msgid "Additional notes or observations about the symptom."
+msgstr "ರೋಗಲಕ್ಷಣದ ಬಗ್ಗೆ ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿಗಳು ಅಥವಾ ಅವಲೋಕನಗಳು."
+
+#: .\veterinary\models\case_models.py:354
+msgid "Unknown Diagnosis"
+msgstr "ಅಜ್ಞಾತ ರೋಗನಿರ್ಣಯ"
+
+#: .\veterinary\models\case_models.py:356
+msgid "Unknown Symptom"
+msgstr "ಅಜ್ಞಾತ ರೋಗಲಕ್ಷಣ"
+
+#: .\veterinary\models\case_models.py:357
+#, python-brace-format
+msgid "{diagnosis} - {symptom} @ {date}"
+msgstr "{ರೋಗನಿರ್ಣಯ} - {ರೋಗಲಕ್ಷಣ @ @ {ದಿನಾಂಕ}"
+
+#: .\veterinary\models\case_models.py:365
+msgid "Diagnosed Symptom"
+msgstr "ರೋಗನಿರ್ಣಯ ಮಾಡಿದ ರೋಗಲಕ್ಷಣ"
+
+#: .\veterinary\models\case_models.py:366
+msgid "Diagnosed Symptoms"
+msgstr "ರೋಗನಿರ್ಣಯದ ಲಕ್ಷಣಗಳು"
+
+#: .\veterinary\models\case_models.py:382
+msgid "The case entry to which this treatment belongs."
+msgstr "ಈ ಚಿಕಿತ್ಸೆಯು ಯಾವ ಪ್ರಕರಣಕ್ಕೆ ಸೇರಿದೆ."
+
+#: .\veterinary\models\case_models.py:389
+msgid "Treatment Provider"
+msgstr "ಚಿಕಿತ್ಸಾ ಪೂರೈಕೆದಾರ"
+
+#: .\veterinary\models\case_models.py:390
+msgid "User (doctor or vet) who performed the treatment."
+msgstr "ಚಿಕಿತ್ಸೆಯನ್ನು ಮಾಡಿದ ಬಳಕೆದಾರ (ವೈದ್ಯರು ಅಥವಾ ವೆಟ್ಸ್)."
+
+#: .\veterinary\models\case_models.py:398
+#: .\veterinary\models\stock_models.py:209
+msgid "Medicine"
+msgstr "ಔಷಧಿ"
+
+#: .\veterinary\models\case_models.py:399
+msgid "Medicine used in the treatment, if any."
+msgstr "ಚಿಕಿತ್ಸೆಯಲ್ಲಿ ಬಳಸಲಾಗುವ medicine ಷಧ, ಯಾವುದಾದರೂ ಇದ್ದರೆ."
+
+#: .\veterinary\models\case_models.py:407
+msgid "Administration Route"
+msgstr "ಆಡಳಿತ ಮಾರ್ಗ"
+
+#: .\veterinary\models\case_models.py:408
+msgid "Route of administration for the medicine."
+msgstr ".ಷಧಕ್ಕಾಗಿ ಆಡಳಿತದ ಮಾರ್ಗ."
+
+#: .\veterinary\models\case_models.py:414
+msgid "Notes"
+msgstr "ಟಿಪ್ಪಣಿಗಳು"
+
+#: .\veterinary\models\case_models.py:415
+msgid "Additional notes or instructions for the treatment."
+msgstr "ಚಿಕಿತ್ಸೆಯ ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿಗಳು ಅಥವಾ ಸೂಚನೆಗಳು."
+
+#: .\veterinary\models\case_models.py:420
+msgid "OTP Verified"
+msgstr "ಒಟಿಪಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:421
+msgid "Indicates whether the treatment has been verified via OTP."
+msgstr "ಚಿಕಿತ್ಸೆಯನ್ನು ಒಟಿಪಿ ಮೂಲಕ ಪರಿಶೀಲಿಸಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\veterinary\models\case_models.py:425
+msgid "No Case"
+msgstr "ಯಾವುದೇ ಪ್ರಕರಣವಿಲ್ಲ"
+
+#: .\veterinary\models\case_models.py:426
+msgid "No Medicine"
+msgstr "ಯಾವುದೇ .ಷಧವಿಲ್ಲ"
+
+#: .\veterinary\models\case_models.py:427
+#, python-brace-format
+msgid "Treatment for Case: {case} | Medicine: {med} | By: {user}"
+msgstr ""
+"ಪ್ರಕರಣಕ್ಕೆ ಚಿಕಿತ್ಸೆ: {ಪ್ರಕರಣ} | Medicine ಷಧಿ: {ಮೆಡ್} | ಇವರಿಂದ: {ಬಳಕೆದಾರ}"
+
+#: .\veterinary\models\case_models.py:435
+msgid "Animal Treatment"
+msgstr "ಪ್ರಾಣಿ ಚಿಕಿತ್ಸೆ"
+
+#: .\veterinary\models\case_models.py:436
+msgid "Animal Treatments"
+msgstr "ಪ್ರಾಣಿ ಚಿಕಿತ್ಸೆಗಳು"
+
+#: .\veterinary\models\case_models.py:452
+msgid "Case associated with this payment."
+msgstr "ಈ ಪಾವತಿಗೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಕರಣ."
+
+#: .\veterinary\models\case_models.py:458
+msgid "Payment Method"
+msgstr "ಪಾವತಿ ವಿಧಾನ"
+
+#: .\veterinary\models\case_models.py:459
+msgid "Method used for payment."
+msgstr "ಪಾವತಿಗಾಗಿ ಬಳಸುವ ವಿಧಾನ."
+
+#: .\veterinary\models\case_models.py:465
+msgid "Amount"
+msgstr "ಮೊತ್ತ"
+
+#: .\veterinary\models\case_models.py:466
+msgid "Amount paid."
+msgstr "ಪಾವತಿಸಿದ ಮೊತ್ತ."
+
+#: .\veterinary\models\case_models.py:471
+msgid "Payment Date"
+msgstr "ಪಾವತಿ ದಿನಾಂಕ"
+
+#: .\veterinary\models\case_models.py:472
+msgid "Date and time when the payment was made."
+msgstr "ಪಾವತಿ ಮಾಡಿದ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\veterinary\models\case_models.py:479
+msgid "Transaction ID"
+msgstr "ವಹಿವಾಟು ಐಡಿ"
+
+#: .\veterinary\models\case_models.py:480
+msgid "Payment gateway reference or manual receipt ID."
+msgstr "ಪಾವತಿ ಗೇಟ್‌ವೇ ಉಲ್ಲೇಖ ಅಥವಾ ಹಸ್ತಚಾಲಿತ ರಶೀದಿ ID."
+
+#: .\veterinary\models\case_models.py:487
+msgid "Payment Status"
+msgstr "ಪಾವತಿ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\case_models.py:488
+msgid "Current status of the payment."
+msgstr "ಪಾವತಿಯ ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ."
+
+#: .\veterinary\models\case_models.py:494
+msgid "Gateway Response"
+msgstr "ಗೇಟ್‌ವೇ ಪ್ರತಿಕ್ರಿಯೆ"
+
+#: .\veterinary\models\case_models.py:495
+msgid "Raw payment gateway response data (online payments only)."
+msgstr "ಕಚ್ಚಾ ಪಾವತಿ ಗೇಟ್‌ವೇ ಪ್ರತಿಕ್ರಿಯೆ ಡೇಟಾ (ಆನ್‌ಲೈನ್ ಪಾವತಿಗಳು ಮಾತ್ರ)."
+
+#: .\veterinary\models\case_models.py:500
+msgid "Is Reconciled"
+msgstr "ಹೊಂದಾಣಿಕೆ ಮಾಡಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:501
+msgid "Whether this payment is reconciled in accounting."
+msgstr "ಈ ಪಾವತಿಯನ್ನು ಅಕೌಂಟಿಂಗ್‌ನಲ್ಲಿ ಹೊಂದಾಣಿಕೆ ಮಾಡಲಾಗಿದೆಯೆ."
+
+#: .\veterinary\models\case_models.py:506
+msgid "Is Cash Collected"
+msgstr "ನಗದು ಸಂಗ್ರಹಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:507
+msgid "Indicates if cash has been collected for offline payments."
+msgstr "ಆಫ್‌ಲೈನ್ ಪಾವತಿಗಳಿಗಾಗಿ ಹಣವನ್ನು ಸಂಗ್ರಹಿಸಲಾಗಿದೆಯೇ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\veterinary\models\case_models.py:516
+msgid "Collected By"
+msgstr "ಸಂಗ್ರಹಿಸಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:517
+msgid "User who collected the payment (for COD)."
+msgstr "ಪಾವತಿಯನ್ನು ಸಂಗ್ರಹಿಸಿದ ಬಳಕೆದಾರ (ಸಿಒಡಿಗಾಗಿ)."
+
+#: .\veterinary\models\case_models.py:523
+msgid "Collected Date"
+msgstr "ಸಂಗ್ರಹಿಸಿದ ದಿನಾಂಕ"
+
+#: .\veterinary\models\case_models.py:524
+msgid "Date and time when cash was collected."
+msgstr "ನಗದು ಸಂಗ್ರಹಿಸಿದಾಗ ದಿನಾಂಕ ಮತ್ತು ಸಮಯ."
+
+#: .\veterinary\models\case_models.py:530
+msgid "Unknown Method"
+msgstr "ಅಜ್ಞಾತ ವಿಧಾನ"
+
+#: .\veterinary\models\case_models.py:531
+#, python-brace-format
+msgid "Payment: ₹{amount} for Case: {case} via {method} [{status}]"
+msgstr "ಪಾವತಿ: ₹ {ಮೊತ್ತ Desive ಪ್ರಕರಣಕ್ಕೆ: {ಪ್ರಕರಣ} ಮೂಲಕ {ವಿಧಾನ} [{ಸ್ಥಿತಿ}]"
+
+#: .\veterinary\models\case_models.py:540
+msgid "Case Payment"
+msgstr "ಪ್ರಕರಣ ಪಾವತಿ"
+
+#: .\veterinary\models\case_models.py:541
+msgid "Case Payments"
+msgstr "ಕೇಸ್ ಪಾವತಿಗಳು"
+
+#: .\veterinary\models\case_models.py:560
+msgid "Case related to this travel record."
+msgstr "ಈ ಪ್ರಯಾಣದ ದಾಖಲೆಗೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಕರಣ."
+
+#: .\veterinary\models\case_models.py:566
+msgid "From Latitude"
+msgstr "ಅಕ್ಷಾಂಶದಿಂದ"
+
+#: .\veterinary\models\case_models.py:567
+msgid "Starting point latitude."
+msgstr "ಆರಂಭಿಕ ಹಂತದ ಅಕ್ಷಾಂಶ."
+
+#: .\veterinary\models\case_models.py:572
+msgid "From Longitude"
+msgstr "ರೇಖಾಂಶದಿಂದ"
+
+#: .\veterinary\models\case_models.py:573
+msgid "Starting point longitude."
+msgstr "ಆರಂಭಿಕ ಹಂತ ರೇಖಾಂಶ."
+
+#: .\veterinary\models\case_models.py:578
+msgid "To Latitude"
+msgstr "ಅಕ್ಷಾಂಶಕ್ಕೆ"
+
+#: .\veterinary\models\case_models.py:579
+msgid "Destination latitude."
+msgstr "ಗಮ್ಯಸ್ಥಾನ ಅಕ್ಷಾಂಶ."
+
+#: .\veterinary\models\case_models.py:584
+msgid "To Longitude"
+msgstr "ರೇಖಾಂಶಕ್ಕೆ"
+
+#: .\veterinary\models\case_models.py:585
+msgid "Destination longitude."
+msgstr "ಗಮ್ಯಸ್ಥಾನ ರೇಖಾಂಶ."
+
+#: .\veterinary\models\case_models.py:591
+msgid "Distance Travelled (km)"
+msgstr "ದೂರ ಪ್ರಯಾಣಿಸಲಾಗಿದೆ (ಕಿಮೀ)"
+
+#: .\veterinary\models\case_models.py:592
+msgid "Calculated distance in kilometers."
+msgstr "ಕಿಲೋಮೀಟರ್‌ಗಳಲ್ಲಿ ಲೆಕ್ಕಹಾಕಿದ ಅಂತರ."
+
+#: .\veterinary\models\case_models.py:596
+msgid "Travel Date"
+msgstr "ಪ್ರಯಾಣದ ಪ್ರಯಾಣ"
+
+#: .\veterinary\models\case_models.py:597
+msgid "Date of the travel."
+msgstr "ಪ್ರಯಾಣದ ದಿನಾಂಕ."
+
+#: .\veterinary\models\case_models.py:602
+#, python-brace-format
+msgid "Case Entry: {case_no} | Distance: {distance} km | Date: {date}"
+msgstr "ಕೇಸ್ ಎಂಟ್ರಿ: {case_no} | ದೂರ: {ದೂರ} ಕಿಮೀ | ದಿನಾಂಕ: {ದಿನಾಂಕ}"
+
+#: .\veterinary\models\case_models.py:648
+#: .\veterinary\models\case_models.py:662
+msgid "Travel Record"
+msgstr "ಪ್ರಯಾಣದ ದಾಖಲೆ"
+
+#: .\veterinary\models\case_models.py:649
+msgid "Travel Records"
+msgstr "ಪ್ರಯಾಣ ದಾಖಲೆಗಳು"
+
+#: .\veterinary\models\case_models.py:663
+msgid "Travel record associated with this image."
+msgstr "ಈ ಚಿತ್ರದೊಂದಿಗೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಯಾಣದ ದಾಖಲೆ."
+
+#: .\veterinary\models\case_models.py:668
+msgid "Image"
+msgstr "ಚಿತ್ರ"
+
+#: .\veterinary\models\case_models.py:669
+msgid ""
+"Upload image related to the travel, such as vehicle dashboard, odometer, or "
+"scene."
+msgstr ""
+"ವಾಹನ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್, ಓಡೋಮೀಟರ್ ಅಥವಾ ದೃಶ್ಯದಂತಹ ಪ್ರಯಾಣಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಚಿತ್ರವನ್ನು "
+"ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."
+
+#: .\veterinary\models\case_models.py:674
+msgid "Uploaded At"
+msgstr "ನಲ್ಲಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ"
+
+#: .\veterinary\models\case_models.py:675
+msgid "Time when image was uploaded."
+msgstr "ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಸಮಯ."
+
+#: .\veterinary\models\case_models.py:682
+msgid "Optional notes about this image."
+msgstr "ಈ ಚಿತ್ರದ ಬಗ್ಗೆ ಐಚ್ al ಿಕ ಟಿಪ್ಪಣಿಗಳು."
+
+#: .\veterinary\models\case_models.py:686
+#, python-brace-format
+msgid "Image for Travel Record ID: {id}"
+msgstr "ಟ್ರಾವೆಲ್ ರೆಕಾರ್ಡ್ ಐಡಿಗಾಗಿ ಚಿತ್ರ: {ಐಡಿ}"
+
+#: .\veterinary\models\case_models.py:690
+msgid "Travel Record Image"
+msgstr "ಪ್ರಯಾಣ ದಾಖಲೆ ಚಿತ್ರ"
+
+#: .\veterinary\models\case_models.py:691
+msgid "Travel Record Images"
+msgstr "ಪ್ರಯಾಣ ದಾಖಲೆ ಚಿತ್ರಗಳು"
+
+#: .\veterinary\models\common_models.py:59
+msgid "Locale used for this entry (e.g. en, hi, te)"
+msgstr "ಈ ಪ್ರವೇಶಕ್ಕಾಗಿ ಲೊಕೇಲ್ ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ (ಉದಾ. ಎನ್, ಹಾಯ್, ಟಿಇ)"
+
+#: .\veterinary\models\common_models.py:415
+msgid "case status of cattle"
+msgstr "ದನಗಳ ಪ್ರಕರಣದ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\models.py:221
+msgid "Member who currently owns this cattle."
+msgstr "ಪ್ರಸ್ತುತ ಈ ಜಾನುವಾರುಗಳನ್ನು ಹೊಂದಿರುವ ಸದಸ್ಯ."
+
+#: .\veterinary\models\models.py:222
+msgid "Owner"
+msgstr "ಮಾಲಿಕ"
+
+#: .\veterinary\models\models.py:231
+msgid "Breed of the cattle."
+msgstr "ದನಗಳ ತಳಿ."
+
+#: .\veterinary\models\models.py:232
+msgid "Breed"
+msgstr "ತಳಿ"
+
+#: .\veterinary\models\models.py:239
+msgid "Gender of the cattle."
+msgstr "ದನಗಳ ಲಿಂಗ."
+
+#: .\veterinary\models\models.py:240
+msgid "Gender"
+msgstr "ಲಿಂಗ"
+
+#: .\veterinary\models\models.py:244
+msgid "Age of the cattle in months."
+msgstr "ತಿಂಗಳುಗಳಲ್ಲಿ ಜಾನುವಾರುಗಳ ವಯಸ್ಸು."
+
+#: .\veterinary\models\models.py:245
+msgid "Age (months)"
+msgstr "ವಯಸ್ಸು (ತಿಂಗಳುಗಳು)"
+
+#: .\veterinary\models\models.py:248
+msgid "Age of the cattle in year."
+msgstr "ವರ್ಷದಲ್ಲಿ ಜಾನುವಾರುಗಳ ವಯಸ್ಸು."
+
+#: .\veterinary\models\models.py:249 .\veterinary\models\models.py:255
+msgid "Age (year)"
+msgstr "ವಯಸ್ಸು (ವರ್ಷ)"
+
+#: .\veterinary\models\models.py:254
+msgid "No Of Calving."
+msgstr "ಕರುಹಾಕುವಿಕೆಯಿಲ್ಲ."
+
+#: .\veterinary\models\models.py:266
+msgid "The mother of this cattle."
+msgstr "ಈ ಜಾನುವಾರುಗಳ ತಾಯಿ."
+
+#: .\veterinary\models\models.py:267
+msgid "Mother"
+msgstr "ತಾಯಿ"
+
+#: .\veterinary\models\models.py:276
+msgid "The father of this cattle."
+msgstr "ಈ ಜಾನುವಾರುಗಳ ತಂದೆ."
+
+#: .\veterinary\models\models.py:277
+msgid "Father"
+msgstr "ತಂದೆ"
+
+#: .\veterinary\models\models.py:358
+msgid "Cattles"
+msgstr "ಜಗಳಗಳು"
+
+#: .\veterinary\models\models.py:447
+msgid "Last Calving Month"
+msgstr "ಕೊನೆಯ ಕರುಹಾಕುವ ತಿಂಗಳು"
+
+#: .\veterinary\models\models.py:468
+msgid "Pregnancy Status"
+msgstr "ಗರ್ಭಧಾರಣೆಯ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\models.py:469
+msgid "Indicates whether the cattle is pregnant."
+msgstr "ದನಗಳು ಗರ್ಭಿಣಿಯಾಗಿದೆಯೆ ಎಂದು ಸೂಚಿಸುತ್ತದೆ."
+
+#: .\veterinary\models\stock_models.py:11
+msgid "Name of the location (e.g., Central Store, Block Office)"
+msgstr "ಸ್ಥಳದ ಹೆಸರು (ಉದಾ., ಸೆಂಟ್ರಲ್ ಸ್ಟೋರ್, ಬ್ಲಾಕ್ ಆಫೀಸ್)"
+
+#: .\veterinary\models\stock_models.py:12
+msgid "Location Name"
+msgstr "ಸ್ಥಳದ ಹೆಸರು"
+
+#: .\veterinary\models\stock_models.py:18
+msgid "Unique identifier for the location (e.g., for integration)"
+msgstr "ಸ್ಥಳಕ್ಕಾಗಿ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆ (ಉದಾ., ಏಕೀಕರಣಕ್ಕಾಗಿ)"
+
+#: .\veterinary\models\stock_models.py:19
+msgid "Location Code"
+msgstr "ಸ್ಥಳ ಕೋಡ್"
+
+#: .\veterinary\models\stock_models.py:26
+msgid "Category or type of the location"
+msgstr "ಸ್ಥಳದ ವರ್ಗ ಅಥವಾ ಪ್ರಕಾರ"
+
+#: .\veterinary\models\stock_models.py:27
+msgid "Location Type"
+msgstr "ಸ್ಥಳದ ಪ್ರಕಾರ"
+
+#: .\veterinary\models\stock_models.py:33
+msgid "Full address of the location"
+msgstr "ಸ್ಥಳದ ಪೂರ್ಣ ವಿಳಾಸ"
+
+#: .\veterinary\models\stock_models.py:41
+msgid "District in which the location falls"
+msgstr "ಸ್ಥಳ ಬೀಳುವ ಜಿಲ್ಲೆ"
+
+#: .\veterinary\models\stock_models.py:42
+msgid "District"
+msgstr "ಜಿಲ್ಲೆ"
+
+#: .\veterinary\models\stock_models.py:49
+msgid "State or province"
+msgstr "ರಾಜ್ಯ ಅಥವಾ ಪ್ರಾಂತ್ಯ"
+
+#: .\veterinary\models\stock_models.py:50
+msgid "State"
+msgstr "ರಾಜ್ಯ"
+
+#: .\veterinary\models\stock_models.py:58
+msgid "Latitude coordinate for map integration"
+msgstr "ನಕ್ಷೆ ಏಕೀಕರಣಕ್ಕಾಗಿ ಅಕ್ಷಾಂಶ ಸಮನ್ವಯ"
+
+#: .\veterinary\models\stock_models.py:67
+msgid "Longitude coordinate for map integration"
+msgstr "ನಕ್ಷೆ ಏಕೀಕರಣಕ್ಕಾಗಿ ರೇಖಾಂಶ ಸಮನ್ವಯ"
+
+#: .\veterinary\models\stock_models.py:73
+msgid "Location"
+msgstr "ಸ್ಥಳ"
+
+#: .\veterinary\models\stock_models.py:74
+msgid "Locations"
+msgstr "ಸ್ಥಳಗಳು"
+
+#: .\veterinary\models\stock_models.py:150
+msgid "Severity level of the disease"
+msgstr "ರೋಗದ ತೀವ್ರತೆಯ ಮಟ್ಟ"
+
+#: .\veterinary\models\stock_models.py:151
+msgid "Severity"
+msgstr "ತೀವ್ರತೆ"
+
+#: .\veterinary\models\stock_models.py:170
+msgid "eg. tablet, liquid, injection, etc"
+msgstr "ಉದಾ. ಟ್ಯಾಬ್ಲೆಟ್, ದ್ರವ, ಇಂಜೆಕ್ಷನ್, ಇತ್ಯಾದಿ"
+
+#: .\veterinary\models\stock_models.py:192
+msgid "Parent Category"
+msgstr "ಪೋಷಕ ವರ್ಗ"
+
+#: .\veterinary\models\stock_models.py:209
+msgid "Name of the medicine"
+msgstr ".ಷಧದ ಹೆಸರು"
+
+#: .\veterinary\models\stock_models.py:214
+msgid "Some description of the medicine"
+msgstr ".ಷಧದ ಕೆಲವು ವಿವರಣೆ"
+
+#: .\veterinary\models\stock_models.py:240
+msgid "Packaging"
+msgstr "ಕವಣೆ"
+
+#: .\veterinary\models\stock_models.py:246
+msgid "Expiry Date of the medicine"
+msgstr ".ಷಧದ ಮುಕ್ತಾಯ ದಿನಾಂಕ"
+
+#: .\veterinary\models\stock_models.py:247
+msgid "Expiry Date"
+msgstr "ಮುಕ್ತಾಯ ದಿನಾಂಕ"
+
+#: .\veterinary\models\stock_models.py:252
+msgid "Diseases this medicine is commonly prescribed for."
+msgstr "ರೋಗಗಳು ಈ medicine ಷಧಿಯನ್ನು ಸಾಮಾನ್ಯವಾಗಿ ಸೂಚಿಸಲಾಗುತ್ತದೆ."
+
+#: .\veterinary\models\stock_models.py:253
+msgid "Diseases"
+msgstr "ರೋಗಗಳು"
+
+#: .\veterinary\models\stock_models.py:312
+msgid "Location sending the medicine"
+msgstr ".ಷಧಿಯನ್ನು ಕಳುಹಿಸುವ ಸ್ಥಳ"
+
+#: .\veterinary\models\stock_models.py:319
+msgid "Location receiving the medicine"
+msgstr ".ಷಧಿಯನ್ನು ಸ್ವೀಕರಿಸುವ ಸ್ಥಳ"
+
+#: .\veterinary\models\stock_models.py:325
+msgid "The batch of medicine being transferred"
+msgstr "Medicine ಷಧದ ಬ್ಯಾಚ್ ಅನ್ನು ವರ್ಗಾಯಿಸಲಾಗುತ್ತಿದೆ"
+
+#: .\veterinary\models\stock_models.py:329
+msgid "Exact quantity of medicine transferred from stock"
+msgstr "ಸ್ಟಾಕ್ನಿಂದ ವರ್ಗಾವಣೆಯಾದ medicine ಷಧದ ನಿಖರ ಪ್ರಮಾಣ"
+
+#: .\veterinary\models\stock_models.py:336
+msgid "Type of transfer (inward, outward, return)"
+msgstr "ವರ್ಗಾವಣೆಯ ಪ್ರಕಾರ (ಆಂತರಿಕ, ಹೊರಕ್ಕೆ, ಹಿಂತಿರುಗಿ)"
+
+#: .\veterinary\models\stock_models.py:343
+msgid "Current status of the stock transfer"
+msgstr "ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆಯ ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ"
+
+#: .\veterinary\models\stock_models.py:350
+msgid "Snapshot of the batch number at the time of transfer"
+msgstr "ವರ್ಗಾವಣೆಯ ಸಮಯದಲ್ಲಿ ಬ್ಯಾಚ್ ಸಂಖ್ಯೆಯ ಸ್ನ್ಯಾಪ್‌ಶಾಟ್"
+
+#: .\veterinary\models\stock_models.py:356
+msgid "Snapshot of expiry date at time of transfer"
+msgstr "ವರ್ಗಾವಣೆಯ ಸಮಯದಲ್ಲಿ ಮುಕ್ತಾಯ ದಿನಾಂಕದ ಸ್ನ್ಯಾಪ್‌ಶಾಟ್"
+
+#: .\veterinary\models\stock_models.py:364
+msgid "User who initiated the stock transfer"
+msgstr "ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿದ ಬಳಕೆದಾರ"
+
+#: .\veterinary\models\stock_models.py:373
+msgid "User who received the stock at destination"
+msgstr "ಗಮ್ಯಸ್ಥಾನದಲ್ಲಿ ಸ್ಟಾಕ್ ಪಡೆದ ಬಳಕೆದಾರ"
+
+#: .\veterinary\models\stock_models.py:378
+msgid "Timestamp when the stock was transferred"
+msgstr "ಸ್ಟಾಕ್ ಅನ್ನು ವರ್ಗಾಯಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್"
+
+#: .\veterinary\models\stock_models.py:384
+msgid "Timestamp when stock was received and confirmed"
+msgstr "ಸ್ಟಾಕ್ ಸ್ವೀಕರಿಸಿದಾಗ ಮತ್ತು ದೃ confirmed ೀಕರಿಸಿದಾಗ ಟೈಮ್‌ಸ್ಟ್ಯಾಂಪ್"
+
+#: .\veterinary\models\stock_models.py:390
+msgid "Optional comments or notes on the transfer"
+msgstr "ವರ್ಗಾವಣೆಯ ಐಚ್ al ಿಕ ಕಾಮೆಂಟ್‌ಗಳು ಅಥವಾ ಟಿಪ್ಪಣಿಗಳು"
+
+#: .\veterinary\models\stock_models.py:398
+msgid "Cost per unit for tracking valuation"
+msgstr "ಮೌಲ್ಯಮಾಪನವನ್ನು ಪತ್ತೆಹಚ್ಚಲು ಪ್ರತಿ ಯೂನಿಟ್‌ಗೆ ವೆಚ್ಚ"
+
+#: .\veterinary\models\stock_models.py:406
+msgid "Total cost of transferred quantity"
+msgstr "ವರ್ಗಾವಣೆಗೊಂಡ ಪ್ರಮಾಣದ ಒಟ್ಟು ವೆಚ್ಚ"
+
+#: .\veterinary\models\stock_models.py:411
+msgid "Medicine Stock Transfer Log"
+msgstr "ಮೆಡಿಸಿನ್ ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆ ಲಾಗ್"
+
+#: .\veterinary\models\stock_models.py:412
+msgid "Medicine Stock Transfer Logs"
+msgstr "Medicine ಷಧಿ ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆ ದಾಖಲೆಗಳು"
+
+#: .\veterinary\signals.py:15
+msgid "Initial assignment on case creation."
+msgstr "ಕೇಸ್ ರಚನೆಯಲ್ಲಿ ಆರಂಭಿಕ ನಿಯೋಜನೆ."

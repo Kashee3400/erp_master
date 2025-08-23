@@ -1,0 +1,3477 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-29 17:32+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: .\erp_app\apps.py:9
+msgid "Kashee ERP"
+msgstr "କସେର୍ erp"
+
+#: .\erp_app\models.py:2336
+msgid "Billing Member Master Code"
+msgstr "ବିଲିଂ ସଦସ୍ୟ ମାଷ୍ଟର କୋଡ୍ |"
+
+#: .\erp_app\models.py:2337
+msgid "Company Code"
+msgstr "କମ୍ପାନୀ କୋଡ୍"
+
+#: .\erp_app\models.py:2338
+msgid "Plant Code"
+msgstr "ଉଦ୍ଭିଦ କୋଡ୍"
+
+#: .\erp_app\models.py:2339
+msgid "MCC CODE"
+msgstr "Mcc କୋଡ୍"
+
+#: .\erp_app\models.py:2340
+msgid "BMC CODE"
+msgstr "ବିଏମସି କୋଡ୍ |"
+
+#: .\erp_app\models.py:2341
+msgid "MPP CODE"
+msgstr "Mpp କୋଡ୍"
+
+#: .\erp_app\models.py:10914
+msgid "Bank"
+msgstr "ବ୍ୟାଙ୍କ"
+
+#: .\erp_app\models.py:10916
+msgid "Bank Branch"
+msgstr "ବ୍ୟାଙ୍କ ଶାଖା"
+
+#: .\erp_app\models.py:13303 .\facilitator\models\vcg_model.py:25
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:100
+msgid "MPP"
+msgstr "Mpp"
+
+#: .\erp_app\models.py:13306
+msgid "Shift"
+msgstr "ଶିଫ୍ଟ"
+
+#: .\erp_app\models.py:13335
+msgid "Reference"
+msgstr "ସନ୍ଦର୍ଭ"
+
+#: .\erp_app\models.py:14341
+msgid "From Shift"
+msgstr "ଶିଫ୍ଟରୁ"
+
+#: .\erp_app\models.py:14344
+msgid "To Shift"
+msgstr "ସ୍ଥାନାନ୍ତର କରିବାକୁ"
+
+#: .\erp_app\views.py:204
+#, python-brace-format
+msgid "No member found on this mobile no {self.request.user.username}"
+msgstr ""
+"ଏହି ମୋବାଇଲରେ କ instrien ଣସି ସଦସ୍ୟ ପାଇଲେ ନାହିଁ {self.request.user.username}"
+
+#: .\erp_app\views.py:236
+msgid "No Data Found"
+msgstr "କ data ଣସି ତଥ୍ୟ ମିଳିଲା ନାହିଁ |"
+
+#: .\erp_master\settings\base.py:151 .\member\models.py:132
+msgid "English"
+msgstr "ଇଂରାଜୀ |"
+
+#: .\erp_master\settings\base.py:152 .\member\models.py:133
+msgid "Hindi"
+msgstr "ହିନ୍ଦୀ"
+
+#: .\erp_master\settings\base.py:164
+msgid "Urdu"
+msgstr "ଉର୍ଦ୍ଦୁ"
+
+#: .\erp_master\settings\base.py:261 .\member\views.py:1330
+#: .\veterinary\choices\choices.py:71
+msgid "January"
+msgstr "ଜାନୁଆରୀ"
+
+#: .\erp_master\settings\base.py:262 .\member\views.py:1331
+#: .\veterinary\choices\choices.py:72
+msgid "February"
+msgstr "ଫେବୃଆରୀ"
+
+#: .\erp_master\settings\base.py:263 .\member\views.py:1332
+#: .\veterinary\choices\choices.py:73
+msgid "March"
+msgstr "ମାର୍ଚ୍ଚ"
+
+#: .\erp_master\settings\base.py:264 .\member\views.py:1333
+#: .\veterinary\choices\choices.py:74
+msgid "April"
+msgstr "ଏପ୍ରିଲ୍"
+
+#: .\erp_master\settings\base.py:265 .\member\views.py:1334
+#: .\veterinary\choices\choices.py:75
+msgid "May"
+msgstr "ମେ"
+
+#: .\erp_master\settings\base.py:266 .\member\views.py:1335
+#: .\veterinary\choices\choices.py:76
+msgid "June"
+msgstr "ଜୁନ୍ |"
+
+#: .\erp_master\settings\base.py:267 .\member\views.py:1336
+#: .\veterinary\choices\choices.py:77
+msgid "July"
+msgstr "ଜୁଲାଇ"
+
+#: .\erp_master\settings\base.py:268 .\member\views.py:1337
+#: .\veterinary\choices\choices.py:78
+msgid "August"
+msgstr "ଅଗଷ୍ଟ"
+
+#: .\erp_master\settings\base.py:269 .\member\views.py:1338
+#: .\veterinary\choices\choices.py:79
+msgid "September"
+msgstr "ସେପ୍ଟେମ୍ବର |"
+
+#: .\erp_master\settings\base.py:270 .\member\views.py:1339
+#: .\veterinary\choices\choices.py:80
+msgid "October"
+msgstr "ଅକ୍ଟୋବର"
+
+#: .\erp_master\settings\base.py:271 .\member\views.py:1340
+#: .\veterinary\choices\choices.py:81
+msgid "November"
+msgstr "ନଭେମ୍ବର"
+
+#: .\erp_master\settings\base.py:272 .\member\views.py:1341
+#: .\veterinary\choices\choices.py:82
+msgid "December"
+msgstr "ଡିସେମ୍ବର"
+
+#: .\facilitator\admin.py:200
+msgid "Meeting Details"
+msgstr "ବିବରଣୀ ସଭା |"
+
+#: .\facilitator\admin.py:214
+msgid "Location Details"
+msgstr "ଅବସ୍ଥାନ ବିବରଣୀ"
+
+#: .\facilitator\admin.py:221
+msgid "Timestamps"
+msgstr "ଟାଇମଷ୍ଟ୍ୟାମ୍ପସ୍ |"
+
+#: .\facilitator\admin.py:227
+msgid "Sync Information"
+msgstr "ସୂଚନା ସିଙ୍କ୍ ସୂଚନା |"
+
+#: .\facilitator\choices.py:8 .\facilitator\models\member_update_model.py:130
+#: .\feedback\models\feedback_model.py:134
+msgid "Mobile Number"
+msgstr "ମୋବାଇଲ୍ ନମ୍ବର"
+
+#: .\facilitator\choices.py:9
+msgid "Bank Account Details"
+msgstr "ବ୍ୟାଙ୍କ ଆକାଉଣ୍ଟ ବିବରଣୀ |"
+
+#: .\facilitator\choices.py:13 .\member\models.py:78
+msgid "Sahayak"
+msgstr "ସାବାଇକ"
+
+#: .\facilitator\choices.py:14
+msgid "Member"
+msgstr "ସଦସ୍ୟ"
+
+#: .\facilitator\choices.py:18 .\notifications\models.py:19
+#: .\veterinary\choices\choices.py:143 .\veterinary\choices\choices.py:165
+#: .\veterinary\choices\choices.py:177
+msgid "Pending"
+msgstr "ବିଚାରାଧୀନ ଅଛି"
+
+#: .\facilitator\choices.py:19
+msgid "Rejected"
+msgstr "ପ୍ରତ୍ୟାଖ୍ୟାନ"
+
+#: .\facilitator\choices.py:20 .\facilitator\choices.py:25
+msgid "Updated"
+msgstr "ଅଦ୍ୟତନ ହୋଇଛି"
+
+#: .\facilitator\choices.py:24
+msgid "Created"
+msgstr "ସୃଷ୍ଟି"
+
+#: .\facilitator\choices.py:26 .\facilitator\models\member_update_model.py:44
+#: .\facilitator\models\vcg_model.py:104 .\notifications\models.py:130
+msgid "Deleted"
+msgstr "ବିଲୋପ"
+
+#: .\facilitator\choices.py:27
+msgid "Status Changed"
+msgstr "ସ୍ଥିତି ବଦଳିଗଲା |"
+
+#: .\facilitator\choices.py:28
+msgid "Reviewed"
+msgstr "ସମୀକ୍ଷା"
+
+#: .\facilitator\choices.py:32
+msgid "Passbook Copy"
+msgstr "ପାସ୍ ବୁକ୍ କପି |"
+
+#: .\facilitator\choices.py:33
+msgid "Application Letter"
+msgstr "ପ୍ରୟୋଗ ଅକ୍ଷର"
+
+#: .\facilitator\choices.py:34
+msgid "Affidavit Copy"
+msgstr "ଆଫିଡେଭିଟ୍ କପି |"
+
+#: .\facilitator\models\facilitator_model.py:12
+#: .\facilitator\models\facilitator_model.py:160
+msgid "API Key"
+msgstr "API କି"
+
+#: .\facilitator\models\facilitator_model.py:13
+msgid "Unique identifier for the API key."
+msgstr "API କି ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\facilitator\models\facilitator_model.py:19
+#: .\facilitator\models\user_profile_model.py:24
+#: .\facilitator\models\vcg_model.py:119 .\member\models.py:49
+msgid "User"
+msgstr "ଉପଯୋଗକର୍ତ୍ତା |"
+
+#: .\facilitator\models\facilitator_model.py:20
+msgid "The user to whom this API key belongs."
+msgstr "ଚାଳକ ଯାହାଙ୍କୁ ଏହି api କୀ ସମ୍ପୁର୍ଣ୍ଣ ଅଟେ |"
+
+#: .\facilitator\models\facilitator_model.py:24
+#: .\facilitator\models\facilitator_model.py:245
+#: .\facilitator\models\user_profile_model.py:74
+#: .\facilitator\models\vcg_model.py:69 .\facilitator\models\vcg_model.py:285
+#: .\facilitator\models\vcg_model.py:333 .\facilitator\models\vcg_model.py:383
+#: .\facilitator\models\vcg_model.py:416 .\facilitator\models\vcg_model.py:578
+#: .\feedback\models\feedback_model.py:164 .\member\models.py:177
+#: .\member\models.py:230 .\notifications\models.py:124
+#: .\veterinary\models\common_models.py:23
+msgid "Created At"
+msgstr "ସୃଷ୍ଟି ହୋଇଛି"
+
+#: .\facilitator\models\facilitator_model.py:25
+msgid "The date and time when the API key was created."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ API କୀ ସୃଷ୍ଟି ହେଲା |"
+
+#: .\facilitator\models\facilitator_model.py:30
+msgid "Expiration Date"
+msgstr "ସମାପ୍ତି ତାରିଖ"
+
+#: .\facilitator\models\facilitator_model.py:31
+msgid "The date and time when the API key expires."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ API କୀ ମିଆଦ ପୂର୍ଣ୍ଣ ହୁଏ |"
+
+#: .\facilitator\models\facilitator_model.py:36
+msgid "Valid From"
+msgstr "ଠାରୁ ବ valid ଧ |"
+
+#: .\facilitator\models\facilitator_model.py:37
+msgid "The date and time from which the API key becomes valid."
+msgstr "ଯେଉଁଥିରୁ API କୀ ବ valid ଧ ହୋଇଯାଏ |"
+
+#: .\facilitator\models\facilitator_model.py:41
+#: .\veterinary\models\common_models.py:42
+msgid "Is Active"
+msgstr "ସକ୍ରିୟ ଅଛି |"
+
+#: .\facilitator\models\facilitator_model.py:42
+msgid "Indicates whether the API key is active."
+msgstr "API କି ସକ୍ରିୟ କି ନୁହେଁ ସୂଚାଏ |"
+
+#: .\facilitator\models\facilitator_model.py:47
+#: .\facilitator\models\member_update_model.py:370
+#: .\veterinary\models\case_models.py:681
+#: .\veterinary\models\stock_models.py:215
+msgid "Description"
+msgstr "ବର୍ଣ୍ଣନା"
+
+#: .\facilitator\models\facilitator_model.py:48
+msgid "A description of the purpose or use case for the API key."
+msgstr "API କି ପାଇଁ ଉଦ୍ଦେଶ୍ୟ କିମ୍ବା ବ୍ୟବହାରର ବର୍ଣ୍ଣନା |"
+
+#: .\facilitator\models\facilitator_model.py:54
+msgid "Usage Count"
+msgstr "ବ୍ୟବହାର ଗଣନା"
+
+#: .\facilitator\models\facilitator_model.py:55
+msgid "The number of times this API key has been used."
+msgstr "ଏହି API କି ପ୍ରକାର ବ୍ୟବହାର କରାଯାଇଛି |"
+
+#: .\facilitator\models\facilitator_model.py:60
+msgid "Maximum Usage Limit"
+msgstr "ସର୍ବାଧିକ ବ୍ୟବହାର ସୀମା |"
+
+#: .\facilitator\models\facilitator_model.py:61
+msgid "The maximum number of requests allowed for this API key."
+msgstr "ଏହି API କି ପାଇଁ ସର୍ବାଧିକ ସଂଖ୍ୟକ ଅନୁରୋଧ ଅନୁମୋଦିତ |"
+
+#: .\facilitator\models\facilitator_model.py:66
+msgid "Usage Reset Time"
+msgstr "ବ୍ୟବହାର ପୁନ et ସେଟ୍ ସମୟ |"
+
+#: .\facilitator\models\facilitator_model.py:67
+msgid "The time at which the usage count will reset."
+msgstr "ସମୟ କାଉଣ୍ଟ୍ ରେ ଥିବା ସମୟ ପୁନ res ସେଟ୍ ହେବ |"
+
+#: .\facilitator\models\facilitator_model.py:71
+msgid "Requests Per Day"
+msgstr "ପ୍ରତିଦିନ ଅନୁରୋଧ"
+
+#: .\facilitator\models\facilitator_model.py:72
+msgid "The maximum number of requests allowed per day for this API key."
+msgstr "ଏହି API କି ପାଇଁ ପ୍ରତିଦିନ ପ୍ରାୟ ଦିନ ଅନୁମତିପ୍ରାପ୍ତ |"
+
+#: .\facilitator\models\facilitator_model.py:76
+msgid "Requests Per Hour"
+msgstr "ଘଣ୍ଟା ପ୍ରତି ଅନୁରୋଧ |"
+
+#: .\facilitator\models\facilitator_model.py:77
+msgid "The maximum number of requests allowed per hour for this API key."
+msgstr "ଏହି API କି ପାଇଁ ପ୍ରତି ଘଣ୍ଟା ପର୍ଯ୍ୟନ୍ତ ଅନୁମୋଦିତ ପରିମାଣର ଅନୁରୋଧ |"
+
+#: .\facilitator\models\facilitator_model.py:85
+msgid "Permissions"
+msgstr "ଅନୁମତି"
+
+#: .\facilitator\models\facilitator_model.py:86
+msgid "The scope of actions allowed by this API key (e.g., 'read', 'write')."
+msgstr ""
+"ଏହି API କି ଦ୍ୱାରା ଅନୁମୋଦିତ କାର୍ଯ୍ୟଗୁଡ଼ିକର ପରିସର (ଯଥା ',' ଲେଖନ୍ତୁ ',' ଲେଖନ୍ତୁ"
+" ') |"
+
+#: .\facilitator\models\facilitator_model.py:91
+msgid "Allowed IPs"
+msgstr "IPS"
+
+#: .\facilitator\models\facilitator_model.py:92
+msgid "Comma-separated list of IP addresses allowed to use this API key."
+msgstr ""
+"IP ଠିକଣାଗୁଡ଼ିକର କମା ଦ୍ୱାରା ପୃଥକ ତାଲିକା ଏହି API କି ବ୍ୟବହାର କରିବାକୁ ଅନୁମତି "
+"ଦିଆଯାଇଛି |"
+
+#: .\facilitator\models\facilitator_model.py:97
+msgid "Allowed URLs"
+msgstr "URL ଗୁଡିକ ଅନୁମତି |"
+
+#: .\facilitator\models\facilitator_model.py:98
+msgid "Comma-separated list of URLs or endpoints this API key can access."
+msgstr "URL ଗୁଡିକର କମା ଦ୍ୱାରା ପୃଥକ ତାଲିକା ଏହି API କୀ ପ୍ରବେଶ କରିପାରିବ |"
+
+#: .\facilitator\models\facilitator_model.py:105
+msgid "Last Used At"
+msgstr "ଶେଷରେ ବ୍ୟବହୃତ |"
+
+#: .\facilitator\models\facilitator_model.py:106
+msgid "The date and time when this API key was last used."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ ଏହି API କୀ ଶେଷରେ ବ୍ୟବହୃତ ହୋଇଥିଲା |"
+
+#: .\facilitator\models\facilitator_model.py:113 .\member\models.py:181
+msgid "Created By"
+msgstr "ଦ୍ୱାରା ସୃଷ୍ଟି"
+
+#: .\facilitator\models\facilitator_model.py:114
+msgid "The user who created this API key."
+msgstr "ଏହି ଉପଯୋଗକର୍ତ୍ତା ଯିଏ ଏହି API କୀ ସୃଷ୍ଟି କରିଛନ୍ତି |"
+
+#: .\facilitator\models\facilitator_model.py:122
+msgid "Last Used By"
+msgstr "ଶେଷ ବ୍ୟବହୃତ |"
+
+#: .\facilitator\models\facilitator_model.py:123
+msgid "The last user who used this API key."
+msgstr "ଶେଷ ଉପଭୋକ୍ତା ଯିଏ ଏହି API କୀ ବ୍ୟବହାର କରିଥିଲେ |"
+
+#: .\facilitator\models\facilitator_model.py:127
+msgid "Is Revoked"
+msgstr "ରଦ୍ଦ ହୋଇଛି"
+
+#: .\facilitator\models\facilitator_model.py:128
+msgid "Indicates whether the API key has been revoked."
+msgstr "API କି ରଦ୍ଦ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\facilitator\models\facilitator_model.py:133
+msgid "Revoked At"
+msgstr "ରଦ୍ଦ ହୋଇଛି"
+
+#: .\facilitator\models\facilitator_model.py:134
+msgid "The date and time when this API key was revoked."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ ଏହି API ଚାବି ପ୍ରତ୍ୟାହାର କରାଯାଇଥିଲା |"
+
+#: .\facilitator\models\facilitator_model.py:142
+msgid "Revoked By"
+msgstr "ସମ୍ମାନିତ"
+
+#: .\facilitator\models\facilitator_model.py:143
+msgid "The user who revoked this API key."
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ଯିଏ ଏହି API କୀ ପ୍ରତ୍ୟାହାର କଲେ |"
+
+#: .\facilitator\models\facilitator_model.py:147
+msgid "Failed Attempts"
+msgstr "ବିଫଳ ପ୍ରୟାସ |"
+
+#: .\facilitator\models\facilitator_model.py:148
+msgid "The number of failed authentication attempts using this API key."
+msgstr "ଏହି api କି ବ୍ୟବହାର କରି ବିଫଳ ପ୍ରାମାଣିକିକରଣ ପ୍ରୟାସର ସଂଖ୍ୟା |"
+
+#: .\facilitator\models\facilitator_model.py:161
+msgid "API Keys"
+msgstr "API କିଗୁଡ଼ିକ |"
+
+#: .\facilitator\models\facilitator_model.py:177
+msgid "Facilitator"
+msgstr "ସୁବିଧା"
+
+#: .\facilitator\models\facilitator_model.py:180
+msgid "The user assigned as the facilitator for this MPP."
+msgstr "ଏହି MPP ପାଇଁ ସୁବିଧାକାରୀ ଭାବରେ ଜଡିତ |"
+
+#: .\facilitator\models\facilitator_model.py:185
+#: .\facilitator\models\member_update_model.py:75
+#: .\facilitator\models\vcg_model.py:143 .\facilitator\models\vcg_model.py:536
+#: .\feedback\models\feedback_model.py:94 .\member\models.py:55
+#: .\member\models.py:87 .\member\models.py:222
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:103
+msgid "MPP Code"
+msgstr "Mpp କୋଡ୍"
+
+#: .\facilitator\models\facilitator_model.py:186
+#: .\facilitator\models\member_update_model.py:77
+msgid ""
+"A unique code assigned to the MPP. This code must be 9 characters long."
+msgstr "Mpp କୁ ଦିଆଯାଇଥିବା ଏକ ଅନନ୍ୟ କୋଡ୍ | ଏହି କୋଡ୍ 9 ଅକ୍ଷର ଲମ୍ବା ହେବା ଜରୁରୀ |"
+
+#: .\facilitator\models\facilitator_model.py:192
+#: .\facilitator\models\member_update_model.py:84
+msgid "MPP External Code"
+msgstr "MPP ବାହ୍ୟ କୋଡ୍ |"
+
+#: .\facilitator\models\facilitator_model.py:193
+#: .\facilitator\models\member_update_model.py:85
+msgid "An external code for the MPP, if applicable."
+msgstr "ଯଦି ପ୍ରଯୁଜ୍ୟ ତେବେ MPP ପାଇଁ ଏକ ବାହ୍ୟ କୋଡ୍ |"
+
+#: .\facilitator\models\facilitator_model.py:199
+#: .\facilitator\models\member_update_model.py:91
+msgid "MPP Short Name"
+msgstr "Mpp ଛୋଟ ନାମ |"
+
+#: .\facilitator\models\facilitator_model.py:200
+#: .\facilitator\models\member_update_model.py:92
+msgid "A short name or abbreviation for the MPP."
+msgstr "MPP ପାଇଁ ଏକ ଛୋଟ ନାମ କିମ୍ବା ସଂକ୍ଷିପ୍ତକରଣ |"
+
+#: .\facilitator\models\facilitator_model.py:206
+#: .\facilitator\models\member_update_model.py:98
+#: .\facilitator\models\vcg_model.py:128 .\facilitator\models\vcg_model.py:525
+#: .\member\models.py:90
+msgid "MPP Name"
+msgstr "Mpp Name"
+
+#: .\facilitator\models\facilitator_model.py:207
+#: .\facilitator\models\member_update_model.py:99
+msgid "The full name of the MPP."
+msgstr "MPP ର ସମ୍ପୂର୍ଣ୍ଣ ନାମ |"
+
+#: .\facilitator\models\facilitator_model.py:213
+msgid "MPP Type"
+msgstr "Mpp ପ୍ରକାର"
+
+#: .\facilitator\models\facilitator_model.py:214
+msgid "The type/category of the MPP."
+msgstr "Mpp ର ପ୍ରକାର / ବର୍ଗ |"
+
+#: .\facilitator\models\facilitator_model.py:220
+msgid "MPP Logo URL"
+msgstr "Mpp ଲୋଗୋ URL |"
+
+#: .\facilitator\models\facilitator_model.py:221
+msgid "The URL or path to the logo image of the MPP."
+msgstr "MPP ର ଲୋଗୋ ପ୍ରତିଛବିକୁ URL କିମ୍ବା ପଥ |"
+
+#: .\facilitator\models\facilitator_model.py:227
+msgid "MPP Icon URL"
+msgstr "Mpp ଆଇକନ୍ url |"
+
+#: .\facilitator\models\facilitator_model.py:228
+msgid "The URL or path to the icon image of the MPP."
+msgstr "MPP ର ଆଇକନ୍ ଇମେଜ୍ ପାଇଁ URL କିମ୍ବା ପଥ |"
+
+#: .\facilitator\models\facilitator_model.py:234
+msgid "MPP Punch Line"
+msgstr "Mpp pidch ରେଖା |"
+
+#: .\facilitator\models\facilitator_model.py:235
+msgid "A catchy tagline or punch line associated with the MPP."
+msgstr "MPP ସହିତ ଜଡିତ ଏକ ଆକର୍ଷଣୀୟ ଟ୍ୟାଗଲାଇନ୍ କିମ୍ବା ପଞ୍ଚ ରେଖା |"
+
+#: .\facilitator\models\facilitator_model.py:240
+msgid "MPP Opening Date"
+msgstr "Mpp ଖୋଲିବା ତାରିଖ |"
+
+#: .\facilitator\models\facilitator_model.py:241
+msgid "The date and time when the MPP is officially opened."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ MPP ଆନୁଷ୍ଠାନିକ ଭାବରେ ଖୋଲାଯାଏ |"
+
+#: .\facilitator\models\facilitator_model.py:246
+msgid "The date and time when the MPP assignment was created."
+msgstr "ଯେତେବେଳେ MPP ଆସାଇନମେଣ୍ଟ ସୃଷ୍ଟି ହେଲା ତାରିଖ ଏବଂ ସମୟ |"
+
+#: .\facilitator\models\facilitator_model.py:250
+#: .\facilitator\models\user_profile_model.py:78
+#: .\facilitator\models\vcg_model.py:74 .\facilitator\models\vcg_model.py:291
+#: .\facilitator\models\vcg_model.py:339 .\facilitator\models\vcg_model.py:389
+#: .\facilitator\models\vcg_model.py:422 .\facilitator\models\vcg_model.py:579
+#: .\member\models.py:178 .\member\models.py:234
+#: .\veterinary\models\common_models.py:28
+msgid "Updated At"
+msgstr "ଅଦ୍ୟତନ ହୋଇଛି"
+
+#: .\facilitator\models\facilitator_model.py:251
+msgid "The date and time when the MPP assignment was last updated."
+msgstr "ତାରିଖ ଏବଂ ସମୟ ଯେତେବେଳେ MPP ଆସାଇନମେଣ୍ଟ ଶେଷ ଅଦ୍ୟତନ ହେଲା |"
+
+#: .\facilitator\models\facilitator_model.py:257
+msgid "Assigned MPP to Facilitator"
+msgstr "ସୁବିଧାକାରୀଙ୍କ ପାଇଁ MPP କୁ ଦିଆଯାଇଛି |"
+
+#: .\facilitator\models\facilitator_model.py:258
+msgid "Assigned MPPs to Facilitators"
+msgstr "ସୁବିଧାକାରୀଙ୍କୁ MPP କୁ ଦିଆଯାଇଛି |"
+
+#: .\facilitator\models\member_update_model.py:43
+msgid "Indicates whether this entry has been deleted."
+msgstr "ଏହି ଏଣ୍ଟ୍ରି ଡିଲିଟ୍ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\facilitator\models\member_update_model.py:59
+#: .\facilitator\models\vcg_model.py:17
+msgid "Enter a valid WhatsApp number with country code (e.g., +1234567890)."
+msgstr ""
+"ଦେଶ କୋଡ୍ ସହିତ ଏକ ବ valid ଧ ହ୍ ats ାଟସ୍ ଆପ୍ ନମ୍ବର ପ୍ରବେଶ କରନ୍ତୁ (ଯଥା, "
+"+1234567890) |"
+
+#: .\facilitator\models\member_update_model.py:65
+msgid "Request ID"
+msgstr "ଅନୁରୋଧ ଅନୁରୋଧ |"
+
+#: .\facilitator\models\member_update_model.py:66
+msgid "Auto-generated unique request identifier (e.g., REQ-2025-001234)"
+msgstr "ଅଟୋ-ଜେନିଜ୍ ଅନନ୍ୟ ଅନୁରୋଧ ପରିଚାୟକ (ଯଥା, REQ-2025-001234)"
+
+#: .\facilitator\models\member_update_model.py:105
+#: .\facilitator\models\vcg_model.py:48 .\facilitator\models\vcg_model.py:445
+#: .\facilitator\models\vcg_model.py:453 .\facilitator\models\vcg_model.py:486
+#: .\feedback\models\feedback_model.py:110
+msgid "Member Code"
+msgstr "ସଦସ୍ୟ କୋଡ୍"
+
+#: .\facilitator\models\member_update_model.py:108
+#: .\facilitator\models\member_update_model.py:115
+msgid "Unique identifier for the member."
+msgstr "ସଦସ୍ୟଙ୍କ ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\facilitator\models\member_update_model.py:112
+#: .\facilitator\models\vcg_model.py:56
+msgid "Member Ex Code"
+msgstr "ସଦସ୍ୟ ଏକ୍ସ କୋଡ୍ |"
+
+#: .\facilitator\models\member_update_model.py:120
+#: .\facilitator\models\vcg_model.py:63 .\facilitator\models\vcg_model.py:460
+#: .\facilitator\models\vcg_model.py:500
+#: .\feedback\models\feedback_model.py:126
+msgid "Member Name"
+msgstr "ସଦସ୍ୟ ନାମ"
+
+#: .\facilitator\models\member_update_model.py:121
+#: .\feedback\models\feedback_model.py:127
+msgid "Full name of the member."
+msgstr "ସଦସ୍ୟଙ୍କ ସମ୍ପୂର୍ଣ୍ଣ ନାମ |"
+
+#: .\facilitator\models\member_update_model.py:131
+msgid "Member's  contact number."
+msgstr "ସଦସ୍ୟଙ୍କ ଯୋଗାଯୋଗ ନମ୍ବର |"
+
+#: .\facilitator\models\member_update_model.py:139
+msgid "Role Type"
+msgstr "ଭୂମିକା ପ୍ରକାର"
+
+#: .\facilitator\models\member_update_model.py:143
+msgid "Update Type"
+msgstr "ଅଦ୍ୟତନ ପ୍ରକାର"
+
+#: .\facilitator\models\member_update_model.py:150
+msgid "Status"
+msgstr "ସ୍ଥିତି"
+
+#: .\facilitator\models\member_update_model.py:192
+msgid "Reviewed By"
+msgstr "ଦ୍ Lo ାରା ସମୀକ୍ଷା"
+
+#: .\facilitator\models\member_update_model.py:196
+msgid "Reviewed At"
+msgstr "ର ସମୀକ୍ଷା"
+
+#: .\facilitator\models\member_update_model.py:199
+msgid "HO Comments"
+msgstr "ପ୍ରଥତା"
+
+#: .\facilitator\models\member_update_model.py:202
+msgid "Rejection Reason"
+msgstr "ପ୍ରତ୍ୟାଖ୍ୟାନ କାରଣ |"
+
+#: .\facilitator\models\member_update_model.py:206
+msgid "Update Request"
+msgstr "ଅନୁରୋଧ ଅନୁରୋଧ |"
+
+#: .\facilitator\models\member_update_model.py:207
+msgid "Update Requests"
+msgstr "ଅନୁରୋଧ ଅଦ୍ୟତନ |"
+
+#: .\facilitator\models\member_update_model.py:255
+msgid "Approved requests must have a reviewer."
+msgstr "ଅନୁମୋଦିତ ଅନୁରୋଧଗୁଡିକ ନିଶ୍ଚିତ ଭାବରେ ଏକ ସମୀକ୍ଷକ ରହିବା ଆବଶ୍ୟକ |"
+
+#: .\facilitator\models\member_update_model.py:258
+msgid "Rejected requests must have a rejection reason."
+msgstr ""
+"ପ୍ରତ୍ୟାଖ୍ୟାନ ଅନୁରୋଧଗୁଡିକ ନିଶ୍ଚିତ ଭାବରେ ଏକ ପ୍ରତ୍ୟାଖ୍ୟାନ କାରଣ ରହିବା ଆବଶ୍ୟକ |"
+
+#: .\facilitator\models\member_update_model.py:289
+#: .\facilitator\models\member_update_model.py:408
+msgid "Field Name"
+msgstr "କ୍ଷେତ୍ର ନାମ"
+
+#: .\facilitator\models\member_update_model.py:291
+#: .\facilitator\models\member_update_model.py:411
+msgid "Old Value"
+msgstr "ପୁରୁଣା ମୂଲ୍ୟ"
+
+#: .\facilitator\models\member_update_model.py:293
+#: .\facilitator\models\member_update_model.py:413
+msgid "New Value"
+msgstr "ନୂତନ ମୂଲ୍ୟ"
+
+#: .\facilitator\models\member_update_model.py:298
+msgid "Text"
+msgstr "ପାଠ"
+
+#: .\facilitator\models\member_update_model.py:299
+msgid "Number"
+msgstr "ସଂଖ୍ୟା"
+
+#: .\facilitator\models\member_update_model.py:300
+msgid "File"
+msgstr "ଫାଇଲ୍ |"
+
+#: .\facilitator\models\member_update_model.py:301
+msgid "JSON"
+msgstr "ଜୋନ୍ସ"
+
+#: .\facilitator\models\member_update_model.py:304
+msgid "Data Type"
+msgstr "ଡାଟା ପ୍ରକାର |"
+
+#: .\facilitator\models\member_update_model.py:308
+#: .\facilitator\models\member_update_model.py:309
+msgid "Update Request Data"
+msgstr "ଅନୁରୋଧ ତଥ୍ୟ ଅଦ୍ୟତନ କରନ୍ତୁ |"
+
+#: .\facilitator\models\member_update_model.py:355
+msgid "Document Type"
+msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍ ପ୍ରକାର |"
+
+#: .\facilitator\models\member_update_model.py:359
+msgid "Document File"
+msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍ ଫାଇଲ୍ |"
+
+#: .\facilitator\models\member_update_model.py:363
+msgid "Original Filename"
+msgstr "ମୂଳ ଫାଇଲନାମ"
+
+#: .\facilitator\models\member_update_model.py:366
+msgid "File Size (bytes)"
+msgstr "ଫାଇଲ୍ ଆକାର (ବାଇଟ୍)"
+
+#: .\facilitator\models\member_update_model.py:368
+msgid "Content Type"
+msgstr "ବିଷୟବସ୍ତୁ ପ୍ରକାର"
+
+#: .\facilitator\models\member_update_model.py:373
+msgid "Update Request Document"
+msgstr "ଅନୁରୋଧ ଡକ୍ୟୁମେଣ୍ଟ୍ ଅପଡେଟ୍ କରନ୍ତୁ |"
+
+#: .\facilitator\models\member_update_model.py:374
+msgid "Update Request Documents"
+msgstr "ଅନୁରୋଧ ଡକ୍ୟୁମେଣ୍ଟ୍ ଅପଡେଟ୍ କରନ୍ତୁ |"
+
+#: .\facilitator\models\member_update_model.py:386
+msgid "File size cannot exceed 10MB."
+msgstr "ଫାଇଲ୍ ଆକାର 10MB ଅତିକ୍ରମ କରିପାରିବ ନାହିଁ |"
+
+#: .\facilitator\models\member_update_model.py:391
+msgid "Only PDF and image files are allowed."
+msgstr "କେବଳ PDF ଏବଂ ପ୍ରତିଛବି ଫାଇଲଗୁଡ଼ିକ ଅନୁମତିପ୍ରାପ୍ତ |"
+
+#: .\facilitator\models\member_update_model.py:404
+msgid "Change Type"
+msgstr "ପରିବର୍ତ୍ତନ ପ୍ରକାର"
+
+#: .\facilitator\models\member_update_model.py:416
+msgid "Changed By"
+msgstr "ଦ୍ୱାରା ପରିବର୍ତ୍ତିତ |"
+
+#: .\facilitator\models\member_update_model.py:420
+msgid "Change Reason"
+msgstr "କାରଣ ପରିବର୍ତ୍ତନ କର |"
+
+#: .\facilitator\models\member_update_model.py:424
+msgid "IP Address"
+msgstr "Ip ଠିକଣା"
+
+#: .\facilitator\models\member_update_model.py:427
+msgid "User Agent"
+msgstr "ବ୍ୟବହାରକାରୀ ଏଜେଣ୍ଟ"
+
+#: .\facilitator\models\member_update_model.py:430
+msgid "Additional Metadata"
+msgstr "ଅତିରିକ୍ତ ମେଟାଡାଟା |"
+
+#: .\facilitator\models\member_update_model.py:434
+msgid "Update Request History"
+msgstr "ଅନୁରୋଧ ଇତିହାସ ଅଦ୍ୟତନ କରନ୍ତୁ |"
+
+#: .\facilitator\models\member_update_model.py:435
+msgid "Update Request Histories"
+msgstr "ଅନୁରୋଧ ଇତିହାସ |"
+
+#: .\facilitator\models\user_profile_model.py:12
+msgid "Support"
+msgstr "ସମର୍ଥନ"
+
+#: .\facilitator\models\user_profile_model.py:13
+msgid "IT"
+msgstr "ଏହା"
+
+#: .\facilitator\models\user_profile_model.py:14
+msgid "PIB"
+msgstr "ପିବ"
+
+#: .\facilitator\models\user_profile_model.py:15
+msgid "Sales"
+msgstr "ବିକ୍ରୟ"
+
+#: .\facilitator\models\user_profile_model.py:16
+msgid "Human Resources"
+msgstr "ମାନବ ସମ୍ବଳ"
+
+#: .\facilitator\models\user_profile_model.py:17
+msgid "Engineering"
+msgstr "ଇଞ୍ଜିନିୟରିଂ"
+
+#: .\facilitator\models\user_profile_model.py:18
+msgid "Administration"
+msgstr "ପ୍ରଶାସନ"
+
+#: .\facilitator\models\user_profile_model.py:25
+msgid "The user to whom this profile belongs."
+msgstr "ଉପଭୋକ୍ତା କାହାକୁ ଏହି ପ୍ରୋଫାଇଲ୍ ଅଛି |"
+
+#: .\facilitator\models\user_profile_model.py:32
+msgid "Department"
+msgstr "ବିଭାଗ"
+
+#: .\facilitator\models\user_profile_model.py:33
+msgid "Department or team of the user."
+msgstr "ପ୍ରସ୍ଥାନ କିମ୍ବା ଉପଭୋକ୍ତା ଦଳ |"
+
+#: .\facilitator\models\user_profile_model.py:39
+msgid "Avatar"
+msgstr "ଅବତାର"
+
+#: .\facilitator\models\user_profile_model.py:40
+msgid "User profile picture."
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ପ୍ରୋଫାଇଲ୍ ଚିତ୍ର |"
+
+#: .\facilitator\models\user_profile_model.py:46 .\member\models.py:19
+msgid "Phone Number"
+msgstr "ଫୋନ୍ ନମ୍ବର"
+
+#: .\facilitator\models\user_profile_model.py:47
+msgid "Contact number of the user."
+msgstr "ଉପଯୋଗକର୍ତ୍ତାଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ |"
+
+#: .\facilitator\models\user_profile_model.py:52
+#: .\veterinary\models\case_models.py:82
+#: .\veterinary\models\stock_models.py:34
+msgid "Address"
+msgstr "ଠିକଣା"
+
+#: .\facilitator\models\user_profile_model.py:53
+msgid "Residential or official address."
+msgstr "ଆବାସିକ କିମ୍ବା ଅଫିସିଆଲ୍ ଠିକଣା |"
+
+#: .\facilitator\models\user_profile_model.py:59
+msgid "Designation"
+msgstr "ନିଯୁକ୍ତ"
+
+#: .\facilitator\models\user_profile_model.py:60
+msgid "Official designation or title."
+msgstr "ଅଫିସିଆଲ୍ ଇନଷ୍ଟେସନ୍ କିମ୍ବା ଆଖ୍ୟା |"
+
+#: .\facilitator\models\user_profile_model.py:64
+msgid "Verified"
+msgstr "ଯାଞ୍ଚ"
+
+#: .\facilitator\models\user_profile_model.py:65
+msgid "Indicates whether the user's profile is verified."
+msgstr "ଉପଯୋଗକର୍ତ୍ତାଙ୍କ ପ୍ରୋଫାଇଲ୍ ଯାଞ୍ଚ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\facilitator\models\user_profile_model.py:69
+msgid "Email Verified"
+msgstr "ଇମେଲ ଯାଞ୍ଚ କରାଯାଇଛି |"
+
+#: .\facilitator\models\user_profile_model.py:70
+msgid "Indicates whether the user's email is verified."
+msgstr "ଉପଭୋକ୍ତାଙ୍କର ଇମେଲ୍ ଯାଞ୍ଚ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\facilitator\models\user_profile_model.py:93
+msgid "User Profile"
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ପ୍ରୋଫାଇଲ୍ |"
+
+#: .\facilitator\models\user_profile_model.py:94
+msgid "User Profiles"
+msgstr "ଜର ପର୍ଯ୍ୟଟକମାନେ"
+
+#: .\facilitator\models\vcg_model.py:26
+msgid "Member related to  mpp"
+msgstr "MPP ସହିତ ଜଡିତ ସଦସ୍ୟ |"
+
+#: .\facilitator\models\vcg_model.py:32
+msgid "Mpp Code"
+msgstr "Mpp କୋଡ୍"
+
+#: .\facilitator\models\vcg_model.py:33
+msgid "Unique mpp code."
+msgstr "ଅନନ୍ୟ MPP କୋଡ୍ |"
+
+#: .\facilitator\models\vcg_model.py:40
+msgid "WhatsApp Number"
+msgstr "ହ୍ ats ାଟସ୍ ଆପ୍ ନମ୍ବର |"
+
+#: .\facilitator\models\vcg_model.py:41
+msgid "Member's WhatsApp contact number."
+msgstr "ସଦସ୍ୟଙ୍କ ହ୍ ats ାଟସ୍ ଆପ୍ ଯୋଗାଯୋଗ ନମ୍ବର |"
+
+#: .\facilitator\models\vcg_model.py:49 .\facilitator\models\vcg_model.py:57
+#: .\facilitator\models\vcg_model.py:446 .\facilitator\models\vcg_model.py:454
+#: .\facilitator\models\vcg_model.py:487
+msgid "Unique identifier for the VCG member."
+msgstr "VCG ସଦସ୍ୟ ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\facilitator\models\vcg_model.py:64 .\facilitator\models\vcg_model.py:461
+#: .\facilitator\models\vcg_model.py:501
+msgid "Full name of the VCG member."
+msgstr "Vcg ସଦସ୍ୟଙ୍କ ସମ୍ପୂର୍ଣ୍ଣ ନାମ |"
+
+#: .\facilitator\models\vcg_model.py:70
+msgid "Timestamp when the member was added."
+msgstr "ଯେତେବେଳେ ସଦସ୍ୟମାନେ ଯୋଗ ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:75
+msgid "Timestamp when the member record was last updated."
+msgstr "ଯେତେବେଳେ ସଦସ୍ୟ ରେକର୍ଡ ଶେଷ ଅଦ୍ୟତନ ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:83
+msgid "VCG Group"
+msgstr "VCG ଗୋଷ୍ଠୀ |"
+
+#: .\facilitator\models\vcg_model.py:84
+msgid "VCG Groups"
+msgstr "VCG ଗୋଷ୍ଠୀଗୁଡିକ |"
+
+#: .\facilitator\models\vcg_model.py:102
+msgid "Started"
+msgstr "ଆରମ୍ଭ କରିବା"
+
+#: .\facilitator\models\vcg_model.py:103 .\veterinary\choices\choices.py:145
+#: .\veterinary\choices\choices.py:166
+msgid "Completed"
+msgstr "ସମାପ୍ତ"
+
+#: .\facilitator\models\vcg_model.py:111
+msgid "Unique identifier for the meeting."
+msgstr "ସଭା ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\facilitator\models\vcg_model.py:120
+msgid "User who initiated the meeting."
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ଯିଏ ସଭା ଆରମ୍ଭ କରିଥିଲେ |"
+
+#: .\facilitator\models\vcg_model.py:129 .\facilitator\models\vcg_model.py:526
+msgid "Name of the MPP associated with the meeting."
+msgstr "ସଭା ସହିତ ଜଡିତ Mpp ର ନାମ |"
+
+#: .\facilitator\models\vcg_model.py:136 .\facilitator\models\vcg_model.py:531
+msgid "MPP EX Code"
+msgstr "Mpp ex କୋଡ୍ |"
+
+#: .\facilitator\models\vcg_model.py:137 .\facilitator\models\vcg_model.py:532
+msgid "External MPP Code for reference."
+msgstr "ରେଫରେନ୍ସ ପାଇଁ ବାହ୍ୟ MPP କୋଡ୍ |"
+
+#: .\facilitator\models\vcg_model.py:144 .\facilitator\models\vcg_model.py:537
+msgid "Unique MPP code assigned."
+msgstr "ଅନନ୍ୟ MPP କୋଡ୍ ନ୍ୟସ୍ତ |"
+
+#: .\facilitator\models\vcg_model.py:151
+#: .\veterinary\models\stock_models.py:59
+msgid "Latitude"
+msgstr "ଅକ୍ଷାଂଶ"
+
+#: .\facilitator\models\vcg_model.py:152
+msgid "Geographical latitude of the meeting location."
+msgstr "ସଭା ସ୍ଥିତିର ଭ ograph ଗୋଳିକ ଅକ୍ଷାଂଶ |"
+
+#: .\facilitator\models\vcg_model.py:158
+#: .\veterinary\models\stock_models.py:68
+msgid "Longitude"
+msgstr "ଦ୍ରାଘିମା"
+
+#: .\facilitator\models\vcg_model.py:159
+msgid "Geographical longitude of the meeting location."
+msgstr "ମିଟିଂ ଅବସ୍ଥାନର ଭ ograph ଗୋଳିକ ଦ୍ରାଘ୍ୟ |"
+
+#: .\facilitator\models\vcg_model.py:165
+msgid "Started At"
+msgstr "ଆରମ୍ଭ କଲା"
+
+#: .\facilitator\models\vcg_model.py:166
+msgid "Timestamp when the meeting started."
+msgstr "ଯେତେବେଳେ ବ meeting ଠକ ଆରମ୍ଭ ହେଲା ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:171
+msgid "Completed At"
+msgstr "ସମାପ୍ତ"
+
+#: .\facilitator\models\vcg_model.py:172
+msgid "Timestamp when the meeting was completed."
+msgstr "ଟିମେଷ୍ଟ୍ୟାମ୍ପ ଯେତେବେଳେ ବ meeting ଠକ ସମାପ୍ତ ହେଲା |"
+
+#: .\facilitator\models\vcg_model.py:179
+msgid "Meeting Status"
+msgstr "ମାନ୍ୟତା ସ୍ଥିତି"
+
+#: .\facilitator\models\vcg_model.py:180
+msgid "Current status of the meeting."
+msgstr "ବ meeting ଠକର ସାମ୍ପ୍ରତିକ ସ୍ଥିତି |"
+
+#: .\facilitator\models\vcg_model.py:184
+#: .\veterinary\models\common_models.py:52
+msgid "Synced"
+msgstr "ସିନ୍ ହୋଇଥିବା"
+
+#: .\facilitator\models\vcg_model.py:185
+msgid "Indicated whether data is synced from mobile app or not."
+msgstr "ସୂଚାଇଟିଆଗୁଡିକ ମୋବାଇଲ୍ ଆପ୍ ରୁ ସିଙ୍କ୍ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଲା |"
+
+#: .\facilitator\models\vcg_model.py:189
+msgid "deleted"
+msgstr "ବିଲୋପ"
+
+#: .\facilitator\models\vcg_model.py:190
+msgid "Indicated whether data is deleted or not."
+msgstr "ଡାଟା ଡିଲିଟ୍ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\facilitator\models\vcg_model.py:210
+msgid "VCG Meeting"
+msgstr "VCG ବ meeting ଠକ"
+
+#: .\facilitator\models\vcg_model.py:211
+msgid "VCG Meetings"
+msgstr "VCG ସଭାଗୁଡ଼ିକ |"
+
+#: .\facilitator\models\vcg_model.py:245
+msgid "Present"
+msgstr "ଉପସ୍ଥିତ"
+
+#: .\facilitator\models\vcg_model.py:246
+msgid "Absent"
+msgstr "ଅନୁପସ୍ଥିତ"
+
+#: .\facilitator\models\vcg_model.py:255 .\facilitator\models\vcg_model.py:321
+msgid "Meeting"
+msgstr "ସଭା"
+
+#: .\facilitator\models\vcg_model.py:256
+msgid "The meeting to which this attendance record belongs."
+msgstr "ଏହି ଉପସ୍ଥାନ ରେକର୍ଡ ହୋଇଥିବା ଏହି ଉପସ୍ଥାନ ରେକର୍ଡ ଥିବା ସଭା |"
+
+#: .\facilitator\models\vcg_model.py:265
+msgid "Group Member"
+msgstr "ଗୋଷ୍ଠୀ ସଦସ୍ୟ"
+
+#: .\facilitator\models\vcg_model.py:266
+msgid "The VCG member attending the meeting."
+msgstr "ବ meeting ଠକରେ VCG ସଦସ୍ୟ |"
+
+#: .\facilitator\models\vcg_model.py:273
+msgid "Attendance Status"
+msgstr "ଉପସ୍ଥତ୍ତିକା ସ୍ଥିତି"
+
+#: .\facilitator\models\vcg_model.py:274
+msgid "Indicates whether the member was present or absent."
+msgstr "ସଦସ୍ୟ ଉପସ୍ଥିତ ହେଉ କିମ୍ବା ଅନୁପସ୍ଥିତ ଥିବାବେଳେ ସୂଚାଏ |"
+
+#: .\facilitator\models\vcg_model.py:279
+msgid "Attendance Date"
+msgstr "ଉପସ୍ଥାନ ତାରିଖ"
+
+#: .\facilitator\models\vcg_model.py:280
+msgid "Timestamp of when the attendance was recorded."
+msgstr "ଉପସ୍ଥାନ ରେକର୍ଡ ହୋଇଥିବାବେଳେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:286
+msgid "Timestamp of when this record was created."
+msgstr "ଯେତେବେଳେ ଏହି ରେକର୍ଡ ସୃଷ୍ଟି ହେଲା ତାହାର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:292 .\facilitator\models\vcg_model.py:340
+msgid "Timestamp of the last update to this record."
+msgstr "ଏହି ରେକର୍ଡକୁ ଶେଷ ଅଦ୍ୟତନର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:300
+msgid "VCG Member Attendance"
+msgstr "VCG ସଦସ୍ୟ ଉପସ୍ଥାନ |"
+
+#: .\facilitator\models\vcg_model.py:301
+msgid "VCG Member Attendances"
+msgstr "Vcg ସଦସ୍ୟ ଦେଶଗଣ |"
+
+#: .\facilitator\models\vcg_model.py:322
+msgid "The meeting associated with this image."
+msgstr "ଏହି ପ୍ରତିଛବି ସହିତ ଜଡିତ ବ meeting ଠକ |"
+
+#: .\facilitator\models\vcg_model.py:327
+msgid "Meeting Image"
+msgstr "ପ୍ରତିଛବି ସାକ୍ଷାତ କରିବା |"
+
+#: .\facilitator\models\vcg_model.py:328
+msgid "Upload an image related to the meeting."
+msgstr "ସଭା ସହିତ ଜଡିତ ଏକ ପ୍ରତିଛବି ଅପଲୋଡ୍ କରନ୍ତୁ |"
+
+#: .\facilitator\models\vcg_model.py:334
+msgid "Timestamp of when this image was uploaded."
+msgstr "ଯେତେବେଳେ ଏହି ପ୍ରତିଛବି ଅପଲୋଡ୍ ହେଲା ତାହାର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\facilitator\models\vcg_model.py:364
+msgid "VCG Meeting Image"
+msgstr "VCG ମିଟିଂ ଇମେଜ୍ |"
+
+#: .\facilitator\models\vcg_model.py:365
+msgid "VCG Meeting Images"
+msgstr "Vcg ମିଟିଂ ପ୍ରତିଛବିଗୁଡିକ |"
+
+#: .\facilitator\models\vcg_model.py:377 .\facilitator\models\vcg_model.py:410
+msgid "Reason"
+msgstr "କାରଣ"
+
+#: .\facilitator\models\vcg_model.py:378
+msgid "Reason for zero days pouring."
+msgstr "ଶୂନ ଦିନର £ ାଳିବାର କାରଣ |"
+
+#: .\facilitator\models\vcg_model.py:384 .\facilitator\models\vcg_model.py:417
+msgid "Timestamp when this reason was added."
+msgstr "ଏହି କାରଣ ପରେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ ଯେତେବେଳେ ଯୋଗ କରାଯାଇଥିଲା |"
+
+#: .\facilitator\models\vcg_model.py:390 .\facilitator\models\vcg_model.py:423
+msgid "Timestamp when this reason was last updated."
+msgstr "ଟାଇମଷ୍ଟ୍ୟାମ୍ପ ଯେତେବେଳେ ଏହି କାରଣ ଶେଷ ଅଦ୍ୟତନ କରାଯାଇଥିଲା |"
+
+#: .\facilitator\models\vcg_model.py:398
+msgid "Zero Days Pouring Reason"
+msgstr "ଶୂନ ଦିନ କାରଣ |"
+
+#: .\facilitator\models\vcg_model.py:399
+msgid "Zero Days Pouring Reasons"
+msgstr "ଶୂନ ଦିନ କାରଣଗୁଡିକ ଗର୍ବ କରିବା |"
+
+#: .\facilitator\models\vcg_model.py:411
+msgid "Reason for a member complaint."
+msgstr "ଏକ ସଦସ୍ୟ ଅଭିଯୋଗର କାରଣ |"
+
+#: .\facilitator\models\vcg_model.py:431
+msgid "Member Complaint Reason"
+msgstr "ସଦସ୍ୟ ଅଭିଯୋଗ କାରଣ |"
+
+#: .\facilitator\models\vcg_model.py:432
+msgid "Member Complaint Reasons"
+msgstr "ସଦସ୍ୟ ଅଭିଯୋଗ କାରଣଗୁଡିକ |"
+
+#: .\facilitator\models\vcg_model.py:493
+msgid "Member External Code"
+msgstr "ସଦସ୍ୟ ବାହ୍ୟ କୋଡ୍ |"
+
+#: .\facilitator\models\vcg_model.py:494
+msgid "External identifier for the VCG member."
+msgstr "VCG ସଦସ୍ୟଙ୍କ ପାଇଁ ବାହ୍ୟ ପରିଚାୟକ |"
+
+#: .\facilitator\models\vcg_model.py:541 .\member\models.py:92
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:109
+msgid "Month"
+msgstr "ମାସ"
+
+#: .\facilitator\models\vcg_model.py:542
+msgid "The month for which the assignment is created."
+msgstr "ଯେଉଁ ମାସ ପାଇଁ ଆସାଇନମେଣ୍ଟ୍ ସୃଷ୍ଟି ହୋଇଛି |"
+
+#: .\facilitator\models\vcg_model.py:548
+msgid "Milk Collection (Liters/Day)"
+msgstr "କ୍ଷୀର ସଂଗ୍ରହ (ଲିଟର / ଦିନ)"
+
+#: .\facilitator\models\vcg_model.py:549
+msgid "Total milk collected per day in liters."
+msgstr "ଲିଟରରେ ଦିନକୁ ସମୁଦାୟ କ୍ଷୀର ସଂଗୃହିତ |"
+
+#: .\facilitator\models\vcg_model.py:552
+msgid "No of Members"
+msgstr "କ Any ଣସି ସଦସ୍ୟ ନାହାଁନ୍ତି |"
+
+#: .\facilitator\models\vcg_model.py:555
+msgid ">=15 Days Pourers"
+msgstr "> = 15 ଦିନ pouures |"
+
+#: .\facilitator\models\vcg_model.py:558
+msgid ">=25 Days Pourers"
+msgstr "> = 25 ଦିନ poorars |"
+
+#: .\facilitator\models\vcg_model.py:561
+msgid "Zero Days Pourers"
+msgstr "ଶୂନ ଦିନ pourelers |"
+
+#: .\facilitator\models\vcg_model.py:566
+msgid "Cattle Feed Sale (KG)"
+msgstr "କ୍ୟାଟଲ୍ ଫିଡ୍ ବିକ୍ରୟ (କେଜି)"
+
+#: .\facilitator\models\vcg_model.py:571
+msgid "Mineral Mixture Sale (KG)"
+msgstr "ଖଣିଜ ମିଶ୍ରଣ ବିକ୍ରୟ (କେଜି)"
+
+#: .\facilitator\models\vcg_model.py:576
+msgid "Sahayak Recovery (%)"
+msgstr "ସାବାଇକ ପୁନରୁଦ୍ଧାର (%)"
+
+#: .\facilitator\models\vcg_model.py:586
+msgid "Month Assignment"
+msgstr "ମାସ ଆସାଇନମେଣ୍ଟ |"
+
+#: .\facilitator\models\vcg_model.py:587
+msgid "Month Assignments"
+msgstr "ମାସ ଆସାଇନମେଣ୍ଟ |"
+
+#: .\facilitator\views\auth.py:27
+msgid "Phone number is required."
+msgstr "ଫୋନ୍ ନମ୍ବର ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\auth.py:35
+msgid "User does not exist. Please contact support."
+msgstr "ଉପଭୋକ୍ତା ବିଦ୍ୟମାନ ନୁହଁନ୍ତି | ଦୟାକରି ସମର୍ଥନ ଯୋଗାଯୋଗ କରନ୍ତୁ |"
+
+#: .\facilitator\views\auth.py:51
+msgid "Failed to send OTP. Please try again later."
+msgstr "OTP ପଠାଇବାରେ ବିଫଳ ହେଲା | ଦୟାକରି ପରେ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
+
+#: .\facilitator\views\auth.py:58 .\facilitator\views\views.py:886
+msgid "OTP sent successfully."
+msgstr "OTP ସଫଳତାର ସହିତ ପଠାଇଲେ |"
+
+#: .\facilitator\views\auth.py:196
+msgid "Refresh token is required"
+msgstr "ଶସ୍ୟ ଟୋକେନ୍ ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\auth.py:204
+msgid "Logout successful"
+msgstr "ଲଗଆଉଟ୍ ସଫଳ |"
+
+#: .\facilitator\views\auth.py:210
+msgid "Invalid refresh token or already blacklisted"
+msgstr "ଅବ val ଧ ସତେଜ ଟୋକେନ୍ କିମ୍ବା ପୂର୍ବରୁ କଳା ତାଲିକାଭୁକ୍ତ |"
+
+#: .\facilitator\views\member_update_view.py:99
+msgid "Update request created successfully"
+msgstr "ଅଦ୍ୟତନ ଅନୁରୋଧ ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି |"
+
+#: .\facilitator\views\member_update_view.py:106
+#: .\facilitator\views\member_update_view.py:189
+msgid "Validation failed"
+msgstr "ବ valid ଧତା ବିଫଳ ହେଲା |"
+
+#: .\facilitator\views\member_update_view.py:113
+#: .\facilitator\views\member_update_view.py:120
+msgid "An error occurred while creating the request"
+msgstr "ଅନୁରୋଧ ସୃଷ୍ଟି କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:133
+msgid "Request retrieved successfully"
+msgstr "ଅନୁରୋଧ ସଫଳତାର ସହିତ ପୁନରୁଦ୍ଧାର ହେଲା |"
+
+#: .\facilitator\views\member_update_view.py:140
+#: .\facilitator\views\member_update_view.py:196
+#: .\facilitator\views\member_update_view.py:240
+msgid "Request not found"
+msgstr "ଅନୁରୋଧ ମିଳିଲା ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:146
+msgid "An error occurred while retrieving the request"
+msgstr "ଅନୁରୋଧ ପୁନରୁଦ୍ଧାର କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:161
+msgid "You don't have permission to update this request"
+msgstr "ଏହି ଅନୁରୋଧକୁ ଅଦ୍ୟତନ କରିବାକୁ ଆପଣଙ୍କର ଅନୁମତି ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:170
+msgid "Cannot update a request that has already been processed"
+msgstr ""
+"ଏକ ଅନୁରୋଧକୁ ଅଦ୍ୟତନ କରିପାରିବ ନାହିଁ ଯାହା ପୂର୍ବରୁ ପ୍ରକ୍ରିୟାକରଣ ହୋଇସାରିଛି |"
+
+#: .\facilitator\views\member_update_view.py:182
+msgid "Request updated successfully"
+msgstr "ସଫଳତାର ସହିତ ଅଦ୍ୟତନ କରାଯାଇଛି |"
+
+#: .\facilitator\views\member_update_view.py:202
+msgid "An error occurred while updating the request"
+msgstr "ଅନୁରୋଧକୁ ଅପଡେଟ୍ କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:216
+msgid "You don't have permission to delete this request"
+msgstr "ଏହି ଅନୁରୋଧ ବିଲୋପ କରିବାକୁ ଆପଣଙ୍କର ଅନୁମତି ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:225
+msgid "Cannot delete a request that has already been processed"
+msgstr "ପୂର୍ବରୁ ପ୍ରକ୍ରିୟାକରଣ ହୋଇଥିବାର ଏକ ଅନୁରୋଧ ବିଲୋପ କରିପାରିବ ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:234
+msgid "Request deleted successfully"
+msgstr "ସଫଳତାର ସହିତ ବିଲୋପ ହେଲା |"
+
+#: .\facilitator\views\member_update_view.py:246
+msgid "An error occurred while deleting the request"
+msgstr "ଅନୁରୋଧ ବିଲୋପ କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:261
+msgid "You don't have permission to approve requests"
+msgstr "ଅନୁରୋଧଗୁଡିକ ଅନୁମୋଦନ କରିବାକୁ ଆପଣଙ୍କର ଅନୁମତି ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:269
+msgid "Only pending requests can be approved"
+msgstr "କେବଳ ଅନୁରୋଧଗୁଡିକ ପ୍ରତିଷ୍ଠା ହୋଇପାରିବ |"
+
+#: .\facilitator\views\member_update_view.py:283
+msgid "Request approved successfully"
+msgstr "ଅନୁରୋଧ ସଫଳତାର ସହିତ ଅନୁମୋଦିତ |"
+
+#: .\facilitator\views\member_update_view.py:290
+msgid "An error occurred while approving the request"
+msgstr "ଅନୁରୋଧକୁ ଅନୁମୋଦନ କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:305
+msgid "You don't have permission to reject requests"
+msgstr "ଅନୁରୋଧଗୁଡିକ ପ୍ରତ୍ୟାଖ୍ୟାନ କରିବାକୁ ଆପଣଙ୍କର ଅନୁମତି ନାହିଁ |"
+
+#: .\facilitator\views\member_update_view.py:313
+msgid "Only pending requests can be rejected"
+msgstr "କେବଳ ସୂଚିତ ଅନୁରୋଧ ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇପାରିବ |"
+
+#: .\facilitator\views\member_update_view.py:322
+msgid "Rejection reason is required"
+msgstr "ପ୍ରତ୍ୟାଖ୍ୟାନ କାରଣଗୁଡିକ ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\member_update_view.py:323
+msgid "This field is required"
+msgstr "ଏହି କ୍ଷେତ୍ର ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\member_update_view.py:338
+msgid "Request rejected successfully"
+msgstr "ଅନୁରୋଧ ସଫଳତାର ସହିତ ପ୍ରତ୍ୟାଖ୍ୟାନ |"
+
+#: .\facilitator\views\member_update_view.py:345
+msgid "An error occurred while rejecting the request"
+msgstr "ଅନୁରୋଧ ପ୍ରତ୍ୟାଖ୍ୟାନ କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\member_update_view.py:379
+msgid "Statistics retrieved successfully"
+msgstr "ପରିସଂଖ୍ୟାନ ସଫଳତାର ସହିତ ପୁନରୁଦ୍ଧାର ହେଲା |"
+
+#: .\facilitator\views\member_update_view.py:386
+msgid "An error occurred while retrieving statistics"
+msgstr "ପରିସଂଖ୍ୟାନ ପୁନରୁଦ୍ଧାର କରିବା ସମୟରେ ଏକ ତ୍ରୁଟି ଘଟିଗଲା |"
+
+#: .\facilitator\views\vcg_api_views.py:953
+msgid "A meeting with the same details already exists."
+msgstr "ସମାନ ବିବରଣୀ ସହିତ ଏକ ସଭା ବିଦ୍ୟମାନ ଅଛି |"
+
+#: .\facilitator\views\vcg_api_views.py:965
+msgid "Your meeting has started"
+msgstr "ତୁମର ବ meeting ଠକ ଆରମ୍ଭ ହୋଇଛି |"
+
+#: .\facilitator\views\vcg_api_views.py:974
+#: .\facilitator\views\vcg_api_views.py:1006
+#: .\facilitator\views\vcg_api_views.py:1050
+#: .\facilitator\views\vcg_api_views.py:1067
+msgid "Invalid data"
+msgstr "ଅବ val ଧ ତଥ୍ୟ |"
+
+#: .\facilitator\views\vcg_api_views.py:997
+msgid "Meeting updated successfully"
+msgstr "ସଫଳତାର ସହିତ ସାକ୍ଷାତ ହେଲା |"
+
+#: .\facilitator\views\vcg_api_views.py:1044
+msgid "VCG Member created successfully"
+msgstr "Vcg ସଦସ୍ୟ ସଫଳତାର ସହିତ ସୃଷ୍ଟି କରିଛନ୍ତି |"
+
+#: .\facilitator\views\vcg_api_views.py:1061
+msgid "VCG Member updated successfully"
+msgstr "Vcg ସଦସ୍ୟ ସଫଳତାର ସହିତ ଅଦ୍ୟତନ କଲେ |"
+
+#: .\facilitator\views\vcg_api_views.py:1075
+msgid "VCG Member deleted successfully"
+msgstr "Vcg ସଦସ୍ୟ ସଫଳତାର ସହିତ ବିଲୋପ କଲେ |"
+
+#: .\facilitator\views\views.py:837
+msgid "All fields are required."
+msgstr "ସମସ୍ତ କ୍ଷେତ୍ରଗୁଡିକ ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\views.py:843
+msgid "Passwords do not match."
+msgstr "ପାସୱାର୍ଡ ମେଳ ଖାଉ ନାହିଁ |"
+
+#: .\facilitator\views\views.py:849
+msgid "Old password is incorrect."
+msgstr "ପୁରୁଣା ପାସୱାର୍ଡ ଭୁଲ ଅଟେ |"
+
+#: .\facilitator\views\views.py:865
+msgid "Password changed successfully."
+msgstr "ପାସୱାର୍ଡ ସଫଳତାର ସହିତ ପରିବର୍ତ୍ତନ ହେଲା |"
+
+#: .\facilitator\views\views.py:874
+msgid "Username is required"
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ନାମ ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\views.py:881 .\facilitator\views\views.py:910
+msgid "User not found"
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ମିଳିଲା ନାହିଁ |"
+
+#: .\facilitator\views\views.py:897
+msgid "All fields are required"
+msgstr "ସମସ୍ତ କ୍ଷେତ୍ର ଆବଶ୍ୟକ |"
+
+#: .\facilitator\views\views.py:903
+msgid "Invalid or expired OTP"
+msgstr "ଅବ val ଧ କିମ୍ବା ମିଆଦ ପୂର୍ଣ୍ଣ OTP |"
+
+#: .\facilitator\views\views.py:916
+msgid "Password reset successfully."
+msgstr "ପାସୱାର୍ଡ ପୁନ res ସେଟ୍ ସଫଳତାର ସହିତ ପୁନ res ସେଟ୍ କରନ୍ତୁ |"
+
+#: .\feedback\models\feedback_model.py:12
+msgid "Open"
+msgstr "ଖୋଲ |"
+
+#: .\feedback\models\feedback_model.py:13
+msgid "Assigned"
+msgstr "ନ୍ୟସ୍ତ"
+
+#: .\feedback\models\feedback_model.py:14
+msgid "In Progress"
+msgstr "ଚାଲୁଛି"
+
+#: .\feedback\models\feedback_model.py:15
+msgid "Resolved"
+msgstr "ସମାଧାନ"
+
+#: .\feedback\models\feedback_model.py:16
+msgid "Closed"
+msgstr "ବନ୍ଦ |"
+
+#: .\feedback\models\feedback_model.py:17
+msgid "Reopened"
+msgstr "ଖୋଲାଯାଇଥିବା"
+
+#: .\feedback\models\feedback_model.py:24
+msgid "Low"
+msgstr "ନିମ୍ନ"
+
+#: .\feedback\models\feedback_model.py:25
+msgid "Medium"
+msgstr "ମଧ୍ୟମ"
+
+#: .\feedback\models\feedback_model.py:26
+msgid "High"
+msgstr "ଉଚ୍ଚ"
+
+#: .\feedback\models\feedback_model.py:27 .\veterinary\choices\choices.py:160
+msgid "Critical"
+msgstr "ଗୁରୁତର"
+
+#: .\feedback\models\feedback_model.py:61
+msgid "Feedback ID"
+msgstr "ମତାମତ ID"
+
+#: .\feedback\models\feedback_model.py:62
+msgid "Unique identifier for this feedback entry. Auto-generated."
+msgstr "ଏହି ମତାମତ ପ୍ରବେଶ ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ | ଅଟୋ-ଜେନେରେଟ୍ |"
+
+#: .\feedback\models\feedback_model.py:69 .\notifications\models.py:37
+msgid "Sender"
+msgstr "ପ୍ରେରକ"
+
+#: .\feedback\models\feedback_model.py:70
+msgid "User who submitted the feedback."
+msgstr "ଉପଭୋକ୍ତା ଯିଏ ମତାମତ ଦାଖଲ କରିଥିଲେ |"
+
+#: .\feedback\models\feedback_model.py:79
+msgid "Assigned To"
+msgstr "ନ୍ୟସ୍ତ"
+
+#: .\feedback\models\feedback_model.py:80
+msgid "User assigned to review or resolve this feedback."
+msgstr "ଏହି ମତାମତ ସମୀକ୍ଷା କିମ୍ବା ସମାଧାନ ପାଇଁ ଉପଭୋକ୍ତା ନ୍ୟସ୍ତ |"
+
+#: .\feedback\models\feedback_model.py:86
+msgid "Assigned At"
+msgstr "ନ୍ୟସ୍ତ"
+
+#: .\feedback\models\feedback_model.py:87
+msgid "Timestamp when the feedback was assigned."
+msgstr "ମତାମତ ନ୍ୟସ୍ତ ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\feedback\models\feedback_model.py:95
+msgid "MPP Code related to the feedback. Must be exactly 9 characters."
+msgstr "ମତାମତ ସହିତ ଜଡିତ MPP କୋଡ୍ | ଠିକ୍ 9 ଅକ୍ଷର ହେବା ଜରୁରୀ |"
+
+#: .\feedback\models\feedback_model.py:102 .\member\models.py:81
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:97
+msgid "MCC Code"
+msgstr "Mcc କୋଡ୍"
+
+#: .\feedback\models\feedback_model.py:103
+msgid "Milk Collection Center code linked to this feedback."
+msgstr "ଏହି ମତାମତ ସହିତ ସଂଯୁକ୍ତ ଦୁଗ୍ଧ କେନ୍ଦ୍ର କୋଡ୍ |"
+
+#: .\feedback\models\feedback_model.py:111
+msgid "Unique identifier for the member associated with this feedback."
+msgstr "ଏହି ମତାମତ ସହିତ ଜଡିତ ସଦସ୍ୟମାନଙ୍କ ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\feedback\models\feedback_model.py:118
+msgid "Member Transaction Code"
+msgstr "ସଦସ୍ୟ କାରବାର କୋଡ୍ |"
+
+#: .\feedback\models\feedback_model.py:119
+msgid "Transaction code related to the member, if applicable."
+msgstr "ଯଦି ପ୍ରଯୁଜ୍ୟ ତେବେ ସଦସ୍ୟମାନଙ୍କ ସହିତ ଜଡିତ କାରବାର କୋଡ୍ |"
+
+#: .\feedback\models\feedback_model.py:135
+msgid "Contact mobile number of the member."
+msgstr "ସଦସ୍ୟଙ୍କ ମୋବାଇଲ୍ ନମ୍ବର ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ |"
+
+#: .\feedback\models\feedback_model.py:142 .\member\models.py:227
+msgid "Feedback Status"
+msgstr "ଭାଷା ସ୍ଥିତି"
+
+#: .\feedback\models\feedback_model.py:143
+msgid "Current status of the feedback."
+msgstr "ମତାମତର ସାମ୍ପ୍ରତିକ ସ୍ଥିତି |"
+
+#: .\feedback\models\feedback_model.py:150
+msgid "Priority"
+msgstr "ପ୍ରାଥମିକତା"
+
+#: .\feedback\models\feedback_model.py:151
+msgid "Priority level of the feedback."
+msgstr "ମତାମତର ପ୍ରାଥମିକତା ସ୍ତର |"
+
+#: .\feedback\models\feedback_model.py:158
+#: .\veterinary\models\stock_models.py:171
+msgid "Category"
+msgstr "ବର୍ଗ"
+
+#: .\feedback\models\feedback_model.py:159
+msgid "Category or type of feedback."
+msgstr "ବର୍ଗ କିମ୍ବା ମତାମତ ପ୍ରକାର |"
+
+#: .\feedback\models\feedback_model.py:165
+msgid "Timestamp when the feedback was created."
+msgstr "ମତାମତ ସୃଷ୍ଟି ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\feedback\models\feedback_model.py:171 .\member\models.py:232
+msgid "Resolved At"
+msgstr "ସମାଧାନ ହୋଇଛି"
+
+#: .\feedback\models\feedback_model.py:172
+msgid "Timestamp when the feedback was marked as resolved."
+msgstr ""
+"ଟାଇମଷ୍ଟମ୍ ଯେତେବେଳେ ମତାମତଗୁଡିକ ସମାଧାନ ଭାବରେ ଚିହ୍ନିତ କରାଯାଉଥିଲା ତିମେଷ୍ଟ୍ୟାମ୍ପ "
+"|"
+
+#: .\feedback\models\feedback_model.py:177
+msgid "Progress"
+msgstr "ପ୍ରଗତି"
+
+#: .\feedback\models\feedback_model.py:178
+msgid "Progress of feedback resolution in percentage."
+msgstr "ଶତକଡା ରେଫରେନ୍ସ ରେଜୋଲୁସନ ର ଅଗ୍ରଗତି |"
+
+#: .\feedback\models\feedback_model.py:185
+msgid "Rating"
+msgstr "ମୂଲ୍ୟାୟନ"
+
+#: .\feedback\models\feedback_model.py:186
+msgid "Rating given by the user after feedback resolution."
+msgstr "ମତାମତ ରେଜୋଲୁସନ ପରେ ଉପଭୋକ୍ତା ଦ୍ୱାରା ପ୍ରଦତ୍ତ ମୂଲ୍ୟାୟନ |"
+
+#: .\feedback\models\feedback_model.py:190
+#: .\veterinary\models\case_models.py:23
+msgid "Last Updated At"
+msgstr "ଶେଷରେ ଅଦ୍ୟତନ ହୋଇଛି |"
+
+#: .\feedback\models\feedback_model.py:191
+msgid "Timestamp of the most recent update to the feedback."
+msgstr "ମତାମତ ପାଇଁ ସାମ୍ପ୍ରତିକ ଅଦ୍ୟତନର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\feedback\models\feedback_model.py:195 .\member\models.py:236
+#: .\notifications\models.py:60
+msgid "Message"
+msgstr "ବାର୍ତ୍ତା |"
+
+#: .\feedback\models\feedback_model.py:196
+msgid "Detailed description or content of the feedback."
+msgstr "ମତାମତଗୁଡିକର ବିସ୍ତୃତ ବର୍ଣ୍ଣନା କିମ୍ବା ବିଷୟବସ୍ତୁ |"
+
+#: .\feedback\models\feedback_model.py:221
+#: .\veterinary\models\common_models.py:47
+msgid "Is Deleted"
+msgstr "ଡିଲିଟ୍ ହୋଇଛି |"
+
+#: .\feedback\models\feedback_model.py:222
+msgid "Indicates whether this feedback is deleted (soft delete)."
+msgstr ""
+"ଏହି ମତାମତ ବିଲୋପ ହୋଇଥିବା (ସଫ୍ଟ ଡିଲିଷ୍ଟ) ବିଲୋପ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\feedback\models\feedback_model.py:226
+msgid "Feedback"
+msgstr "ମତାମତ"
+
+#: .\feedback\models\feedback_model.py:227
+msgid "Feedbacks"
+msgstr "ଫିଡବଳୀ |"
+
+#: .\feedback\models\feedback_model.py:243
+msgid "Cannot set resolved time if feedback is not resolved or closed."
+msgstr ""
+"ଯଦି ମତାମତ ସମାଧାନ ହେଉନାହିଁ କିମ୍ବା ବନ୍ଦ ନହେଲେ ସମାଧାନ ସମୟ ସ୍ଥିର କରିପାରିବ ନାହିଁ "
+"|"
+
+#: .\feedback\models\feedback_model.py:253
+msgid "Assigned to cannot be empty when assigned time is set."
+msgstr "ଦିଆଯାଇଥିବା ସମୟ ସେଟ୍ ହେଲେ ଖାଲି ହୋଇପାରିବ ନାହିଁ |"
+
+#: .\feedback\models\feedback_model.py:294
+#, python-brace-format
+msgid "Invalid status transition from '{self.status}' to '{new_status}'"
+msgstr ""
+"'{Sust.status}' {new_status} 'ରୁ' {{ne_status} 'ରୁ ଅବ val ଧ ସ୍ଥିତି "
+"ପରିବର୍ତ୍ତନ |"
+
+#: .\feedback\models\feedback_model.py:325
+msgid "Previous Status"
+msgstr "ପୂର୍ବ ସ୍ଥିତି"
+
+#: .\feedback\models\feedback_model.py:327
+msgid "New Status"
+msgstr "ନୂତନ ସ୍ଥିତି"
+
+#: .\feedback\models\feedback_model.py:328
+msgid "Log Remark"
+msgstr "ଲଗ୍ ଟିପ୍ପଣୀ |"
+
+#: .\member\apps.py:8
+msgid "Kashee Member"
+msgstr "କସେ ସଦସ୍ୟ |"
+
+#: .\member\models.py:21
+msgid "OTP"
+msgstr "Otp"
+
+#: .\member\models.py:22
+msgid "Created AT"
+msgstr "ସୃଷ୍ଟି ହୋଇଛି"
+
+#: .\member\models.py:43
+msgid "User OTP"
+msgstr "ବ୍ୟବହାରକାରୀ OPP"
+
+#: .\member\models.py:44
+msgid "Users' OTPs"
+msgstr "ଉପଭୋକ୍ତାମାନଙ୍କର OTPS |"
+
+#: .\member\models.py:52
+msgid "Device"
+msgstr "ଉପକରଣ"
+
+#: .\member\models.py:57
+msgid "FCM Token"
+msgstr "FCM ଟୋକେନ୍ |"
+
+#: .\member\models.py:59
+msgid "Module Code"
+msgstr "ମଡ୍ୟୁଲ୍ କୋଡ୍ |"
+
+#: .\member\models.py:69
+msgid "User Device"
+msgstr "ବ୍ୟବହାରକାରୀ ଉପକରଣ"
+
+#: .\member\models.py:70
+msgid "Users' Devices"
+msgstr "ବ୍ୟବହାରକାରୀଙ୍କ ଉପକରଣଗୁଡ଼ିକ |"
+
+#: .\member\models.py:84
+msgid "MCC Name"
+msgstr "Mcc ନାମ |"
+
+#: .\member\models.py:93
+msgid "Year"
+msgstr "ବର୍ଷ"
+
+#: .\member\models.py:94
+msgid "Opening Balance"
+msgstr "ସନ୍ତୁଳନ ଖୋଲିବା |"
+
+#: .\member\models.py:95
+msgid "Milk Qty"
+msgstr "କ୍ଷୀର Qty"
+
+#: .\member\models.py:96
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:115
+msgid "Milk Incentive"
+msgstr "କ୍ଷୀର ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:97
+msgid "TDS(%)"
+msgstr "Tds (%)"
+
+#: .\member\models.py:98
+msgid "TDS (AMT)"
+msgstr "Tds (amt)"
+
+#: .\member\models.py:99
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:118
+msgid "Other Incentive"
+msgstr "ଅନ୍ୟାନ୍ୟ ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:101
+msgid "Cattle Feed Incentive"
+msgstr "ଗୋରୁ ଫିଡ୍ ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:104
+msgid "Mineral Mixture Incentive"
+msgstr "ମିନେରାଲ୍ ମିଶ୍ରଣ ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:106
+msgid "C.D.A Recovery"
+msgstr "C.D.A ପୁନରୁଦ୍ଧାର"
+
+#: .\member\models.py:107
+msgid "Asset Recovery"
+msgstr "ସମ୍ପତ୍ତି ପୁନରୁଦ୍ଧାର"
+
+#: .\member\models.py:109
+msgid "Milk Incentive Payable"
+msgstr "କ୍ଷୀର ପ୍ରୋତ୍ସାହନ ଦେୟ ପ୍ରଦାନଯୋଗ୍ୟ |"
+
+#: .\member\models.py:111
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:121
+msgid "Payable"
+msgstr "ଦେୟଯୋଗ୍ୟ"
+
+#: .\member\models.py:112
+msgid "Closing Balance"
+msgstr "ବନ୍ଦ ବାଲାନ୍ସ"
+
+#: .\member\models.py:114
+msgid "Additional Data"
+msgstr "ଅତିରିକ୍ତ ତଥ୍ୟ"
+
+#: .\member\models.py:117
+msgid "Add additional data to be shown in sahayak recovery"
+msgstr "ସାବାଇକ ପୁନରୁଦ୍ଧାରରେ ଦେଖାଯିବାକୁ ଅତିରିକ୍ତ ଡାଟା ଯୋଡନ୍ତୁ |"
+
+#: .\member\models.py:126
+msgid "Sahayak Incentive"
+msgstr "ସାୟାକ ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:127
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:45
+msgid "Sahayak Incentives"
+msgstr "ସାୟାକ ପ୍ରୋତ୍ସାହନ |"
+
+#: .\member\models.py:138
+msgid "Product Name"
+msgstr "ଉତ୍ପାଦ ନାମ"
+
+#: .\member\models.py:139
+msgid "The name of product"
+msgstr "ଉତ୍ପାଦର ନାମ |"
+
+#: .\member\models.py:144
+msgid "Product Price"
+msgstr "ଉତ୍ପାଦ ମୂଲ୍ୟ"
+
+#: .\member\models.py:145
+msgid "Rate of the product"
+msgstr "ଉତ୍ପାଦର ହାର"
+
+#: .\member\models.py:151
+msgid "Product Image"
+msgstr "ଉତ୍ପାଦ ପ୍ରତିଛବି |"
+
+#: .\member\models.py:152
+msgid "Image of the product to display as icon, size should be 100x100"
+msgstr ""
+"ଆଇକନ୍ ଭାବରେ ପ୍ରଦର୍ଶନ କରିବାକୁ ଉତ୍ପାଦର ପ୍ରତିଛବି, ଆକାର 100x100 ହେବା ଉଚିତ |"
+
+#: .\member\models.py:158 .\veterinary\models\common_models.py:58
+msgid "Locale"
+msgstr "ଲୋକାଲ୍ |"
+
+#: .\member\models.py:159
+msgid "Locale of the product data (e.g., en for English, hi for Hindi)"
+msgstr "ଉତ୍ପାଦ ତଥ୍ୟର ଲୋକାଲ୍ (E.G., ଇଂରାଜୀ ପାଇଁ, ହିନ୍ଦୀ ପାଇଁ ହିନ୍ଦୀ)"
+
+#: .\member\models.py:166
+msgid "Translated Product Name"
+msgstr "ଅନୁବାଦିତ ଉତ୍ପାଦ ନାମ |"
+
+#: .\member\models.py:167
+msgid "Translated name of the product in the selected locale"
+msgstr "ମନୋନୀତ ଲୋକେଲରେ ଉତ୍ପାଦର ଅନୁବାଦିତ ନାମ |"
+
+#: .\member\models.py:173
+msgid "Price Description"
+msgstr "ମୂଲ୍ୟ ବର୍ଣ୍ଣନା"
+
+#: .\member\models.py:174
+msgid "Description of the product price, e.g., price of 1 bag or 1 pill"
+msgstr "ଉତ୍ପାଦ ମୂଲ୍ୟର ବର୍ଣ୍ଣନା, ଯଥା 1 ବ୍ୟାଗ କିମ୍ବା 1 ବଟିକା ମୂଲ୍ୟ |"
+
+#: .\member\models.py:189 .\veterinary\models\common_models.py:37
+msgid "Updated By"
+msgstr "ଦ୍ୱାରା ଅଦ୍ୟତନ କରାଯାଇଛି |"
+
+#: .\member\models.py:202
+msgid "Product Rate"
+msgstr "ଉତ୍ପାଦ ହାର"
+
+#: .\member\models.py:203
+msgid "Product Rates"
+msgstr "ଉତ୍ପାଦ ହାର"
+
+#: .\member\models.py:235 .\veterinary\models\case_models.py:346
+msgid "Remark"
+msgstr "ଟିପ୍ପଣୀ |"
+
+#: .\member\models.py:240
+msgid "Files"
+msgstr "ଫାଇଲଗୁଡ଼ିକ |"
+
+#: .\member\models.py:279
+msgid "Sahayak Feedback"
+msgstr "ସାଏକ୍ ଫିଡବ୍ୟାକ୍ |"
+
+#: .\member\models.py:280
+msgid "Sahayak Feedbacks"
+msgstr "ସାଏକ୍ ଫିଡବ୍ୟାକ୍ |"
+
+#: .\member\models.py:299
+msgid "Feedback Log"
+msgstr "ମତାମତ ଲଗ୍"
+
+#: .\member\models.py:300
+msgid "Feedback Logs"
+msgstr "ଫିଡବ୍ୟାକ୍ ଲଗ୍ |"
+
+#: .\member\views.py:1088
+msgid ""
+"No valid data to import. Ensure your file has the correct headers or data "
+"for import."
+msgstr ""
+"ଆମଦାନି ପାଇଁ କ valid ଣସି ବ valid ଧ ତଥ୍ୟ ନାହିଁ | ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ ଆପଣଙ୍କର "
+"ଫାଇଲ୍ ର ସଠିକ୍ ହେଡର୍ କିମ୍ବା ତଥ୍ୟ ଅଛି |"
+
+#: .\member\views.py:1123
+msgid "Import Sahayak Incentive Preview"
+msgstr "ସାହାକିକ୍ ପ୍ରୋତ୍ସାହନ ପୂର୍ବାବଲୋକନ ଆର୍ଗାନ୍ସ |"
+
+#: .\member\views.py:1163 .\templates\member\form\confirm_excel_import.html:18
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:56
+msgid "Import"
+msgstr "ଆମଦାନି କରନ୍ତୁ |"
+
+#: .\member\views.py:1347
+msgid "Months retrieved successfully"
+msgstr "ମାସ ସଫଳତାର ସହିତ ପୁନରୁଦ୍ଧାର ହେଲା |"
+
+#: .\member\views.py:2180
+msgid "Data Retrieved"
+msgstr "ତଥ୍ୟ ପୁନରୁଦ୍ଧାର"
+
+#: .\mpms\apps.py:10
+msgid "MPMS"
+msgstr "Mpms"
+
+#: .\notifications\models.py:13
+msgid "Information"
+msgstr "ସୂଚନା"
+
+#: .\notifications\models.py:14
+msgid "Warning"
+msgstr "ଚେତାବନୀ"
+
+#: .\notifications\models.py:15
+msgid "Alert"
+msgstr "ସତର୍କ"
+
+#: .\notifications\models.py:16
+msgid "Success"
+msgstr "ସଫଳତା"
+
+#: .\notifications\models.py:20
+msgid "Sent"
+msgstr "ପଠାଯାଇଛି"
+
+#: .\notifications\models.py:21 .\veterinary\choices\choices.py:167
+msgid "Failed"
+msgstr "ବିଫଳ ହେଲା"
+
+#: .\notifications\models.py:25 .\veterinary\models\case_models.py:235
+msgid "System"
+msgstr "ସିଷ୍ଟମ୍"
+
+#: .\notifications\models.py:26
+msgid "Firebase Push"
+msgstr "ଫାୟାରବସ୍ ପୁସ୍ |"
+
+#: .\notifications\models.py:27
+msgid "Email"
+msgstr "ଇମେଲ୍"
+
+#: .\notifications\models.py:38
+msgid "User who triggered the notification."
+msgstr "ଚାଳକ ବିଜ୍ଞପ୍ତି ଉପରେ ପ୍ରଭାବ ପକାଇଲା |"
+
+#: .\notifications\models.py:44
+msgid "Recipient"
+msgstr "ପ୍ରାପ୍ତକର୍ତ୍ତା"
+
+#: .\notifications\models.py:45
+msgid "User who will receive the notification."
+msgstr "ଚାଳକ ଯିଏ ବିଜ୍ଞପ୍ତି ଗ୍ରହଣ କରିବେ |"
+
+#: .\notifications\models.py:49
+msgid "Title"
+msgstr "ଆଖ୍ୟା"
+
+#: .\notifications\models.py:50
+msgid "Title or heading for the notification."
+msgstr "ବିଜ୍ଞପ୍ତି ପାଇଁ ଆଖ୍ୟା କିମ୍ବା ହେଡିଙ୍ଗ୍ |"
+
+#: .\notifications\models.py:56
+msgid "Body"
+msgstr "ଶରୀର"
+
+#: .\notifications\models.py:57
+msgid "Short summary or preview for the notification."
+msgstr "ବିଜ୍ଞପ୍ତି ପାଇଁ ସଂକ୍ଷିପ୍ତ ସାରାଂଶ କିମ୍ବା ପୂର୍ବାବଲୋକନ |"
+
+#: .\notifications\models.py:61
+msgid "Detailed notification message to be shown."
+msgstr "ଦେଖାଯିବାକୁ ଥିବା ସମ୍ବନ୍ଧୀୟ ବିଜ୍ଞପ୍ତି ବାର୍ତ୍ତା |"
+
+#: .\notifications\models.py:66
+msgid "Model Type"
+msgstr "ମଡେଲ୍ ପ୍ରକାର |"
+
+#: .\notifications\models.py:68
+msgid ""
+"Name of the model related to this notification, e.g., 'feedback', 'report'."
+msgstr "ଏହି ବିଜ୍ଞପ୍ତି ସହିତ ଜଡିତ ମଡେଲର ନାମ, e.g, 'ଫିଡବ୍ୟାକ୍', 'ରିପୋର୍ଟ' |"
+
+#: .\notifications\models.py:72
+msgid "Object ID"
+msgstr "ବସ୍ତୁ ID"
+
+#: .\notifications\models.py:73
+msgid "Primary key of the related model instance."
+msgstr "ସମ୍ପୃକ୍ତ ମଡେଲ ଉଦାହରଣର ପ୍ରାଥମିକ ଚାବି |"
+
+#: .\notifications\models.py:77
+msgid "Route"
+msgstr "ମାର୍ଗ"
+
+#: .\notifications\models.py:78
+msgid "Frontend route name for redirection."
+msgstr "ପୁନ ir ନିର୍ଦ୍ଦେଶ ପାଇଁ ଫ୍ରଣ୍ଟେଣ୍ଡ୍ ମାର୍ଗ ନାମ |"
+
+#: .\notifications\models.py:84
+msgid "Custom Key"
+msgstr "କଷ୍ଟମ୍ କୀ |"
+
+#: .\notifications\models.py:85
+msgid "Optional key used for grouping or client-side logic."
+msgstr "ଗୋଷ୍ଠୀ କିମ୍ବା କ୍ଲାଏଣ୍ଟ ସାଇଡ୍ ଲଜିକ୍ ପାଇଁ ବ୍ୟବହୃତ ଇଚ୍ଛାଧୀନ କୀ |"
+
+#: .\notifications\models.py:89
+msgid "Is Subroute"
+msgstr "ସବ୍ର୍ୟୁଟ୍ ହେଉଛି |"
+
+#: .\notifications\models.py:90
+msgid "Indicates if the route is a sub-path or detail view."
+msgstr "ମାର୍ଗ ହେଉଛି ଏକ ସବ୍-ପଥ କିମ୍ବା ସବିଶେଷ ଦୃଶ୍ୟ |"
+
+#: .\notifications\models.py:96
+msgid "Notification Type"
+msgstr "ବିଜ୍ଞପ୍ତି ପ୍ରକାର |"
+
+#: .\notifications\models.py:97
+msgid "Classifies the type of notification."
+msgstr "ବିଜ୍ଞପ୍ତିର ପ୍ରକାରକୁ ଶ୍ରେଣୀଭୁକ୍ତ କରେ |"
+
+#: .\notifications\models.py:103
+msgid "Sent Via"
+msgstr "ମାଧ୍ୟମରେ ପଠାଇଲେ"
+
+#: .\notifications\models.py:104
+msgid "Medium through which the notification was sent."
+msgstr "ମଧ୍ୟମ ଯାହା ମାଧ୍ୟମରେ ବିଜ୍ଞପ୍ତି ପଠାଗଲା |"
+
+#: .\notifications\models.py:108
+msgid "Is Read"
+msgstr "ପ read ଼ାଯାଏ |"
+
+#: .\notifications\models.py:109
+msgid "Indicates whether the user has read the notification."
+msgstr "ଉପଭୋକ୍ତା ବିଜ୍ଞପ୍ତି ପ read ିଛନ୍ତି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\notifications\models.py:113
+msgid "Allowed Email"
+msgstr "ଅନୁମତିପ୍ରାପ୍ତ ଇମେଲ |"
+
+#: .\notifications\models.py:114
+msgid "Used to handle if email notification allowed or not."
+msgstr "ଯଦି ଇମେଲ ବିଜ୍ଞପ୍ତି ଅନୁମତି ଦିଆଯାଏ କିମ୍ବା ନକରିବାକୁ ବ୍ୟବହୃତ ହୁଏ |"
+
+#: .\notifications\models.py:119
+msgid "Read At"
+msgstr "ପ read"
+
+#: .\notifications\models.py:120
+msgid "Timestamp when the notification was read."
+msgstr "ଯେତେବେଳେ ବିଜ୍ଞପ୍ତି ପ read ଼ାଗଲା ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\notifications\models.py:125
+msgid "Timestamp when the notification was created."
+msgstr "ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\notifications\models.py:129
+msgid "Indicates whether this object has been deleted or not."
+msgstr "ଏହି ବସ୍ତୁ ଡିଲିଟ୍ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\notifications\models.py:136
+msgid "Delivery Status"
+msgstr "ବିତରଣ ସ୍ଥିତି"
+
+#: .\notifications\models.py:137
+msgid "Tracks whether the notification was successfully delivered."
+msgstr "ବିଜ୍ଞପ୍ତି ସଫଳତାର ସହିତ ବିତରଣ କରାଯାଇଥିଲା କି ନାହିଁ ଟ୍ରାକ୍ |"
+
+#: .\notifications\models.py:142
+msgid "Delivery Response"
+msgstr "ବିତରଣର ପ୍ରତିକ୍ରିୟା"
+
+#: .\notifications\models.py:143
+msgid "Raw response from the notification delivery system (e.g., FCM)."
+msgstr "ବିଜ୍ଞପ୍ତି ବିତରଣ ସିଷ୍ଟମରୁ କଞ୍ଚା ପ୍ରତିକ୍ରିୟା (ଯଥା, FCM) |"
+
+#: .\notifications\models.py:148
+msgid "Delivery Attempted At"
+msgstr "ବିତରଣ ପ୍ରୟାସ"
+
+#: .\notifications\models.py:149
+msgid "Timestamp of the last delivery attempt."
+msgstr "ଶେଷ ବିତରଣ ପ୍ରୟାସର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\notifications\models.py:153
+msgid "App Notification"
+msgstr "ଆପ୍ ବିଜ୍ଞପ୍ତି |"
+
+#: .\notifications\models.py:154
+msgid "App Notifications"
+msgstr "ଆପ୍ ବିଜ୍ଞପ୍ତିଗୁଡିକ |"
+
+#: .\notifications\views.py:209
+msgid "Unread notification count retrieved successfully."
+msgstr "ପଠନ ବିଜ୍ଞପ୍ତି ଗଣନା ସଫଳତାର ସହିତ ପୁନରୁଦ୍ଧାର ହେଲା |"
+
+#: .\templates\admin\request_reason_form.html:30
+msgid "Cancel"
+msgstr "ବାତିଲ୍ କରନ୍ତୁ |"
+
+#: .\templates\member\form\confirm_excel_import.html:42
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+"ଆମଦାନୀ ହେବାକୁ ତଥ୍ୟର ଏକ ପୂର୍ବାବଲୋକନ ହେଉଛି | ଯଦି ଆପଣ ଫଳାଫଳଗୁଡିକରେ ସନ୍ତୁଷ୍ଟ "
+"ହୁଅନ୍ତି, 'ଆମଦାନି ନିଶ୍ଚିତ କରନ୍ତୁ' କ୍ଲିକ୍ କରନ୍ତୁ |"
+
+#: .\templates\member\form\confirm_excel_import.html:45
+msgid "Confirm import"
+msgstr "ଆମଦାନୀ ନିଶ୍ଚିତ କରନ୍ତୁ |"
+
+#: .\templates\member\form\confirm_excel_import.html:53
+#: .\templates\member\form\confirm_excel_import.html:99
+msgid "Errors"
+msgstr "ତ୍ରୁଟି"
+
+#: .\templates\member\form\confirm_excel_import.html:68
+msgid "Line number"
+msgstr "ରେଖା ସଂଖ୍ୟା"
+
+#: .\templates\member\form\confirm_excel_import.html:86
+msgid "Some rows failed to validate"
+msgstr "କେତେକ ଧାଡି ବ valid ଧ କରିବାରେ ବିଫଳ ହେଲା |"
+
+#: .\templates\member\form\confirm_excel_import.html:89
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+"ଯେଉଁଠାରେ ସମ୍ଭବ, ଆପଣଙ୍କ ତଥ୍ୟରେ ଏହି ତ୍ରୁଟିଗୁଡ଼ିକୁ ସଂଶୋଧନ କରନ୍ତୁ, ତାପରେ ଉପରୋକ୍ତ"
+" ଫର୍ମ ବ୍ୟବହାର କରି ଏହାକୁ ପୁନ up ଲୋଡ୍ କରନ୍ତୁ |"
+
+#: .\templates\member\form\confirm_excel_import.html:96
+msgid "Row"
+msgstr "ଧାଡି"
+
+#: .\templates\member\form\confirm_excel_import.html:126
+msgid "Non field specific"
+msgstr "ଅଣ କ୍ଷେତ୍ର ନିର୍ଦ୍ଦିଷ୍ଟ |"
+
+#: .\templates\member\form\confirm_excel_import.html:147
+msgid "Preview"
+msgstr "ପୂର୍ବାବଲୋକନ"
+
+#: .\templates\member\form\confirm_excel_import.html:162
+msgid "New"
+msgstr "ନୂତନ"
+
+#: .\templates\member\form\confirm_excel_import.html:164
+msgid "Skipped"
+msgstr "ଏଡ଼ାଇଲା |"
+
+#: .\templates\member\form\confirm_excel_import.html:166
+msgid "Delete"
+msgstr "ବିଲୋପ କରନ୍ତୁ |"
+
+#: .\templates\member\form\confirm_excel_import.html:168
+msgid "Update"
+msgstr "ଅଦ୍ୟତନ କରନ୍ତୁ |"
+
+#: .\templates\member\form\export.html:17
+msgid "Export"
+msgstr "ରପ୍ତାନି"
+
+#: .\templates\member\form\export.html:44
+#, python-format
+msgid ""
+"\n"
+"                          Export %(len)s selected item.\n"
+"                          "
+msgid_plural ""
+"\n"
+"                          Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\member\form\export.html:71
+msgid "This exporter will export the following fields: "
+msgstr "ଏହି ରପ୍ତାନିକାରୀ ନିମ୍ନଲିଖିତ କ୍ଷେତ୍ରଗୁଡ଼ିକୁ ରପ୍ତାନି କରିବ:"
+
+#: .\templates\member\form\export.html:105
+msgid "Submit"
+msgstr "ଦାଖଲ କର |"
+
+#: .\templates\member\pages\dashboards\default.html:19
+msgid "ERP :: Dashboard"
+msgstr "Erp :: ଡ୍ୟାସବୋର୍ଡ |"
+
+#: .\templates\member\pages\dashboards\default.html:28
+msgid "Kashee E-Dairy App Installation Report"
+msgstr "କାସେ ଇ-ଡାଏରାଇ ଆପ୍ ସ୍ଥାପନ ରିପୋର୍ଟ |"
+
+#: .\templates\member\pages\dashboards\default.html:63
+msgid "Sahayak Mitra Installed By MCCs"
+msgstr "MCCs ଦ୍ୱାରା ସ୍ଥାପିତ ସାୟାକ୍ ମିତରା |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:32
+msgid "Filter"
+msgstr "ଫିଲ୍ଟର୍"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:33
+#: .\templates\rangefilter\numeric_filter.html:65
+#: .\templates\rangefilter\numeric_filter_4_0.html:61
+msgid "Reset"
+msgstr "ପୁନ et ସେଟ୍ କରନ୍ତୁ |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:47
+msgid "Sahayak incentive data"
+msgstr "ସାଏକ୍ ପ୍ରୋତ୍ସାହନ ତଥ୍ୟ |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:55
+msgid "Add"
+msgstr "ଯୋଡନ୍ତୁ |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:72
+msgid "Choose Action"
+msgstr "କାର୍ଯ୍ୟ ବାଛନ୍ତୁ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:83
+msgid "Total Rows"
+msgstr "ମୋଟ ଧାଡିଗୁଡ଼ିକ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:84
+msgid "Selected Rows"
+msgstr "ମନୋନୀତ ଧାଡିଗୁଡ଼ିକ |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:94
+msgid "MCC"
+msgstr "Mcc"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:106
+msgid "Sahayak Name"
+msgstr "ସାବାଇକ ନାମ |"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:112
+msgid "Opening"
+msgstr "ଖୋଲିବା"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:190
+msgid "Import Excel To Populate the Data"
+msgstr "ତଥ୍ୟକୁ ଜନସଂଖ୍ୟା କରିବାକୁ Excel ଆମଦାନି କରନ୍ତୁ |"
+
+#: .\templates\member\pages\sidebar.html:7
+msgid "ERP Dashboard"
+msgstr "ERP ଡ୍ୟାସବୋର୍ଡ |"
+
+#: .\templates\member\pages\sidebar.html:17
+msgid "Dashboard"
+msgstr "ଡ୍ୟାସବୋର୍ଡ |"
+
+#: .\templates\rangefilter\date_filter.html:4
+#, python-format
+msgid "By %(filter_title)s "
+msgstr "% (ଫିଲ୍ଟର_ଟଲ୍) s ଦ୍ୱାରା |"
+
+#: .\templates\rangefilter\numeric_filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr "% (ଫିଲ୍ଟର_ଟଲ୍) s ଦ୍ୱାରା |"
+
+#: .\templates\rangefilter\numeric_filter.html:64
+#: .\templates\rangefilter\numeric_filter_4_0.html:60
+msgid "Search"
+msgstr "ସନ୍ଧାନ କର |"
+
+#: .\templates\registration\logged_out.html:4
+#: .\templates\registration\password_change_done.html:13
+#: .\templates\registration\password_change_form.html:14
+#: .\templates\registration\password_reset_complete.html:6
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_done.html:6
+#: .\templates\registration\password_reset_form.html:7
+msgid "Home"
+msgstr "ଘର"
+
+#: .\templates\registration\logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr "ଆଜି ୱେବ୍ ସାଇଟ୍ ସହିତ କିଛି ଗୁଣାତ୍ମକ ସମୟ ବିତାଇ ଧନ୍ୟବାଦ |"
+
+#: .\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr "ପୁନର୍ବାର ଲଗ୍ ଇନ୍ କରନ୍ତୁ |"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Documentation"
+msgstr "ଡକ୍ୟୁମେଣ୍ଟେସନ୍"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Change password"
+msgstr "ପାସୱାର୍ଡ ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
+
+#: .\templates\registration\password_change_done.html:7
+#: .\templates\registration\password_change_form.html:8
+msgid "Log out"
+msgstr "ଲଗ୍ ଆଉଟ୍ କରନ୍ତୁ"
+
+#: .\templates\registration\password_change_done.html:14
+#: .\templates\registration\password_change_form.html:15
+msgid "Password change"
+msgstr "ପାସଉଣ୍ଡ୍ରାଡ୍ ପରିବର୍ତ୍ତନ"
+
+#: .\templates\registration\password_change_done.html:19
+msgid "Your password was changed."
+msgstr "ଆପଣଙ୍କର ପାସୱାର୍ଡ ପରିବର୍ତ୍ତନ କରାଯାଇଥିଲା |"
+
+#: .\templates\registration\password_change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\registration\password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new"
+" password twice so we can verify you typed it in correctly."
+msgstr ""
+"ସୁରକ୍ଷା ପାଇଁ ଦୟାକରି ଆପଣଙ୍କର ପୁରୁଣା ପାସୱାର୍ଡ ପ୍ରବେଶ କରନ୍ତୁ, ଏବଂ ତାପରେ ଆପଣଙ୍କର"
+" ନୂତନ ପାସୱାର୍ଡ ପ୍ରବେଶ କରନ୍ତୁ, ଏବଂ ତାପରେ ଆପଣଙ୍କର ନୂତନ ପାସୱାର୍ଡ ପ୍ରବେଶ କରନ୍ତୁ "
+"ତେଣୁ ଆମେ ଏହାକୁ ସଠିକ୍ ଭାବରେ ଟାଇପ୍ କରିପାରିବା |"
+
+#: .\templates\registration\password_change_form.html:58
+#: .\templates\registration\password_reset_confirm.html:37
+msgid "Change my password"
+msgstr "ମୋର ପାସୱାର୍ଡ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |"
+
+#: .\templates\registration\password_reset_complete.html:7
+#: .\templates\registration\password_reset_done.html:7
+#: .\templates\registration\password_reset_form.html:8
+msgid "Password reset"
+msgstr "ପାସୱାର୍ଡ ପୁନ et ସେଟ୍ |"
+
+#: .\templates\registration\password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr "ଆପଣଙ୍କର ପାସୱାର୍ଡ ସେଟ୍ ହୋଇଛି |  ଆପଣ ଆଗକୁ ଯାଇ ଲଗ୍ ଇନ୍ କରିପାରିବେ |"
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Log in"
+msgstr "ଭିତରକୁ ଯାଉ"
+
+#: .\templates\registration\password_reset_confirm.html:8
+msgid "Password reset confirmation"
+msgstr "ପାସୱାର୍ଡ ପୁନ et ସେଟ୍ ନିଶ୍ଚିତକରଣ |"
+
+#: .\templates\registration\password_reset_confirm.html:16
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"ଦୟାକରି ଆପଣଙ୍କର ନୂତନ ପାସୱାର୍ଡକୁ ଦୁଇଥର ପ୍ରବେଶ କରନ୍ତୁ ଯାହା ଦ୍ we ାରା ଆମେ ଏହାକୁ "
+"ସଠିକ୍ ଭାବରେ ଟାଇପ୍ କରି ଯାଞ୍ଚ କରିପାରିବା |"
+
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "New password:"
+msgstr "ନୂତନ ପାସୱାର୍ଡ:"
+
+#: .\templates\registration\password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr "ପାସୱାର୍ଡ ନିଶ୍ଚିତ କରନ୍ତୁ:"
+
+#: .\templates\registration\password_reset_confirm.html:43
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"ପାସୱାର୍ଡ ପୁନ res ସେଟ୍ ଲିଙ୍କ୍ ଅବ alid ଧ ଥିଲା, ସମ୍ଭବତ। ଏହା ପୂର୍ବରୁ ବ୍ୟବହୃତ "
+"ହୋଇସାରିଛି |  ଦୟାକରି ଏକ ନୂତନ ପାସୱାର୍ଡ ପୁନ et ସେଟ୍ ପାଇଁ ଅନୁରୋଧ କରନ୍ତୁ |"
+
+#: .\templates\registration\password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"ଯଦି ଆପଣ ପ୍ରବେଶ କରିଥିବା ଇମେଲ ସହିତ ଏକ ଆକାଉଣ୍ଟ୍ ବିଦ୍ୟମାନ ତେବେ ଆମେ ଆପଣଙ୍କର "
+"ପାସୱାର୍ଡ ସେଟ୍ କରିବାକୁ ନିର୍ଦ୍ଦେଶ ଦେଇଛୁ | ତୁମେ ସେମାନଙ୍କୁ ଖୁବ୍ ଶୀଘ୍ର ଗ୍ରହଣ "
+"କରିବା ଉଚିତ୍ |"
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"ଯଦି ଆପଣ ଏକ ଇମେଲ୍ ଗ୍ରହଣ କରନ୍ତି ନାହିଁ, ଦୟାକରି ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ ଆପଣ ପଞ୍ଜୀକୃତ "
+"ହୋଇଥିବା ଠିକଣା ସହିତ ଆପଣ ପ୍ରବେଶ କରିଥିବା ଠିକଣା, ଏବଂ ଆପଣଙ୍କର ସ୍ପାମ୍ ଫୋଲ୍ଡର୍ "
+"ଯାଞ୍ଚ କରନ୍ତୁ |"
+
+#: .\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"ଆପଣ ଏହି ଇମେଲ୍ ଗ୍ରହଣ କରୁଛନ୍ତି କାରଣ ଆପଣ ଆପଣଙ୍କର ଉପଭୋକ୍ତା ଖାତା% (ସାଇଟ୍_ନାମ) s "
+"ରେ ଆପଣଙ୍କର ଉପଭୋକ୍ତା ଖାତା ପାଇଁ ଏକ ପାସୱାର୍ଡ ପୁନ et ସେଟ୍ କରିଛନ୍ତି |"
+
+#: .\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr "ଦୟାକରି ନିମ୍ନ ପୃଷ୍ଠାକୁ ଯାଆନ୍ତୁ ଏବଂ ଏକ ନୂତନ ପାସୱାର୍ଡ ବାଛନ୍ତୁ:"
+
+#: .\templates\registration\password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr "ତୁମର ଚାଳକନାମ, ଯଦି ତୁମେ ଭୁଲି ଯାଇଛ:"
+
+#: .\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "ଆମର ସାଇଟ୍ ବ୍ୟବହାର କରିଥିବାରୁ ଧନ୍ୟବାଦ!"
+
+#: .\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "% (ସାଇଥ_ନାମ) s ଦଳ |"
+
+#: .\templates\registration\password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"ଆପଣଙ୍କର ପାସୱାର୍ଡ ଭୁଲିଗଲେ କି? ନିମ୍ନରେ ଆପଣଙ୍କର ଇମେଲ୍ ଠିକଣା ପ୍ରବେଶ କରନ୍ତୁ ଏବଂ "
+"ଏକ ନୂତନ ସେଟିଂ ପାଇଁ ଆମେ ନିର୍ଦ୍ଦେଶାବଳୀ ଇମେଲ୍ କରିବୁ |"
+
+#: .\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr "ଇମେଲ୍ ଠିକଣା:"
+
+#: .\templates\registration\password_reset_form.html:27
+msgid "Reset my password"
+msgstr "ମୋର ପାସୱାର୍ଡ ପୁନ Res ସେଟ୍ କରନ୍ତୁ |"
+
+#: .\veterinary\choices\choices.py:7
+msgid "Online"
+msgstr "ଅନଲାଇନ୍ |"
+
+#: .\veterinary\choices\choices.py:8
+msgid "Cash"
+msgstr "ନଗଦ"
+
+#: .\veterinary\choices\choices.py:20
+msgid "Dairy"
+msgstr "ଦୁଗ୍ଧ"
+
+#: .\veterinary\choices\choices.py:21
+msgid "Beef"
+msgstr "ଗୋମାଂସ"
+
+#: .\veterinary\choices\choices.py:22
+msgid "Dual Purpose"
+msgstr "ଦ୍ୱ ual ତନ୍ତୁର ଉଦ୍ଦେଶ୍ୟ |"
+
+#: .\veterinary\choices\choices.py:23 .\veterinary\choices\choices.py:45
+#: .\veterinary\choices\choices.py:60 .\veterinary\choices\choices.py:109
+msgid "Other"
+msgstr "ଅନ୍ୟ"
+
+#: .\veterinary\choices\choices.py:28
+msgid "Primarily used for milk production"
+msgstr "ମୁଖ୍ୟତ suck କ୍ଷୀର ଉତ୍ପାଦନ ପାଇଁ ବ୍ୟବହୃତ ହୁଏ |"
+
+#: .\veterinary\choices\choices.py:29
+msgid "Primarily used for meat production"
+msgstr "ମୁଖ୍ୟତ meat ମାଂସ ଉତ୍ପାଦନ ପାଇଁ ବ୍ୟବହୃତ ହୁଏ |"
+
+#: .\veterinary\choices\choices.py:30
+msgid "Used for both dairy and beef purposes"
+msgstr "ଉଭୟ ଦୁଗ୍ଧ ଏବଂ ଗୋମାଂସ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ ବ୍ୟବହୃତ |"
+
+#: .\veterinary\choices\choices.py:31
+msgid "Uncategorized or other specific use"
+msgstr "ଅଣ ଶ୍ରେଣୀଭୁକ୍ତ କିମ୍ବା ଅନ୍ୟାନ୍ୟ ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାର |"
+
+#: .\veterinary\choices\choices.py:32 .\veterinary\models\case_models.py:302
+msgid "Unknown"
+msgstr "ଅଜ୍ଞାତ"
+
+#: .\veterinary\choices\choices.py:37
+msgid "Male"
+msgstr "ପୁରୁଷ"
+
+#: .\veterinary\choices\choices.py:38
+msgid "Female"
+msgstr "ମହିଳା"
+
+#: .\veterinary\choices\choices.py:43
+msgid "Doctor"
+msgstr "ଡାକ୍ତର"
+
+#: .\veterinary\choices\choices.py:44
+msgid "MAT"
+msgstr "ଖଟ"
+
+#: .\veterinary\choices\choices.py:50
+msgid "Manual"
+msgstr "ମାନୁଆଲ୍ |"
+
+#: .\veterinary\choices\choices.py:51
+msgid "RFID Tag"
+msgstr "Rfid ଟ୍ୟାଗ୍ |"
+
+#: .\veterinary\choices\choices.py:52
+msgid "QR Code"
+msgstr "QR କୋଡ୍ |"
+
+#: .\veterinary\choices\choices.py:57
+msgid "Left Ear"
+msgstr "ବାମ କାନ"
+
+#: .\veterinary\choices\choices.py:58
+msgid "Right Ear"
+msgstr "ଡାହାଣ କାନ"
+
+#: .\veterinary\choices\choices.py:59
+msgid "Neck"
+msgstr "ବେକ"
+
+#: .\veterinary\choices\choices.py:65
+msgid "New Tag"
+msgstr "ନୂତନ ଟ୍ୟାଗ୍ |"
+
+#: .\veterinary\choices\choices.py:66
+msgid "Replaced"
+msgstr "ସ୍ଥାନାନ୍ତରିତ"
+
+#: .\veterinary\choices\choices.py:86
+msgid "Tablet"
+msgstr "ଟାବଲେଟ୍ |"
+
+#: .\veterinary\choices\choices.py:87
+msgid "Liquid"
+msgstr "ତରଳ"
+
+#: .\veterinary\choices\choices.py:88
+msgid "Injection"
+msgstr "ଇଞ୍ଜେକ୍ସନ୍ |"
+
+#: .\veterinary\choices\choices.py:89
+msgid "Capsule"
+msgstr "Capsule"
+
+#: .\veterinary\choices\choices.py:90
+msgid "Ointment"
+msgstr "ମଲମ |"
+
+#: .\veterinary\choices\choices.py:91
+msgid "Powder"
+msgstr "ପାଉଡର |"
+
+#: .\veterinary\choices\choices.py:92
+msgid "Paste"
+msgstr "ପେଷ୍ଟ କରନ୍ତୁ |"
+
+#: .\veterinary\choices\choices.py:93
+msgid "Bolus"
+msgstr "ବ୍ଲାସ୍ |"
+
+#: .\veterinary\choices\choices.py:94
+msgid "Suspension"
+msgstr "ନିଲମ୍ବନ"
+
+#: .\veterinary\choices\choices.py:95
+msgid "Solution"
+msgstr "ସମାଧାନ"
+
+#: .\veterinary\choices\choices.py:96
+msgid "Spray"
+msgstr "ସ୍ପ୍ରେ"
+
+#: .\veterinary\choices\choices.py:97
+msgid "Eye/Ear/Nose Drops"
+msgstr "ଆଖି / କାନ / ନାକ ଡ୍ରପ୍ |"
+
+#: .\veterinary\choices\choices.py:98
+msgid "Cream"
+msgstr "କ୍ରିମ୍"
+
+#: .\veterinary\choices\choices.py:99
+msgid "Lotion"
+msgstr "ଲୋସନ"
+
+#: .\veterinary\choices\choices.py:100
+msgid "Medicated Shampoo"
+msgstr "Medic ଷଧ ଶ୍ୟାପୋ |"
+
+#: .\veterinary\choices\choices.py:101
+msgid "Feed Additive"
+msgstr "ଯୋଗୀ"
+
+#: .\veterinary\choices\choices.py:102
+msgid "Implant"
+msgstr "ପ୍ରତିରୋପଣ"
+
+#: .\veterinary\choices\choices.py:103
+msgid "Inhalant"
+msgstr "ନିଶ୍ୱାସ"
+
+#: .\veterinary\choices\choices.py:104
+msgid "Transdermal Patch"
+msgstr "ଟ୍ରାନ୍ସଡ୍ରାଲ୍ ପ୍ୟାଚ୍ |"
+
+#: .\veterinary\choices\choices.py:105
+msgid "Suppository"
+msgstr "Schegository"
+
+#: .\veterinary\choices\choices.py:106
+msgid "Drench"
+msgstr "ଖାଲ"
+
+#: .\veterinary\choices\choices.py:107
+msgid "Pour-On"
+msgstr "Pour ାଳ"
+
+#: .\veterinary\choices\choices.py:108
+msgid "Intramammary"
+msgstr "ଇଣ୍ଟ୍ରାମାମାରୀ |"
+
+#: .\veterinary\choices\choices.py:114
+msgid "Stock In"
+msgstr "ଭିତରେ ଷ୍ଟକ୍ |"
+
+#: .\veterinary\choices\choices.py:115
+msgid "Stock Out"
+msgstr "ଷ୍ଟକ୍ ଆଉଟ୍ |"
+
+#: .\veterinary\choices\choices.py:116
+msgid "Adjustment"
+msgstr "ଆଡଜଷ୍ଟମେଣ୍ଟ୍"
+
+#: .\veterinary\choices\choices.py:121
+msgid "Allocated"
+msgstr "ଆବଣ୍ଟିତ |"
+
+#: .\veterinary\choices\choices.py:122
+msgid "Used"
+msgstr "ବ୍ୟବହୃତ |"
+
+#: .\veterinary\choices\choices.py:123
+msgid "Returned"
+msgstr "ଫେରସ୍ତ"
+
+#: .\veterinary\choices\choices.py:128
+msgid "Normal Case"
+msgstr "ସାଧାରଣ ମାମଲା"
+
+#: .\veterinary\choices\choices.py:129
+msgid "Special Case"
+msgstr "ବିଶେଷ ମାମଲା"
+
+#: .\veterinary\choices\choices.py:130
+msgid "Operational Case"
+msgstr "କାର୍ଯ୍ୟକ୍ଷମ ମାମଲା"
+
+#: .\veterinary\choices\choices.py:135
+msgid "Morning"
+msgstr "ସକାଳ"
+
+#: .\veterinary\choices\choices.py:136
+msgid "Afternoon"
+msgstr "ଅପରାହ୍ନ"
+
+#: .\veterinary\choices\choices.py:137
+msgid "Evening"
+msgstr "ସନ୍ଧ୍ୟା"
+
+#: .\veterinary\choices\choices.py:138
+msgid "Night"
+msgstr "ରାତି"
+
+#: .\veterinary\choices\choices.py:144
+msgid "Confirmed"
+msgstr "ନିଶ୍ଚିତ କରାଗଲା"
+
+#: .\veterinary\choices\choices.py:150
+msgid "Dry"
+msgstr "ଶୁଖିଲା |"
+
+#: .\veterinary\choices\choices.py:151
+msgid "Pregnant"
+msgstr "ଗର୍ଭବତୀ"
+
+#: .\veterinary\choices\choices.py:152
+msgid "Milking"
+msgstr "କ୍ଷୀର ଚକ୍କର |"
+
+#: .\veterinary\choices\choices.py:153
+msgid "Milking & Pregnant"
+msgstr "କ୍ଷୀର ଏବଂ ଗର୍ଭବତୀ |"
+
+#: .\veterinary\choices\choices.py:157
+msgid "Mild"
+msgstr "ମୃଦୁ"
+
+#: .\veterinary\choices\choices.py:158
+msgid "Moderate"
+msgstr "ମଧ୍ୟମ"
+
+#: .\veterinary\choices\choices.py:159
+msgid "Severe"
+msgstr "ଗମ୍ଭୀର"
+
+#: .\veterinary\choices\choices.py:168
+msgid "Refunded"
+msgstr "ଫେରସ୍ତ"
+
+#: .\veterinary\choices\choices.py:172
+msgid "Inward"
+msgstr "ଭିତର"
+
+#: .\veterinary\choices\choices.py:173
+msgid "Outward"
+msgstr "ବାହ୍ୟ"
+
+#: .\veterinary\choices\choices.py:174
+msgid "Return"
+msgstr "ଫେରନ୍ତୁ"
+
+#: .\veterinary\choices\choices.py:178
+msgid "Approved"
+msgstr "ଅନୁମୋଦିତ |"
+
+#: .\veterinary\choices\choices.py:179
+msgid "Cancelled"
+msgstr "ବାତିଲ"
+
+#: .\veterinary\choices\choices.py:182
+msgid "Central Warehouse"
+msgstr "କେନ୍ଦ୍ରୀୟ ଗୋଦାମ"
+
+#: .\veterinary\choices\choices.py:183
+msgid "Field Office"
+msgstr "କ୍ଷେତ୍ର କାର୍ଯ୍ୟାଳୟ"
+
+#: .\veterinary\choices\choices.py:184
+msgid "Mobile Veterinary Unit"
+msgstr "ମୋବାଇଲ୍ ଭେଟେରିନାରୀ ୟୁନିଟ୍ |"
+
+#: .\veterinary\choices\choices.py:185
+msgid "Clinic"
+msgstr "କ୍ଲିନିକ୍"
+
+#: .\veterinary\choices\choices.py:186
+msgid "Veterinarian"
+msgstr "ପ୍ରାଣୀ ଚିକିତ୍ସକ"
+
+#: .\veterinary\models\case_models.py:16
+msgid "Diagnosis Route Name"
+msgstr "ନିରାକରଣ ମାର୍ଗ ନାମ |"
+
+#: .\veterinary\models\case_models.py:18
+msgid ""
+"Short name or label of the diagnosis route, e.g., Oral, Injection, etc."
+msgstr ""
+"ନିରାକରଣ ମାର୍ଗର ସଂକ୍ଷିପ୍ତ ନାମ କିମ୍ବା ଲେବଲ୍, e.g., ମ oral ଖିକ, ଇଞ୍ଜେକ୍ସନ୍, "
+"ଇତ୍ୟାଦି |"
+
+#: .\veterinary\models\case_models.py:24
+msgid "Timestamp of the last update. Automatically set on update."
+msgstr "ଶେଷ ଅଦ୍ୟତନର ଟାଇମଷ୍ଟ୍ୟାମ୍ପ | ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଅଦ୍ୟତନରେ ସେଟ୍ କରନ୍ତୁ |"
+
+#: .\veterinary\models\case_models.py:28
+msgid "Is Synced"
+msgstr "ସିଙ୍କ୍ ହୋଇଛି |"
+
+#: .\veterinary\models\case_models.py:30
+msgid "Flag to track if the record has been synced with external systems."
+msgstr "LIGT କୁ ବାହ୍ୟ ସିଷ୍ଟମ ସହିତ ସିଙ୍କ୍ ହୋଇଛି ତେବେ ଟ୍ରାକ୍ କରିବାକୁ ଫ୍ଲାଗ୍ |"
+
+#: .\veterinary\models\case_models.py:39
+msgid "Diagnosis Route"
+msgstr "ନିରାକରଣ ମାର୍ଗ"
+
+#: .\veterinary\models\case_models.py:40
+msgid "Diagnosis Routes"
+msgstr "ନିରାକରଣ ମାର୍ଗଗୁଡ଼ିକ"
+
+#: .\veterinary\models\case_models.py:56
+msgid "The cattle associated with this case entry."
+msgstr "ଏହି ମାମଲା ପ୍ରବେଶ ସହିତ ସଂଯୁକ୍ତ ଗୋଲ୍ |"
+
+#: .\veterinary\models\case_models.py:57 .\veterinary\models\models.py:357
+msgid "Cattle"
+msgstr "ଗୋରୁ"
+
+#: .\veterinary\models\case_models.py:66
+msgid "User who applied or recorded this case."
+msgstr "ଉପଭୋକ୍ତା ଯିଏ ଏହି ମାମଲା ପ୍ରୟୋଗ କିମ୍ବା ରେକର୍ଡ କରିଛନ୍ତି |"
+
+#: .\veterinary\models\case_models.py:67
+msgid "Applied By"
+msgstr "ଦ୍ୱାରା ପ୍ରୟୋଗ କରାଯାଇଛି |"
+
+#: .\veterinary\models\case_models.py:74
+msgid "Current status of the case."
+msgstr "ମାମଲାର ସାମ୍ପ୍ରତିକ ସ୍ଥିତି |"
+
+#: .\veterinary\models\case_models.py:75
+#: .\veterinary\models\common_models.py:416
+msgid "Case Status"
+msgstr "କେସ୍ ସ୍ଥିତି"
+
+#: .\veterinary\models\case_models.py:81
+msgid "Address where the case occurred or was reported."
+msgstr "ଯେଉଁଠାରେ କେସ୍ ଘଟିଲା କିମ୍ବା ରିପୋର୍ଟ କରାଯାଇଥିଲା |"
+
+#: .\veterinary\models\case_models.py:88
+msgid "Additional notes or remarks about the case."
+msgstr "ଅତିରିକ୍ତ ଟିପ୍ପଣୀ କିମ୍ବା ମାମଲା ବିଷୟରେ ଟିପ୍ପଣୀ |"
+
+#: .\veterinary\models\case_models.py:89
+#: .\veterinary\models\case_models.py:222
+msgid "Remarks"
+msgstr "ଟିପ୍ପଣୀ"
+
+#: .\veterinary\models\case_models.py:96
+msgid "Unique identifier for the case."
+msgstr "ମାମଲା ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ |"
+
+#: .\veterinary\models\case_models.py:97
+msgid "Case Number"
+msgstr "କେସ୍ ନମ୍ବର"
+
+#: .\veterinary\models\case_models.py:102
+msgid "Indicates whether the entry is synced with the server."
+msgstr "ସର୍ଭର ସହିତ ଏଣ୍ଟ୍ରି ସିଙ୍କ୍ ହୋଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\veterinary\models\case_models.py:103
+msgid "Sync Status"
+msgstr "ସିଙ୍କ ସ୍ଥିତି"
+
+#: .\veterinary\models\case_models.py:120
+msgid "Both 'case_no' and 'to_user' are required."
+msgstr "ଉଭୟ 'କେସ୍_ନୋ' ଏବଂ 'TO_USER' ଆବଶ୍ୟକ |"
+
+#: .\veterinary\models\case_models.py:126
+#, python-brace-format
+msgid "Case with number '{case_no}' does not exist."
+msgstr "ସଂଖ୍ୟା '{{cash_no}' ବିଦ୍ୟମାନ ନାହିଁ |"
+
+#: .\veterinary\models\case_models.py:135
+msgid "The case is already assigned to this user."
+msgstr "ଏହି ଉପଭୋକ୍ତାଙ୍କୁ ଏହି ଉପଯୋଗକର୍ତ୍ତାଙ୍କୁ ଦିଆଯାଇଛି |"
+
+#: .\veterinary\models\case_models.py:146
+msgid "Assigned via system action."
+msgstr "ସିଷ୍ଟମ୍ ଆକ୍ସନ୍ ମାଧ୍ୟମରେ ନ୍ୟସ୍ତ |"
+
+#: .\veterinary\models\case_models.py:152
+#: .\veterinary\models\case_models.py:234
+#: .\veterinary\models\case_models.py:304
+#: .\veterinary\models\case_models.py:533
+#: .\veterinary\models\case_models.py:604
+msgid "N/A"
+msgstr "N / A"
+
+#: .\veterinary\models\case_models.py:157
+#: .\veterinary\models\case_models.py:197
+#: .\veterinary\models\case_models.py:259
+#: .\veterinary\models\case_models.py:381
+#: .\veterinary\models\case_models.py:451
+#: .\veterinary\models\case_models.py:559
+msgid "Case Entry"
+msgstr "କେସ୍ ଏଣ୍ଟ୍ରି |"
+
+#: .\veterinary\models\case_models.py:158
+msgid "Case Entries"
+msgstr "କେସ୍ ଏଣ୍ଟ୍ରିଗୁଡିକ |"
+
+#: .\veterinary\models\case_models.py:198
+msgid "Reference to the case entry being transferred."
+msgstr "ସ୍ଥାନାନ୍ତରିତ ପ୍ରବେଶକୁ ସ୍ଥାନାନ୍ତରିତ ହୋଇଥିବା ପରି ସନ୍ଦର୍ଭ |"
+
+#: .\veterinary\models\case_models.py:207
+msgid "Transferred From"
+msgstr "ଏଥିରୁ ସ୍ଥାନାନ୍ତରିତ"
+
+#: .\veterinary\models\case_models.py:208
+msgid "User who previously handled the case."
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ଯିଏ ପୂର୍ବରୁ ମାମଲା ପରିଚାଳନା କରିଥିଲେ |"
+
+#: .\veterinary\models\case_models.py:215
+msgid "Transferred To"
+msgstr "କୁ ସ୍ଥାନାନ୍ତରିତ"
+
+#: .\veterinary\models\case_models.py:216
+msgid "User who is receiving the case."
+msgstr "ଉପଭୋକ୍ତା ଯିଏ ମାମଲା ଗ୍ରହଣ କରୁଛନ୍ତି |"
+
+#: .\veterinary\models\case_models.py:223
+msgid "Optional remarks for the transfer."
+msgstr "ସ୍ଥାନାନ୍ତର ପାଇଁ ବ al କଳ୍ପିକ ଟିପ୍ପଣୀ |"
+
+#: .\veterinary\models\case_models.py:228
+msgid "Transferred At"
+msgstr "ରେ ସ୍ଥାନାନ୍ତରିତ |"
+
+#: .\veterinary\models\case_models.py:229
+msgid "Timestamp of when the case was transferred."
+msgstr "ଯେତେବେଳେ ମାମଲା ସ୍ଥାନାନ୍ତରିତ ହେଲା ତୀରବ |"
+
+#: .\veterinary\models\case_models.py:233
+#, python-brace-format
+msgid "Case: {case_no} | {from_user} ➝ {to_user} @ {timestamp}"
+msgstr "କେସ୍: {cash_no} | | {ରୁ_ user} {to_user} {{ଟାଇମଷ୍ଟ୍ୟାମ୍ପ}"
+
+#: .\veterinary\models\case_models.py:242
+msgid "Case Receiver Log"
+msgstr "କେସ୍ ରିସିଭର୍ ଲଗ୍ |"
+
+#: .\veterinary\models\case_models.py:243
+msgid "Case Receiver Logs"
+msgstr "କେସ୍ ରିସିଭର୍ ଲଗ୍ |"
+
+#: .\veterinary\models\case_models.py:260
+msgid "The case entry associated with this diagnosis."
+msgstr "ଏହି ନିରାକରଣ ସହିତ ଜଡିତ ମାମଲା ପ୍ରବେଶ |"
+
+#: .\veterinary\models\case_models.py:268
+msgid "Disease"
+msgstr "ରୋଗ"
+
+#: .\veterinary\models\case_models.py:269
+msgid "Identified disease during the diagnosis."
+msgstr "ନିରାକରଣ ସମୟରେ ଚିହ୍ନଟ ରୋଗ ଚିହ୍ନଟ କଲା |"
+
+#: .\veterinary\models\case_models.py:277
+msgid "Cattle Status"
+msgstr "ଗୋରୁ ସ୍ଥିତି"
+
+#: .\veterinary\models\case_models.py:278
+msgid "Current physiological or production status of the animal."
+msgstr "ପ୍ରାଣୀର ସାମ୍ପ୍ରତିକ ଶାରୀରିକ କିମ୍ବା ଉତ୍ପାଦନ ସ୍ଥିତି |"
+
+#: .\veterinary\models\case_models.py:285
+msgid "Milk Production"
+msgstr "କ୍ଷୀର ଉତ୍ପାଦନ"
+
+#: .\veterinary\models\case_models.py:286
+msgid "Optional note on milk production (e.g., '2.5L/day')."
+msgstr "କ୍ଷୀର ଉତ୍ପାଦନରେ ବ tion କଳ୍ପିକ ଟିପ୍ପଣୀ (ଯଥା, '2.5L / ଦିନ) |"
+
+#: .\veterinary\models\case_models.py:294
+msgid "Case Type"
+msgstr "କେସ୍ ପ୍ରକାର |"
+
+#: .\veterinary\models\case_models.py:296
+msgid "Type of the veterinary case (e.g., Normal, Special, Operational)."
+msgstr "ପ୍ରାଣୀହୀନ ମାମଲା ପ୍ରକାର (ଯଥା, ବିଶେଷ, ବିଶେଷ, କାର୍ଯ୍ୟକ୍ଷମ) |"
+
+#: .\veterinary\models\case_models.py:306
+msgid "Unknown Disease"
+msgstr "ଅଜ୍ଞାତ ରୋଗ"
+
+#: .\veterinary\models\case_models.py:307
+#, python-brace-format
+msgid "{tag} - {disease} @ {date}"
+msgstr "{ଟ୍ୟାଗ୍} - {ରୋଗ} \\ {ତାରିଖ}"
+
+#: .\veterinary\models\case_models.py:315
+#: .\veterinary\models\case_models.py:339
+msgid "Animal Diagnosis"
+msgstr "ପଶୁ ନିରାକରଣ |"
+
+#: .\veterinary\models\case_models.py:316
+msgid "Animal Diagnoses"
+msgstr "ପଶୁ ନିରାକରଣ |"
+
+#: .\veterinary\models\case_models.py:331
+msgid "Symptom"
+msgstr "ଲକ୍ଷଣ"
+
+#: .\veterinary\models\case_models.py:332
+msgid "Symptom associated with this diagnosis."
+msgstr "ଏହି ନିରାକରଣ ସହିତ ଜଡିତ ଲକ୍ଷଣ |"
+
+#: .\veterinary\models\case_models.py:340
+msgid "Diagnosis entry this symptom is related to."
+msgstr "ନିରାକରଣ ପ୍ରବେଶ ଏହି ଲକ୍ଷଣ ସହିତ ଜଡିତ |"
+
+#: .\veterinary\models\case_models.py:347
+msgid "Additional notes or observations about the symptom."
+msgstr "ଲକ୍ଷଣ ବିଷୟରେ ଅତିରିକ୍ତ ଟିପ୍ପଣୀ କିମ୍ବା ପର୍ଯ୍ୟବେକ୍ଷଣ |"
+
+#: .\veterinary\models\case_models.py:354
+msgid "Unknown Diagnosis"
+msgstr "ଅଜ୍ଞାତ ନିରାକରଣ |"
+
+#: .\veterinary\models\case_models.py:356
+msgid "Unknown Symptom"
+msgstr "ଅଜ୍ଞାତ ଲକ୍ଷଣ"
+
+#: .\veterinary\models\case_models.py:357
+#, python-brace-format
+msgid "{diagnosis} - {symptom} @ {date}"
+msgstr "{ଡାଇଗ୍ନୋସିସ୍} - {ପାରଙ୍ଗମ} @ {ତାରିଖ}"
+
+#: .\veterinary\models\case_models.py:365
+msgid "Diagnosed Symptom"
+msgstr "ନିରାକରଣ ଲକ୍ଷଣ |"
+
+#: .\veterinary\models\case_models.py:366
+msgid "Diagnosed Symptoms"
+msgstr "ଲକ୍ଷଣ ନିର୍ଣ୍ଣୟ କରେ |"
+
+#: .\veterinary\models\case_models.py:382
+msgid "The case entry to which this treatment belongs."
+msgstr "ଏହି ଚିକିତ୍ସା ପାଇଁ କେସ୍ ଏଣ୍ଟ୍ରି |"
+
+#: .\veterinary\models\case_models.py:389
+msgid "Treatment Provider"
+msgstr "ଚିକିତ୍ସା ପ୍ରଦାନକାରୀ"
+
+#: .\veterinary\models\case_models.py:390
+msgid "User (doctor or vet) who performed the treatment."
+msgstr "ଉପଭୋକ୍ତା (ଡାକ୍ତର କିମ୍ବା ଭେଟ୍) ଯେଉଁମାନେ ଚିକିତ୍ସା କରିଥିଲେ |"
+
+#: .\veterinary\models\case_models.py:398
+#: .\veterinary\models\stock_models.py:209
+msgid "Medicine"
+msgstr "Medicine ଷଧ"
+
+#: .\veterinary\models\case_models.py:399
+msgid "Medicine used in the treatment, if any."
+msgstr "ଚିକିତ୍ସାରେ ବ୍ୟବହୃତ medicine ଷଧ, ଯଦି ଥାଏ |"
+
+#: .\veterinary\models\case_models.py:407
+msgid "Administration Route"
+msgstr "ପ୍ରଶାସନ ମାର୍ଗ"
+
+#: .\veterinary\models\case_models.py:408
+msgid "Route of administration for the medicine."
+msgstr "Medicine ଷଧ ପାଇଁ ପ୍ରଶାସନ ମାର୍ଗ |"
+
+#: .\veterinary\models\case_models.py:414
+msgid "Notes"
+msgstr "ଟିପ୍ପଣୀ |"
+
+#: .\veterinary\models\case_models.py:415
+msgid "Additional notes or instructions for the treatment."
+msgstr "ଚିକିତ୍ସା ପାଇଁ ଅତିରିକ୍ତ ଟିପ୍ପଣୀ କିମ୍ବା ନିର୍ଦ୍ଦେଶାବଳୀ |"
+
+#: .\veterinary\models\case_models.py:420
+msgid "OTP Verified"
+msgstr "OTP ଯାଞ୍ଚ |"
+
+#: .\veterinary\models\case_models.py:421
+msgid "Indicates whether the treatment has been verified via OTP."
+msgstr "ଚିକିତ୍ସା OTP ମାଧ୍ୟମରେ ଯାଞ୍ଚ କରାଯାଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\veterinary\models\case_models.py:425
+msgid "No Case"
+msgstr "କ case ଣସି ମାମଲା ନାହିଁ"
+
+#: .\veterinary\models\case_models.py:426
+msgid "No Medicine"
+msgstr "କ made ଣସି medicine ଷଧ ନାହିଁ |"
+
+#: .\veterinary\models\case_models.py:427
+#, python-brace-format
+msgid "Treatment for Case: {case} | Medicine: {med} | By: {user}"
+msgstr ""
+"କେସ୍ ପାଇଁ ଚିକିତ୍ସା: {କେସ୍} | | Medicine ଷଧ: {PED} | | ଦ୍ୱାରା: {ଉପଭୋକ୍ତା}"
+
+#: .\veterinary\models\case_models.py:435
+msgid "Animal Treatment"
+msgstr "ପଶୁ ଚିକିତ୍ସା"
+
+#: .\veterinary\models\case_models.py:436
+msgid "Animal Treatments"
+msgstr "ପଶୁ ଚିକିତ୍ସା"
+
+#: .\veterinary\models\case_models.py:452
+msgid "Case associated with this payment."
+msgstr "ଏହି ଦେୟ ସହିତ ମାମଲା |"
+
+#: .\veterinary\models\case_models.py:458
+msgid "Payment Method"
+msgstr "ଅର୍ଥ ପ୍ରଦାନ ପଦ୍ଧତି"
+
+#: .\veterinary\models\case_models.py:459
+msgid "Method used for payment."
+msgstr "ଦେୟ ପାଇଁ ବ୍ୟବହୃତ ପଦ୍ଧତି |"
+
+#: .\veterinary\models\case_models.py:465
+msgid "Amount"
+msgstr "ପରିମାଣ"
+
+#: .\veterinary\models\case_models.py:466
+msgid "Amount paid."
+msgstr "ଦେୟ ରାଶି"
+
+#: .\veterinary\models\case_models.py:471
+msgid "Payment Date"
+msgstr "ଦେୟ ତାରିଖ"
+
+#: .\veterinary\models\case_models.py:472
+msgid "Date and time when the payment was made."
+msgstr "ଦେୟ ଯେତେବେଳେ ଦେୟ ଦିଆଗଲା ତାରିଖ ଏବଂ ସମୟ |"
+
+#: .\veterinary\models\case_models.py:479
+msgid "Transaction ID"
+msgstr "କାରବାର ID"
+
+#: .\veterinary\models\case_models.py:480
+msgid "Payment gateway reference or manual receipt ID."
+msgstr "ପେମେଣ୍ଟ ଗେଟୱେ ରେଫରେନ୍ସ କିମ୍ବା ମାନୁଆଲ୍ ରସିଦ ID |"
+
+#: .\veterinary\models\case_models.py:487
+msgid "Payment Status"
+msgstr "ଦେୟ ସ୍ଥିତି"
+
+#: .\veterinary\models\case_models.py:488
+msgid "Current status of the payment."
+msgstr "ଦେୟର ସାମ୍ପ୍ରତିକ ସ୍ଥିତି |"
+
+#: .\veterinary\models\case_models.py:494
+msgid "Gateway Response"
+msgstr "ଗେଟୱେ ପ୍ରତିକ୍ରିୟା |"
+
+#: .\veterinary\models\case_models.py:495
+msgid "Raw payment gateway response data (online payments only)."
+msgstr "କଞ୍ଚା ପେମେଣ୍ଟ ଗେଟୱେ ପ୍ରତିକ୍ରିୟା ତଥ୍ୟ (କେବଳ ଅନଲାଇନ୍ ପେମେଣ୍ଟ) |"
+
+#: .\veterinary\models\case_models.py:500
+msgid "Is Reconciled"
+msgstr "ସମନ୍ୱୟ ଅଟେ |"
+
+#: .\veterinary\models\case_models.py:501
+msgid "Whether this payment is reconciled in accounting."
+msgstr "ଏହି ଦେୟ ହିସାବରେ ସମନ୍ୱୟ ହୋଇଛି କି ନାହିଁ |"
+
+#: .\veterinary\models\case_models.py:506
+msgid "Is Cash Collected"
+msgstr "ନଗଦ ସଂଗୃହିତ |"
+
+#: .\veterinary\models\case_models.py:507
+msgid "Indicates if cash has been collected for offline payments."
+msgstr "ଅଫଲାଇନ୍ ଦେୟ ପାଇଁ ନଗଦ ସଂଗ୍ରହ କରାଯାଇଛି କି ନାହିଁ ସୂଚାଇଥାଏ |"
+
+#: .\veterinary\models\case_models.py:516
+msgid "Collected By"
+msgstr "ସମର୍ପଣ"
+
+#: .\veterinary\models\case_models.py:517
+msgid "User who collected the payment (for COD)."
+msgstr "ଉପଭୋକ୍ତା ଯିଏ ଦେୟ ସଂଗ୍ରହ କରିଥିଲେ (COD ପାଇଁ) |"
+
+#: .\veterinary\models\case_models.py:523
+msgid "Collected Date"
+msgstr "ସଂଗୃହିତ ତାରିଖ |"
+
+#: .\veterinary\models\case_models.py:524
+msgid "Date and time when cash was collected."
+msgstr "ନଗଦ ସଂଗୃହିତ ତାରିଖ ଏବଂ ସମୟ |"
+
+#: .\veterinary\models\case_models.py:530
+msgid "Unknown Method"
+msgstr "ଅଜ୍ଞାତ ପଦ୍ଧତି |"
+
+#: .\veterinary\models\case_models.py:531
+#, python-brace-format
+msgid "Payment: ₹{amount} for Case: {case} via {method} [{status}]"
+msgstr "ଦେୟ: ₹ {ପରିମାଣ}: {ପଦ୍ଧତି} [{ସ୍ଥିତି}]"
+
+#: .\veterinary\models\case_models.py:540
+msgid "Case Payment"
+msgstr "କେସ୍ ଦେୟ"
+
+#: .\veterinary\models\case_models.py:541
+msgid "Case Payments"
+msgstr "କେସ୍ ଦେୟ |"
+
+#: .\veterinary\models\case_models.py:560
+msgid "Case related to this travel record."
+msgstr "ଏହି ଭ୍ରମଣ ରେକର୍ଡ ସହିତ ଜଡିତ |"
+
+#: .\veterinary\models\case_models.py:566
+msgid "From Latitude"
+msgstr "ଅକ୍ଷାଂଶରୁ"
+
+#: .\veterinary\models\case_models.py:567
+msgid "Starting point latitude."
+msgstr "ବିନ୍ଦୁ ଅକ୍ଷାଂଶ ଆରମ୍ଭ କରିବା |"
+
+#: .\veterinary\models\case_models.py:572
+msgid "From Longitude"
+msgstr "ଦ୍ରାଘିମା ଠାରୁ"
+
+#: .\veterinary\models\case_models.py:573
+msgid "Starting point longitude."
+msgstr "ବିନ୍ଦୁ ଲଟା ହେବା |"
+
+#: .\veterinary\models\case_models.py:578
+msgid "To Latitude"
+msgstr "ଅକ୍ଷାଂଶ"
+
+#: .\veterinary\models\case_models.py:579
+msgid "Destination latitude."
+msgstr "ଗନ୍ତବ୍ୟସ୍ଥଳ ଅକ୍ଷାଂଶ |"
+
+#: .\veterinary\models\case_models.py:584
+msgid "To Longitude"
+msgstr "ଦ୍ରାଘିମା"
+
+#: .\veterinary\models\case_models.py:585
+msgid "Destination longitude."
+msgstr "ଗନ୍ତବ୍ୟସ୍ଥଳ ଦ୍ରାଘିମା |"
+
+#: .\veterinary\models\case_models.py:591
+msgid "Distance Travelled (km)"
+msgstr "ଦୂରତା ଯାତ୍ରା (କିମି)"
+
+#: .\veterinary\models\case_models.py:592
+msgid "Calculated distance in kilometers."
+msgstr "କିଲୋମିଟର କିଲୋମିଟର ଦୂରକରଣ |"
+
+#: .\veterinary\models\case_models.py:596
+msgid "Travel Date"
+msgstr "ଭ୍ରମଣ ତାରିଖ"
+
+#: .\veterinary\models\case_models.py:597
+msgid "Date of the travel."
+msgstr "ଭ୍ରମଣ ତାରିଖ"
+
+#: .\veterinary\models\case_models.py:602
+#, python-brace-format
+msgid "Case Entry: {case_no} | Distance: {distance} km | Date: {date}"
+msgstr "କେସ୍ ଏଣ୍ଟ୍ରି: {case_no} | | ଦୂରତା: {ଦୂରତା} KM | | ତାରିଖ: {ତାରିଖ}"
+
+#: .\veterinary\models\case_models.py:648
+#: .\veterinary\models\case_models.py:662
+msgid "Travel Record"
+msgstr "ଭ୍ରମଣ ରେକର୍ଡ |"
+
+#: .\veterinary\models\case_models.py:649
+msgid "Travel Records"
+msgstr "ଭ୍ରମଣ ରେକର୍ଡଗୁଡିକ |"
+
+#: .\veterinary\models\case_models.py:663
+msgid "Travel record associated with this image."
+msgstr "ଏହି ପ୍ରତିଛବି ସହିତ ଜଡିତ ଭ୍ରମଣ ରେକର୍ଡ |"
+
+#: .\veterinary\models\case_models.py:668
+msgid "Image"
+msgstr "ପ୍ରତିଛବି |"
+
+#: .\veterinary\models\case_models.py:669
+msgid ""
+"Upload image related to the travel, such as vehicle dashboard, odometer, or "
+"scene."
+msgstr ""
+"ଯାତ୍ରା ସହିତ ଜଡିତ ପ୍ରତିଛବି ଅପଲୋଡ୍ କରନ୍ତୁ, ଯେପରିକି ଯାନ ଡ୍ୟାସବୋର୍ଡ, ଓଡୋର୍ଥର୍, "
+"କିମ୍ବା ଦୃଶ୍ୟ |"
+
+#: .\veterinary\models\case_models.py:674
+msgid "Uploaded At"
+msgstr "ଅପଲୋଡ୍ ହୋଇଛି |"
+
+#: .\veterinary\models\case_models.py:675
+msgid "Time when image was uploaded."
+msgstr "ଯେତେବେଳେ ପ୍ରତିଛବି ଅପଲୋଡ୍ ହେଲା ସମୟ |"
+
+#: .\veterinary\models\case_models.py:682
+msgid "Optional notes about this image."
+msgstr "ଏହି ପ୍ରତିଛବି ବିଷୟରେ ବ al କଳ୍ପିକ ଟିପ୍ପଣୀ |"
+
+#: .\veterinary\models\case_models.py:686
+#, python-brace-format
+msgid "Image for Travel Record ID: {id}"
+msgstr "ଭ୍ରମଣ ରେକର୍ଡ ID ପାଇଁ ପ୍ରତିଛବି: {ID}"
+
+#: .\veterinary\models\case_models.py:690
+msgid "Travel Record Image"
+msgstr "ଭ୍ରମଣ ରେକର୍ଡ ପ୍ରତିଛବି |"
+
+#: .\veterinary\models\case_models.py:691
+msgid "Travel Record Images"
+msgstr "ଭ୍ରମଣ ରେକର୍ଡ ପ୍ରତିଛବିଗୁଡିକ |"
+
+#: .\veterinary\models\common_models.py:59
+msgid "Locale used for this entry (e.g. en, hi, te)"
+msgstr "ଏହି ଏଣ୍ଟ୍ରି ପାଇଁ ବ୍ୟବହୃତ ଲୋକାଲ୍ (ଯଥା en, ହାଏ, TE)"
+
+#: .\veterinary\models\common_models.py:415
+msgid "case status of cattle"
+msgstr "ଗୋରୁମାନଙ୍କର ମାମଲା ସ୍ଥିତି |"
+
+#: .\veterinary\models\models.py:221
+msgid "Member who currently owns this cattle."
+msgstr "ସଦସ୍ୟ ଯିଏ ବର୍ତ୍ତମାନ ଏହି ଗୋରୁର ମାଲିକ ଅଟନ୍ତି |"
+
+#: .\veterinary\models\models.py:222
+msgid "Owner"
+msgstr "ମାଲିକ"
+
+#: .\veterinary\models\models.py:231
+msgid "Breed of the cattle."
+msgstr "ଗୋରୁର ପ୍ରଜନନ |"
+
+#: .\veterinary\models\models.py:232
+msgid "Breed"
+msgstr "ପ୍ରଜାତି"
+
+#: .\veterinary\models\models.py:239
+msgid "Gender of the cattle."
+msgstr "ଗୋରୁର ଲିଙ୍ଗ"
+
+#: .\veterinary\models\models.py:240
+msgid "Gender"
+msgstr "ଲିଙ୍ଗ"
+
+#: .\veterinary\models\models.py:244
+msgid "Age of the cattle in months."
+msgstr "ମାସରେ ଗୋରୁର ବୟସ |"
+
+#: .\veterinary\models\models.py:245
+msgid "Age (months)"
+msgstr "ବୟସ (ମାସ)"
+
+#: .\veterinary\models\models.py:248
+msgid "Age of the cattle in year."
+msgstr "ବର୍ଷରେ ଗୋରୁର ବୟସ |"
+
+#: .\veterinary\models\models.py:249 .\veterinary\models\models.py:255
+msgid "Age (year)"
+msgstr "ବୟସ (ବର୍ଷ)"
+
+#: .\veterinary\models\models.py:254
+msgid "No Of Calving."
+msgstr "କ calling ଣସି ବାଛୁରୀ"
+
+#: .\veterinary\models\models.py:266
+msgid "The mother of this cattle."
+msgstr "ଏହି ଗୋରୁର ମାତା |"
+
+#: .\veterinary\models\models.py:267
+msgid "Mother"
+msgstr "ମା"
+
+#: .\veterinary\models\models.py:276
+msgid "The father of this cattle."
+msgstr "ଏହି ଗୋରୁର ପିତା |"
+
+#: .\veterinary\models\models.py:277
+msgid "Father"
+msgstr "ବାପା"
+
+#: .\veterinary\models\models.py:358
+msgid "Cattles"
+msgstr "କ୍ୟାଟଲ୍ସ |"
+
+#: .\veterinary\models\models.py:447
+msgid "Last Calving Month"
+msgstr "ଶେଷ ବାଛୁରୀ ମାସ |"
+
+#: .\veterinary\models\models.py:468
+msgid "Pregnancy Status"
+msgstr "ଗର୍ଭଧାରଣ ସ୍ଥିତି"
+
+#: .\veterinary\models\models.py:469
+msgid "Indicates whether the cattle is pregnant."
+msgstr "ଗୋରୁମାନଙ୍କୁ ଗର୍ଭବତୀ କି ନାହିଁ ସୂଚାଇଥାଏ।"
+
+#: .\veterinary\models\stock_models.py:11
+msgid "Name of the location (e.g., Central Store, Block Office)"
+msgstr "ଅବସ୍ଥାନର ନାମ (ଯଥା, ସେଣ୍ଟ୍ରାଲ୍ ଷ୍ଟୋର୍, ବ୍ଲକ୍ ଅଫିସ୍)"
+
+#: .\veterinary\models\stock_models.py:12
+msgid "Location Name"
+msgstr "ଅବସ୍ଥାନ ନାମ"
+
+#: .\veterinary\models\stock_models.py:18
+msgid "Unique identifier for the location (e.g., for integration)"
+msgstr "ଅବସ୍ଥାନ ପାଇଁ ଅନନ୍ୟ ପରିଚାୟକ (ଯଥା, ଇଣ୍ଟିଗ୍ରେସନ୍ ପାଇଁ)"
+
+#: .\veterinary\models\stock_models.py:19
+msgid "Location Code"
+msgstr "ଅବସ୍ଥାନ କୋଡ୍"
+
+#: .\veterinary\models\stock_models.py:26
+msgid "Category or type of the location"
+msgstr "ସ୍ଥାନ କିମ୍ବା ଅବସ୍ଥାନର ପ୍ରକାର |"
+
+#: .\veterinary\models\stock_models.py:27
+msgid "Location Type"
+msgstr "ଅବସ୍ଥାନ ପ୍ରକାର"
+
+#: .\veterinary\models\stock_models.py:33
+msgid "Full address of the location"
+msgstr "ଅବସ୍ଥାନର ସମ୍ପୂର୍ଣ୍ଣ ଠିକଣା |"
+
+#: .\veterinary\models\stock_models.py:41
+msgid "District in which the location falls"
+msgstr "ଜିଲ୍ଲା ଯେଉଁଥିରେ ସ୍ଥାନ ପତନ ହୁଏ |"
+
+#: .\veterinary\models\stock_models.py:42
+msgid "District"
+msgstr "ଜିଲ୍ଲା"
+
+#: .\veterinary\models\stock_models.py:49
+msgid "State or province"
+msgstr "ରାଜ୍ୟ କିମ୍ବା ପ୍ରଦେଶ"
+
+#: .\veterinary\models\stock_models.py:50
+msgid "State"
+msgstr "ରାଜ୍ୟ"
+
+#: .\veterinary\models\stock_models.py:58
+msgid "Latitude coordinate for map integration"
+msgstr "ମାନଚିତ୍ର ଏକୀକରଣ ପାଇଁ ଅକ୍ଷାଂଶ ସଂଯୋଜନା |"
+
+#: .\veterinary\models\stock_models.py:67
+msgid "Longitude coordinate for map integration"
+msgstr "ମାନଚିତ୍ର ଇଣ୍ଟିଗ୍ରେସନ୍ ପାଇଁ ଡ୍ୟାରେସନ୍ ସଂଯୋଜନା |"
+
+#: .\veterinary\models\stock_models.py:73
+msgid "Location"
+msgstr "ଅବସ୍ଥାନ"
+
+#: .\veterinary\models\stock_models.py:74
+msgid "Locations"
+msgstr "ଅବସ୍ଥାନ"
+
+#: .\veterinary\models\stock_models.py:150
+msgid "Severity level of the disease"
+msgstr "ରୋଗର ଗମ୍ଭୀରତା ସ୍ତର |"
+
+#: .\veterinary\models\stock_models.py:151
+msgid "Severity"
+msgstr "ଗମ୍ଭୀରତା"
+
+#: .\veterinary\models\stock_models.py:170
+msgid "eg. tablet, liquid, injection, etc"
+msgstr "ଯଥା। ଟାବଲେଟ୍, ତରଳ, ଇଞ୍ଜେକ୍ସନ୍, ଇତ୍ୟାଦି |"
+
+#: .\veterinary\models\stock_models.py:192
+msgid "Parent Category"
+msgstr "ପିତାମାତା ବର୍ଗ |"
+
+#: .\veterinary\models\stock_models.py:209
+msgid "Name of the medicine"
+msgstr "Medicine ଷଧର ନାମ"
+
+#: .\veterinary\models\stock_models.py:214
+msgid "Some description of the medicine"
+msgstr "Medicine ଷଧର କିଛି ବର୍ଣ୍ଣନା |"
+
+#: .\veterinary\models\stock_models.py:240
+msgid "Packaging"
+msgstr "ପ୍ୟାକେଜିଂ"
+
+#: .\veterinary\models\stock_models.py:246
+msgid "Expiry Date of the medicine"
+msgstr "Medicine ଷଧର ସମାପ୍ତି ତାରିଖ |"
+
+#: .\veterinary\models\stock_models.py:247
+msgid "Expiry Date"
+msgstr "ସମାପ୍ତି ତାରିଖ"
+
+#: .\veterinary\models\stock_models.py:252
+msgid "Diseases this medicine is commonly prescribed for."
+msgstr ""
+"ରୋଗଗୁଡିକ ଏହି medicine ଷଧ ସାଧାରଣତ for ନିର୍ଦ୍ଦିଷ୍ଟ ଭାବରେ ନିର୍ଦେଶ ଦିଆଯାଇଛି |"
+
+#: .\veterinary\models\stock_models.py:253
+msgid "Diseases"
+msgstr "ରୋଗ"
+
+#: .\veterinary\models\stock_models.py:312
+msgid "Location sending the medicine"
+msgstr "Medicine ଷଧ ପଠାଇବା ସ୍ଥାନ ପଠାଉଛି |"
+
+#: .\veterinary\models\stock_models.py:319
+msgid "Location receiving the medicine"
+msgstr "Medicine ଷଧ ଗ୍ରହଣ କରୁଥିବା ସ୍ଥାନ |"
+
+#: .\veterinary\models\stock_models.py:325
+msgid "The batch of medicine being transferred"
+msgstr "Medicine ଷଧର ବ୍ୟାଚ୍ ସ୍ଥାନାନ୍ତରିତ ହେବ |"
+
+#: .\veterinary\models\stock_models.py:329
+msgid "Exact quantity of medicine transferred from stock"
+msgstr "ଷ୍ଟକ୍ ଠାରୁ ସଠିକ୍ ପରିମାଣର medicit ଣ |"
+
+#: .\veterinary\models\stock_models.py:336
+msgid "Type of transfer (inward, outward, return)"
+msgstr "ସ୍ଥାନାନ୍ତର ପ୍ରକାର (ଭିତର, ବାହ୍ୟ, ଫେରସ୍ତ)"
+
+#: .\veterinary\models\stock_models.py:343
+msgid "Current status of the stock transfer"
+msgstr "ଷ୍ଟକ୍ ଟ୍ରାନ୍ସଫରନର ସାମ୍ପ୍ରତିକ ସ୍ଥିତି |"
+
+#: .\veterinary\models\stock_models.py:350
+msgid "Snapshot of the batch number at the time of transfer"
+msgstr "ସ୍ଥାନାନ୍ତର ସମୟରେ ବ୍ୟାଚ୍ ନମ୍ବରର ସ୍ନାପସଟ୍ |"
+
+#: .\veterinary\models\stock_models.py:356
+msgid "Snapshot of expiry date at time of transfer"
+msgstr "ସ୍ଥାନାନ୍ତର ସମୟରେ ସମାପ୍ତି ତାରିଖର ସ୍ନାପସଟ୍ |"
+
+#: .\veterinary\models\stock_models.py:364
+msgid "User who initiated the stock transfer"
+msgstr "ଉପଯୋଗକର୍ତ୍ତା ଯିଏ ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର ଆରମ୍ଭ କରିଛନ୍ତି |"
+
+#: .\veterinary\models\stock_models.py:373
+msgid "User who received the stock at destination"
+msgstr "ଉପଭୋକ୍ତା ଯିଏ ଗନ୍ତବ୍ୟ ସ୍ଥଳରେ ଷ୍ଟକ୍ ଗ୍ରହଣ କରିଥିଲେ |"
+
+#: .\veterinary\models\stock_models.py:378
+msgid "Timestamp when the stock was transferred"
+msgstr "ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତରିତ ହେଲେ ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |"
+
+#: .\veterinary\models\stock_models.py:384
+msgid "Timestamp when stock was received and confirmed"
+msgstr ""
+"ଟାଇମଷ୍ଟ୍ୟାମ୍ପ ଯେତେବେଳେ ଷ୍ଟକ୍ ଗ୍ରହଣ କରାଯାଇଥିଲା ଏବଂ ନିଶ୍ଚିତ କରାଯାଇଥିଲା |"
+
+#: .\veterinary\models\stock_models.py:390
+msgid "Optional comments or notes on the transfer"
+msgstr "ସ୍ଥାନାନ୍ତର ଉପରେ ବ al କଳ୍ପିକ ମନ୍ତବ୍ୟ କିମ୍ବା ନୋଟ୍ |"
+
+#: .\veterinary\models\stock_models.py:398
+msgid "Cost per unit for tracking valuation"
+msgstr "ଟ୍ରାକିଂ ମୂଲ୍ୟ ପାଇଁ ୟୁନିଟ୍ ପିଛା ମୂଲ୍ୟ |"
+
+#: .\veterinary\models\stock_models.py:406
+msgid "Total cost of transferred quantity"
+msgstr "ସ୍ଥାନାନ୍ତରିତ ପରିମାଣର ମୋଟ ମୂଲ୍ୟ |"
+
+#: .\veterinary\models\stock_models.py:411
+msgid "Medicine Stock Transfer Log"
+msgstr "Medicine ଷଧ ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର ଲଗ୍ |"
+
+#: .\veterinary\models\stock_models.py:412
+msgid "Medicine Stock Transfer Logs"
+msgstr "Medicine ଷଧ ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର ଲଗ୍ |"
+
+#: .\veterinary\signals.py:15
+msgid "Initial assignment on case creation."
+msgstr "କେସ୍ ସୃଷ୍ଟି ଉପରେ ପ୍ରାରମ୍ଭିକ ଆସାଇନମେଣ୍ଟ |"
