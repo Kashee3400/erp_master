@@ -45,7 +45,7 @@ urlpatterns = [
     path("facilitator/", include("facilitator.urls")),
     path("management/api/", include("facilitator.user_urls")),
     path("storage/api/", include("facilitator.file_urls")),
-    path("veterinary/", include("veterinary.urls")),
+    path("veterinary/api/v1/", include("veterinary.urls")),
     path("feedback/", include("feedback.urls")),
     path("erp-fcm/", include("notifications.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
@@ -61,6 +61,6 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path(
-        "openapi/docs/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
+        "openapi/docs/readoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

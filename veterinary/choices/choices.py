@@ -2,10 +2,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+def serialize_choices(choices_cls: type[models.TextChoices]):
+    return [{"value": choice.value, "label": choice.label} for choice in choices_cls]
+
+
 class PaymentMethodChoices(models.TextChoices):
     """Payment methods available for transactions."""
-    ONLINE = "online", _("Online")   # Payment made through online platforms (UPI, net banking, etc.)
-    CASH = "cash", _("Cash")         # Physical cash payment
+
+    ONLINE = "online", _("Online")
+    CASH = "cash", _("Cash")
 
     @classmethod
     def icon(cls, value):
@@ -17,10 +22,11 @@ class PaymentMethodChoices(models.TextChoices):
 
 class AnimalUse(models.TextChoices):
     """Use case classification of the animal."""
-    DAIRY = "dairy", _("Dairy")              # Milk production
-    BEEF = "beef", _("Beef")                # Meat production
-    DUAL = "dual", _("Dual Purpose")        # Both milk and meat
-    OTHER = "other", _("Other")             # Other specific uses
+
+    DAIRY = "dairy", _("Dairy")  # Milk production
+    BEEF = "beef", _("Beef")  # Meat production
+    DUAL = "dual", _("Dual Purpose")  # Both milk and meat
+    OTHER = "other", _("Other")  # Other specific uses
 
     @classmethod
     def description(cls, value):
@@ -34,12 +40,14 @@ class AnimalUse(models.TextChoices):
 
 class GenderChoices(models.TextChoices):
     """Animal gender."""
+
     MALE = "male", _("Male")
     FEMALE = "female", _("Female")
 
 
 class UserRoleChoices(models.TextChoices):
     """User roles in the system."""
+
     DOCTOR = "doctor", _("Doctor")
     MAT = "mat", _("MAT")
     OTHER = "other", _("Other")
@@ -47,6 +55,7 @@ class UserRoleChoices(models.TextChoices):
 
 class TagMethodChoices(models.TextChoices):
     """Animal tag type used for identification."""
+
     MANUAL = "Manual", _("Manual")
     RFID = "RFID", _("RFID Tag")
     QR = "QR", _("QR Code")
@@ -54,6 +63,7 @@ class TagMethodChoices(models.TextChoices):
 
 class TagLocationChoices(models.TextChoices):
     """Location where the tag is applied."""
+
     LEFT_EAR = "Left Ear", _("Left Ear")
     RIGHT_EAR = "Right Ear", _("Right Ear")
     NECK = "Neck", _("Neck")
@@ -62,12 +72,31 @@ class TagLocationChoices(models.TextChoices):
 
 class TagActionChoices(models.TextChoices):
     """Actions performed on tags."""
+
     CREATED = "created", _("New Tag")
     REPLACED = "replaced", _("Replaced")
 
 
+class MonthChoices(models.TextChoices):
+    """Standard month choices from January to December."""
+
+    JANUARY = "01", _("January")
+    FEBRUARY = "02", _("February")
+    MARCH = "03", _("March")
+    APRIL = "04", _("April")
+    MAY = "05", _("May")
+    JUNE = "06", _("June")
+    JULY = "07", _("July")
+    AUGUST = "08", _("August")
+    SEPTEMBER = "09", _("September")
+    OCTOBER = "10", _("October")
+    NOVEMBER = "11", _("November")
+    DECEMBER = "12", _("December")
+
+
 class MedicineFormChoices(models.TextChoices):
     """Forms in which medicine is administered."""
+
     TABLET = "tablet", _("Tablet")
     LIQUID = "liquid", _("Liquid")
     INJECTION = "injection", _("Injection")
@@ -93,9 +122,9 @@ class MedicineFormChoices(models.TextChoices):
     INTRAMAMMARY = "intramammary", _("Intramammary")
     OTHER = "other", _("Other")
 
-
 class TransactionTypeChoices(models.TextChoices):
     """Inventory transaction types."""
+
     IN = "IN", _("Stock In")
     OUT = "OUT", _("Stock Out")
     ADJUST = "ADJUST", _("Adjustment")
@@ -103,6 +132,7 @@ class TransactionTypeChoices(models.TextChoices):
 
 class ActionTypeChoices(models.TextChoices):
     """Inventory action tracking."""
+
     ALLOCATED = "ALLOCATED", _("Allocated")
     USED = "USED", _("Used")
     RETURNED = "RETURNED", _("Returned")
@@ -110,6 +140,7 @@ class ActionTypeChoices(models.TextChoices):
 
 class CaseTypeChoices(models.TextChoices):
     """Classification of medical cases."""
+
     NORMAL = "Normal", _("Normal Case")
     SPECIAL = "Special", _("Special Case")
     OPERATIONAL = "Operational", _("Operational Case")
@@ -117,6 +148,7 @@ class CaseTypeChoices(models.TextChoices):
 
 class PeriodChoices(models.TextChoices):
     """Time slot choices."""
+
     MORNING = "Morning", _("Morning")
     AFTERNOON = "Afternoon", _("Afternoon")
     EVENING = "Evening", _("Evening")
@@ -125,6 +157,7 @@ class PeriodChoices(models.TextChoices):
 
 class StatusChoices(models.TextChoices):
     """Workflow status states."""
+
     PENDING = "Pending", _("Pending")
     CONFIRMED = "Confirmed", _("Confirmed")
     COMPLETED = "Completed", _("Completed")
@@ -132,10 +165,10 @@ class StatusChoices(models.TextChoices):
 
 class CattleStatusChoices(models.TextChoices):
     """Cattle's reproductive/lactation status."""
+
     DRY = "dry", _("Dry")
     PREGNANT = "pregnant", _("Pregnant")
     MILKING = "milking", _("Milking")
-    MILKING_PREGNANT = "milking_pregnant", _("Milking & Pregnant")
 
 
 class DiseaseSeverity(models.TextChoices):
@@ -143,10 +176,11 @@ class DiseaseSeverity(models.TextChoices):
     MODERATE = "Moderate", _("Moderate")
     SEVERE = "Severe", _("Severe")
     CRITICAL = "Critical", _("Critical")
-    
+
+
 class PaymentStatusChoices(models.TextChoices):
     """Payment processing status."""
-    
+
     PENDING = "pending", _("Pending")
     COMPLETED = "completed", _("Completed")
     FAILED = "failed", _("Failed")
@@ -154,14 +188,18 @@ class PaymentStatusChoices(models.TextChoices):
 
 
 class TransferTypeChoices(models.TextChoices):
-    INWARD = "inward", _("Inward")        # For receiving new stock
-    OUTWARD = "outward", _("Outward")     # For sending stock to another location
-    RETURN = "return", _("Return")        # For returning stock to source (e.g., damaged/unused)
+    INWARD = "inward", _("Inward")  # For receiving new stock
+    OUTWARD = "outward", _("Outward")  # For sending stock to another location
+    RETURN = "return", _(
+        "Return"
+    )  # For returning stock to source (e.g., damaged/unused)
+
 
 class TransferStatusChoices(models.TextChoices):
-    PENDING = "pending", _("Pending")         # Awaiting approval or dispatch
-    APPROVED = "approved", _("Approved")      # Completed and received
-    CANCELLED = "cancelled", _("Cancelled")   # Cancelled transfer
+    PENDING = "pending", _("Pending")  # Awaiting approval or dispatch
+    APPROVED = "approved", _("Approved")  # Completed and received
+    CANCELLED = "cancelled", _("Cancelled")  # Cancelled transfer
+
 
 class LocationTypeChoices(models.TextChoices):
     CENTRAL_WAREHOUSE = "central_warehouse", _("Central Warehouse")
@@ -169,3 +207,12 @@ class LocationTypeChoices(models.TextChoices):
     MOBILE_UNIT = "mobile_unit", _("Mobile Veterinary Unit")
     CLINIC = "clinic", _("Clinic")
     VET = "vet", _("Veterinarian")
+
+
+class VehicleTypeChoices(models.TextChoices):
+    CAR = "CAR", _("Car")
+    TRUCK = "TRUCK", _("Truck")
+    BUS = "BUS", _("Bus")
+    TWO_WHEELER = "2W", _("Two-Wheeler")
+    TRACTOR = "TRACTOR", _("Tractor")
+    OTHER = "OTHER", _("Other")

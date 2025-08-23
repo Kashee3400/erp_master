@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models.user_profile_model import UserProfile
 from .models.facilitator_model import AssignedMppToFacilitator
-from notifications.models import AppNotification, NotificationMedium, NotificationType
+from notifications.model import AppNotification, NotificationMedium, NotificationType
 from import_export.signals import post_import
 from .utils.import_flag import set_importing, is_importing
 from facilitator.models.file_models import UploadedFile, FileActionLog

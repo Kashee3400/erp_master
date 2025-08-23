@@ -8,6 +8,12 @@ from .common_models import BaseModel, User, SpeciesBreed, CattleStatusType
 
 
 class MembersMasterCopy(models.Model):
+    member_code = models.CharField(
+        max_length=50,
+        primary_key=True,
+        verbose_name="Member Code",
+        help_text="Unique identifier for the member.",
+    )
     company_code = models.CharField(
         max_length=50,
         blank=True,
@@ -43,12 +49,7 @@ class MembersMasterCopy(models.Model):
         verbose_name="MPP Code",
         help_text="Milk Procurement Point Code.",
     )
-    member_code = models.CharField(
-        max_length=50,
-        primary_key=True,
-        verbose_name="Member Code",
-        help_text="Unique identifier for the member.",
-    )
+
     member_tr_code = models.CharField(
         max_length=50,
         blank=True,
@@ -195,9 +196,9 @@ class MembersMasterCopy(models.Model):
     )
 
     class Meta:
-        db_table = "member_hierarchy"
-        verbose_name = "Member Hierarchy"
-        verbose_name_plural = "Member Hierarchies"
+        db_table = "member_master_copy"
+        verbose_name = "Member Master Copy"
+        verbose_name_plural = "Member Masters"
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["member_code"]),
@@ -243,6 +244,18 @@ class Cattle(BaseModel):
     age = models.PositiveIntegerField(
         help_text=_("Age of the cattle in months."),
         verbose_name=_("Age (months)"),
+    )
+    age_year = models.PositiveIntegerField(
+        help_text=_("Age of the cattle in year."),
+        verbose_name=_("Age (year)"),
+        null=True,
+        blank=True,
+    )
+    no_of_calving = models.PositiveIntegerField(
+        help_text=_("No Of Calving."),
+        verbose_name=_("Age (year)"),
+        null=True,
+        blank=True,
     )
 
     mother = models.ForeignKey(
@@ -306,12 +319,6 @@ class Cattle(BaseModel):
     def ai_history(self):
         return self.ai_records.all().order_by("-insemination_date")
 
-    # @property
-    # def treatments(self):
-    #     """Returns all treatments associated with this cattle."""
-    #     from health.models import AnimalTreatment  # lazy import to avoid circular deps
-    #     return AnimalTreatment.objects.filter(case_treatment__animal=self)
-
     def all_details(self):
         """Return a dictionary of full cattle details."""
         return {
@@ -344,16 +351,6 @@ class Cattle(BaseModel):
 
         if save:
             self.save(update_fields=["owner", "updated_at"])
-
-        # Optional: log transfer
-        # CattleOwnershipHistory.objects.create(
-        #     cattle=self,
-        #     from_owner=old_owner,
-        #     to_owner=new_owner,
-        #     reason=reason,
-        #     updated_by=updated_by,
-        # )
-
         return True
 
     class Meta:
@@ -441,14 +438,34 @@ class CattleStatusLog(BaseModel):
         related_name="status_logs",
         verbose_name="Cattle",
     )
-    status = models.ForeignKey(
-        CattleStatusType, on_delete=models.PROTECT, verbose_name="Cattle Status"
+
+    last_calving_month = models.CharField(
+        max_length=10,
+        choices=MonthChoices.choices,
+        blank=True,
+        null=True,
+        help_text="Month of last calving (optional)",
+        verbose_name=_("Last Calving Month"),
     )
+
+    statuses = models.ManyToManyField(
+        CattleStatusType,
+        related_name="cattle_logs",
+        verbose_name="Cattle Statuses",
+        help_text="Multiple statuses like MILKING, PREGNANT, DRY etc.",
+    )
+
     from_date = models.DateField(verbose_name="From Date")
     to_date = models.DateField(null=True, blank=True, verbose_name="To Date")
 
     notes = models.TextField(
         blank=True, null=True, help_text="Any remarks from field vet or technician"
+    )
+
+    pregnancy_status = models.BooleanField(
+        default=False,
+        verbose_name=_("Pregnancy Status"),
+        help_text=_("Indicates whether the cattle is pregnant."),
     )
 
     class Meta:
@@ -457,16 +474,210 @@ class CattleStatusLog(BaseModel):
         ordering = ["-from_date"]
         indexes = [
             models.Index(fields=["cattle", "from_date"]),
-            models.Index(fields=["status"]),
         ]
 
     def __str__(self):
-        return f"{self.cattle} → {self.status.label} ({self.from_date} – {self.to_date or 'Ongoing'})"
+        status_labels = ", ".join(s.code for s in self.statuses.all())
+        return f"{self.cattle} → {status_labels} ({self.from_date} - {self.to_date or 'Ongoing'})"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        # Update current status on Animal
         if not self.to_date:
-            self.cattle.current_status = self.status
-            self.cattle.save(update_fields=["current_status"])
+            self.cattle.current_status.set(self.statuses.all())
+
+
+class FarmerMeeting(BaseModel):
+    """
+    Represents a farmer meeting held at an MCC (Milk Collection Center) or MPP (Milk Producer Point).
+    """
+
+    mcc_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MCC Code"),
+        help_text=_("Unique code identifying the Milk Collection Center."),
+    )
+    mcc_name = models.CharField(
+        max_length=255,
+        verbose_name=_("MCC Name"),
+        help_text=_("Name of the Milk Collection Center where the meeting is held."),
+    )
+    mcc_ex_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MCC External Code"),
+        help_text=_(
+            "External reference code for the Milk Collection Center (for integration purposes)."
+        ),
+        blank=True,
+        null=True,
+    )
+    mpp_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MPP Code"),
+        help_text=_("Unique code identifying the Milk Pulling Point."),
+    )
+    mpp_ex_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MPP External Code"),
+        help_text=_(
+            "External reference code for the Milk Pulling Point (for integration purposes)."
+        ),
+        blank=True,
+        null=True,
+    )
+    mpp_name = models.CharField(
+        max_length=255,
+        verbose_name=_("MPP Name"),
+        help_text=_("Name of the Milk Pulling Point where the meeting is held."),
+    )
+    members = models.ManyToManyField(
+        MembersMasterCopy,
+        related_name="farmer_meetings",
+        verbose_name=_("Members"),
+        help_text=_("Members who attended or are associated with this meeting."),
+        blank=True,
+    )
+    total_participants = models.PositiveIntegerField(
+        verbose_name=_("Total Participants"),
+        help_text=_("Total number of participants who attended the meeting."),
+    )
+    image = models.ImageField(
+        upload_to="farmer_meetings/",
+        verbose_name=_("Meeting Image"),
+        help_text=_("Image related to the meeting (e.g., group photo, event capture)."),
+        blank=True,
+        null=True,
+    )
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_("Additional Notes"),
+        help_text=_("Any notes(optional)"),
+    )
+
+    class Meta:
+        db_table = "farmer_meetings"
+        verbose_name = _("Farmer Meeting")
+        verbose_name_plural = _("Farmer Meetings")
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["mcc_code"], name="idx_farmermeeting_mcc_code"),
+            models.Index(fields=["mpp_code"], name="idx_farmermeeting_mpp_code"),
+        ]
+
+    def __str__(self):
+        return f"Farmer Meeting at {self.mpp_name} ({self.mcc_name})"
+
+
+class ObservationType(BaseModel):
+    """
+    Master table for types of observations recorded for cattle.
+    """
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_("Name"),
+        help_text=_("Human-readable name of the observation type."),
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_("Description"),
+        help_text=_("Detailed explanation of this observation type."),
+    )
+
+    class Meta:
+        db_table = "observation_types"
+        verbose_name = _("Observation Type")
+        verbose_name_plural = _("Observation Types")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class FarmerObservation(BaseModel):
+    """
+    Represents an observation recorded for a farmer's cattle at an MCC/MPP level.
+    """
+
+    # MCC (Milk Collection Center) info
+    mcc_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MCC Code"),
+        help_text=_("Unique code identifying the Milk Collection Center."),
+    )
+    mcc_name = models.CharField(
+        max_length=255,
+        verbose_name=_("MCC Name"),
+        help_text=_("Name of the Milk Collection Center."),
+    )
+    mcc_ex_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MCC External Code"),
+        help_text=_("External reference code for the Milk Collection Center."),
+        blank=True,
+        null=True,
+    )
+
+    # MPP (Milk Producer Point) info
+    mpp_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MPP Code"),
+        help_text=_("Unique code identifying the Milk Producer Point."),
+    )
+    mpp_ex_code = models.CharField(
+        max_length=50,
+        verbose_name=_("MPP External Code"),
+        help_text=_("External reference code for the Milk Producer Point."),
+        blank=True,
+        null=True,
+    )
+    mpp_name = models.CharField(
+        max_length=255,
+        verbose_name=_("MPP Name"),
+        help_text=_("Name of the Milk Producer Point."),
+    )
+
+    # Relations
+    member = models.ForeignKey(
+        MembersMasterCopy,
+        on_delete=models.CASCADE,
+        related_name="farmer_observations",
+        verbose_name=_("Member"),
+        help_text=_("Reference to the member associated with this observation."),
+    )
+    animal = models.ForeignKey(
+        Cattle,
+        on_delete=models.CASCADE,
+        related_name="observations",
+        verbose_name=_("Animal"),
+        help_text=_("The cattle for which the observation is recorded."),
+    )
+
+    observation_type = models.ForeignKey(
+        ObservationType,
+        on_delete=models.PROTECT,
+        related_name="observations",
+        verbose_name=_("Observation Type"),
+        help_text=_("Type of observation recorded for this animal."),
+    )
+    
+    notes = models.TextField(
+        blank=True, null=True, help_text="Any remarks from field vet or technician"
+    )
+
+    class Meta:
+        db_table = "farmer_observations"
+        verbose_name = _("Farmer Observation")
+        verbose_name_plural = _("Farmer Observations")
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["mcc_code"], name="idx_farmerobservation_mcc_code"),
+            models.Index(fields=["mpp_code"], name="idx_farmerobservation_mpp_code"),
+            models.Index(fields=["member"], name="idx_farmerobservation_member"),
+            models.Index(fields=["animal"], name="idx_farmerobservation_animal"),
+        ]
+
+    def __str__(self):
+        return f"Observation ({self.get_observation_display()}) - {self.animal} by {self.member}"

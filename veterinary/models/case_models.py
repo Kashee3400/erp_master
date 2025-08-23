@@ -18,6 +18,14 @@ class DiagnosisRoute(models.Model):
             "Short name or label of the diagnosis route, e.g., Oral, Injection, etc."
         ),
     )
+    locale = models.CharField(
+        max_length=10,
+        choices=settings.LANGUAGES,
+        default=settings.LANGUAGE_CODE,
+        verbose_name=_("Locale"),
+        help_text=_("Locale used for this entry (e.g. en, hi, te)"),
+    )
+
     created_at = models.DateTimeField(
         auto_now=True,
         verbose_name=_("Last Updated At"),
@@ -244,7 +252,7 @@ class CaseReceiverLog(BaseModel):
         ordering = ["-transferred_at"]
         indexes = [
             models.Index(fields=["case_entry"], name="idx_receiverlog_case"),
-            models.Index(fields=["to_user"], name="idx_receiverlog_to_user"),
+            models.Index(fields=["assigned_to"], name="idx_receiverlog_to_user"),
             models.Index(
                 fields=["transferred_at"], name="idx_receiverlog_transferred_at"
             ),
@@ -482,7 +490,7 @@ class CasePayment(models.Model):
 
     payment_status = models.CharField(
         max_length=20,
-        choices=PaymentStatusChoices,
+        choices=PaymentStatusChoices.choices,
         default=PaymentStatusChoices.PENDING,
         verbose_name=_("Payment Status"),
         help_text=_("Current status of the payment."),

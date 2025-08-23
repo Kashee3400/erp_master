@@ -3796,6 +3796,53 @@ class BusinessHierarchy(models.Model):
         managed = False
         db_table = 'business_hierarchy'
 
+class BusinessHierarchySnapshot(models.Model):
+    company_code = models.CharField(max_length=10)
+    company_name = models.CharField(max_length=255)
+    company_type = models.CharField(max_length=50)
+    
+    plant_code = models.CharField(max_length=10)
+    plant_tr_code = models.CharField(max_length=50)
+    plant_name = models.CharField(max_length=255)
+
+    mcc_code = models.CharField(max_length=10)
+    mcc_tr_code = models.CharField(max_length=50)
+    mcc_name = models.CharField(max_length=255)
+
+    bmc_code = models.CharField(max_length=10)
+    bmc_tr_code = models.CharField(max_length=50)
+    bmc_name = models.CharField(max_length=255)
+
+    mpp_code = models.CharField(max_length=10,primary_key=True)
+    mpp_ex_code = models.CharField(max_length=50)
+    mpp_tr_code = models.CharField(max_length=50)
+    mpp_name = models.CharField(max_length=255)
+    mpp_type = models.CharField(max_length=50)
+
+    route_code = models.CharField(max_length=10)
+    route_ex_code = models.CharField(max_length=50)
+    route_name = models.CharField(max_length=255)
+
+    wef_date = models.DateField()
+    is_default = models.BooleanField()
+    created_at = models.DateTimeField()
+    
+    dpu_station_code = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'business_hierarchy_snapshot'
+        verbose_name = 'Business Hierarchy Snapshot'
+        verbose_name_plural = 'Business Hierarchy Snapshots'
+        indexes = [
+            models.Index(fields=["company_code"]),
+            models.Index(fields=["mcc_code"]),
+            models.Index(fields=["mpp_code"]),
+        ]
+
+    def __str__(self):
+        return f"{self.company_code} - {self.mpp_name}"
+
 
 class BusinessShippingAddressDetail(models.Model):
     shipping_address_detail_code = models.AutoField(primary_key=True)

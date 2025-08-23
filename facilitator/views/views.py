@@ -592,7 +592,6 @@ class DashboardNewDetailAPI(APIView):
             mpp_dispatch_code__from_shift=shift_codes,
         ).aggregate(
             qty=Sum("dispatch_qty"),
-            # amount=Sum("amount"),
             fat=Coalesce(
                 Cast(
                     Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),

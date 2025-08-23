@@ -1,0 +1,3486 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-29 17:32+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\erp_app\apps.py:9
+msgid "Kashee ERP"
+msgstr "കാശി എർപ്പ്"
+
+#: .\erp_app\models.py:2336
+msgid "Billing Member Master Code"
+msgstr "ബില്ലിംഗ് അംഗം മാസ്റ്റർ കോഡ്"
+
+#: .\erp_app\models.py:2337
+msgid "Company Code"
+msgstr "കമ്പനി കോഡ്"
+
+#: .\erp_app\models.py:2338
+msgid "Plant Code"
+msgstr "പ്ലാന്റ് കോഡ്"
+
+#: .\erp_app\models.py:2339
+msgid "MCC CODE"
+msgstr "മക്കോഡ് കോഡ്"
+
+#: .\erp_app\models.py:2340
+msgid "BMC CODE"
+msgstr "ബിഎംസി കോഡ്"
+
+#: .\erp_app\models.py:2341
+msgid "MPP CODE"
+msgstr "എംപിപി കോഡ്"
+
+#: .\erp_app\models.py:10914
+msgid "Bank"
+msgstr "ബാങ്ക്"
+
+#: .\erp_app\models.py:10916
+msgid "Bank Branch"
+msgstr "ബാങ്ക് ശാഖ"
+
+#: .\erp_app\models.py:13303 .\facilitator\models\vcg_model.py:25
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:100
+msgid "MPP"
+msgstr "എംപിപി"
+
+#: .\erp_app\models.py:13306
+msgid "Shift"
+msgstr "തവണ"
+
+#: .\erp_app\models.py:13335
+msgid "Reference"
+msgstr "ബന്ധപ്പെടല്"
+
+#: .\erp_app\models.py:14341
+msgid "From Shift"
+msgstr "ഷിഫ്റ്റിൽ നിന്ന്"
+
+#: .\erp_app\models.py:14344
+msgid "To Shift"
+msgstr "മാറ്റാൻ"
+
+#: .\erp_app\views.py:204
+#, python-brace-format
+msgid "No member found on this mobile no {self.request.user.username}"
+msgstr "ഒരു അംഗവും ഈ മൊബൈൽ ഇല്ല {self.request.user.username}"
+
+#: .\erp_app\views.py:236
+msgid "No Data Found"
+msgstr "ഡാറ്റയൊന്നും കണ്ടെത്തിയില്ല"
+
+#: .\erp_master\settings\base.py:151 .\member\models.py:132
+msgid "English"
+msgstr "ഇംഗ്ലീഷ്"
+
+#: .\erp_master\settings\base.py:152 .\member\models.py:133
+msgid "Hindi"
+msgstr "ഹിന്ദി"
+
+#: .\erp_master\settings\base.py:164
+msgid "Urdu"
+msgstr "ഉറുദു"
+
+#: .\erp_master\settings\base.py:261 .\member\views.py:1330
+#: .\veterinary\choices\choices.py:71
+msgid "January"
+msgstr "ജാനുവരി"
+
+#: .\erp_master\settings\base.py:262 .\member\views.py:1331
+#: .\veterinary\choices\choices.py:72
+msgid "February"
+msgstr "ഫെബുവരി"
+
+#: .\erp_master\settings\base.py:263 .\member\views.py:1332
+#: .\veterinary\choices\choices.py:73
+msgid "March"
+msgstr "അതിര്"
+
+#: .\erp_master\settings\base.py:264 .\member\views.py:1333
+#: .\veterinary\choices\choices.py:74
+msgid "April"
+msgstr "ഏപില്"
+
+#: .\erp_master\settings\base.py:265 .\member\views.py:1334
+#: .\veterinary\choices\choices.py:75
+msgid "May"
+msgstr "മേയ്"
+
+#: .\erp_master\settings\base.py:266 .\member\views.py:1335
+#: .\veterinary\choices\choices.py:76
+msgid "June"
+msgstr "ജൂണ്"
+
+#: .\erp_master\settings\base.py:267 .\member\views.py:1336
+#: .\veterinary\choices\choices.py:77
+msgid "July"
+msgstr "ജൂലൈ"
+
+#: .\erp_master\settings\base.py:268 .\member\views.py:1337
+#: .\veterinary\choices\choices.py:78
+msgid "August"
+msgstr "ആഗസ്റ്റ്"
+
+#: .\erp_master\settings\base.py:269 .\member\views.py:1338
+#: .\veterinary\choices\choices.py:79
+msgid "September"
+msgstr "സെപ്തംബര്"
+
+#: .\erp_master\settings\base.py:270 .\member\views.py:1339
+#: .\veterinary\choices\choices.py:80
+msgid "October"
+msgstr "ഒക്ടോബര്"
+
+#: .\erp_master\settings\base.py:271 .\member\views.py:1340
+#: .\veterinary\choices\choices.py:81
+msgid "November"
+msgstr "നവംബര്"
+
+#: .\erp_master\settings\base.py:272 .\member\views.py:1341
+#: .\veterinary\choices\choices.py:82
+msgid "December"
+msgstr "ഡിസംന്വര്"
+
+#: .\facilitator\admin.py:200
+msgid "Meeting Details"
+msgstr "മീറ്റിംഗ് വിശദാംശങ്ങൾ"
+
+#: .\facilitator\admin.py:214
+msgid "Location Details"
+msgstr "ലൊക്കേഷൻ വിശദാംശങ്ങൾ"
+
+#: .\facilitator\admin.py:221
+msgid "Timestamps"
+msgstr "ടൈംസ്റ്റാമ്പുകൾ"
+
+#: .\facilitator\admin.py:227
+msgid "Sync Information"
+msgstr "സമന്വയിപ്പിക്കുക"
+
+#: .\facilitator\choices.py:8 .\facilitator\models\member_update_model.py:130
+#: .\feedback\models\feedback_model.py:134
+msgid "Mobile Number"
+msgstr "മൊബൈൽ നമ്പർ"
+
+#: .\facilitator\choices.py:9
+msgid "Bank Account Details"
+msgstr "ബാങ്ക് അക്കൗണ്ട് വിശദാംശങ്ങൾ"
+
+#: .\facilitator\choices.py:13 .\member\models.py:78
+msgid "Sahayak"
+msgstr "സഹയാക്"
+
+#: .\facilitator\choices.py:14
+msgid "Member"
+msgstr "അംഗം"
+
+#: .\facilitator\choices.py:18 .\notifications\models.py:19
+#: .\veterinary\choices\choices.py:143 .\veterinary\choices\choices.py:165
+#: .\veterinary\choices\choices.py:177
+msgid "Pending"
+msgstr "അതിനിടയില്"
+
+#: .\facilitator\choices.py:19
+msgid "Rejected"
+msgstr "നിരസിച്ചു"
+
+#: .\facilitator\choices.py:20 .\facilitator\choices.py:25
+msgid "Updated"
+msgstr "അപ്ഡേറ്റുചെയ്തു"
+
+#: .\facilitator\choices.py:24
+msgid "Created"
+msgstr "സൃഷ്ടിച്ചു"
+
+#: .\facilitator\choices.py:26 .\facilitator\models\member_update_model.py:44
+#: .\facilitator\models\vcg_model.py:104 .\notifications\models.py:130
+msgid "Deleted"
+msgstr "ഇല്ലാതാക്കപ്പെട്ടു"
+
+#: .\facilitator\choices.py:27
+msgid "Status Changed"
+msgstr "നില മാറ്റി"
+
+#: .\facilitator\choices.py:28
+msgid "Reviewed"
+msgstr "അവലോകനം ചെയ്തു"
+
+#: .\facilitator\choices.py:32
+msgid "Passbook Copy"
+msgstr "പാസ്ബുക്ക് പകർപ്പ്"
+
+#: .\facilitator\choices.py:33
+msgid "Application Letter"
+msgstr "അപേക്ഷ കത്ത്"
+
+#: .\facilitator\choices.py:34
+msgid "Affidavit Copy"
+msgstr "സത്യവാങ്മൂല പകർപ്പ്"
+
+#: .\facilitator\models\facilitator_model.py:12
+#: .\facilitator\models\facilitator_model.py:160
+msgid "API Key"
+msgstr "API കീ"
+
+#: .\facilitator\models\facilitator_model.py:13
+msgid "Unique identifier for the API key."
+msgstr "API കീയ്ക്കുള്ള അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\facilitator\models\facilitator_model.py:19
+#: .\facilitator\models\user_profile_model.py:24
+#: .\facilitator\models\vcg_model.py:119 .\member\models.py:49
+msgid "User"
+msgstr "ഉപയോഗിക്കുന്നവന്"
+
+#: .\facilitator\models\facilitator_model.py:20
+msgid "The user to whom this API key belongs."
+msgstr "ഈ API കീ ആർക്കാണ്."
+
+#: .\facilitator\models\facilitator_model.py:24
+#: .\facilitator\models\facilitator_model.py:245
+#: .\facilitator\models\user_profile_model.py:74
+#: .\facilitator\models\vcg_model.py:69 .\facilitator\models\vcg_model.py:285
+#: .\facilitator\models\vcg_model.py:333 .\facilitator\models\vcg_model.py:383
+#: .\facilitator\models\vcg_model.py:416 .\facilitator\models\vcg_model.py:578
+#: .\feedback\models\feedback_model.py:164 .\member\models.py:177
+#: .\member\models.py:230 .\notifications\models.py:124
+#: .\veterinary\models\common_models.py:23
+msgid "Created At"
+msgstr "സൃഷ്ടിച്ചു"
+
+#: .\facilitator\models\facilitator_model.py:25
+msgid "The date and time when the API key was created."
+msgstr "API കീ സൃഷ്ടിച്ച തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:30
+msgid "Expiration Date"
+msgstr "കാലഹരണപ്പെടുന്ന തീയതി"
+
+#: .\facilitator\models\facilitator_model.py:31
+msgid "The date and time when the API key expires."
+msgstr "API കീ കാലഹരണപ്പെടുന്ന തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:36
+msgid "Valid From"
+msgstr "സാധുവാണ്"
+
+#: .\facilitator\models\facilitator_model.py:37
+msgid "The date and time from which the API key becomes valid."
+msgstr "API കീ സാധുവാകുന്ന തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:41
+#: .\veterinary\models\common_models.py:42
+msgid "Is Active"
+msgstr "സജീവമാണ്"
+
+#: .\facilitator\models\facilitator_model.py:42
+msgid "Indicates whether the API key is active."
+msgstr "API കീ സജീവമാണോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\facilitator_model.py:47
+#: .\facilitator\models\member_update_model.py:370
+#: .\veterinary\models\case_models.py:681
+#: .\veterinary\models\stock_models.py:215
+msgid "Description"
+msgstr "വിവരണം"
+
+#: .\facilitator\models\facilitator_model.py:48
+msgid "A description of the purpose or use case for the API key."
+msgstr "API കീയ്ക്കുള്ള ഉദ്ദേശ്യത്തിന്റെ അല്ലെങ്കിൽ ഉപയോഗ കേസ്."
+
+#: .\facilitator\models\facilitator_model.py:54
+msgid "Usage Count"
+msgstr "ഉപയോഗ എണ്ണം"
+
+#: .\facilitator\models\facilitator_model.py:55
+msgid "The number of times this API key has been used."
+msgstr "ഈ API കീ ഉപയോഗിച്ച സമയങ്ങളുടെ എണ്ണം."
+
+#: .\facilitator\models\facilitator_model.py:60
+msgid "Maximum Usage Limit"
+msgstr "പരമാവധി ഉപയോഗ പരിധി"
+
+#: .\facilitator\models\facilitator_model.py:61
+msgid "The maximum number of requests allowed for this API key."
+msgstr "ഈ API കീയ്ക്കായി അനുവദനീയമായ പരമാവധി അഭ്യർത്ഥനകൾ."
+
+#: .\facilitator\models\facilitator_model.py:66
+msgid "Usage Reset Time"
+msgstr "ഉപയോഗം പുന reset സജ്ജമാക്കുക"
+
+#: .\facilitator\models\facilitator_model.py:67
+msgid "The time at which the usage count will reset."
+msgstr "ഉപയോഗം പുന reset സജ്ജമാക്കുന്ന സമയം."
+
+#: .\facilitator\models\facilitator_model.py:71
+msgid "Requests Per Day"
+msgstr "പ്രതിദിനം അഭ്യർത്ഥിക്കുന്നു"
+
+#: .\facilitator\models\facilitator_model.py:72
+msgid "The maximum number of requests allowed per day for this API key."
+msgstr "ഈ API കീയ്ക്കായി പ്രതിദിനം അനുവദനീയമായ പരമാവധി അഭ്യർത്ഥനകൾ."
+
+#: .\facilitator\models\facilitator_model.py:76
+msgid "Requests Per Hour"
+msgstr "മണിക്കൂറിൽ അഭ്യർത്ഥനകൾ"
+
+#: .\facilitator\models\facilitator_model.py:77
+msgid "The maximum number of requests allowed per hour for this API key."
+msgstr "ഈ API കീയ്ക്കായി മണിക്കൂറിൽ പരമാവധി അഭ്യർത്ഥനകൾ അനുവദനീയമാണ്."
+
+#: .\facilitator\models\facilitator_model.py:85
+msgid "Permissions"
+msgstr "അനുമതികൾ"
+
+#: .\facilitator\models\facilitator_model.py:86
+msgid "The scope of actions allowed by this API key (e.g., 'read', 'write')."
+msgstr ""
+"ഈ API കീ അനുവദനീയമായ പ്രവർത്തനങ്ങളുടെ വ്യാപ്തി (E.G., 'വായിക്കുക', "
+"'എഴുതുക')."
+
+#: .\facilitator\models\facilitator_model.py:91
+msgid "Allowed IPs"
+msgstr "ഐപിഎസ് അനുവദിച്ചു"
+
+#: .\facilitator\models\facilitator_model.py:92
+msgid "Comma-separated list of IP addresses allowed to use this API key."
+msgstr ""
+"കോമയാൽ വേർതിരിച്ച ഐപി വിലാസങ്ങളുടെ പട്ടിക ഈ API കീ ഉപയോഗിക്കാൻ "
+"അനുവദിച്ചിരിക്കുന്നു."
+
+#: .\facilitator\models\facilitator_model.py:97
+msgid "Allowed URLs"
+msgstr "അനുവദനീയ URL- കൾ"
+
+#: .\facilitator\models\facilitator_model.py:98
+msgid "Comma-separated list of URLs or endpoints this API key can access."
+msgstr ""
+"കോമ-വേർതിരിച്ച URL- കളുടെ അല്ലെങ്കിൽ എൻഡ് പോയിന്റുകളുടെ പട്ടിക ഈ API കീ "
+"ആക്സസ് ചെയ്യാൻ കഴിയും."
+
+#: .\facilitator\models\facilitator_model.py:105
+msgid "Last Used At"
+msgstr "അവസാനമായി ഉപയോഗിച്ചു"
+
+#: .\facilitator\models\facilitator_model.py:106
+msgid "The date and time when this API key was last used."
+msgstr "ഈ API കീ അവസാനമായി ഉപയോഗിച്ച തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:113 .\member\models.py:181
+msgid "Created By"
+msgstr "സൃഷ്ടിച്ചു"
+
+#: .\facilitator\models\facilitator_model.py:114
+msgid "The user who created this API key."
+msgstr "ഈ API കീ സൃഷ്ടിച്ച ഉപയോക്താവ്."
+
+#: .\facilitator\models\facilitator_model.py:122
+msgid "Last Used By"
+msgstr "അവസാനമായി ഉപയോഗിച്ചു"
+
+#: .\facilitator\models\facilitator_model.py:123
+msgid "The last user who used this API key."
+msgstr "ഈ API കീ ഉപയോഗിച്ച അവസാന ഉപയോക്താക്കൾ."
+
+#: .\facilitator\models\facilitator_model.py:127
+msgid "Is Revoked"
+msgstr "അസാധുവാക്കി"
+
+#: .\facilitator\models\facilitator_model.py:128
+msgid "Indicates whether the API key has been revoked."
+msgstr "API കീ അസാധുവാക്കിയിട്ടുണ്ടോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\facilitator_model.py:133
+msgid "Revoked At"
+msgstr "അസാധുവാക്കി"
+
+#: .\facilitator\models\facilitator_model.py:134
+msgid "The date and time when this API key was revoked."
+msgstr "ഈ API കീ അസാധുവാക്കിയ തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:142
+msgid "Revoked By"
+msgstr "അസാധുവാക്കി"
+
+#: .\facilitator\models\facilitator_model.py:143
+msgid "The user who revoked this API key."
+msgstr "ഈ API കീ അസാധുവാക്കിയ ഉപയോക്താവ്."
+
+#: .\facilitator\models\facilitator_model.py:147
+msgid "Failed Attempts"
+msgstr "പരാജയപ്പെട്ട ശ്രമങ്ങൾ"
+
+#: .\facilitator\models\facilitator_model.py:148
+msgid "The number of failed authentication attempts using this API key."
+msgstr "ഈ API കീ ഉപയോഗിച്ച് പരാജയപ്പെട്ട പ്രാമാണീകരണ ശ്രമങ്ങളുടെ എണ്ണം."
+
+#: .\facilitator\models\facilitator_model.py:161
+msgid "API Keys"
+msgstr "API കീകൾ"
+
+#: .\facilitator\models\facilitator_model.py:177
+msgid "Facilitator"
+msgstr "ഫെസിലിറ്റേറ്റർ"
+
+#: .\facilitator\models\facilitator_model.py:180
+msgid "The user assigned as the facilitator for this MPP."
+msgstr "ഉപയോക്താവിനെ ഈ എംപിപിയുടെ ഫെസിലിറ്റേറ്ററായി നിയോഗിച്ചിട്ടുണ്ട്."
+
+#: .\facilitator\models\facilitator_model.py:185
+#: .\facilitator\models\member_update_model.py:75
+#: .\facilitator\models\vcg_model.py:143 .\facilitator\models\vcg_model.py:536
+#: .\feedback\models\feedback_model.py:94 .\member\models.py:55
+#: .\member\models.py:87 .\member\models.py:222
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:103
+msgid "MPP Code"
+msgstr "എംപിപി കോഡ്"
+
+#: .\facilitator\models\facilitator_model.py:186
+#: .\facilitator\models\member_update_model.py:77
+msgid ""
+"A unique code assigned to the MPP. This code must be 9 characters long."
+msgstr ""
+"എംപിപിക്ക് നിയുക്തമാക്കിയ ഒരു അദ്വിതീയ കോഡ്. ഈ കോഡ് 9 പ്രതീകങ്ങൾ "
+"ദൈർഘ്യമായിരിക്കണം."
+
+#: .\facilitator\models\facilitator_model.py:192
+#: .\facilitator\models\member_update_model.py:84
+msgid "MPP External Code"
+msgstr "എംപിപി ബാഹ്യ കോഡ്"
+
+#: .\facilitator\models\facilitator_model.py:193
+#: .\facilitator\models\member_update_model.py:85
+msgid "An external code for the MPP, if applicable."
+msgstr "ബാധകമെങ്കിൽ എംപിപിക്കായി ഒരു ബാഹ്യ കോഡ്."
+
+#: .\facilitator\models\facilitator_model.py:199
+#: .\facilitator\models\member_update_model.py:91
+msgid "MPP Short Name"
+msgstr "എംപിപി ഹ്രസ്വ നാമം"
+
+#: .\facilitator\models\facilitator_model.py:200
+#: .\facilitator\models\member_update_model.py:92
+msgid "A short name or abbreviation for the MPP."
+msgstr "എംപിപിയുടെ ഒരു ഹ്രസ്വ പേരോ ചുരുക്കമോ."
+
+#: .\facilitator\models\facilitator_model.py:206
+#: .\facilitator\models\member_update_model.py:98
+#: .\facilitator\models\vcg_model.py:128 .\facilitator\models\vcg_model.py:525
+#: .\member\models.py:90
+msgid "MPP Name"
+msgstr "എംപിപി പേര്"
+
+#: .\facilitator\models\facilitator_model.py:207
+#: .\facilitator\models\member_update_model.py:99
+msgid "The full name of the MPP."
+msgstr "എംപിപിയുടെ മുഴുവൻ പേര്."
+
+#: .\facilitator\models\facilitator_model.py:213
+msgid "MPP Type"
+msgstr "എംപിപി തരം"
+
+#: .\facilitator\models\facilitator_model.py:214
+msgid "The type/category of the MPP."
+msgstr "എംപിപിയുടെ തരം / വിഭാഗം."
+
+#: .\facilitator\models\facilitator_model.py:220
+msgid "MPP Logo URL"
+msgstr "Mpp ലോഗോ URL"
+
+#: .\facilitator\models\facilitator_model.py:221
+msgid "The URL or path to the logo image of the MPP."
+msgstr "എംപിപിയുടെ ലോഗോ ഇമേജിലേക്കുള്ള URL അല്ലെങ്കിൽ പാത."
+
+#: .\facilitator\models\facilitator_model.py:227
+msgid "MPP Icon URL"
+msgstr "എംപിപി ഐക്കൺ URL"
+
+#: .\facilitator\models\facilitator_model.py:228
+msgid "The URL or path to the icon image of the MPP."
+msgstr "എംപിപിയുടെ ഐക്കണിലേക്കുള്ള URL അല്ലെങ്കിൽ പാത."
+
+#: .\facilitator\models\facilitator_model.py:234
+msgid "MPP Punch Line"
+msgstr "എംപിപി പഞ്ച് ലൈൻ"
+
+#: .\facilitator\models\facilitator_model.py:235
+msgid "A catchy tagline or punch line associated with the MPP."
+msgstr "എംപിപിയുമായി ബന്ധപ്പെട്ട ഒരു ആകർഷകമായ ടാഗ്ലൈൻ അല്ലെങ്കിൽ പഞ്ച് ലൈൻ."
+
+#: .\facilitator\models\facilitator_model.py:240
+msgid "MPP Opening Date"
+msgstr "എംപിപി പ്രാരംഭ തീയതി"
+
+#: .\facilitator\models\facilitator_model.py:241
+msgid "The date and time when the MPP is officially opened."
+msgstr "എംപിപി official ദ്യോഗികമായി തുറന്ന തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:246
+msgid "The date and time when the MPP assignment was created."
+msgstr "എംപിപി അസൈൻമെന്റ് സൃഷ്ടിച്ച തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:250
+#: .\facilitator\models\user_profile_model.py:78
+#: .\facilitator\models\vcg_model.py:74 .\facilitator\models\vcg_model.py:291
+#: .\facilitator\models\vcg_model.py:339 .\facilitator\models\vcg_model.py:389
+#: .\facilitator\models\vcg_model.py:422 .\facilitator\models\vcg_model.py:579
+#: .\member\models.py:178 .\member\models.py:234
+#: .\veterinary\models\common_models.py:28
+msgid "Updated At"
+msgstr "At അപ്ഡേറ്റുചെയ്തു"
+
+#: .\facilitator\models\facilitator_model.py:251
+msgid "The date and time when the MPP assignment was last updated."
+msgstr "എംപിപി അസൈൻമെന്റ് അവസാനമായി അപ്ഡേറ്റ് ചെയ്ത തീയതിയും സമയവും."
+
+#: .\facilitator\models\facilitator_model.py:257
+msgid "Assigned MPP to Facilitator"
+msgstr "ഫെസിലിറ്റേറ്ററിലേക്ക് എംപിപി നിയുക്തമാക്കി"
+
+#: .\facilitator\models\facilitator_model.py:258
+msgid "Assigned MPPs to Facilitators"
+msgstr "ഫെസിലിറ്റേറ്റർമാർക്ക് എംപിപിഎസ് നൽകി"
+
+#: .\facilitator\models\member_update_model.py:43
+msgid "Indicates whether this entry has been deleted."
+msgstr "ഈ എൻട്രി ഇല്ലാതാക്കിയത് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\member_update_model.py:59
+#: .\facilitator\models\vcg_model.py:17
+msgid "Enter a valid WhatsApp number with country code (e.g., +1234567890)."
+msgstr ""
+"രാജ്യ കോഡ് ഉപയോഗിച്ച് സാധുവായ വാട്ട്സ്ആപ്പ് നമ്പർ നൽകുക (ഉദാ., +1234567890)."
+
+#: .\facilitator\models\member_update_model.py:65
+msgid "Request ID"
+msgstr "ഐഡി അഭ്യർത്ഥിക്കുക"
+
+#: .\facilitator\models\member_update_model.py:66
+msgid "Auto-generated unique request identifier (e.g., REQ-2025-001234)"
+msgstr ""
+"യാന്ത്രികമായി ജനറേറ്റുചെയ്ത അദ്വിതീയ അഭ്യർത്ഥന ഐഡന്റിഫയർ (ഉദാ., "
+"Req-2025-001234)"
+
+#: .\facilitator\models\member_update_model.py:105
+#: .\facilitator\models\vcg_model.py:48 .\facilitator\models\vcg_model.py:445
+#: .\facilitator\models\vcg_model.py:453 .\facilitator\models\vcg_model.py:486
+#: .\feedback\models\feedback_model.py:110
+msgid "Member Code"
+msgstr "അംഗ കോഡ്"
+
+#: .\facilitator\models\member_update_model.py:108
+#: .\facilitator\models\member_update_model.py:115
+msgid "Unique identifier for the member."
+msgstr "അംഗത്തിനായുള്ള അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\facilitator\models\member_update_model.py:112
+#: .\facilitator\models\vcg_model.py:56
+msgid "Member Ex Code"
+msgstr "അംഗം എക്സ് കോഡ്"
+
+#: .\facilitator\models\member_update_model.py:120
+#: .\facilitator\models\vcg_model.py:63 .\facilitator\models\vcg_model.py:460
+#: .\facilitator\models\vcg_model.py:500
+#: .\feedback\models\feedback_model.py:126
+msgid "Member Name"
+msgstr "അംഗ നാമം"
+
+#: .\facilitator\models\member_update_model.py:121
+#: .\feedback\models\feedback_model.py:127
+msgid "Full name of the member."
+msgstr "അംഗത്തിന്റെ മുഴുവൻ പേര്."
+
+#: .\facilitator\models\member_update_model.py:131
+msgid "Member's  contact number."
+msgstr "അംഗത്തിന്റെ കോൺടാക്റ്റ് നമ്പർ."
+
+#: .\facilitator\models\member_update_model.py:139
+msgid "Role Type"
+msgstr "റോൾ തരം"
+
+#: .\facilitator\models\member_update_model.py:143
+msgid "Update Type"
+msgstr "അപ്ഡേറ്റ് തരം"
+
+#: .\facilitator\models\member_update_model.py:150
+msgid "Status"
+msgstr "പദവി"
+
+#: .\facilitator\models\member_update_model.py:192
+msgid "Reviewed By"
+msgstr "അവലോകനം ചെയ്തു"
+
+#: .\facilitator\models\member_update_model.py:196
+msgid "Reviewed At"
+msgstr "അവലോകനം ചെയ്തു"
+
+#: .\facilitator\models\member_update_model.py:199
+msgid "HO Comments"
+msgstr "ഹോ അഭിപ്രായങ്ങൾ"
+
+#: .\facilitator\models\member_update_model.py:202
+msgid "Rejection Reason"
+msgstr "നിരസിക്കൽ കാരണം"
+
+#: .\facilitator\models\member_update_model.py:206
+msgid "Update Request"
+msgstr "അഭ്യർത്ഥന അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:207
+msgid "Update Requests"
+msgstr "അഭ്യർത്ഥനകൾ അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:255
+msgid "Approved requests must have a reviewer."
+msgstr "അംഗീകൃത അഭ്യർത്ഥനകൾക്ക് ഒരു അവലോകകൻ ഉണ്ടായിരിക്കണം."
+
+#: .\facilitator\models\member_update_model.py:258
+msgid "Rejected requests must have a rejection reason."
+msgstr "നിരസിച്ച അഭ്യർത്ഥനകൾക്ക് നിരസിക്കൽ കാരണം ഉണ്ടായിരിക്കണം."
+
+#: .\facilitator\models\member_update_model.py:289
+#: .\facilitator\models\member_update_model.py:408
+msgid "Field Name"
+msgstr "ഫീൽഡിന്റെ പേര്"
+
+#: .\facilitator\models\member_update_model.py:291
+#: .\facilitator\models\member_update_model.py:411
+msgid "Old Value"
+msgstr "പഴയ മൂല്യം"
+
+#: .\facilitator\models\member_update_model.py:293
+#: .\facilitator\models\member_update_model.py:413
+msgid "New Value"
+msgstr "പുതിയ മൂല്യം"
+
+#: .\facilitator\models\member_update_model.py:298
+msgid "Text"
+msgstr "മൂലഗന്ഥം"
+
+#: .\facilitator\models\member_update_model.py:299
+msgid "Number"
+msgstr "അക്കം"
+
+#: .\facilitator\models\member_update_model.py:300
+msgid "File"
+msgstr "ഫയല്"
+
+#: .\facilitator\models\member_update_model.py:301
+msgid "JSON"
+msgstr "ജീസൺ"
+
+#: .\facilitator\models\member_update_model.py:304
+msgid "Data Type"
+msgstr "ഡാറ്റ തരം"
+
+#: .\facilitator\models\member_update_model.py:308
+#: .\facilitator\models\member_update_model.py:309
+msgid "Update Request Data"
+msgstr "അഭ്യർത്ഥന ഡാറ്റ അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:355
+msgid "Document Type"
+msgstr "പ്രമാണ തരം"
+
+#: .\facilitator\models\member_update_model.py:359
+msgid "Document File"
+msgstr "പ്രമാണ ഫയൽ"
+
+#: .\facilitator\models\member_update_model.py:363
+msgid "Original Filename"
+msgstr "യഥാർത്ഥ ഫയൽ നാമം"
+
+#: .\facilitator\models\member_update_model.py:366
+msgid "File Size (bytes)"
+msgstr "ഫയൽ വലുപ്പം (ബൈറ്റുകൾ)"
+
+#: .\facilitator\models\member_update_model.py:368
+msgid "Content Type"
+msgstr "ഉള്ളടക്ക തരം"
+
+#: .\facilitator\models\member_update_model.py:373
+msgid "Update Request Document"
+msgstr "അഭ്യർത്ഥന പ്രമാണം അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:374
+msgid "Update Request Documents"
+msgstr "അഭ്യർത്ഥന പ്രമാണങ്ങൾ അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:386
+msgid "File size cannot exceed 10MB."
+msgstr "ഫയൽ വലുപ്പം 10MB കവിയാൻ കഴിയില്ല."
+
+#: .\facilitator\models\member_update_model.py:391
+msgid "Only PDF and image files are allowed."
+msgstr "PDF, ഇമേജ് ഫയലുകൾ മാത്രമേ അനുവദിക്കൂ."
+
+#: .\facilitator\models\member_update_model.py:404
+msgid "Change Type"
+msgstr "മാറ്റുക തരം"
+
+#: .\facilitator\models\member_update_model.py:416
+msgid "Changed By"
+msgstr "മാറ്റി"
+
+#: .\facilitator\models\member_update_model.py:420
+msgid "Change Reason"
+msgstr "കാരണം മാറ്റുക"
+
+#: .\facilitator\models\member_update_model.py:424
+msgid "IP Address"
+msgstr "ഐപി വിലാസം"
+
+#: .\facilitator\models\member_update_model.py:427
+msgid "User Agent"
+msgstr "ഉപയോക്തൃ ഏജന്റ്"
+
+#: .\facilitator\models\member_update_model.py:430
+msgid "Additional Metadata"
+msgstr "അധിക മെറ്റാഡാറ്റ"
+
+#: .\facilitator\models\member_update_model.py:434
+msgid "Update Request History"
+msgstr "അഭ്യർത്ഥന ചരിത്രം അപ്ഡേറ്റ് ചെയ്യുക"
+
+#: .\facilitator\models\member_update_model.py:435
+msgid "Update Request Histories"
+msgstr "അഭ്യർത്ഥന ചരിത്രങ്ങൾ അപ്ഡേറ്റുചെയ്യുക"
+
+#: .\facilitator\models\user_profile_model.py:12
+msgid "Support"
+msgstr "പിന്താങ്ങുക"
+
+#: .\facilitator\models\user_profile_model.py:13
+msgid "IT"
+msgstr "അത്"
+
+#: .\facilitator\models\user_profile_model.py:14
+msgid "PIB"
+msgstr "പിഐബി"
+
+#: .\facilitator\models\user_profile_model.py:15
+msgid "Sales"
+msgstr "വില്പ്പന"
+
+#: .\facilitator\models\user_profile_model.py:16
+msgid "Human Resources"
+msgstr "ഹ്യൂമൻ റിസോഴ്സസ്"
+
+#: .\facilitator\models\user_profile_model.py:17
+msgid "Engineering"
+msgstr "എഞ്ചിനീയറിംഗ്"
+
+#: .\facilitator\models\user_profile_model.py:18
+msgid "Administration"
+msgstr "ഭരണം"
+
+#: .\facilitator\models\user_profile_model.py:25
+msgid "The user to whom this profile belongs."
+msgstr "ഈ പ്രൊഫൈൽ ആർക്കാണ്."
+
+#: .\facilitator\models\user_profile_model.py:32
+msgid "Department"
+msgstr "വകുപ്പ്"
+
+#: .\facilitator\models\user_profile_model.py:33
+msgid "Department or team of the user."
+msgstr "വകുപ്പ് അല്ലെങ്കിൽ ഉപയോക്താവിന്റെ ടീം."
+
+#: .\facilitator\models\user_profile_model.py:39
+msgid "Avatar"
+msgstr "അവപ്പെടുത്തല്"
+
+#: .\facilitator\models\user_profile_model.py:40
+msgid "User profile picture."
+msgstr "ഉപയോക്തൃ പ്രൊഫൈൽ ചിത്രം."
+
+#: .\facilitator\models\user_profile_model.py:46 .\member\models.py:19
+msgid "Phone Number"
+msgstr "ഫോൺ നമ്പർ"
+
+#: .\facilitator\models\user_profile_model.py:47
+msgid "Contact number of the user."
+msgstr "ഉപയോക്താവിന്റെ കോൺടാക്റ്റ് നമ്പർ."
+
+#: .\facilitator\models\user_profile_model.py:52
+#: .\veterinary\models\case_models.py:82
+#: .\veterinary\models\stock_models.py:34
+msgid "Address"
+msgstr "അഭിസംബോധന ചെയ്യുക"
+
+#: .\facilitator\models\user_profile_model.py:53
+msgid "Residential or official address."
+msgstr "റെസിഡൻഷ്യൽ അല്ലെങ്കിൽ official ദ്യോഗിക വിലാസം."
+
+#: .\facilitator\models\user_profile_model.py:59
+msgid "Designation"
+msgstr "പദവി"
+
+#: .\facilitator\models\user_profile_model.py:60
+msgid "Official designation or title."
+msgstr "Official ദ്യോഗിക പദവി അല്ലെങ്കിൽ ശീർഷകം."
+
+#: .\facilitator\models\user_profile_model.py:64
+msgid "Verified"
+msgstr "സ്ഥിരീകരിച്ചു"
+
+#: .\facilitator\models\user_profile_model.py:65
+msgid "Indicates whether the user's profile is verified."
+msgstr "ഉപയോക്താവിന്റെ പ്രൊഫൈൽ പരിശോധിച്ചിട്ടുണ്ടോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\user_profile_model.py:69
+msgid "Email Verified"
+msgstr "ഇമെയിൽ പരിശോധിച്ചു"
+
+#: .\facilitator\models\user_profile_model.py:70
+msgid "Indicates whether the user's email is verified."
+msgstr "ഉപയോക്താവിന്റെ ഇമെയിൽ പരിശോധിച്ചുവെന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\user_profile_model.py:93
+msgid "User Profile"
+msgstr "ഉപയോക്തൃ പ്രൊഫൈൽ"
+
+#: .\facilitator\models\user_profile_model.py:94
+msgid "User Profiles"
+msgstr "ഉപയോക്തൃ പ്രൊഫൈലുകൾ"
+
+#: .\facilitator\models\vcg_model.py:26
+msgid "Member related to  mpp"
+msgstr "എംപിപിയുമായി ബന്ധപ്പെട്ട അംഗം"
+
+#: .\facilitator\models\vcg_model.py:32
+msgid "Mpp Code"
+msgstr "എംപിപി കോഡ്"
+
+#: .\facilitator\models\vcg_model.py:33
+msgid "Unique mpp code."
+msgstr "അദ്വിതീയ എംപിപി കോഡ്."
+
+#: .\facilitator\models\vcg_model.py:40
+msgid "WhatsApp Number"
+msgstr "വാട്ട്സ്ആപ്പ് നമ്പർ"
+
+#: .\facilitator\models\vcg_model.py:41
+msgid "Member's WhatsApp contact number."
+msgstr "അംഗത്തിന്റെ വാട്ട്സ്ആപ്പ് കോൺടാക്റ്റ് നമ്പർ."
+
+#: .\facilitator\models\vcg_model.py:49 .\facilitator\models\vcg_model.py:57
+#: .\facilitator\models\vcg_model.py:446 .\facilitator\models\vcg_model.py:454
+#: .\facilitator\models\vcg_model.py:487
+msgid "Unique identifier for the VCG member."
+msgstr "വിസിജി അംഗത്തിന്റെ അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\facilitator\models\vcg_model.py:64 .\facilitator\models\vcg_model.py:461
+#: .\facilitator\models\vcg_model.py:501
+msgid "Full name of the VCG member."
+msgstr "വിസിജി അംഗത്തിന്റെ മുഴുവൻ പേര്."
+
+#: .\facilitator\models\vcg_model.py:70
+msgid "Timestamp when the member was added."
+msgstr "അംഗം ചേർത്തപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:75
+msgid "Timestamp when the member record was last updated."
+msgstr "അംഗം റെക്കോർഡ് അവസാനമായി അപ്ഡേറ്റ് ചെയ്തപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:83
+msgid "VCG Group"
+msgstr "Vcg ഗ്രൂപ്പ്"
+
+#: .\facilitator\models\vcg_model.py:84
+msgid "VCG Groups"
+msgstr "Vcg ഗ്രൂപ്പുകൾ"
+
+#: .\facilitator\models\vcg_model.py:102
+msgid "Started"
+msgstr "തുടങ്ങി"
+
+#: .\facilitator\models\vcg_model.py:103 .\veterinary\choices\choices.py:145
+#: .\veterinary\choices\choices.py:166
+msgid "Completed"
+msgstr "പൂർത്തിയായ"
+
+#: .\facilitator\models\vcg_model.py:111
+msgid "Unique identifier for the meeting."
+msgstr "മീറ്റിംഗിനായുള്ള അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\facilitator\models\vcg_model.py:120
+msgid "User who initiated the meeting."
+msgstr "യോഗത്തിന് തുടക്കമിട്ട ഉപയോക്താവ്."
+
+#: .\facilitator\models\vcg_model.py:129 .\facilitator\models\vcg_model.py:526
+msgid "Name of the MPP associated with the meeting."
+msgstr "മീറ്റിംഗുമായി ബന്ധപ്പെട്ട എംപിപിയുടെ പേര്."
+
+#: .\facilitator\models\vcg_model.py:136 .\facilitator\models\vcg_model.py:531
+msgid "MPP EX Code"
+msgstr "എംപിപി എക്സ് കോഡ്"
+
+#: .\facilitator\models\vcg_model.py:137 .\facilitator\models\vcg_model.py:532
+msgid "External MPP Code for reference."
+msgstr "റഫറൻസിനായി ബാഹ്യ എംപിപി കോഡ്."
+
+#: .\facilitator\models\vcg_model.py:144 .\facilitator\models\vcg_model.py:537
+msgid "Unique MPP code assigned."
+msgstr "അദ്വിതീയ എംപിപി കോഡ് നിയുക്തമാക്കി."
+
+#: .\facilitator\models\vcg_model.py:151
+#: .\veterinary\models\stock_models.py:59
+msgid "Latitude"
+msgstr "വാപ്തി"
+
+#: .\facilitator\models\vcg_model.py:152
+msgid "Geographical latitude of the meeting location."
+msgstr "മീറ്റിംഗ് ലൊക്കേഷന്റെ ഭൂമിശാസ്ത്രപരമായ അക്ഷാംശം."
+
+#: .\facilitator\models\vcg_model.py:158
+#: .\veterinary\models\stock_models.py:68
+msgid "Longitude"
+msgstr "ദേശാന്തരരേഖ"
+
+#: .\facilitator\models\vcg_model.py:159
+msgid "Geographical longitude of the meeting location."
+msgstr "മീറ്റിംഗ് ലൊക്കേഷന്റെ ഭൂമിശാസ്ത്രപരമായ രേഖാംശം."
+
+#: .\facilitator\models\vcg_model.py:165
+msgid "Started At"
+msgstr "ആരംഭിച്ചു"
+
+#: .\facilitator\models\vcg_model.py:166
+msgid "Timestamp when the meeting started."
+msgstr "മീറ്റിംഗ് ആരംഭിച്ചപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:171
+msgid "Completed At"
+msgstr "പൂർത്തിയാക്കി"
+
+#: .\facilitator\models\vcg_model.py:172
+msgid "Timestamp when the meeting was completed."
+msgstr "മീറ്റിംഗ് പൂർത്തിയാകുമ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:179
+msgid "Meeting Status"
+msgstr "മീറ്റിംഗ് നില"
+
+#: .\facilitator\models\vcg_model.py:180
+msgid "Current status of the meeting."
+msgstr "മീറ്റിംഗിന്റെ നിലവിലെ നില."
+
+#: .\facilitator\models\vcg_model.py:184
+#: .\veterinary\models\common_models.py:52
+msgid "Synced"
+msgstr "സമന്വയവും"
+
+#: .\facilitator\models\vcg_model.py:185
+msgid "Indicated whether data is synced from mobile app or not."
+msgstr ""
+"ഡാറ്റ മൊബൈൽ അപ്ലിക്കേഷനിൽ നിന്നും ഇല്ലയോ എന്ന് സൂചിപ്പിച്ചിരിക്കുന്നു."
+
+#: .\facilitator\models\vcg_model.py:189
+msgid "deleted"
+msgstr "ഇല്ലാതാക്കപ്പെട്ടു"
+
+#: .\facilitator\models\vcg_model.py:190
+msgid "Indicated whether data is deleted or not."
+msgstr "ഡാറ്റ ഇല്ലാതാക്കണോ വേണ്ടയോ എന്ന് സൂചിപ്പിച്ചു."
+
+#: .\facilitator\models\vcg_model.py:210
+msgid "VCG Meeting"
+msgstr "വിസിജി യോഗം"
+
+#: .\facilitator\models\vcg_model.py:211
+msgid "VCG Meetings"
+msgstr "വിസിജി മീറ്റിംഗുകൾ"
+
+#: .\facilitator\models\vcg_model.py:245
+msgid "Present"
+msgstr "സമ്മാനിക്കുക"
+
+#: .\facilitator\models\vcg_model.py:246
+msgid "Absent"
+msgstr "ഹാജരില്ലാത്ത"
+
+#: .\facilitator\models\vcg_model.py:255 .\facilitator\models\vcg_model.py:321
+msgid "Meeting"
+msgstr "കണ്ടുമുട്ടല്"
+
+#: .\facilitator\models\vcg_model.py:256
+msgid "The meeting to which this attendance record belongs."
+msgstr "ഈ ഹാജർ റെക്കോർഡിന്റേതായ യോഗം."
+
+#: .\facilitator\models\vcg_model.py:265
+msgid "Group Member"
+msgstr "ഗ്രൂപ്പ് അംഗം"
+
+#: .\facilitator\models\vcg_model.py:266
+msgid "The VCG member attending the meeting."
+msgstr "യോഗത്തിൽ പങ്കെടുക്കുന്ന VCG അംഗം."
+
+#: .\facilitator\models\vcg_model.py:273
+msgid "Attendance Status"
+msgstr "ഹാജർ നില"
+
+#: .\facilitator\models\vcg_model.py:274
+msgid "Indicates whether the member was present or absent."
+msgstr "അംഗം നിലവിലുണ്ടോ ഇല്ലയോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\facilitator\models\vcg_model.py:279
+msgid "Attendance Date"
+msgstr "ഹാജർ തീയതി"
+
+#: .\facilitator\models\vcg_model.py:280
+msgid "Timestamp of when the attendance was recorded."
+msgstr "ഹാജർ രേഖപ്പെടുത്തിയപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:286
+msgid "Timestamp of when this record was created."
+msgstr "ഈ റെക്കോർഡ് സൃഷ്ടിച്ചപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:292 .\facilitator\models\vcg_model.py:340
+msgid "Timestamp of the last update to this record."
+msgstr "ഈ റെക്കോർഡിലേക്കുള്ള അവസാന അപ്ഡേറ്റിന്റെ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:300
+msgid "VCG Member Attendance"
+msgstr "Vcg അംഗം ഹാജർ"
+
+#: .\facilitator\models\vcg_model.py:301
+msgid "VCG Member Attendances"
+msgstr "വിസിജി അംഗ ഹാജർ"
+
+#: .\facilitator\models\vcg_model.py:322
+msgid "The meeting associated with this image."
+msgstr "ഈ ചിത്രവുമായി ബന്ധപ്പെട്ട മീറ്റിംഗ്."
+
+#: .\facilitator\models\vcg_model.py:327
+msgid "Meeting Image"
+msgstr "മീറ്റിംഗ് ചിത്രം"
+
+#: .\facilitator\models\vcg_model.py:328
+msgid "Upload an image related to the meeting."
+msgstr "മീറ്റിംഗുമായി ബന്ധപ്പെട്ട ഒരു ചിത്രം അപ്ലോഡുചെയ്യുക."
+
+#: .\facilitator\models\vcg_model.py:334
+msgid "Timestamp of when this image was uploaded."
+msgstr "ഈ ചിത്രം അപ്ലോഡുചെയ്തപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:364
+msgid "VCG Meeting Image"
+msgstr "Vcg മീറ്റിംഗ് ചിത്രം"
+
+#: .\facilitator\models\vcg_model.py:365
+msgid "VCG Meeting Images"
+msgstr "വിസിജി മീറ്റിംഗ് ഇമേജുകൾ"
+
+#: .\facilitator\models\vcg_model.py:377 .\facilitator\models\vcg_model.py:410
+msgid "Reason"
+msgstr "കാരണം"
+
+#: .\facilitator\models\vcg_model.py:378
+msgid "Reason for zero days pouring."
+msgstr "പൂജ്യം ദിവസങ്ങളുടെ കാരണം ഒഴുകുന്നു."
+
+#: .\facilitator\models\vcg_model.py:384 .\facilitator\models\vcg_model.py:417
+msgid "Timestamp when this reason was added."
+msgstr "ഈ കാരണം ചേർത്തപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:390 .\facilitator\models\vcg_model.py:423
+msgid "Timestamp when this reason was last updated."
+msgstr "ഈ കാരണം അവസാനമായി അപ്ഡേറ്റ് ചെയ്തപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\facilitator\models\vcg_model.py:398
+msgid "Zero Days Pouring Reason"
+msgstr "യുക്തി ഒഴിക്കുക"
+
+#: .\facilitator\models\vcg_model.py:399
+msgid "Zero Days Pouring Reasons"
+msgstr "പൂജ്യം ദിവസങ്ങൾ പകർന്നു"
+
+#: .\facilitator\models\vcg_model.py:411
+msgid "Reason for a member complaint."
+msgstr "ഒരു അംഗ പരാതിയുടെ കാരണം."
+
+#: .\facilitator\models\vcg_model.py:431
+msgid "Member Complaint Reason"
+msgstr "അംഗ പരാതി കാരണം"
+
+#: .\facilitator\models\vcg_model.py:432
+msgid "Member Complaint Reasons"
+msgstr "അംഗ പരാതി കാരണങ്ങൾ"
+
+#: .\facilitator\models\vcg_model.py:493
+msgid "Member External Code"
+msgstr "അംഗം അത്തേത്"
+
+#: .\facilitator\models\vcg_model.py:494
+msgid "External identifier for the VCG member."
+msgstr "വിസിജി അംഗത്തിന്റെ ബാഹ്യ ഐഡന്റിഫയർ."
+
+#: .\facilitator\models\vcg_model.py:541 .\member\models.py:92
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:109
+msgid "Month"
+msgstr "മാസം"
+
+#: .\facilitator\models\vcg_model.py:542
+msgid "The month for which the assignment is created."
+msgstr "അസൈൻമെന്റ് സൃഷ്ടിച്ച മാസം."
+
+#: .\facilitator\models\vcg_model.py:548
+msgid "Milk Collection (Liters/Day)"
+msgstr "പാൽ ശേഖരണം (ലിറ്റർ / ദിവസം)"
+
+#: .\facilitator\models\vcg_model.py:549
+msgid "Total milk collected per day in liters."
+msgstr "ലിറ്ററിൽ പ്രതിദിനം ശേഖരിച്ച ആകെ പാൽ."
+
+#: .\facilitator\models\vcg_model.py:552
+msgid "No of Members"
+msgstr "അംഗങ്ങളുടെ എണ്ണം"
+
+#: .\facilitator\models\vcg_model.py:555
+msgid ">=15 Days Pourers"
+msgstr "> = 15 ദിവസം കളറുകൾ"
+
+#: .\facilitator\models\vcg_model.py:558
+msgid ">=25 Days Pourers"
+msgstr "> = 25 ദിവസം കളറുകൾ"
+
+#: .\facilitator\models\vcg_model.py:561
+msgid "Zero Days Pourers"
+msgstr "പൂജ്യം ദിവസത്തെ ഒഴിക്കുക"
+
+#: .\facilitator\models\vcg_model.py:566
+msgid "Cattle Feed Sale (KG)"
+msgstr "കന്നുകാലി തീറ്റ വിൽപ്പന (കെജി)"
+
+#: .\facilitator\models\vcg_model.py:571
+msgid "Mineral Mixture Sale (KG)"
+msgstr "ധാതു മിശ്രിതം വിൽപ്പന (കിലോ)"
+
+#: .\facilitator\models\vcg_model.py:576
+msgid "Sahayak Recovery (%)"
+msgstr "സഹയാക് വീണ്ടെടുക്കൽ (%)"
+
+#: .\facilitator\models\vcg_model.py:586
+msgid "Month Assignment"
+msgstr "മാസ അസൈൻമെന്റ്"
+
+#: .\facilitator\models\vcg_model.py:587
+msgid "Month Assignments"
+msgstr "മാസ അസൈൻമെന്റുകൾ"
+
+#: .\facilitator\views\auth.py:27
+msgid "Phone number is required."
+msgstr "ഫോൺ നമ്പർ ആവശ്യമാണ്."
+
+#: .\facilitator\views\auth.py:35
+msgid "User does not exist. Please contact support."
+msgstr "ഉപയോക്താവ് നിലവിലില്ല. പിന്തുണയുമായി ബന്ധപ്പെടുക."
+
+#: .\facilitator\views\auth.py:51
+msgid "Failed to send OTP. Please try again later."
+msgstr "OTP അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
+
+#: .\facilitator\views\auth.py:58 .\facilitator\views\views.py:886
+msgid "OTP sent successfully."
+msgstr "OTP വിജയകരമായി അയച്ചു."
+
+#: .\facilitator\views\auth.py:196
+msgid "Refresh token is required"
+msgstr "ടോക്കൺ ആവശ്യമാണ്"
+
+#: .\facilitator\views\auth.py:204
+msgid "Logout successful"
+msgstr "ലോഗൗട്ട് വിജയകരമാണ്"
+
+#: .\facilitator\views\auth.py:210
+msgid "Invalid refresh token or already blacklisted"
+msgstr "അസാധുവായ പുതുക്കൽ ടോക്കൺ അല്ലെങ്കിൽ ഇതിനകം കരിമ്പട്ടികയിൽ പെടുന്നു"
+
+#: .\facilitator\views\member_update_view.py:99
+msgid "Update request created successfully"
+msgstr "അപ്ഡേറ്റ് അഭ്യർത്ഥന വിജയകരമായി സൃഷ്ടിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:106
+#: .\facilitator\views\member_update_view.py:189
+msgid "Validation failed"
+msgstr "മൂല്യനിർണ്ണയം പരാജയപ്പെട്ടു"
+
+#: .\facilitator\views\member_update_view.py:113
+#: .\facilitator\views\member_update_view.py:120
+msgid "An error occurred while creating the request"
+msgstr "അഭ്യർത്ഥന സൃഷ്ടിക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:133
+msgid "Request retrieved successfully"
+msgstr "അഭ്യർത്ഥന വിജയകരമായി വീണ്ടെടുത്തു"
+
+#: .\facilitator\views\member_update_view.py:140
+#: .\facilitator\views\member_update_view.py:196
+#: .\facilitator\views\member_update_view.py:240
+msgid "Request not found"
+msgstr "അഭ്യർത്ഥന കണ്ടെത്തിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:146
+msgid "An error occurred while retrieving the request"
+msgstr "അഭ്യർത്ഥന വീണ്ടെടുക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:161
+msgid "You don't have permission to update this request"
+msgstr "ഈ അഭ്യർത്ഥന അപ്ഡേറ്റ് ചെയ്യാൻ നിങ്ങൾക്ക് അനുമതിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:170
+msgid "Cannot update a request that has already been processed"
+msgstr "ഇതിനകം പ്രോസസ്സ് ചെയ്ത ഒരു അഭ്യർത്ഥന അപ്ഡേറ്റ് ചെയ്യാൻ കഴിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:182
+msgid "Request updated successfully"
+msgstr "അഭ്യർത്ഥന വിജയകരമായി അപ്ഡേറ്റുചെയ്തു"
+
+#: .\facilitator\views\member_update_view.py:202
+msgid "An error occurred while updating the request"
+msgstr "അഭ്യർത്ഥന അപ്ഡേറ്റ് ചെയ്യുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:216
+msgid "You don't have permission to delete this request"
+msgstr "ഈ അഭ്യർത്ഥന ഇല്ലാതാക്കാൻ നിങ്ങൾക്ക് അനുമതിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:225
+msgid "Cannot delete a request that has already been processed"
+msgstr "ഇതിനകം പ്രോസസ്സ് ചെയ്ത ഒരു അഭ്യർത്ഥന ഇല്ലാതാക്കാൻ കഴിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:234
+msgid "Request deleted successfully"
+msgstr "അഭ്യർത്ഥന വിജയകരമായി ഇല്ലാതാക്കി"
+
+#: .\facilitator\views\member_update_view.py:246
+msgid "An error occurred while deleting the request"
+msgstr "അഭ്യർത്ഥന ഇല്ലാതാക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:261
+msgid "You don't have permission to approve requests"
+msgstr "അഭ്യർത്ഥനകൾ അംഗീകരിക്കാൻ നിങ്ങൾക്ക് അനുമതിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:269
+msgid "Only pending requests can be approved"
+msgstr "തീർച്ചപ്പെടുത്തിയിട്ടില്ലാത്ത അഭ്യർത്ഥനകൾ മാത്രം അംഗീകരിക്കാൻ കഴിയും"
+
+#: .\facilitator\views\member_update_view.py:283
+msgid "Request approved successfully"
+msgstr "അഭ്യർത്ഥന വിജയകരമായി അംഗീകരിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:290
+msgid "An error occurred while approving the request"
+msgstr "അഭ്യർത്ഥന അംഗീകരിക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:305
+msgid "You don't have permission to reject requests"
+msgstr "അഭ്യർത്ഥനകൾ നിരസിക്കാൻ നിങ്ങൾക്ക് അനുമതിയില്ല"
+
+#: .\facilitator\views\member_update_view.py:313
+msgid "Only pending requests can be rejected"
+msgstr "തീർച്ചപ്പെടുത്തിയിട്ടില്ലാത്ത അഭ്യർത്ഥനകൾ മാത്രം നിരസിക്കാൻ കഴിയും"
+
+#: .\facilitator\views\member_update_view.py:322
+msgid "Rejection reason is required"
+msgstr "നിരസിക്കൽ കാരണം ആവശ്യമാണ്"
+
+#: .\facilitator\views\member_update_view.py:323
+msgid "This field is required"
+msgstr "ഈ ഫീൽഡ് പൂരിപ്പിക്കേണ്ടതുണ്ട്"
+
+#: .\facilitator\views\member_update_view.py:338
+msgid "Request rejected successfully"
+msgstr "അഭ്യർത്ഥന വിജയകരമായി നിരസിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:345
+msgid "An error occurred while rejecting the request"
+msgstr "അഭ്യർത്ഥന നിരസിക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\member_update_view.py:379
+msgid "Statistics retrieved successfully"
+msgstr "സ്ഥിതിവിവരക്കണക്കുകൾ വിജയകരമായി വീണ്ടെടുത്തു"
+
+#: .\facilitator\views\member_update_view.py:386
+msgid "An error occurred while retrieving statistics"
+msgstr "സ്ഥിതിവിവരക്കണക്കുകൾ വീണ്ടെടുക്കുമ്പോൾ ഒരു പിശക് സംഭവിച്ചു"
+
+#: .\facilitator\views\vcg_api_views.py:953
+msgid "A meeting with the same details already exists."
+msgstr "സമാന വിശദാംശങ്ങളുള്ള ഒരു മീറ്റിംഗ് ഇതിനകം നിലവിലുണ്ട്."
+
+#: .\facilitator\views\vcg_api_views.py:965
+msgid "Your meeting has started"
+msgstr "നിങ്ങളുടെ മീറ്റിംഗ് ആരംഭിച്ചു"
+
+#: .\facilitator\views\vcg_api_views.py:974
+#: .\facilitator\views\vcg_api_views.py:1006
+#: .\facilitator\views\vcg_api_views.py:1050
+#: .\facilitator\views\vcg_api_views.py:1067
+msgid "Invalid data"
+msgstr "അസാധുവായ ഡാറ്റ"
+
+#: .\facilitator\views\vcg_api_views.py:997
+msgid "Meeting updated successfully"
+msgstr "മീറ്റിംഗ് വിജയകരമായി അപ്ഡേറ്റുചെയ്തു"
+
+#: .\facilitator\views\vcg_api_views.py:1044
+msgid "VCG Member created successfully"
+msgstr "Vcg അംഗം വിജയകരമായി സൃഷ്ടിച്ചു"
+
+#: .\facilitator\views\vcg_api_views.py:1061
+msgid "VCG Member updated successfully"
+msgstr "Vcg അംഗം വിജയകരമായി അപ്ഡേറ്റുചെയ്തു"
+
+#: .\facilitator\views\vcg_api_views.py:1075
+msgid "VCG Member deleted successfully"
+msgstr "Vcg അംഗം വിജയകരമായി ഇല്ലാതാക്കി"
+
+#: .\facilitator\views\views.py:837
+msgid "All fields are required."
+msgstr "എല്ലാ ഫീൽഡുകളും ആവശ്യമാണ്."
+
+#: .\facilitator\views\views.py:843
+msgid "Passwords do not match."
+msgstr "പാസ്വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല."
+
+#: .\facilitator\views\views.py:849
+msgid "Old password is incorrect."
+msgstr "പഴയ പാസ്വേഡ് തെറ്റാണ്."
+
+#: .\facilitator\views\views.py:865
+msgid "Password changed successfully."
+msgstr "പാസ്വേഡ് വിജയകരമായി മാറ്റി."
+
+#: .\facilitator\views\views.py:874
+msgid "Username is required"
+msgstr "ഉപയോക്തൃനാമം ആവശ്യമാണ്"
+
+#: .\facilitator\views\views.py:881 .\facilitator\views\views.py:910
+msgid "User not found"
+msgstr "ഉപയോക്താവ് കണ്ടെത്തിയില്ല"
+
+#: .\facilitator\views\views.py:897
+msgid "All fields are required"
+msgstr "എല്ലാ ഫീൽഡുകളും ആവശ്യമാണ്"
+
+#: .\facilitator\views\views.py:903
+msgid "Invalid or expired OTP"
+msgstr "അസാധുവാണ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ട OTP"
+
+#: .\facilitator\views\views.py:916
+msgid "Password reset successfully."
+msgstr "പാസ്വേഡ് വിജയകരമായി പുന reset സജ്ജമാക്കൽ."
+
+#: .\feedback\models\feedback_model.py:12
+msgid "Open"
+msgstr "തുറക്കുക"
+
+#: .\feedback\models\feedback_model.py:13
+msgid "Assigned"
+msgstr "നിയുക്തമാക്കി"
+
+#: .\feedback\models\feedback_model.py:14
+msgid "In Progress"
+msgstr "പുരോഗതിയിൽ"
+
+#: .\feedback\models\feedback_model.py:15
+msgid "Resolved"
+msgstr "തീരുമാനിച്ചു"
+
+#: .\feedback\models\feedback_model.py:16
+msgid "Closed"
+msgstr "അടച്ച"
+
+#: .\feedback\models\feedback_model.py:17
+msgid "Reopened"
+msgstr "വീണ്ടും തുറന്നു"
+
+#: .\feedback\models\feedback_model.py:24
+msgid "Low"
+msgstr "താണനിലയില്"
+
+#: .\feedback\models\feedback_model.py:25
+msgid "Medium"
+msgstr "മധസ്ഥാനം"
+
+#: .\feedback\models\feedback_model.py:26
+msgid "High"
+msgstr "ഉയര്ന്ന"
+
+#: .\feedback\models\feedback_model.py:27 .\veterinary\choices\choices.py:160
+msgid "Critical"
+msgstr "വിമര്ശിക്കുന്ന"
+
+#: .\feedback\models\feedback_model.py:61
+msgid "Feedback ID"
+msgstr "ഫീഡ്ബാക്ക് ഐഡി"
+
+#: .\feedback\models\feedback_model.py:62
+msgid "Unique identifier for this feedback entry. Auto-generated."
+msgstr "ഈ ഫീഡ്ബാക്ക് എൻട്രിയുടെ അദ്വിതീയ ഐഡന്റിഫയർ. യാന്ത്രികമായി സൃഷ്ടിച്ചു."
+
+#: .\feedback\models\feedback_model.py:69 .\notifications\models.py:37
+msgid "Sender"
+msgstr "അയച്ചാൽ"
+
+#: .\feedback\models\feedback_model.py:70
+msgid "User who submitted the feedback."
+msgstr "ഫീഡ്ബാക്ക് സമർപ്പിച്ച ഉപയോക്താവ്."
+
+#: .\feedback\models\feedback_model.py:79
+msgid "Assigned To"
+msgstr "നിയുക്തമാക്കി"
+
+#: .\feedback\models\feedback_model.py:80
+msgid "User assigned to review or resolve this feedback."
+msgstr ""
+"ഈ ഫീഡ്ബാക്ക് അവലോകനം ചെയ്യുന്നതിനോ പരിഹരിക്കുന്നതിനോ ഉപയോക്താവിനെ "
+"നിയോഗിച്ചു."
+
+#: .\feedback\models\feedback_model.py:86
+msgid "Assigned At"
+msgstr "നിയുക്തമാക്കി"
+
+#: .\feedback\models\feedback_model.py:87
+msgid "Timestamp when the feedback was assigned."
+msgstr "ഫീഡ്ബാക്ക് നൽകിയിരുന്ന ടൈംസ്റ്റാമ്പ്."
+
+#: .\feedback\models\feedback_model.py:95
+msgid "MPP Code related to the feedback. Must be exactly 9 characters."
+msgstr ""
+"ഫീഡ്ബാക്കിൽ ബന്ധപ്പെട്ട എംപിപി കോഡ്. കൃത്യമായി 9 പ്രതീകങ്ങൾ ആയിരിക്കണം."
+
+#: .\feedback\models\feedback_model.py:102 .\member\models.py:81
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:97
+msgid "MCC Code"
+msgstr "മക്കോഡ് കോഡ്"
+
+#: .\feedback\models\feedback_model.py:103
+msgid "Milk Collection Center code linked to this feedback."
+msgstr "ഈ ഫീഡ്ബാക്കിന് ലിങ്കുചെയ്ത പാൽ കളക്ഷൻ സെന്റർ കോഡ്."
+
+#: .\feedback\models\feedback_model.py:111
+msgid "Unique identifier for the member associated with this feedback."
+msgstr "ഈ ഫീഡ്ബാക്കിനൊപ്പം ബന്ധപ്പെട്ട അംഗത്തിന്റെ അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\feedback\models\feedback_model.py:118
+msgid "Member Transaction Code"
+msgstr "അംഗ ഇടപാട് കോഡ്"
+
+#: .\feedback\models\feedback_model.py:119
+msgid "Transaction code related to the member, if applicable."
+msgstr "ബാധകമെങ്കിൽ അംഗവുമായി ബന്ധപ്പെട്ട ഇടപാട് കോഡ്."
+
+#: .\feedback\models\feedback_model.py:135
+msgid "Contact mobile number of the member."
+msgstr "അംഗത്തിന്റെ മൊബൈൽ നമ്പർ ബന്ധപ്പെടുക."
+
+#: .\feedback\models\feedback_model.py:142 .\member\models.py:227
+msgid "Feedback Status"
+msgstr "ഫീഡ്ബാക്ക് നില"
+
+#: .\feedback\models\feedback_model.py:143
+msgid "Current status of the feedback."
+msgstr "ഫീഡ്ബാക്കിന്റെ നിലവിലെ നില."
+
+#: .\feedback\models\feedback_model.py:150
+msgid "Priority"
+msgstr "മുന്ഗണന"
+
+#: .\feedback\models\feedback_model.py:151
+msgid "Priority level of the feedback."
+msgstr "ഫീഡ്ബാക്കിന്റെ മുൻഗണനാ നില."
+
+#: .\feedback\models\feedback_model.py:158
+#: .\veterinary\models\stock_models.py:171
+msgid "Category"
+msgstr "ഇനം"
+
+#: .\feedback\models\feedback_model.py:159
+msgid "Category or type of feedback."
+msgstr "വിഭാഗം അല്ലെങ്കിൽ തരം ഫീഡ്ബാക്ക്."
+
+#: .\feedback\models\feedback_model.py:165
+msgid "Timestamp when the feedback was created."
+msgstr "ഫീഡ്ബാക്ക് സൃഷ്ടിച്ചപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\feedback\models\feedback_model.py:171 .\member\models.py:232
+msgid "Resolved At"
+msgstr "പരിഹരിച്ചു"
+
+#: .\feedback\models\feedback_model.py:172
+msgid "Timestamp when the feedback was marked as resolved."
+msgstr "ഫീഡ്ബാക്ക് പരിഹരിച്ച സമയത്തെ ടൈംസ്റ്റാമ്പ്."
+
+#: .\feedback\models\feedback_model.py:177
+msgid "Progress"
+msgstr "പുരോഗതി"
+
+#: .\feedback\models\feedback_model.py:178
+msgid "Progress of feedback resolution in percentage."
+msgstr "ശതമാനത്തിലെ ഫീഡ്ബാക്ക് റെസല്യൂഷന്റെ പുരോഗതി."
+
+#: .\feedback\models\feedback_model.py:185
+msgid "Rating"
+msgstr "റേറ്റിംഗ്"
+
+#: .\feedback\models\feedback_model.py:186
+msgid "Rating given by the user after feedback resolution."
+msgstr "ഫീഡ്ബാക്ക് റെസല്യൂഷനുശേഷം ഉപയോക്താവ് നൽകിയ റേറ്റിംഗ്."
+
+#: .\feedback\models\feedback_model.py:190
+#: .\veterinary\models\case_models.py:23
+msgid "Last Updated At"
+msgstr "അവസാനം അപ്ഡേറ്റ് ചെയ്തത്"
+
+#: .\feedback\models\feedback_model.py:191
+msgid "Timestamp of the most recent update to the feedback."
+msgstr "ഫീഡ്ബാക്കിലേക്കുള്ള ഏറ്റവും പുതിയ അപ്ഡേറ്റിന്റെ ടൈംസ്റ്റാമ്പ്."
+
+#: .\feedback\models\feedback_model.py:195 .\member\models.py:236
+#: .\notifications\models.py:60
+msgid "Message"
+msgstr "ദൂത്"
+
+#: .\feedback\models\feedback_model.py:196
+msgid "Detailed description or content of the feedback."
+msgstr "വിശദമായ വിവരണം അല്ലെങ്കിൽ ഫീഡ്ബാക്കിന്റെ ഉള്ളടക്കം."
+
+#: .\feedback\models\feedback_model.py:221
+#: .\veterinary\models\common_models.py:47
+msgid "Is Deleted"
+msgstr "ഇല്ലാതാക്കി"
+
+#: .\feedback\models\feedback_model.py:222
+msgid "Indicates whether this feedback is deleted (soft delete)."
+msgstr ""
+"ഈ ഫീഡ്ബാക്ക് ഇല്ലാതാക്കണോ എന്ന് സൂചിപ്പിക്കുന്നു (സോഫ്റ്റ് ഇല്ലാതാക്കുക)."
+
+#: .\feedback\models\feedback_model.py:226
+msgid "Feedback"
+msgstr "ഫീഡ്ബാക്ക്"
+
+#: .\feedback\models\feedback_model.py:227
+msgid "Feedbacks"
+msgstr "ഫീഡ്ബാക്കുകൾ"
+
+#: .\feedback\models\feedback_model.py:243
+msgid "Cannot set resolved time if feedback is not resolved or closed."
+msgstr ""
+"ഫീഡ്ബാക്ക് പരിഹരിക്കുകയോ അടയ്ക്കുകയോ ചെയ്താൽ പരിഹരിച്ച സമയം പരിഹരിക്കാൻ "
+"കഴിയില്ല."
+
+#: .\feedback\models\feedback_model.py:253
+msgid "Assigned to cannot be empty when assigned time is set."
+msgstr "നിയുക്ത സമയം സജ്ജമാക്കുമ്പോൾ നിയുക്തമാക്കാൻ കഴിയില്ല."
+
+#: .\feedback\models\feedback_model.py:294
+#, python-brace-format
+msgid "Invalid status transition from '{self.status}' to '{new_status}'"
+msgstr ""
+"'{Self.status}' ൽ നിന്ന് അസാധുവായ സ്റ്റാറ്റസ് പരിവർത്തനം '{newsstatus}'"
+
+#: .\feedback\models\feedback_model.py:325
+msgid "Previous Status"
+msgstr "മുമ്പത്തെ നില"
+
+#: .\feedback\models\feedback_model.py:327
+msgid "New Status"
+msgstr "പുതിയ പദവി"
+
+#: .\feedback\models\feedback_model.py:328
+msgid "Log Remark"
+msgstr "ലോഗ് ചെയ്യുക"
+
+#: .\member\apps.py:8
+msgid "Kashee Member"
+msgstr "കാശി അംഗം"
+
+#: .\member\models.py:21
+msgid "OTP"
+msgstr "OTP"
+
+#: .\member\models.py:22
+msgid "Created AT"
+msgstr "സൃഷ്ടിച്ചു"
+
+#: .\member\models.py:43
+msgid "User OTP"
+msgstr "ഉപയോക്താവ് OTP"
+
+#: .\member\models.py:44
+msgid "Users' OTPs"
+msgstr "ഉപയോക്താക്കളുടെ OTPS"
+
+#: .\member\models.py:52
+msgid "Device"
+msgstr "ഉപായം"
+
+#: .\member\models.py:57
+msgid "FCM Token"
+msgstr "എഫ്സിഎം ടോക്കൺ"
+
+#: .\member\models.py:59
+msgid "Module Code"
+msgstr "മൊഡ്യൂൾ കോഡ്"
+
+#: .\member\models.py:69
+msgid "User Device"
+msgstr "ഉപയോക്തൃ ഉപകരണം"
+
+#: .\member\models.py:70
+msgid "Users' Devices"
+msgstr "ഉപയോക്താക്കളുടെ ഉപകരണങ്ങൾ"
+
+#: .\member\models.py:84
+msgid "MCC Name"
+msgstr "എംസിസി പേര്"
+
+#: .\member\models.py:93
+msgid "Year"
+msgstr "വര്ഷം"
+
+#: .\member\models.py:94
+msgid "Opening Balance"
+msgstr "ഓപ്പണിംഗ് ബാലൻസ്"
+
+#: .\member\models.py:95
+msgid "Milk Qty"
+msgstr "പാൽ ക്യൂട്ടി"
+
+#: .\member\models.py:96
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:115
+msgid "Milk Incentive"
+msgstr "പാൽ പ്രോത്സാഹനം"
+
+#: .\member\models.py:97
+msgid "TDS(%)"
+msgstr "ടിഡിഎസ് (%)"
+
+#: .\member\models.py:98
+msgid "TDS (AMT)"
+msgstr "ടിഡിഎസ് (amt)"
+
+#: .\member\models.py:99
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:118
+msgid "Other Incentive"
+msgstr "മറ്റ് പ്രോത്സാഹനം"
+
+#: .\member\models.py:101
+msgid "Cattle Feed Incentive"
+msgstr "കന്നുകാലി തീറ്റ പ്രോത്സാഹനം"
+
+#: .\member\models.py:104
+msgid "Mineral Mixture Incentive"
+msgstr "ധാതു മിശ്രിതം പ്രോത്സാഹനം"
+
+#: .\member\models.py:106
+msgid "C.D.A Recovery"
+msgstr "C.D.A വീണ്ടെടുക്കൽ"
+
+#: .\member\models.py:107
+msgid "Asset Recovery"
+msgstr "അസറ്റ് വീണ്ടെടുക്കൽ"
+
+#: .\member\models.py:109
+msgid "Milk Incentive Payable"
+msgstr "പാൽ പ്രോത്സാഹനം അടയ്ക്കേണ്ടതാണ്"
+
+#: .\member\models.py:111
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:121
+msgid "Payable"
+msgstr "കൊടുക്കാവുന്ന"
+
+#: .\member\models.py:112
+msgid "Closing Balance"
+msgstr "അടയ്ക്കൽ ബാലൻസ്"
+
+#: .\member\models.py:114
+msgid "Additional Data"
+msgstr "അധിക ഡാറ്റ"
+
+#: .\member\models.py:117
+msgid "Add additional data to be shown in sahayak recovery"
+msgstr "സഹയാക് റിക്കവറിയിൽ കാണിക്കേണ്ട അധിക ഡാറ്റ ചേർക്കുക"
+
+#: .\member\models.py:126
+msgid "Sahayak Incentive"
+msgstr "സഹയാക് പ്രോത്സാഹനം"
+
+#: .\member\models.py:127
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:45
+msgid "Sahayak Incentives"
+msgstr "സഹയാക് പ്രോത്സാഹനങ്ങൾ"
+
+#: .\member\models.py:138
+msgid "Product Name"
+msgstr "ഉൽപ്പന്ന നാമം"
+
+#: .\member\models.py:139
+msgid "The name of product"
+msgstr "ഉൽപ്പന്നത്തിന്റെ പേര്"
+
+#: .\member\models.py:144
+msgid "Product Price"
+msgstr "ഉൽപ്പന്ന വില"
+
+#: .\member\models.py:145
+msgid "Rate of the product"
+msgstr "ഉൽപ്പന്നത്തിന്റെ നിരക്ക്"
+
+#: .\member\models.py:151
+msgid "Product Image"
+msgstr "ഉൽപ്പന്ന ചിത്രം"
+
+#: .\member\models.py:152
+msgid "Image of the product to display as icon, size should be 100x100"
+msgstr ""
+"ഐക്കൺ ആയി പ്രദർശിപ്പിക്കുന്നതിന് ഉൽപ്പന്നത്തിന്റെ ചിത്രം 100x100 ആയിരിക്കണം"
+
+#: .\member\models.py:158 .\veterinary\models\common_models.py:58
+msgid "Locale"
+msgstr "ഭാഷ"
+
+#: .\member\models.py:159
+msgid "Locale of the product data (e.g., en for English, hi for Hindi)"
+msgstr "ഉൽപ്പന്ന ഡാറ്റയുടെ ലോക്കേൽ (ഉദാ., En ഇംഗ്ലീഷിനായി, ഹിന്ദിക്ക് ഹായ്)"
+
+#: .\member\models.py:166
+msgid "Translated Product Name"
+msgstr "വിവർത്തനം ചെയ്ത ഉൽപ്പന്ന നാമം"
+
+#: .\member\models.py:167
+msgid "Translated name of the product in the selected locale"
+msgstr "തിരഞ്ഞെടുത്ത ലോക്കേലിലെ ഉൽപ്പന്നത്തിന്റെ വിവർത്തനം"
+
+#: .\member\models.py:173
+msgid "Price Description"
+msgstr "വില വിവരണവും"
+
+#: .\member\models.py:174
+msgid "Description of the product price, e.g., price of 1 bag or 1 pill"
+msgstr "ഉൽപ്പന്ന വിലയുടെ വിവരണം, ഉദാ., 1 ബാഗിന്റെ വില അല്ലെങ്കിൽ 1 ഗുളിക"
+
+#: .\member\models.py:189 .\veterinary\models\common_models.py:37
+msgid "Updated By"
+msgstr "അപ്ഡേറ്റുചെയ്തു"
+
+#: .\member\models.py:202
+msgid "Product Rate"
+msgstr "ഉൽപ്പന്ന നിരക്ക്"
+
+#: .\member\models.py:203
+msgid "Product Rates"
+msgstr "ഉൽപ്പന്ന നിരക്കുകൾ"
+
+#: .\member\models.py:235 .\veterinary\models\case_models.py:346
+msgid "Remark"
+msgstr "അഭിപായപ്പെടുക"
+
+#: .\member\models.py:240
+msgid "Files"
+msgstr "ഫയലകൾ"
+
+#: .\member\models.py:279
+msgid "Sahayak Feedback"
+msgstr "സഹയാക് ഫീഡ്ബാക്ക്"
+
+#: .\member\models.py:280
+msgid "Sahayak Feedbacks"
+msgstr "സഹയാക് ഫീഡ്ബാക്കുകൾ"
+
+#: .\member\models.py:299
+msgid "Feedback Log"
+msgstr "ഫീഡ്ബാക്ക് ലോഗ്"
+
+#: .\member\models.py:300
+msgid "Feedback Logs"
+msgstr "ഫീഡ്ബാക്ക് ലോഗുകൾ"
+
+#: .\member\views.py:1088
+msgid ""
+"No valid data to import. Ensure your file has the correct headers or data "
+"for import."
+msgstr ""
+"ഇമ്പോർട്ടുന്നതിന് സാധുവായ ഡാറ്റയൊന്നുമില്ല. നിങ്ങളുടെ ഫയലിന് ശരിയായ "
+"തലക്കെട്ടുകളോ ഇറക്കുമതിക്കായി ഡാറ്റയുണ്ടെന്ന് ഉറപ്പാക്കുക."
+
+#: .\member\views.py:1123
+msgid "Import Sahayak Incentive Preview"
+msgstr "സഹായക് പ്രോത്സാഹന പ്രിവ്യൂ ഇറക്കുമതി ചെയ്യുക"
+
+#: .\member\views.py:1163 .\templates\member\form\confirm_excel_import.html:18
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:56
+msgid "Import"
+msgstr "ഇറക്കുമതിച്ചരക്ക്"
+
+#: .\member\views.py:1347
+msgid "Months retrieved successfully"
+msgstr "മാസങ്ങൾ വിജയകരമായി വീണ്ടെടുത്തു"
+
+#: .\member\views.py:2180
+msgid "Data Retrieved"
+msgstr "ഡാറ്റ വീണ്ടെടുത്തു"
+
+#: .\mpms\apps.py:10
+msgid "MPMS"
+msgstr "എംപിഎംഎസ്"
+
+#: .\notifications\models.py:13
+msgid "Information"
+msgstr "വിവരം"
+
+#: .\notifications\models.py:14
+msgid "Warning"
+msgstr "താക്കീത്"
+
+#: .\notifications\models.py:15
+msgid "Alert"
+msgstr "ജാഗതയുള്ള"
+
+#: .\notifications\models.py:16
+msgid "Success"
+msgstr "പിന്തുടര്ച്ച"
+
+#: .\notifications\models.py:20
+msgid "Sent"
+msgstr "അയച്ചു"
+
+#: .\notifications\models.py:21 .\veterinary\choices\choices.py:167
+msgid "Failed"
+msgstr "പരാജയപ്പെട്ടു"
+
+#: .\notifications\models.py:25 .\veterinary\models\case_models.py:235
+msgid "System"
+msgstr "ഏര്പ്പാട്"
+
+#: .\notifications\models.py:26
+msgid "Firebase Push"
+msgstr "ഫയർബേസ് പുഷ്"
+
+#: .\notifications\models.py:27
+msgid "Email"
+msgstr "ഇമെയിൽ"
+
+#: .\notifications\models.py:38
+msgid "User who triggered the notification."
+msgstr "അറിയിപ്പ് ആവശ്യപ്പെടുന്ന ഉപയോക്താവ്."
+
+#: .\notifications\models.py:44
+msgid "Recipient"
+msgstr "സീകരിക്കുന്നവള്"
+
+#: .\notifications\models.py:45
+msgid "User who will receive the notification."
+msgstr "അറിയിപ്പ് ആർക്കാണ് ലഭിക്കുക."
+
+#: .\notifications\models.py:49
+msgid "Title"
+msgstr "തലക്കെട്ട്"
+
+#: .\notifications\models.py:50
+msgid "Title or heading for the notification."
+msgstr "ശീർഷകം അല്ലെങ്കിൽ അറിയിപ്പിനായി തലക്കെട്ട്."
+
+#: .\notifications\models.py:56
+msgid "Body"
+msgstr "ശരീരം"
+
+#: .\notifications\models.py:57
+msgid "Short summary or preview for the notification."
+msgstr "അറിയിപ്പിനായി ഹ്രസ്വ സംഗ്രഹം അല്ലെങ്കിൽ പ്രിവ്യൂ."
+
+#: .\notifications\models.py:61
+msgid "Detailed notification message to be shown."
+msgstr "കാണിക്കേണ്ട വിശദമായ അറിയിപ്പ് സന്ദേശം."
+
+#: .\notifications\models.py:66
+msgid "Model Type"
+msgstr "മോഡൽ തരം"
+
+#: .\notifications\models.py:68
+msgid ""
+"Name of the model related to this notification, e.g., 'feedback', 'report'."
+msgstr ""
+"ഈ അറിയിപ്പ്, ഉദാ. ',' ഫീഡ്ബാക്ക് ',' റിപ്പോർട്ട് 'എന്നതുമായി ബന്ധപ്പെട്ട "
+"മോഡലിന്റെ പേര്."
+
+#: .\notifications\models.py:72
+msgid "Object ID"
+msgstr "ഒബ്ജക്റ്റ് ഐഡി"
+
+#: .\notifications\models.py:73
+msgid "Primary key of the related model instance."
+msgstr "അനുബന്ധ മോഡൽ ഉദാഹരണത്തിന്റെ പ്രാഥമിക കീ."
+
+#: .\notifications\models.py:77
+msgid "Route"
+msgstr "യാതാമാര്ഗം"
+
+#: .\notifications\models.py:78
+msgid "Frontend route name for redirection."
+msgstr "റീഡയറക്ഷനായി റൂട്ട് നാമം."
+
+#: .\notifications\models.py:84
+msgid "Custom Key"
+msgstr "ഇഷ്ടാനുസൃത കീ"
+
+#: .\notifications\models.py:85
+msgid "Optional key used for grouping or client-side logic."
+msgstr ""
+"ഗ്രൂപ്പിംഗ് അല്ലെങ്കിൽ ക്ലയൻറ്-സൈഡ് ലോജിക്കിന് ഉപയോഗിക്കുന്ന ഓപ്ഷണൽ കീ."
+
+#: .\notifications\models.py:89
+msgid "Is Subroute"
+msgstr "സബ്റൂട്ടറാണ്"
+
+#: .\notifications\models.py:90
+msgid "Indicates if the route is a sub-path or detail view."
+msgstr "റൂട്ട് ഒരു ഉപഭാരം അല്ലെങ്കിൽ വിശദമായ കാഴ്ചയാണെന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\notifications\models.py:96
+msgid "Notification Type"
+msgstr "അറിയിപ്പ് തരം"
+
+#: .\notifications\models.py:97
+msgid "Classifies the type of notification."
+msgstr "അറിയിപ്പ് തരം തരം തിരിക്കുന്നില്ല."
+
+#: .\notifications\models.py:103
+msgid "Sent Via"
+msgstr "വഴി അയച്ചു"
+
+#: .\notifications\models.py:104
+msgid "Medium through which the notification was sent."
+msgstr "അറിയിപ്പ് അയച്ച ഇടത്തരം."
+
+#: .\notifications\models.py:108
+msgid "Is Read"
+msgstr "വായിക്കുന്നു"
+
+#: .\notifications\models.py:109
+msgid "Indicates whether the user has read the notification."
+msgstr "ഉപയോക്താവ് അറിയിപ്പ് വായിച്ചിട്ടുണ്ടോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\notifications\models.py:113
+msgid "Allowed Email"
+msgstr "അനുവദനീയമായ ഇമെയിൽ"
+
+#: .\notifications\models.py:114
+msgid "Used to handle if email notification allowed or not."
+msgstr ""
+"ഇമെയിൽ അറിയിപ്പ് അനുവദനീയമോ ഇല്ലയോ എന്ന് കൈകാര്യം ചെയ്യാൻ ഉപയോഗിക്കുന്നു."
+
+#: .\notifications\models.py:119
+msgid "Read At"
+msgstr "വായിക്കുക"
+
+#: .\notifications\models.py:120
+msgid "Timestamp when the notification was read."
+msgstr "അറിയിപ്പ് വായിച്ചപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\notifications\models.py:125
+msgid "Timestamp when the notification was created."
+msgstr "വിജ്ഞാപനം സൃഷ്ടിച്ചപ്പോൾ ടൈംസ്റ്റാമ്പ്."
+
+#: .\notifications\models.py:129
+msgid "Indicates whether this object has been deleted or not."
+msgstr "ഈ ഒബ്ജക്റ്റ് ഇല്ലാതാക്കണോ വേണ്ടയോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\notifications\models.py:136
+msgid "Delivery Status"
+msgstr "ഡെലിവറി നില"
+
+#: .\notifications\models.py:137
+msgid "Tracks whether the notification was successfully delivered."
+msgstr "വിജ്ഞാപനം വിജയകരമായി കൈമാറിയത് ട്രാക്കുകൾ ചെയ്യുന്നു."
+
+#: .\notifications\models.py:142
+msgid "Delivery Response"
+msgstr "ഡെലിവറി പ്രതികരണം"
+
+#: .\notifications\models.py:143
+msgid "Raw response from the notification delivery system (e.g., FCM)."
+msgstr ""
+"അറിയിപ്പ് ഡെലിവറി സിസ്റ്റത്തിൽ നിന്നുള്ള അസംസ്കൃത പ്രതികരണം (ഉദാ., എഫ്സിഎം)."
+
+#: .\notifications\models.py:148
+msgid "Delivery Attempted At"
+msgstr "ഡെലിവറി ശ്രമിച്ചു"
+
+#: .\notifications\models.py:149
+msgid "Timestamp of the last delivery attempt."
+msgstr "അവസാന ഡെലിവറി ശ്രമത്തിന്റെ ടൈംസ്റ്റാമ്പ്."
+
+#: .\notifications\models.py:153
+msgid "App Notification"
+msgstr "അപ്ലിക്കേഷൻ അറിയിപ്പ്"
+
+#: .\notifications\models.py:154
+msgid "App Notifications"
+msgstr "അപ്ലിക്കേഷൻ അറിയിപ്പുകൾ"
+
+#: .\notifications\views.py:209
+msgid "Unread notification count retrieved successfully."
+msgstr "വായിക്കാത്ത അറിയിപ്പുകളുടെ എണ്ണം വിജയകരമായി വീണ്ടെടുത്തു."
+
+#: .\templates\admin\request_reason_form.html:30
+msgid "Cancel"
+msgstr "റദ്ദാക്കുക"
+
+#: .\templates\member\form\confirm_excel_import.html:42
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+"ഇറക്കുമതി ചെയ്യേണ്ട ഡാറ്റയുടെ പ്രിവ്യൂ ചുവടെയുണ്ട്. ഫലങ്ങളിൽ നിങ്ങൾ "
+"സംതൃപ്തനാണെങ്കിൽ, 'ഇറക്കുമതി സ്ഥിരീകരിക്കുക' ക്ലിക്കുചെയ്യുക"
+
+#: .\templates\member\form\confirm_excel_import.html:45
+msgid "Confirm import"
+msgstr "ഇറക്കുമതി സ്ഥിരീകരിക്കുക"
+
+#: .\templates\member\form\confirm_excel_import.html:53
+#: .\templates\member\form\confirm_excel_import.html:99
+msgid "Errors"
+msgstr "പിശകുകൾ"
+
+#: .\templates\member\form\confirm_excel_import.html:68
+msgid "Line number"
+msgstr "ലൈൻ നമ്പർ"
+
+#: .\templates\member\form\confirm_excel_import.html:86
+msgid "Some rows failed to validate"
+msgstr "ചില വരികൾ സാധൂകരിക്കാൻ പരാജയപ്പെട്ടു"
+
+#: .\templates\member\form\confirm_excel_import.html:89
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+"നിങ്ങളുടെ ഡാറ്റ സാധ്യമാകുന്നിടത്ത് ഈ പിശകുകൾ ശരിയാക്കുക, തുടർന്ന് മുകളിലുള്ള"
+" ഫോം ഉപയോഗിച്ച് ഇത് വീണ്ടും ലോഡുചെയ്യുക."
+
+#: .\templates\member\form\confirm_excel_import.html:96
+msgid "Row"
+msgstr "തുഴയുക"
+
+#: .\templates\member\form\confirm_excel_import.html:126
+msgid "Non field specific"
+msgstr "നോൺ ഫീൽഡ് നിർദ്ദിഷ്ട"
+
+#: .\templates\member\form\confirm_excel_import.html:147
+msgid "Preview"
+msgstr "പിവു"
+
+#: .\templates\member\form\confirm_excel_import.html:162
+msgid "New"
+msgstr "നവീനമായ"
+
+#: .\templates\member\form\confirm_excel_import.html:164
+msgid "Skipped"
+msgstr "കൊള്ളയിട്ടു"
+
+#: .\templates\member\form\confirm_excel_import.html:166
+msgid "Delete"
+msgstr "ഇല്ലാതാക്കുക"
+
+#: .\templates\member\form\confirm_excel_import.html:168
+msgid "Update"
+msgstr "അപ്ഡേയ്ക്കുക"
+
+#: .\templates\member\form\export.html:17
+msgid "Export"
+msgstr "കയറ്റുമതി"
+
+#: .\templates\member\form\export.html:44
+#, python-format
+msgid ""
+"\n"
+"                          Export %(len)s selected item.\n"
+"                          "
+msgid_plural ""
+"\n"
+"                          Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\member\form\export.html:71
+msgid "This exporter will export the following fields: "
+msgstr "ഈ കയറ്റുമതിക്കാരൻ ഇനിപ്പറയുന്ന ഫീൽഡുകൾ കയറ്റുമതി ചെയ്യും:"
+
+#: .\templates\member\form\export.html:105
+msgid "Submit"
+msgstr "കീഴടങ്ങുക"
+
+#: .\templates\member\pages\dashboards\default.html:19
+msgid "ERP :: Dashboard"
+msgstr "ERP :: ഡാഷ്ബോർഡ്"
+
+#: .\templates\member\pages\dashboards\default.html:28
+msgid "Kashee E-Dairy App Installation Report"
+msgstr "കാശി ഇ-ഡയറി അപ്ലിക്കേഷൻ ഇൻസ്റ്റാളേഷൻ റിപ്പോർട്ട്"
+
+#: .\templates\member\pages\dashboards\default.html:63
+msgid "Sahayak Mitra Installed By MCCs"
+msgstr "സഹയാക് മിത്ര എംസിസികൾ സ്ഥാപിച്ചു"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:32
+msgid "Filter"
+msgstr "അരിപ്പ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:33
+#: .\templates\rangefilter\numeric_filter.html:65
+#: .\templates\rangefilter\numeric_filter_4_0.html:61
+msgid "Reset"
+msgstr "പുന .സജ്ജമാക്കുക"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:47
+msgid "Sahayak incentive data"
+msgstr "സഹയാക് പ്രോത്സാഹന ഡാറ്റ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:55
+msgid "Add"
+msgstr "കൂട്ടിച്ചേര്ക്കുക"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:72
+msgid "Choose Action"
+msgstr "പ്രവർത്തനം തിരഞ്ഞെടുക്കുക"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:83
+msgid "Total Rows"
+msgstr "ആകെ വരികൾ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:84
+msgid "Selected Rows"
+msgstr "തിരഞ്ഞെടുത്ത വരികൾ"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:94
+msgid "MCC"
+msgstr "എംസി"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:106
+msgid "Sahayak Name"
+msgstr "സഹയാക്കിന്റെ പേര്"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:112
+msgid "Opening"
+msgstr "ഉദ്ഘാടനം"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:190
+msgid "Import Excel To Populate the Data"
+msgstr "ഡാറ്റ ജനകീയമാക്കാൻ excel ഇറക്കുമതി ചെയ്യുക"
+
+#: .\templates\member\pages\sidebar.html:7
+msgid "ERP Dashboard"
+msgstr "എർപ്പ് ഡാഷ്ബോർഡ്"
+
+#: .\templates\member\pages\sidebar.html:17
+msgid "Dashboard"
+msgstr "ഡാഷ്ബോർഡ്"
+
+#: .\templates\rangefilter\date_filter.html:4
+#, python-format
+msgid "By %(filter_title)s "
+msgstr "% (ഫിൽട്ടർ_റ്റിറ്റ്) s"
+
+#: .\templates\rangefilter\numeric_filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr "% (ഫിൽട്ടർ_റ്റിറ്റ്) s"
+
+#: .\templates\rangefilter\numeric_filter.html:64
+#: .\templates\rangefilter\numeric_filter_4_0.html:60
+msgid "Search"
+msgstr "അനേഷണം"
+
+#: .\templates\registration\logged_out.html:4
+#: .\templates\registration\password_change_done.html:13
+#: .\templates\registration\password_change_form.html:14
+#: .\templates\registration\password_reset_complete.html:6
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_done.html:6
+#: .\templates\registration\password_reset_form.html:7
+msgid "Home"
+msgstr "വീട്"
+
+#: .\templates\registration\logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr "ഇന്ന് വെബ് സൈറ്റ് ഉപയോഗിച്ച് ഗുണനിലവാര സമയം ചെലവഴിച്ചതിന് നന്ദി."
+
+#: .\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr "വീണ്ടും ലോഗിൻ ചെയ്യുക"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Documentation"
+msgstr "ഡോക്യുമെന്റേഷൻ"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Change password"
+msgstr "പാസ്വേഡ് മാറ്റുക"
+
+#: .\templates\registration\password_change_done.html:7
+#: .\templates\registration\password_change_form.html:8
+msgid "Log out"
+msgstr "ലോഗ് out ട്ട് ചെയ്യുക"
+
+#: .\templates\registration\password_change_done.html:14
+#: .\templates\registration\password_change_form.html:15
+msgid "Password change"
+msgstr "പാസ്വേഡ് മാറ്റം"
+
+#: .\templates\registration\password_change_done.html:19
+msgid "Your password was changed."
+msgstr "നിങ്ങളുടെ പാസ്വേഡ് മാറ്റി."
+
+#: .\templates\registration\password_change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\registration\password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new"
+" password twice so we can verify you typed it in correctly."
+msgstr ""
+"സുരക്ഷയ്ക്കായി ദയവായി നിങ്ങളുടെ പഴയ പാസ്വേഡ് നൽകുക, തുടർന്ന് നിങ്ങളുടെ പുതിയ"
+" പാസ്വേഡ് രണ്ടുതവണ നൽകുക, അതുവഴി നിങ്ങൾ അത് ശരിയായി ടൈപ്പുചെയ്തു."
+
+#: .\templates\registration\password_change_form.html:58
+#: .\templates\registration\password_reset_confirm.html:37
+msgid "Change my password"
+msgstr "എന്റെ പാസ്വേഡ് മാറ്റുക"
+
+#: .\templates\registration\password_reset_complete.html:7
+#: .\templates\registration\password_reset_done.html:7
+#: .\templates\registration\password_reset_form.html:8
+msgid "Password reset"
+msgstr "പാസ്വേഡ് പുന .സജ്ജമാക്കുക"
+
+#: .\templates\registration\password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+"നിങ്ങളുടെ പാസ്വേഡ് സജ്ജമാക്കി.  നിങ്ങൾക്ക് മുന്നോട്ട് പോയി ഇപ്പോൾ ലോഗിൻ "
+"ചെയ്യാം."
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Log in"
+msgstr "ലോഗിൻ"
+
+#: .\templates\registration\password_reset_confirm.html:8
+msgid "Password reset confirmation"
+msgstr "പാസ്വേഡ് പുന reset സജ്ജീകരണ സ്ഥിരീകരണം"
+
+#: .\templates\registration\password_reset_confirm.html:16
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"നിങ്ങളുടെ പുതിയ പാസ്വേഡ് രണ്ടുതവണ നൽകുക, അതുവഴി നിങ്ങൾ അത് ശരിയായി "
+"ടൈപ്പുചെയ്തുവെന്ന് പരിശോധിക്കാൻ കഴിയും."
+
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "New password:"
+msgstr "പുതിയ പാസ്വേഡ്:"
+
+#: .\templates\registration\password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr "പാസ്വേഡ് സ്ഥിരീകരിക്കുക:"
+
+#: .\templates\registration\password_reset_confirm.html:43
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"പാസ്വേഡ് പുന reset സജ്ജമാക്കൽ ലിങ്ക് അസാധുവായിരുന്നു, കാരണം അത് ഇതിനകം "
+"ഉപയോഗിച്ചു.  ഒരു പുതിയ പാസ്വേഡ് പുന .സജ്ജമാക്കുക."
+
+#: .\templates\registration\password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"നിങ്ങളുടെ പാസ്വേഡ് സജ്ജീകരിക്കുന്നതിനുള്ള നിർദ്ദേശങ്ങൾ ഞങ്ങൾ ഇമെയിൽ ചെയ്തു, "
+"നിങ്ങൾ നൽകിയ ഇമെയിലിലൂടെ ഒരു അക്കൗണ്ട് നിലവിലുണ്ടെങ്കിൽ. നിങ്ങൾ ഉടൻ തന്നെ അവ"
+" സ്വീകരിക്കണം."
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"നിങ്ങൾക്ക് ഒരു ഇമെയിൽ ലഭിച്ചില്ലെങ്കിൽ, നിങ്ങൾ രജിസ്റ്റർ ചെയ്ത വിലാസം നൽകി, "
+"നിങ്ങളുടെ സ്പാം ഫോൾഡർ പരിശോധിക്കുന്നുവെന്ന് ഉറപ്പാക്കുക."
+
+#: .\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"നിങ്ങളുടെ ഉപയോക്തൃ അക്ക for ണ്ടിനായി% (site_name) s ൽ ഒരു പാസ്വേഡ് പുന reset"
+" സജ്ജമാക്കാൻ നിങ്ങൾ അഭ്യർത്ഥിക്കുന്നു."
+
+#: .\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+"ദയവായി ഇനിപ്പറയുന്ന പേജിലേക്ക് പോയി ഒരു പുതിയ പാസ്വേഡ് തിരഞ്ഞെടുക്കുക:"
+
+#: .\templates\registration\password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr "നിങ്ങളുടെ ഉപയോക്തൃനാമം, നിങ്ങൾ മറന്നുപോയാൽ:"
+
+#: .\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "ഞങ്ങളുടെ സൈറ്റ് ഉപയോഗിച്ചതിന് നന്ദി!"
+
+#: .\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "% (Site_name) s ടീം"
+
+#: .\templates\registration\password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"നിങ്ങളുടെ പാസ്വേഡ് മറന്നോ? നിങ്ങളുടെ ഇമെയിൽ വിലാസം ചുവടെ നൽകുക, പുതിയൊരെണ്ണം"
+" സജ്ജീകരിക്കുന്നതിനുള്ള നിർദ്ദേശങ്ങൾ ഞങ്ങൾ ഇമെയിൽ ചെയ്യും."
+
+#: .\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr "ഇമെയിൽ വിലാസം:"
+
+#: .\templates\registration\password_reset_form.html:27
+msgid "Reset my password"
+msgstr "എന്റെ പാസ്വേഡ് പുന reset സജ്ജമാക്കുക"
+
+#: .\veterinary\choices\choices.py:7
+msgid "Online"
+msgstr "ഓൺലൈൻ"
+
+#: .\veterinary\choices\choices.py:8
+msgid "Cash"
+msgstr "പണം"
+
+#: .\veterinary\choices\choices.py:20
+msgid "Dairy"
+msgstr "പാല്ശേഖരണകേന്ദം"
+
+#: .\veterinary\choices\choices.py:21
+msgid "Beef"
+msgstr "ഗോമാംസം"
+
+#: .\veterinary\choices\choices.py:22
+msgid "Dual Purpose"
+msgstr "ഇരട്ട ഉദ്ദേശ്യം"
+
+#: .\veterinary\choices\choices.py:23 .\veterinary\choices\choices.py:45
+#: .\veterinary\choices\choices.py:60 .\veterinary\choices\choices.py:109
+msgid "Other"
+msgstr "മറ്റേതായ"
+
+#: .\veterinary\choices\choices.py:28
+msgid "Primarily used for milk production"
+msgstr "പ്രാഥമികമായി പാൽ ഉൽപാദനത്തിനായി ഉപയോഗിക്കുന്നു"
+
+#: .\veterinary\choices\choices.py:29
+msgid "Primarily used for meat production"
+msgstr "പ്രാഥമികമായി ഇറച്ചി ഉൽപാദനത്തിനായി ഉപയോഗിക്കുന്നു"
+
+#: .\veterinary\choices\choices.py:30
+msgid "Used for both dairy and beef purposes"
+msgstr "രണ്ട് ഡയറി, ബീഫ് ആവശ്യങ്ങൾക്കായി ഉപയോഗിക്കുന്നു"
+
+#: .\veterinary\choices\choices.py:31
+msgid "Uncategorized or other specific use"
+msgstr "തരം തിരിക്കാത്ത അല്ലെങ്കിൽ മറ്റ് നിർദ്ദിഷ്ട ഉപയോഗം"
+
+#: .\veterinary\choices\choices.py:32 .\veterinary\models\case_models.py:302
+msgid "Unknown"
+msgstr "അറിയപ്പെടാത്ത"
+
+#: .\veterinary\choices\choices.py:37
+msgid "Male"
+msgstr "പുരുഷന്"
+
+#: .\veterinary\choices\choices.py:38
+msgid "Female"
+msgstr "സ്തൈണമായ"
+
+#: .\veterinary\choices\choices.py:43
+msgid "Doctor"
+msgstr "ഡോക്ടര്"
+
+#: .\veterinary\choices\choices.py:44
+msgid "MAT"
+msgstr "പായ"
+
+#: .\veterinary\choices\choices.py:50
+msgid "Manual"
+msgstr "ലഘുഗന്ഥം"
+
+#: .\veterinary\choices\choices.py:51
+msgid "RFID Tag"
+msgstr "Rfid ടാഗ്"
+
+#: .\veterinary\choices\choices.py:52
+msgid "QR Code"
+msgstr "QR കോഡ്"
+
+#: .\veterinary\choices\choices.py:57
+msgid "Left Ear"
+msgstr "ഇടത് ചെവി"
+
+#: .\veterinary\choices\choices.py:58
+msgid "Right Ear"
+msgstr "വലത് ചെവി"
+
+#: .\veterinary\choices\choices.py:59
+msgid "Neck"
+msgstr "കഴുത്ത്"
+
+#: .\veterinary\choices\choices.py:65
+msgid "New Tag"
+msgstr "പുതിയ ടാഗ്"
+
+#: .\veterinary\choices\choices.py:66
+msgid "Replaced"
+msgstr "മാറ്റിസ്ഥാപിച്ചു"
+
+#: .\veterinary\choices\choices.py:86
+msgid "Tablet"
+msgstr "ചെറുതകിട്"
+
+#: .\veterinary\choices\choices.py:87
+msgid "Liquid"
+msgstr "ദാവകം"
+
+#: .\veterinary\choices\choices.py:88
+msgid "Injection"
+msgstr "കുത്തിവയ്പ്പ്"
+
+#: .\veterinary\choices\choices.py:89
+msgid "Capsule"
+msgstr "കാപ്സ്യൂൾ"
+
+#: .\veterinary\choices\choices.py:90
+msgid "Ointment"
+msgstr "കുഴന്വ്"
+
+#: .\veterinary\choices\choices.py:91
+msgid "Powder"
+msgstr "പൊടി"
+
+#: .\veterinary\choices\choices.py:92
+msgid "Paste"
+msgstr "ഒട്ടിക്കുക"
+
+#: .\veterinary\choices\choices.py:93
+msgid "Bolus"
+msgstr "ബോളസ്"
+
+#: .\veterinary\choices\choices.py:94
+msgid "Suspension"
+msgstr "പുറത്താക്കല്"
+
+#: .\veterinary\choices\choices.py:95
+msgid "Solution"
+msgstr "പരിഹാരം"
+
+#: .\veterinary\choices\choices.py:96
+msgid "Spray"
+msgstr "തളിക്കുക"
+
+#: .\veterinary\choices\choices.py:97
+msgid "Eye/Ear/Nose Drops"
+msgstr "കണ്ണ് / ചെവി / മൂക്ക് തുള്ളികൾ"
+
+#: .\veterinary\choices\choices.py:98
+msgid "Cream"
+msgstr "സാരാംശം"
+
+#: .\veterinary\choices\choices.py:99
+msgid "Lotion"
+msgstr "ലോഷൻ"
+
+#: .\veterinary\choices\choices.py:100
+msgid "Medicated Shampoo"
+msgstr "മരുന്ന് ഷാംപൂ"
+
+#: .\veterinary\choices\choices.py:101
+msgid "Feed Additive"
+msgstr "തീറ്റ അഡിറ്റീവ്"
+
+#: .\veterinary\choices\choices.py:102
+msgid "Implant"
+msgstr "ഇംപ്ലാന്റ്"
+
+#: .\veterinary\choices\choices.py:103
+msgid "Inhalant"
+msgstr "ശ്വശായാകമായ"
+
+#: .\veterinary\choices\choices.py:104
+msgid "Transdermal Patch"
+msgstr "ട്രാൻസ്ഡെർമൽ പാച്ച്"
+
+#: .\veterinary\choices\choices.py:105
+msgid "Suppository"
+msgstr "ഉപകാരം"
+
+#: .\veterinary\choices\choices.py:106
+msgid "Drench"
+msgstr "നനഞ്ഞുപോകുക"
+
+#: .\veterinary\choices\choices.py:107
+msgid "Pour-On"
+msgstr "ഒഴിക്കുക"
+
+#: .\veterinary\choices\choices.py:108
+msgid "Intramammary"
+msgstr "അന്തത്യാസം"
+
+#: .\veterinary\choices\choices.py:114
+msgid "Stock In"
+msgstr "സ്റ്റോക്ക്"
+
+#: .\veterinary\choices\choices.py:115
+msgid "Stock Out"
+msgstr "സംഭരിക്കുക"
+
+#: .\veterinary\choices\choices.py:116
+msgid "Adjustment"
+msgstr "കമപ്പെടുത്തല്"
+
+#: .\veterinary\choices\choices.py:121
+msgid "Allocated"
+msgstr "അനുവദിച്ചു"
+
+#: .\veterinary\choices\choices.py:122
+msgid "Used"
+msgstr "ഉപയോഗിച്ചു"
+
+#: .\veterinary\choices\choices.py:123
+msgid "Returned"
+msgstr "മടങ്ങിയ"
+
+#: .\veterinary\choices\choices.py:128
+msgid "Normal Case"
+msgstr "സാധാരണ കേസ്"
+
+#: .\veterinary\choices\choices.py:129
+msgid "Special Case"
+msgstr "പ്രത്യേക കേസ്"
+
+#: .\veterinary\choices\choices.py:130
+msgid "Operational Case"
+msgstr "പ്രവർത്തന കേസ്"
+
+#: .\veterinary\choices\choices.py:135
+msgid "Morning"
+msgstr "പുലര്കാലം"
+
+#: .\veterinary\choices\choices.py:136
+msgid "Afternoon"
+msgstr "അപരാഹ്നം"
+
+#: .\veterinary\choices\choices.py:137
+msgid "Evening"
+msgstr "വൈകുന്നേരം"
+
+#: .\veterinary\choices\choices.py:138
+msgid "Night"
+msgstr "രാതി"
+
+#: .\veterinary\choices\choices.py:144
+msgid "Confirmed"
+msgstr "സ്ഥിരീകരിച്ചു"
+
+#: .\veterinary\choices\choices.py:150
+msgid "Dry"
+msgstr "ഉണങ്ങിയ"
+
+#: .\veterinary\choices\choices.py:151
+msgid "Pregnant"
+msgstr "ഗര്ഭിണിയായ"
+
+#: .\veterinary\choices\choices.py:152
+msgid "Milking"
+msgstr "പാലിപ്പണികൾ"
+
+#: .\veterinary\choices\choices.py:153
+msgid "Milking & Pregnant"
+msgstr "പാൽ കൊടുക്കുന്നു & ഗർഭിണിയാണ്"
+
+#: .\veterinary\choices\choices.py:157
+msgid "Mild"
+msgstr "സൗമമായ"
+
+#: .\veterinary\choices\choices.py:158
+msgid "Moderate"
+msgstr "മിതനിരക്ക്"
+
+#: .\veterinary\choices\choices.py:159
+msgid "Severe"
+msgstr "കര്ക്കശമായ"
+
+#: .\veterinary\choices\choices.py:168
+msgid "Refunded"
+msgstr "തിരികെ നൽകി"
+
+#: .\veterinary\choices\choices.py:172
+msgid "Inward"
+msgstr "ഉള്ളിലേക്കുള്ള"
+
+#: .\veterinary\choices\choices.py:173
+msgid "Outward"
+msgstr "വെളിയിലേക്കുള്ള"
+
+#: .\veterinary\choices\choices.py:174
+msgid "Return"
+msgstr "മടങ്ങിവരുക"
+
+#: .\veterinary\choices\choices.py:178
+msgid "Approved"
+msgstr "അംഗീകരിച്ചു"
+
+#: .\veterinary\choices\choices.py:179
+msgid "Cancelled"
+msgstr "റദ്ദാക്കി"
+
+#: .\veterinary\choices\choices.py:182
+msgid "Central Warehouse"
+msgstr "സെൻട്രൽ വെയർഹ house സ്"
+
+#: .\veterinary\choices\choices.py:183
+msgid "Field Office"
+msgstr "ഫീൽഡ് ഓഫീസ്"
+
+#: .\veterinary\choices\choices.py:184
+msgid "Mobile Veterinary Unit"
+msgstr "മൊബൈൽ വെറ്ററിനറി യൂണിറ്റ്"
+
+#: .\veterinary\choices\choices.py:185
+msgid "Clinic"
+msgstr "ചികിത്സാലയം"
+
+#: .\veterinary\choices\choices.py:186
+msgid "Veterinarian"
+msgstr "മൃഗവൈദന്"
+
+#: .\veterinary\models\case_models.py:16
+msgid "Diagnosis Route Name"
+msgstr "രോഗനിർണയത്തിന്റെ പേര്"
+
+#: .\veterinary\models\case_models.py:18
+msgid ""
+"Short name or label of the diagnosis route, e.g., Oral, Injection, etc."
+msgstr "രോഗനിർണയ റൂട്ടിന്റെ ഹ്രസ്വ പേരോ ലേബലും, ഉദാ. ഓറൽ, ഇഞ്ചക്ഷൻ മുതലായവ."
+
+#: .\veterinary\models\case_models.py:24
+msgid "Timestamp of the last update. Automatically set on update."
+msgstr ""
+"അവസാന അപ്ഡേറ്റിന്റെ ടൈംസ്റ്റാമ്പ്. അപ്ഡേറ്റ് യാന്ത്രികമായി സജ്ജമാക്കുക."
+
+#: .\veterinary\models\case_models.py:28
+msgid "Is Synced"
+msgstr "സമന്വയിപ്പിക്കുന്നു"
+
+#: .\veterinary\models\case_models.py:30
+msgid "Flag to track if the record has been synced with external systems."
+msgstr ""
+"ബാഹ്യ സംവിധാനങ്ങളുമായി റെക്കോർഡ് സമന്വയിപ്പിച്ചിട്ടുണ്ടോ എന്ന് "
+"ട്രാക്കുചെയ്യാനുള്ള ഫ്ലാഗ്."
+
+#: .\veterinary\models\case_models.py:39
+msgid "Diagnosis Route"
+msgstr "രോഗനിർണയ റൂട്ട്"
+
+#: .\veterinary\models\case_models.py:40
+msgid "Diagnosis Routes"
+msgstr "രോഗനിർണയ റൂട്ടുകൾ"
+
+#: .\veterinary\models\case_models.py:56
+msgid "The cattle associated with this case entry."
+msgstr "ഈ കേസ് എൻട്രിയുമായി ബന്ധപ്പെട്ട കന്നുകാലികൾ."
+
+#: .\veterinary\models\case_models.py:57 .\veterinary\models\models.py:357
+msgid "Cattle"
+msgstr "കന്നുകാലികള്"
+
+#: .\veterinary\models\case_models.py:66
+msgid "User who applied or recorded this case."
+msgstr "ഈ കേസ് പ്രയോഗിച്ച അല്ലെങ്കിൽ റെക്കോർഡുചെയ്ത ഉപയോക്താവ്."
+
+#: .\veterinary\models\case_models.py:67
+msgid "Applied By"
+msgstr "പ്രയോഗിച്ചു"
+
+#: .\veterinary\models\case_models.py:74
+msgid "Current status of the case."
+msgstr "കേസിന്റെ നിലവിലെ നില."
+
+#: .\veterinary\models\case_models.py:75
+#: .\veterinary\models\common_models.py:416
+msgid "Case Status"
+msgstr "കേസ് നില"
+
+#: .\veterinary\models\case_models.py:81
+msgid "Address where the case occurred or was reported."
+msgstr "കേസ് സംഭവിച്ചതോ റിപ്പോർട്ടുചെയ്തതോ ആയ വിലാസം."
+
+#: .\veterinary\models\case_models.py:88
+msgid "Additional notes or remarks about the case."
+msgstr "കേസുകളെക്കുറിച്ചുള്ള അധിക കുറിപ്പുകൾ അല്ലെങ്കിൽ പരാമർശങ്ങൾ."
+
+#: .\veterinary\models\case_models.py:89
+#: .\veterinary\models\case_models.py:222
+msgid "Remarks"
+msgstr "പരാമർശങ്ങൾ"
+
+#: .\veterinary\models\case_models.py:96
+msgid "Unique identifier for the case."
+msgstr "കേസിനായി അദ്വിതീയ ഐഡന്റിഫയർ."
+
+#: .\veterinary\models\case_models.py:97
+msgid "Case Number"
+msgstr "കേസ് നമ്പർ"
+
+#: .\veterinary\models\case_models.py:102
+msgid "Indicates whether the entry is synced with the server."
+msgstr "എൻട്രി സെർവറുമായി സമന്വയിപ്പിക്കുമോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\veterinary\models\case_models.py:103
+msgid "Sync Status"
+msgstr "പദവി സമന്വയിപ്പിക്കുക"
+
+#: .\veterinary\models\case_models.py:120
+msgid "Both 'case_no' and 'to_user' are required."
+msgstr "'കേസ്_നോ', 'ടു_യൂസേർ' എന്നിവ ആവശ്യമാണ്."
+
+#: .\veterinary\models\case_models.py:126
+#, python-brace-format
+msgid "Case with number '{case_no}' does not exist."
+msgstr "നമ്പർ '{കേസ്_നൊ}' നിലവിലില്ല."
+
+#: .\veterinary\models\case_models.py:135
+msgid "The case is already assigned to this user."
+msgstr "കേസ് ഇതിനകം ഈ ഉപയോക്താവിന് നൽകിയിട്ടുണ്ട്."
+
+#: .\veterinary\models\case_models.py:146
+msgid "Assigned via system action."
+msgstr "സിസ്റ്റം പ്രവർത്തനം വഴി നിയുക്തമാക്കി."
+
+#: .\veterinary\models\case_models.py:152
+#: .\veterinary\models\case_models.py:234
+#: .\veterinary\models\case_models.py:304
+#: .\veterinary\models\case_models.py:533
+#: .\veterinary\models\case_models.py:604
+msgid "N/A"
+msgstr "N / A."
+
+#: .\veterinary\models\case_models.py:157
+#: .\veterinary\models\case_models.py:197
+#: .\veterinary\models\case_models.py:259
+#: .\veterinary\models\case_models.py:381
+#: .\veterinary\models\case_models.py:451
+#: .\veterinary\models\case_models.py:559
+msgid "Case Entry"
+msgstr "കേസ് എൻട്രി"
+
+#: .\veterinary\models\case_models.py:158
+msgid "Case Entries"
+msgstr "കേസ് എൻട്രികൾ"
+
+#: .\veterinary\models\case_models.py:198
+msgid "Reference to the case entry being transferred."
+msgstr "കേസ് എൻട്രി മാറ്റുന്നതിനുള്ള റഫറൻസ്."
+
+#: .\veterinary\models\case_models.py:207
+msgid "Transferred From"
+msgstr "നിന്ന് കൈമാറി"
+
+#: .\veterinary\models\case_models.py:208
+msgid "User who previously handled the case."
+msgstr "മുമ്പ് കേസ് കൈകാര്യം ചെയ്യുന്ന ഉപയോക്താവ്."
+
+#: .\veterinary\models\case_models.py:215
+msgid "Transferred To"
+msgstr "ഇതിലേക്ക് മാറ്റുന്നു"
+
+#: .\veterinary\models\case_models.py:216
+msgid "User who is receiving the case."
+msgstr "കേസ് സ്വീകരിക്കുന്ന ഉപയോക്താവിന്."
+
+#: .\veterinary\models\case_models.py:223
+msgid "Optional remarks for the transfer."
+msgstr "കൈമാറ്റത്തിനുള്ള ഓപ്ഷണൽ പരാമർശങ്ങൾ."
+
+#: .\veterinary\models\case_models.py:228
+msgid "Transferred At"
+msgstr "കൈമാറി"
+
+#: .\veterinary\models\case_models.py:229
+msgid "Timestamp of when the case was transferred."
+msgstr "കേസ് കൈമാറിയ സമയത്തിന്റെ ടൈംസ്റ്റാമ്പ്."
+
+#: .\veterinary\models\case_models.py:233
+#, python-brace-format
+msgid "Case: {case_no} | {from_user} ➝ {to_user} @ {timestamp}"
+msgstr "കേസ്: {കേസ്_നോ} | {{{ടു_സർ} @ {ടൈംസ്റ്റാമ്പ്}"
+
+#: .\veterinary\models\case_models.py:242
+msgid "Case Receiver Log"
+msgstr "കേസ് റിസീവർ ലോഗ്"
+
+#: .\veterinary\models\case_models.py:243
+msgid "Case Receiver Logs"
+msgstr "കേസ് റിസീവർ ലോഗുകൾ"
+
+#: .\veterinary\models\case_models.py:260
+msgid "The case entry associated with this diagnosis."
+msgstr "ഈ രോഗനിർണയവുമായി ബന്ധപ്പെട്ട കേസ് എൻട്രി."
+
+#: .\veterinary\models\case_models.py:268
+msgid "Disease"
+msgstr "രോഗം"
+
+#: .\veterinary\models\case_models.py:269
+msgid "Identified disease during the diagnosis."
+msgstr "രോഗനിർണയ സമയത്ത് രോഗം തിരിച്ചറിഞ്ഞു."
+
+#: .\veterinary\models\case_models.py:277
+msgid "Cattle Status"
+msgstr "കന്നുകാലികളുടെ നില"
+
+#: .\veterinary\models\case_models.py:278
+msgid "Current physiological or production status of the animal."
+msgstr "മൃഗങ്ങളുടെ നിലവിലെ ഫിസിയോളജിക്കൽ അല്ലെങ്കിൽ ഉൽപാദന നില."
+
+#: .\veterinary\models\case_models.py:285
+msgid "Milk Production"
+msgstr "പാൽ ഉൽപാദനം"
+
+#: .\veterinary\models\case_models.py:286
+msgid "Optional note on milk production (e.g., '2.5L/day')."
+msgstr "പാൽ ഉൽപാദനത്തെക്കുറിച്ചുള്ള ഓപ്ഷണൽ കുറിപ്പ് (ഉദാ., '2.5 എൽ')."
+
+#: .\veterinary\models\case_models.py:294
+msgid "Case Type"
+msgstr "കേസ് തരം"
+
+#: .\veterinary\models\case_models.py:296
+msgid "Type of the veterinary case (e.g., Normal, Special, Operational)."
+msgstr "വെറ്റിനറി കേസിന്റെ തരം (ഉദാ., സാധാരണ, പ്രത്യേക, പ്രവർത്തനക്ഷമമായ)."
+
+#: .\veterinary\models\case_models.py:306
+msgid "Unknown Disease"
+msgstr "അജ്ഞാത രോഗം"
+
+#: .\veterinary\models\case_models.py:307
+#, python-brace-format
+msgid "{tag} - {disease} @ {date}"
+msgstr "{ടാഗ്} - {രോഗം} {തീയതി}"
+
+#: .\veterinary\models\case_models.py:315
+#: .\veterinary\models\case_models.py:339
+msgid "Animal Diagnosis"
+msgstr "മൃഗ രോഗനിർണയം"
+
+#: .\veterinary\models\case_models.py:316
+msgid "Animal Diagnoses"
+msgstr "അനിമൽ രോഗനിർണയങ്ങള്"
+
+#: .\veterinary\models\case_models.py:331
+msgid "Symptom"
+msgstr "ലക്ഷണം"
+
+#: .\veterinary\models\case_models.py:332
+msgid "Symptom associated with this diagnosis."
+msgstr "ഈ രോഗനിർണയവുമായി ബന്ധപ്പെട്ട ലക്ഷണം."
+
+#: .\veterinary\models\case_models.py:340
+msgid "Diagnosis entry this symptom is related to."
+msgstr "രോഗനിർണയ പ്രവേശനം ഈ ലക്ഷണം അനുബന്ധമാണ്."
+
+#: .\veterinary\models\case_models.py:347
+msgid "Additional notes or observations about the symptom."
+msgstr "രോഗലക്ഷണത്തെക്കുറിച്ചുള്ള അധിക കുറിപ്പുകൾ അല്ലെങ്കിൽ നിരീക്ഷണങ്ങൾ."
+
+#: .\veterinary\models\case_models.py:354
+msgid "Unknown Diagnosis"
+msgstr "അജ്ഞാത രോഗനിർണയം"
+
+#: .\veterinary\models\case_models.py:356
+msgid "Unknown Symptom"
+msgstr "അജ്ഞാത ലക്ഷണം"
+
+#: .\veterinary\models\case_models.py:357
+#, python-brace-format
+msgid "{diagnosis} - {symptom} @ {date}"
+msgstr "{രോഗനിർണയം} - {ലക്ഷണം} {തീയതി}"
+
+#: .\veterinary\models\case_models.py:365
+msgid "Diagnosed Symptom"
+msgstr "രോഗനിർണയം നേരിടേണ്ടി"
+
+#: .\veterinary\models\case_models.py:366
+msgid "Diagnosed Symptoms"
+msgstr "രോഗലക്ഷണങ്ങൾ രോഗനിർണയം നടത്തി"
+
+#: .\veterinary\models\case_models.py:382
+msgid "The case entry to which this treatment belongs."
+msgstr "ഈ ചികിത്സ ഉൾപ്പെടുന്ന കേസ് എൻട്രി."
+
+#: .\veterinary\models\case_models.py:389
+msgid "Treatment Provider"
+msgstr "ചികിത്സാ ദാതാവ്"
+
+#: .\veterinary\models\case_models.py:390
+msgid "User (doctor or vet) who performed the treatment."
+msgstr "ഉപയോക്താവ് (ഡോക്ടറേ അല്ലെങ്കിൽ വാട്ട്) ചികിത്സ നിർവഹിച്ചു."
+
+#: .\veterinary\models\case_models.py:398
+#: .\veterinary\models\stock_models.py:209
+msgid "Medicine"
+msgstr "മരുന്ന്"
+
+#: .\veterinary\models\case_models.py:399
+msgid "Medicine used in the treatment, if any."
+msgstr "ചികിത്സയിൽ ഉപയോഗിക്കുന്ന മരുന്ന് എന്തെങ്കിലും ഉണ്ടെങ്കിൽ."
+
+#: .\veterinary\models\case_models.py:407
+msgid "Administration Route"
+msgstr "അഡ്മിനിസ്ട്രേഷൻ റൂട്ട്"
+
+#: .\veterinary\models\case_models.py:408
+msgid "Route of administration for the medicine."
+msgstr "ആക്സിംഗിനായുള്ള ഭരണത്തിന്റെ വഴി."
+
+#: .\veterinary\models\case_models.py:414
+msgid "Notes"
+msgstr "കുറിപ്പുകൾ"
+
+#: .\veterinary\models\case_models.py:415
+msgid "Additional notes or instructions for the treatment."
+msgstr "ചികിത്സയ്ക്കുള്ള അധിക കുറിപ്പുകൾ അല്ലെങ്കിൽ നിർദ്ദേശങ്ങൾ."
+
+#: .\veterinary\models\case_models.py:420
+msgid "OTP Verified"
+msgstr "OTP പരിശോധിച്ചു"
+
+#: .\veterinary\models\case_models.py:421
+msgid "Indicates whether the treatment has been verified via OTP."
+msgstr "ഒടിപി വഴി ചികിത്സ പരിശോധിച്ചിട്ടുണ്ടോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\veterinary\models\case_models.py:425
+msgid "No Case"
+msgstr "ഒരു കേസും ഇല്ല"
+
+#: .\veterinary\models\case_models.py:426
+msgid "No Medicine"
+msgstr "മരുന്ന് ഇല്ല"
+
+#: .\veterinary\models\case_models.py:427
+#, python-brace-format
+msgid "Treatment for Case: {case} | Medicine: {med} | By: {user}"
+msgstr "കേസിന് ചികിത്സ: {കേസ്} | മെഡിസിൻ: {മെഡൽ} | എഴുതിയത്: {ഉപയോക്താവ്}"
+
+#: .\veterinary\models\case_models.py:435
+msgid "Animal Treatment"
+msgstr "മൃഗ ചികിത്സ"
+
+#: .\veterinary\models\case_models.py:436
+msgid "Animal Treatments"
+msgstr "മൃഗങ്ങളുടെ ചികിത്സകൾ"
+
+#: .\veterinary\models\case_models.py:452
+msgid "Case associated with this payment."
+msgstr "ഈ പേയ്മെന്റുമായി ബന്ധപ്പെട്ട കേസ്."
+
+#: .\veterinary\models\case_models.py:458
+msgid "Payment Method"
+msgstr "പണമടയ്ക്കൽ രീതി"
+
+#: .\veterinary\models\case_models.py:459
+msgid "Method used for payment."
+msgstr "പേയ്മെന്റിനായി ഉപയോഗിക്കുന്ന രീതി."
+
+#: .\veterinary\models\case_models.py:465
+msgid "Amount"
+msgstr "സംഖ"
+
+#: .\veterinary\models\case_models.py:466
+msgid "Amount paid."
+msgstr "അടച്ച തുക."
+
+#: .\veterinary\models\case_models.py:471
+msgid "Payment Date"
+msgstr "പേയ്മെന്റ് തീയതി"
+
+#: .\veterinary\models\case_models.py:472
+msgid "Date and time when the payment was made."
+msgstr "പേയ്മെന്റ് നടത്തിയ തീയതിയും സമയവും."
+
+#: .\veterinary\models\case_models.py:479
+msgid "Transaction ID"
+msgstr "ഇടപാട് ഐഡി"
+
+#: .\veterinary\models\case_models.py:480
+msgid "Payment gateway reference or manual receipt ID."
+msgstr "പേയ്മെന്റ് ഗേറ്റ്വേ റഫറൻസ് അല്ലെങ്കിൽ മാനുവൽ രസീത് ഐഡി."
+
+#: .\veterinary\models\case_models.py:487
+msgid "Payment Status"
+msgstr "പേയ്മെന്റ് നില"
+
+#: .\veterinary\models\case_models.py:488
+msgid "Current status of the payment."
+msgstr "പേയ്മെന്റിന്റെ നിലവിലെ നില."
+
+#: .\veterinary\models\case_models.py:494
+msgid "Gateway Response"
+msgstr "ഗേറ്റ്വേ പ്രതികരണം"
+
+#: .\veterinary\models\case_models.py:495
+msgid "Raw payment gateway response data (online payments only)."
+msgstr ""
+"അസംസ്കൃത പേയ്മെന്റ് ഗേറ്റ്വേ പ്രതികരണ ഡാറ്റ (ഓൺലൈൻ പേയ്മെന്റുകൾ മാത്രം)."
+
+#: .\veterinary\models\case_models.py:500
+msgid "Is Reconciled"
+msgstr "അനുരഞ്ജനം നടത്തി"
+
+#: .\veterinary\models\case_models.py:501
+msgid "Whether this payment is reconciled in accounting."
+msgstr "ഈ പേയ്മെന്റ് അക്കൗണ്ടിംഗിൽ അനുരഞ്ജനമാണോ എന്ന്."
+
+#: .\veterinary\models\case_models.py:506
+msgid "Is Cash Collected"
+msgstr "പണം ശേഖരിച്ചിരിക്കുന്നു"
+
+#: .\veterinary\models\case_models.py:507
+msgid "Indicates if cash has been collected for offline payments."
+msgstr ""
+"ഓഫ്ലൈൻ പേയ്മെന്റുകൾക്കായി പണം ശേഖരിച്ചിട്ടുണ്ടെങ്കിൽ സൂചിപ്പിക്കുന്നു."
+
+#: .\veterinary\models\case_models.py:516
+msgid "Collected By"
+msgstr "ശേഖരിച്ചു"
+
+#: .\veterinary\models\case_models.py:517
+msgid "User who collected the payment (for COD)."
+msgstr "പേയ്മെന്റ് ശേഖരിച്ച ഉപയോക്താവ് (COD നായി)."
+
+#: .\veterinary\models\case_models.py:523
+msgid "Collected Date"
+msgstr "ശേഖരിച്ച തീയതി"
+
+#: .\veterinary\models\case_models.py:524
+msgid "Date and time when cash was collected."
+msgstr "പണവും സമയവും ശേഖരിച്ചിരുന്ന തീയതി."
+
+#: .\veterinary\models\case_models.py:530
+msgid "Unknown Method"
+msgstr "അജ്ഞാത രീതി"
+
+#: .\veterinary\models\case_models.py:531
+#, python-brace-format
+msgid "Payment: ₹{amount} for Case: {case} via {method} [{status}]"
+msgstr "പേയ്മെന്റ്: {{തുക} കേസ്: {കേസ്} {രീതി} [{സ്റ്റാറ്റസ്}]"
+
+#: .\veterinary\models\case_models.py:540
+msgid "Case Payment"
+msgstr "കേസ് പേയ്മെന്റ്"
+
+#: .\veterinary\models\case_models.py:541
+msgid "Case Payments"
+msgstr "കേസ് പേയ്മെന്റുകൾ"
+
+#: .\veterinary\models\case_models.py:560
+msgid "Case related to this travel record."
+msgstr "ഈ യാത്രാ റെക്കോർഡുമായി ബന്ധപ്പെട്ട കേസ്."
+
+#: .\veterinary\models\case_models.py:566
+msgid "From Latitude"
+msgstr "അക്ഷാംശത്തിൽ നിന്ന്"
+
+#: .\veterinary\models\case_models.py:567
+msgid "Starting point latitude."
+msgstr "ആരംഭ ഭാഷാ അക്ഷാംശം."
+
+#: .\veterinary\models\case_models.py:572
+msgid "From Longitude"
+msgstr "രേഖാംശത്തിൽ നിന്ന്"
+
+#: .\veterinary\models\case_models.py:573
+msgid "Starting point longitude."
+msgstr "പോയിന്റ് രേഖാംശത്തിൽ."
+
+#: .\veterinary\models\case_models.py:578
+msgid "To Latitude"
+msgstr "അക്ഷാംശത്തിലേക്ക്"
+
+#: .\veterinary\models\case_models.py:579
+msgid "Destination latitude."
+msgstr "ലക്ഷ്യസ്ഥാന അക്ഷാംശം."
+
+#: .\veterinary\models\case_models.py:584
+msgid "To Longitude"
+msgstr "രേഖാംശം"
+
+#: .\veterinary\models\case_models.py:585
+msgid "Destination longitude."
+msgstr "ലക്ഷ്യബോധയോഗം."
+
+#: .\veterinary\models\case_models.py:591
+msgid "Distance Travelled (km)"
+msgstr "സഞ്ചരിച്ച ദൂരം (കിലോമീറ്റർ)"
+
+#: .\veterinary\models\case_models.py:592
+msgid "Calculated distance in kilometers."
+msgstr "കിലോമീറ്ററുകളിൽ കണക്കാക്കിയ ദൂരം."
+
+#: .\veterinary\models\case_models.py:596
+msgid "Travel Date"
+msgstr "യാത്രാ തീയതി"
+
+#: .\veterinary\models\case_models.py:597
+msgid "Date of the travel."
+msgstr "യാത്രയുടെ തീയതി."
+
+#: .\veterinary\models\case_models.py:602
+#, python-brace-format
+msgid "Case Entry: {case_no} | Distance: {distance} km | Date: {date}"
+msgstr "കേസ് എൻട്രി: {കേസ്_നോ} | ദൂരം: {ദൂരം} KM | തീയതി: {തീയതി}"
+
+#: .\veterinary\models\case_models.py:648
+#: .\veterinary\models\case_models.py:662
+msgid "Travel Record"
+msgstr "യാത്രാ റെക്കോർഡ്"
+
+#: .\veterinary\models\case_models.py:649
+msgid "Travel Records"
+msgstr "യാത്രാ രേഖകൾ"
+
+#: .\veterinary\models\case_models.py:663
+msgid "Travel record associated with this image."
+msgstr "ഈ ചിത്രവുമായി ബന്ധപ്പെട്ട യാത്രാ റെക്കോർഡ്."
+
+#: .\veterinary\models\case_models.py:668
+msgid "Image"
+msgstr "പതിഛായ"
+
+#: .\veterinary\models\case_models.py:669
+msgid ""
+"Upload image related to the travel, such as vehicle dashboard, odometer, or "
+"scene."
+msgstr ""
+"വാഹനം ഡാഷ്ബോർഡ്, ഓഡോമീറ്റർ അല്ലെങ്കിൽ രംഗം തുടങ്ങിയ യാത്രയുമായി ബന്ധപ്പെട്ട "
+"അപ്ലോഡ് ഇമേജ്."
+
+#: .\veterinary\models\case_models.py:674
+msgid "Uploaded At"
+msgstr "അപ്ലോഡുചെയ്തു"
+
+#: .\veterinary\models\case_models.py:675
+msgid "Time when image was uploaded."
+msgstr "ചിത്രം അപ്ലോഡ് ചെയ്ത സമയം."
+
+#: .\veterinary\models\case_models.py:682
+msgid "Optional notes about this image."
+msgstr "ഈ ചിത്രത്തെക്കുറിച്ചുള്ള ഓപ്ഷണൽ കുറിപ്പുകൾ."
+
+#: .\veterinary\models\case_models.py:686
+#, python-brace-format
+msgid "Image for Travel Record ID: {id}"
+msgstr "ട്രാവൽ റെക്കോർഡ് ഐഡിയുടെ ചിത്രം: {ഐഡി}"
+
+#: .\veterinary\models\case_models.py:690
+msgid "Travel Record Image"
+msgstr "യാത്രാ റെക്കോർഡ് ചിത്രം"
+
+#: .\veterinary\models\case_models.py:691
+msgid "Travel Record Images"
+msgstr "ഇമേജുകൾ റെക്കോർഡ് ചെയ്യുക"
+
+#: .\veterinary\models\common_models.py:59
+msgid "Locale used for this entry (e.g. en, hi, te)"
+msgstr "ഈ എൻട്രിക്ക് ഉപയോഗിക്കുന്ന ലോക്കേൽ (ഉദാ. En, ഹായ്, ടെ)"
+
+#: .\veterinary\models\common_models.py:415
+msgid "case status of cattle"
+msgstr "കന്നുകാലികളുടെ കേസ് നില"
+
+#: .\veterinary\models\models.py:221
+msgid "Member who currently owns this cattle."
+msgstr "ഇപ്പോൾ ഈ കന്നുകാലികളെ സ്വന്തമാക്കിയ അംഗത്തിന്."
+
+#: .\veterinary\models\models.py:222
+msgid "Owner"
+msgstr "ഉടമസ്ഥന്"
+
+#: .\veterinary\models\models.py:231
+msgid "Breed of the cattle."
+msgstr "കന്നുകാലികളുടെ ഇനം."
+
+#: .\veterinary\models\models.py:232
+msgid "Breed"
+msgstr "ഇനം"
+
+#: .\veterinary\models\models.py:239
+msgid "Gender of the cattle."
+msgstr "കന്നുകാലികളുടെ ലിംഗഭേദം."
+
+#: .\veterinary\models\models.py:240
+msgid "Gender"
+msgstr "ലിംഗഭേദം"
+
+#: .\veterinary\models\models.py:244
+msgid "Age of the cattle in months."
+msgstr "മാസങ്ങളിൽ കന്നുകാലികളുടെ പ്രായം."
+
+#: .\veterinary\models\models.py:245
+msgid "Age (months)"
+msgstr "പ്രായം (മാസം)"
+
+#: .\veterinary\models\models.py:248
+msgid "Age of the cattle in year."
+msgstr "വർഷത്തിലെ കന്നുകാലികളുടെ പ്രായം."
+
+#: .\veterinary\models\models.py:249 .\veterinary\models\models.py:255
+msgid "Age (year)"
+msgstr "പ്രായം (വർഷം)"
+
+#: .\veterinary\models\models.py:254
+msgid "No Of Calving."
+msgstr "പ്രസവത്തിന്റെ എണ്ണം."
+
+#: .\veterinary\models\models.py:266
+msgid "The mother of this cattle."
+msgstr "ഈ കന്നുകാലികളുടെ അമ്മ."
+
+#: .\veterinary\models\models.py:267
+msgid "Mother"
+msgstr "അമ്മ"
+
+#: .\veterinary\models\models.py:276
+msgid "The father of this cattle."
+msgstr "ഈ കന്നുകാലികളുടെ പിതാവ്."
+
+#: .\veterinary\models\models.py:277
+msgid "Father"
+msgstr "പിതാവ്"
+
+#: .\veterinary\models\models.py:358
+msgid "Cattles"
+msgstr "കാറ്റിൽസ്"
+
+#: .\veterinary\models\models.py:447
+msgid "Last Calving Month"
+msgstr "അവസാന പ്രസവിക്കുന്ന മാസം"
+
+#: .\veterinary\models\models.py:468
+msgid "Pregnancy Status"
+msgstr "ഗർഭാവസ്ഥ നില"
+
+#: .\veterinary\models\models.py:469
+msgid "Indicates whether the cattle is pregnant."
+msgstr "കന്നുകാലികൾ ഗർഭിണിയാണോ എന്ന് സൂചിപ്പിക്കുന്നു."
+
+#: .\veterinary\models\stock_models.py:11
+msgid "Name of the location (e.g., Central Store, Block Office)"
+msgstr "ലൊക്കേഷന്റെ പേര് (ഉദാ., സെൻട്രൽ സ്റ്റോർ, ബ്ലോക്ക് ഓഫീസ്)"
+
+#: .\veterinary\models\stock_models.py:12
+msgid "Location Name"
+msgstr "സ്ഥാനത്തിന്റെ പേര്"
+
+#: .\veterinary\models\stock_models.py:18
+msgid "Unique identifier for the location (e.g., for integration)"
+msgstr "ലൊക്കേഷനായുള്ള അദ്വിതീയ ഐഡന്റിഫയർ (ഉദാ. സംയോജനത്തിനായി)"
+
+#: .\veterinary\models\stock_models.py:19
+msgid "Location Code"
+msgstr "ലൊക്കേഷൻ കോഡ്"
+
+#: .\veterinary\models\stock_models.py:26
+msgid "Category or type of the location"
+msgstr "വിഭാഗം അല്ലെങ്കിൽ സ്ഥലത്തിന്റെ തരം"
+
+#: .\veterinary\models\stock_models.py:27
+msgid "Location Type"
+msgstr "ലൊക്കേഷൻ തരം"
+
+#: .\veterinary\models\stock_models.py:33
+msgid "Full address of the location"
+msgstr "ലൊക്കേഷന്റെ മുഴുവൻ വിലാസവും"
+
+#: .\veterinary\models\stock_models.py:41
+msgid "District in which the location falls"
+msgstr "ലൊക്കേഷൻ വെള്ളച്ചാട്ടം"
+
+#: .\veterinary\models\stock_models.py:42
+msgid "District"
+msgstr "ജില്ല"
+
+#: .\veterinary\models\stock_models.py:49
+msgid "State or province"
+msgstr "സംസ്ഥാനം അല്ലെങ്കിൽ പ്രവിശ്യ"
+
+#: .\veterinary\models\stock_models.py:50
+msgid "State"
+msgstr "രാജം"
+
+#: .\veterinary\models\stock_models.py:58
+msgid "Latitude coordinate for map integration"
+msgstr "മാപ്പ് ഇന്റഗ്രേഷനായി അക്ഷാംശ കോർഡിനേറ്റ്"
+
+#: .\veterinary\models\stock_models.py:67
+msgid "Longitude coordinate for map integration"
+msgstr "മാപ്പ് സംയോജനത്തിനായുള്ള ലോംഗീഷൻ കോർഡിനേറ്റ്"
+
+#: .\veterinary\models\stock_models.py:73
+msgid "Location"
+msgstr "സ്ഥാപിക്കല്"
+
+#: .\veterinary\models\stock_models.py:74
+msgid "Locations"
+msgstr "സ്ഥലങ്ങൾ"
+
+#: .\veterinary\models\stock_models.py:150
+msgid "Severity level of the disease"
+msgstr "രോഗത്തിന്റെ തീവ്രത നില"
+
+#: .\veterinary\models\stock_models.py:151
+msgid "Severity"
+msgstr "കാഠിന്യം"
+
+#: .\veterinary\models\stock_models.py:170
+msgid "eg. tablet, liquid, injection, etc"
+msgstr "ഉദാ. ടാബ്ലെറ്റ്, ലിക്വിഡ്, ഇഞ്ചക്ഷൻ മുതലായവ"
+
+#: .\veterinary\models\stock_models.py:192
+msgid "Parent Category"
+msgstr "രക്ഷാകർതൃ വിഭാഗം"
+
+#: .\veterinary\models\stock_models.py:209
+msgid "Name of the medicine"
+msgstr "മരുന്നിന്റെ പേര്"
+
+#: .\veterinary\models\stock_models.py:214
+msgid "Some description of the medicine"
+msgstr "മരുന്നിന്റെ ചില വിവരണം"
+
+#: .\veterinary\models\stock_models.py:240
+msgid "Packaging"
+msgstr "പാക്കേജിംഗ്"
+
+#: .\veterinary\models\stock_models.py:246
+msgid "Expiry Date of the medicine"
+msgstr "മരുന്നിന്റെ കാലഹരണപ്പെടൽ തീയതി"
+
+#: .\veterinary\models\stock_models.py:247
+msgid "Expiry Date"
+msgstr "കാലഹരണപ്പെടുന്ന തീയതി"
+
+#: .\veterinary\models\stock_models.py:252
+msgid "Diseases this medicine is commonly prescribed for."
+msgstr "രോഗങ്ങൾ ഈ മരുന്ന് സാധാരണയായി നിർദ്ദേശിക്കപ്പെടുന്നു."
+
+#: .\veterinary\models\stock_models.py:253
+msgid "Diseases"
+msgstr "രോഗങ്ങൾ"
+
+#: .\veterinary\models\stock_models.py:312
+msgid "Location sending the medicine"
+msgstr "സ്ഥാനം മരുന്ന് അയയ്ക്കുന്നു"
+
+#: .\veterinary\models\stock_models.py:319
+msgid "Location receiving the medicine"
+msgstr "മരുന്ന് സ്വീകരിക്കുന്ന സ്ഥാനം"
+
+#: .\veterinary\models\stock_models.py:325
+msgid "The batch of medicine being transferred"
+msgstr "ബാച്ച് മെഡിസിൻ കൈമാറ്റം ചെയ്യപ്പെട്ടു"
+
+#: .\veterinary\models\stock_models.py:329
+msgid "Exact quantity of medicine transferred from stock"
+msgstr "സ്റ്റോക്കിൽ നിന്ന് കൈമാറിയ വൈദ്യത്തിന്റെ അളവ്"
+
+#: .\veterinary\models\stock_models.py:336
+msgid "Type of transfer (inward, outward, return)"
+msgstr "കൈമാറ്റം (അകത്തേക്ക്, ബാഹ്യ, മടങ്ങുക)"
+
+#: .\veterinary\models\stock_models.py:343
+msgid "Current status of the stock transfer"
+msgstr "സ്റ്റോക്ക് കൈമാറ്റത്തിന്റെ നിലവിലെ നില"
+
+#: .\veterinary\models\stock_models.py:350
+msgid "Snapshot of the batch number at the time of transfer"
+msgstr "കൈമാറ്റ സമയത്ത് ബാച്ച് നമ്പറിന്റെ സ്നാപ്പ്ഷോട്ട്"
+
+#: .\veterinary\models\stock_models.py:356
+msgid "Snapshot of expiry date at time of transfer"
+msgstr "കൈമാറ്റ സമയത്ത് കാലഹരണപ്പെടൽ തീയതിയുടെ സ്നാപ്പ്ഷോട്ട്"
+
+#: .\veterinary\models\stock_models.py:364
+msgid "User who initiated the stock transfer"
+msgstr "സ്റ്റോക്ക് കൈമാറ്റത്തിന് തുടക്കമിട്ട ഉപയോക്താവ്"
+
+#: .\veterinary\models\stock_models.py:373
+msgid "User who received the stock at destination"
+msgstr "ലക്ഷ്യസ്ഥാനത്ത് സ്റ്റോക്ക് ലഭിച്ച ഉപയോക്താവിന്"
+
+#: .\veterinary\models\stock_models.py:378
+msgid "Timestamp when the stock was transferred"
+msgstr "സ്റ്റോക്ക് കൈമാറ്റം ചെയ്തപ്പോൾ ടൈംസ്റ്റാമ്പ്"
+
+#: .\veterinary\models\stock_models.py:384
+msgid "Timestamp when stock was received and confirmed"
+msgstr "സ്റ്റോക്ക് ലഭിച്ചതും സ്ഥിരീകരിച്ചതുമായ ടൈംസ്റ്റാമ്പ്"
+
+#: .\veterinary\models\stock_models.py:390
+msgid "Optional comments or notes on the transfer"
+msgstr "കൈമാറ്റത്തിലെ ഓപ്ഷണൽ അഭിപ്രായങ്ങളോ കുറിപ്പുകളോ"
+
+#: .\veterinary\models\stock_models.py:398
+msgid "Cost per unit for tracking valuation"
+msgstr "മൂല്യനിർണ്ണയം ട്രാക്കുചെയ്യുന്നതിന് യൂണിറ്റിന് ചെലവ്"
+
+#: .\veterinary\models\stock_models.py:406
+msgid "Total cost of transferred quantity"
+msgstr "കൈമാറ്റം ചെയ്ത അളവിന്റെ ആകെ ചെലവ്"
+
+#: .\veterinary\models\stock_models.py:411
+msgid "Medicine Stock Transfer Log"
+msgstr "മെഡിസിൻ സ്റ്റോക്ക് ട്രാൻസ്ഫർ ലോഗ്"
+
+#: .\veterinary\models\stock_models.py:412
+msgid "Medicine Stock Transfer Logs"
+msgstr "മെഡിസിൻ സ്റ്റോക്ക് ട്രാൻസ്ഫർ ലോഗുകൾ"
+
+#: .\veterinary\signals.py:15
+msgid "Initial assignment on case creation."
+msgstr "കേസ് സൃഷ്ടിക്കുന്നതിനെക്കുറിച്ച് പ്രാരംഭ നിയമനം."

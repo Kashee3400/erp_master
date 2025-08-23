@@ -7,11 +7,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     name = serializers.SerializerMethodField()
     avatar = serializers.ImageField(required=False, allow_null=True)
-
+    reportee_count = serializers.SerializerMethodField()
     class Meta:
         model = UserProfile
         fields = [
             "id",
+            "salutation",
             "user",
             "username",
             "email",
@@ -25,6 +26,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "is_email_verified",
             "created_at",
             "updated_at",
+            "reportee_count",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -34,3 +36,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
         full_name = f"{first_name} {last_name}".strip()
 
         return full_name if full_name else obj.user.username
+    def get_reportee_count(self,obj):
+        return 0

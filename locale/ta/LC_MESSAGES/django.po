@@ -1,0 +1,3493 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-29 17:32+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\erp_app\apps.py:9
+msgid "Kashee ERP"
+msgstr "காஷி எர்ப்"
+
+#: .\erp_app\models.py:2336
+msgid "Billing Member Master Code"
+msgstr "பில்லிங் உறுப்பினர் முதன்மை குறியீடு"
+
+#: .\erp_app\models.py:2337
+msgid "Company Code"
+msgstr "நிறுவனத்தின் குறியீடு"
+
+#: .\erp_app\models.py:2338
+msgid "Plant Code"
+msgstr "தாவர குறியீடு"
+
+#: .\erp_app\models.py:2339
+msgid "MCC CODE"
+msgstr "MCC குறியீடு"
+
+#: .\erp_app\models.py:2340
+msgid "BMC CODE"
+msgstr "பிஎம்சி குறியீடு"
+
+#: .\erp_app\models.py:2341
+msgid "MPP CODE"
+msgstr "MPP குறியீடு"
+
+#: .\erp_app\models.py:10914
+msgid "Bank"
+msgstr "வங்கி"
+
+#: .\erp_app\models.py:10916
+msgid "Bank Branch"
+msgstr "வங்கி கிளை"
+
+#: .\erp_app\models.py:13303 .\facilitator\models\vcg_model.py:25
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:100
+msgid "MPP"
+msgstr "எம்.பி.பி."
+
+#: .\erp_app\models.py:13306
+msgid "Shift"
+msgstr "மாற்றம்"
+
+#: .\erp_app\models.py:13335
+msgid "Reference"
+msgstr "குறிப்பு"
+
+#: .\erp_app\models.py:14341
+msgid "From Shift"
+msgstr "ஷிப்டிலிருந்து"
+
+#: .\erp_app\models.py:14344
+msgid "To Shift"
+msgstr "மாற்ற"
+
+#: .\erp_app\views.py:204
+#, python-brace-format
+msgid "No member found on this mobile no {self.request.user.username}"
+msgstr ""
+"இந்த மொபைலில் எந்த உறுப்பினரும் காணப்படவில்லை {self.request.user.username}"
+
+#: .\erp_app\views.py:236
+msgid "No Data Found"
+msgstr "தரவு எதுவும் கிடைக்கவில்லை"
+
+#: .\erp_master\settings\base.py:151 .\member\models.py:132
+msgid "English"
+msgstr "ஆங்கிலம்"
+
+#: .\erp_master\settings\base.py:152 .\member\models.py:133
+msgid "Hindi"
+msgstr "இந்தி"
+
+#: .\erp_master\settings\base.py:164
+msgid "Urdu"
+msgstr "உருது"
+
+#: .\erp_master\settings\base.py:261 .\member\views.py:1330
+#: .\veterinary\choices\choices.py:71
+msgid "January"
+msgstr "ஜனவரி"
+
+#: .\erp_master\settings\base.py:262 .\member\views.py:1331
+#: .\veterinary\choices\choices.py:72
+msgid "February"
+msgstr "பிப்ரவரி"
+
+#: .\erp_master\settings\base.py:263 .\member\views.py:1332
+#: .\veterinary\choices\choices.py:73
+msgid "March"
+msgstr "மார்ச்"
+
+#: .\erp_master\settings\base.py:264 .\member\views.py:1333
+#: .\veterinary\choices\choices.py:74
+msgid "April"
+msgstr "ஏப்ரல்"
+
+#: .\erp_master\settings\base.py:265 .\member\views.py:1334
+#: .\veterinary\choices\choices.py:75
+msgid "May"
+msgstr "மே"
+
+#: .\erp_master\settings\base.py:266 .\member\views.py:1335
+#: .\veterinary\choices\choices.py:76
+msgid "June"
+msgstr "ஜூன்"
+
+#: .\erp_master\settings\base.py:267 .\member\views.py:1336
+#: .\veterinary\choices\choices.py:77
+msgid "July"
+msgstr "ஜூலை"
+
+#: .\erp_master\settings\base.py:268 .\member\views.py:1337
+#: .\veterinary\choices\choices.py:78
+msgid "August"
+msgstr "ஆகஸ்ட்"
+
+#: .\erp_master\settings\base.py:269 .\member\views.py:1338
+#: .\veterinary\choices\choices.py:79
+msgid "September"
+msgstr "செப்டம்பர்"
+
+#: .\erp_master\settings\base.py:270 .\member\views.py:1339
+#: .\veterinary\choices\choices.py:80
+msgid "October"
+msgstr "அக்டோபர்"
+
+#: .\erp_master\settings\base.py:271 .\member\views.py:1340
+#: .\veterinary\choices\choices.py:81
+msgid "November"
+msgstr "நவம்பர்"
+
+#: .\erp_master\settings\base.py:272 .\member\views.py:1341
+#: .\veterinary\choices\choices.py:82
+msgid "December"
+msgstr "டிசம்பர்"
+
+#: .\facilitator\admin.py:200
+msgid "Meeting Details"
+msgstr "சந்திப்பு விவரங்கள்"
+
+#: .\facilitator\admin.py:214
+msgid "Location Details"
+msgstr "இருப்பிட விவரங்கள்"
+
+#: .\facilitator\admin.py:221
+msgid "Timestamps"
+msgstr "நேர முத்திரைகள்"
+
+#: .\facilitator\admin.py:227
+msgid "Sync Information"
+msgstr "தகவல்களை ஒத்திசைக்கவும்"
+
+#: .\facilitator\choices.py:8 .\facilitator\models\member_update_model.py:130
+#: .\feedback\models\feedback_model.py:134
+msgid "Mobile Number"
+msgstr "மொபைல் எண்"
+
+#: .\facilitator\choices.py:9
+msgid "Bank Account Details"
+msgstr "வங்கி கணக்கு விவரங்கள்"
+
+#: .\facilitator\choices.py:13 .\member\models.py:78
+msgid "Sahayak"
+msgstr "சஹாயக்"
+
+#: .\facilitator\choices.py:14
+msgid "Member"
+msgstr "உறுப்பினர்"
+
+#: .\facilitator\choices.py:18 .\notifications\models.py:19
+#: .\veterinary\choices\choices.py:143 .\veterinary\choices\choices.py:165
+#: .\veterinary\choices\choices.py:177
+msgid "Pending"
+msgstr "நிலுவையில் உள்ளது"
+
+#: .\facilitator\choices.py:19
+msgid "Rejected"
+msgstr "நிராகரிக்கப்பட்டது"
+
+#: .\facilitator\choices.py:20 .\facilitator\choices.py:25
+msgid "Updated"
+msgstr "புதுப்பிக்கப்பட்டது"
+
+#: .\facilitator\choices.py:24
+msgid "Created"
+msgstr "உருவாக்கப்பட்டது"
+
+#: .\facilitator\choices.py:26 .\facilitator\models\member_update_model.py:44
+#: .\facilitator\models\vcg_model.py:104 .\notifications\models.py:130
+msgid "Deleted"
+msgstr "நீக்கப்பட்டது"
+
+#: .\facilitator\choices.py:27
+msgid "Status Changed"
+msgstr "நிலை மாற்றப்பட்டது"
+
+#: .\facilitator\choices.py:28
+msgid "Reviewed"
+msgstr "மதிப்பாய்வு செய்யப்பட்டது"
+
+#: .\facilitator\choices.py:32
+msgid "Passbook Copy"
+msgstr "பாஸ் புக் நகல்"
+
+#: .\facilitator\choices.py:33
+msgid "Application Letter"
+msgstr "விண்ணப்ப கடிதம்"
+
+#: .\facilitator\choices.py:34
+msgid "Affidavit Copy"
+msgstr "வாக்குமூலம் நகல்"
+
+#: .\facilitator\models\facilitator_model.py:12
+#: .\facilitator\models\facilitator_model.py:160
+msgid "API Key"
+msgstr "ஏபிஐ விசை"
+
+#: .\facilitator\models\facilitator_model.py:13
+msgid "Unique identifier for the API key."
+msgstr "API விசைக்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\facilitator\models\facilitator_model.py:19
+#: .\facilitator\models\user_profile_model.py:24
+#: .\facilitator\models\vcg_model.py:119 .\member\models.py:49
+msgid "User"
+msgstr "பயனர்"
+
+#: .\facilitator\models\facilitator_model.py:20
+msgid "The user to whom this API key belongs."
+msgstr "இந்த ஏபிஐ விசை யாருக்கு சொந்தமானது."
+
+#: .\facilitator\models\facilitator_model.py:24
+#: .\facilitator\models\facilitator_model.py:245
+#: .\facilitator\models\user_profile_model.py:74
+#: .\facilitator\models\vcg_model.py:69 .\facilitator\models\vcg_model.py:285
+#: .\facilitator\models\vcg_model.py:333 .\facilitator\models\vcg_model.py:383
+#: .\facilitator\models\vcg_model.py:416 .\facilitator\models\vcg_model.py:578
+#: .\feedback\models\feedback_model.py:164 .\member\models.py:177
+#: .\member\models.py:230 .\notifications\models.py:124
+#: .\veterinary\models\common_models.py:23
+msgid "Created At"
+msgstr "உருவாக்கப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:25
+msgid "The date and time when the API key was created."
+msgstr "ஏபிஐ விசை உருவாக்கப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:30
+msgid "Expiration Date"
+msgstr "காலாவதி தேதி"
+
+#: .\facilitator\models\facilitator_model.py:31
+msgid "The date and time when the API key expires."
+msgstr "ஏபிஐ விசை காலாவதியாகும் தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:36
+msgid "Valid From"
+msgstr "இருந்து செல்லுபடியாகும்"
+
+#: .\facilitator\models\facilitator_model.py:37
+msgid "The date and time from which the API key becomes valid."
+msgstr "ஏபிஐ விசை செல்லுபடியாகும் தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:41
+#: .\veterinary\models\common_models.py:42
+msgid "Is Active"
+msgstr "செயலில் உள்ளது"
+
+#: .\facilitator\models\facilitator_model.py:42
+msgid "Indicates whether the API key is active."
+msgstr "API விசை செயலில் உள்ளதா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\facilitator_model.py:47
+#: .\facilitator\models\member_update_model.py:370
+#: .\veterinary\models\case_models.py:681
+#: .\veterinary\models\stock_models.py:215
+msgid "Description"
+msgstr "விளக்கம்"
+
+#: .\facilitator\models\facilitator_model.py:48
+msgid "A description of the purpose or use case for the API key."
+msgstr "API விசைக்கான நோக்கம் அல்லது பயன்பாட்டு வழக்கு பற்றிய விளக்கம்."
+
+#: .\facilitator\models\facilitator_model.py:54
+msgid "Usage Count"
+msgstr "பயன்பாட்டு எண்ணிக்கை"
+
+#: .\facilitator\models\facilitator_model.py:55
+msgid "The number of times this API key has been used."
+msgstr "இந்த ஏபிஐ விசை எத்தனை முறை பயன்படுத்தப்பட்டுள்ளது."
+
+#: .\facilitator\models\facilitator_model.py:60
+msgid "Maximum Usage Limit"
+msgstr "அதிகபட்ச பயன்பாட்டு வரம்பு"
+
+#: .\facilitator\models\facilitator_model.py:61
+msgid "The maximum number of requests allowed for this API key."
+msgstr "இந்த ஏபிஐ விசைக்கு அனுமதிக்கப்பட்ட அதிகபட்ச கோரிக்கைகள்."
+
+#: .\facilitator\models\facilitator_model.py:66
+msgid "Usage Reset Time"
+msgstr "பயன்பாட்டு மீட்டமைப்பு நேரம்"
+
+#: .\facilitator\models\facilitator_model.py:67
+msgid "The time at which the usage count will reset."
+msgstr "பயன்பாட்டு எண்ணிக்கை மீட்டமைக்கப்படும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:71
+msgid "Requests Per Day"
+msgstr "ஒரு நாளைக்கு கோரிக்கைகள்"
+
+#: .\facilitator\models\facilitator_model.py:72
+msgid "The maximum number of requests allowed per day for this API key."
+msgstr "இந்த ஏபிஐ விசைக்கு ஒரு நாளைக்கு அனுமதிக்கப்பட்ட அதிகபட்ச கோரிக்கைகள்."
+
+#: .\facilitator\models\facilitator_model.py:76
+msgid "Requests Per Hour"
+msgstr "ஒரு மணி நேரத்திற்கு கோரிக்கைகள்"
+
+#: .\facilitator\models\facilitator_model.py:77
+msgid "The maximum number of requests allowed per hour for this API key."
+msgstr ""
+"இந்த ஏபிஐ விசைக்கு ஒரு மணி நேரத்திற்கு அனுமதிக்கப்பட்ட அதிகபட்ச கோரிக்கைகள்."
+
+#: .\facilitator\models\facilitator_model.py:85
+msgid "Permissions"
+msgstr "அனுமதிகள்"
+
+#: .\facilitator\models\facilitator_model.py:86
+msgid "The scope of actions allowed by this API key (e.g., 'read', 'write')."
+msgstr ""
+"இந்த ஏபிஐ விசையால் அனுமதிக்கப்பட்ட செயல்களின் நோக்கம் (எ.கா., 'படிக்க', "
+"'எழுது')."
+
+#: .\facilitator\models\facilitator_model.py:91
+msgid "Allowed IPs"
+msgstr "அனுமதிக்கப்பட்ட ஐபிக்கள்"
+
+#: .\facilitator\models\facilitator_model.py:92
+msgid "Comma-separated list of IP addresses allowed to use this API key."
+msgstr ""
+"இந்த ஏபிஐ விசையைப் பயன்படுத்த அனுமதிக்கப்பட்ட ஐபி முகவரிகளின் கமாவால் "
+"பிரிக்கப்பட்ட பட்டியல்."
+
+#: .\facilitator\models\facilitator_model.py:97
+msgid "Allowed URLs"
+msgstr "அனுமதிக்கப்பட்ட URL கள்"
+
+#: .\facilitator\models\facilitator_model.py:98
+msgid "Comma-separated list of URLs or endpoints this API key can access."
+msgstr ""
+"இந்த API விசை அணுகக்கூடிய URL கள் அல்லது இறுதி புள்ளிகளின் கமாவால் "
+"பிரிக்கப்பட்ட பட்டியல்."
+
+#: .\facilitator\models\facilitator_model.py:105
+msgid "Last Used At"
+msgstr "கடைசியாக பயன்படுத்தப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:106
+msgid "The date and time when this API key was last used."
+msgstr "இந்த ஏபிஐ விசை கடைசியாக பயன்படுத்தப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:113 .\member\models.py:181
+msgid "Created By"
+msgstr "உருவாக்கியது"
+
+#: .\facilitator\models\facilitator_model.py:114
+msgid "The user who created this API key."
+msgstr "இந்த API விசையை உருவாக்கிய பயனர்."
+
+#: .\facilitator\models\facilitator_model.py:122
+msgid "Last Used By"
+msgstr "கடைசியாக பயன்படுத்தியது"
+
+#: .\facilitator\models\facilitator_model.py:123
+msgid "The last user who used this API key."
+msgstr "இந்த API விசையைப் பயன்படுத்திய கடைசி பயனர்."
+
+#: .\facilitator\models\facilitator_model.py:127
+msgid "Is Revoked"
+msgstr "ரத்து செய்யப்படுகிறது"
+
+#: .\facilitator\models\facilitator_model.py:128
+msgid "Indicates whether the API key has been revoked."
+msgstr "ஏபிஐ விசை ரத்து செய்யப்பட்டுள்ளதா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\facilitator_model.py:133
+msgid "Revoked At"
+msgstr "ரத்து செய்யப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:134
+msgid "The date and time when this API key was revoked."
+msgstr "இந்த ஏபிஐ விசை ரத்து செய்யப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:142
+msgid "Revoked By"
+msgstr "ரத்து செய்யப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:143
+msgid "The user who revoked this API key."
+msgstr "இந்த ஏபிஐ விசையை ரத்து செய்த பயனர்."
+
+#: .\facilitator\models\facilitator_model.py:147
+msgid "Failed Attempts"
+msgstr "தோல்வியுற்ற முயற்சிகள்"
+
+#: .\facilitator\models\facilitator_model.py:148
+msgid "The number of failed authentication attempts using this API key."
+msgstr ""
+"இந்த API விசையைப் பயன்படுத்தி தோல்வியுற்ற அங்கீகார முயற்சிகளின் எண்ணிக்கை."
+
+#: .\facilitator\models\facilitator_model.py:161
+msgid "API Keys"
+msgstr "ஏபிஐ விசைகள்"
+
+#: .\facilitator\models\facilitator_model.py:177
+msgid "Facilitator"
+msgstr "வசதி"
+
+#: .\facilitator\models\facilitator_model.py:180
+msgid "The user assigned as the facilitator for this MPP."
+msgstr "இந்த எம்.பி.பி.க்கு வசதியாளராக நியமிக்கப்பட்ட பயனர்."
+
+#: .\facilitator\models\facilitator_model.py:185
+#: .\facilitator\models\member_update_model.py:75
+#: .\facilitator\models\vcg_model.py:143 .\facilitator\models\vcg_model.py:536
+#: .\feedback\models\feedback_model.py:94 .\member\models.py:55
+#: .\member\models.py:87 .\member\models.py:222
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:103
+msgid "MPP Code"
+msgstr "MPP குறியீடு"
+
+#: .\facilitator\models\facilitator_model.py:186
+#: .\facilitator\models\member_update_model.py:77
+msgid ""
+"A unique code assigned to the MPP. This code must be 9 characters long."
+msgstr ""
+"MPP க்கு ஒதுக்கப்பட்ட தனித்துவமான குறியீடு. இந்த குறியீடு 9 எழுத்துக்கள் "
+"நீளமாக இருக்க வேண்டும்."
+
+#: .\facilitator\models\facilitator_model.py:192
+#: .\facilitator\models\member_update_model.py:84
+msgid "MPP External Code"
+msgstr "MPP வெளிப்புற குறியீடு"
+
+#: .\facilitator\models\facilitator_model.py:193
+#: .\facilitator\models\member_update_model.py:85
+msgid "An external code for the MPP, if applicable."
+msgstr "பொருந்தினால், MPP க்கான வெளிப்புற குறியீடு."
+
+#: .\facilitator\models\facilitator_model.py:199
+#: .\facilitator\models\member_update_model.py:91
+msgid "MPP Short Name"
+msgstr "எம்.பி.பி குறுகிய பெயர்"
+
+#: .\facilitator\models\facilitator_model.py:200
+#: .\facilitator\models\member_update_model.py:92
+msgid "A short name or abbreviation for the MPP."
+msgstr "MPP க்கு ஒரு குறுகிய பெயர் அல்லது சுருக்கம்."
+
+#: .\facilitator\models\facilitator_model.py:206
+#: .\facilitator\models\member_update_model.py:98
+#: .\facilitator\models\vcg_model.py:128 .\facilitator\models\vcg_model.py:525
+#: .\member\models.py:90
+msgid "MPP Name"
+msgstr "எம்.பி.பி பெயர்"
+
+#: .\facilitator\models\facilitator_model.py:207
+#: .\facilitator\models\member_update_model.py:99
+msgid "The full name of the MPP."
+msgstr "MPP இன் முழு பெயர்."
+
+#: .\facilitator\models\facilitator_model.py:213
+msgid "MPP Type"
+msgstr "எம்.பி.பி வகை"
+
+#: .\facilitator\models\facilitator_model.py:214
+msgid "The type/category of the MPP."
+msgstr "MPP இன் வகை/வகை."
+
+#: .\facilitator\models\facilitator_model.py:220
+msgid "MPP Logo URL"
+msgstr "MPP லோகோ URL"
+
+#: .\facilitator\models\facilitator_model.py:221
+msgid "The URL or path to the logo image of the MPP."
+msgstr "MPP இன் லோகோ படத்திற்கான URL அல்லது பாதை."
+
+#: .\facilitator\models\facilitator_model.py:227
+msgid "MPP Icon URL"
+msgstr "MPP ஐகான் URL"
+
+#: .\facilitator\models\facilitator_model.py:228
+msgid "The URL or path to the icon image of the MPP."
+msgstr "MPP இன் ஐகான் படத்திற்கு URL அல்லது பாதை."
+
+#: .\facilitator\models\facilitator_model.py:234
+msgid "MPP Punch Line"
+msgstr "எம்.பி.பி பஞ்ச் வரி"
+
+#: .\facilitator\models\facilitator_model.py:235
+msgid "A catchy tagline or punch line associated with the MPP."
+msgstr "MPP உடன் தொடர்புடைய ஒரு கவர்ச்சியான டேக்லைன் அல்லது பஞ்ச் வரி."
+
+#: .\facilitator\models\facilitator_model.py:240
+msgid "MPP Opening Date"
+msgstr "எம்.பி.பி தொடக்க தேதி"
+
+#: .\facilitator\models\facilitator_model.py:241
+msgid "The date and time when the MPP is officially opened."
+msgstr "எம்.பி.பி அதிகாரப்பூர்வமாக திறக்கப்படும் தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:246
+msgid "The date and time when the MPP assignment was created."
+msgstr "எம்.பி.பி பணி உருவாக்கப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:250
+#: .\facilitator\models\user_profile_model.py:78
+#: .\facilitator\models\vcg_model.py:74 .\facilitator\models\vcg_model.py:291
+#: .\facilitator\models\vcg_model.py:339 .\facilitator\models\vcg_model.py:389
+#: .\facilitator\models\vcg_model.py:422 .\facilitator\models\vcg_model.py:579
+#: .\member\models.py:178 .\member\models.py:234
+#: .\veterinary\models\common_models.py:28
+msgid "Updated At"
+msgstr "இல் புதுப்பிக்கப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:251
+msgid "The date and time when the MPP assignment was last updated."
+msgstr "எம்.பி.பி பணி கடைசியாக புதுப்பிக்கப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\facilitator\models\facilitator_model.py:257
+msgid "Assigned MPP to Facilitator"
+msgstr "எளிதாக்குபவருக்கு MPP ஒதுக்கப்பட்டது"
+
+#: .\facilitator\models\facilitator_model.py:258
+msgid "Assigned MPPs to Facilitators"
+msgstr "எளிதாக்குபவர்களுக்கு MPP களை ஒதுக்கியது"
+
+#: .\facilitator\models\member_update_model.py:43
+msgid "Indicates whether this entry has been deleted."
+msgstr "இந்த நுழைவு நீக்கப்பட்டதா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\member_update_model.py:59
+#: .\facilitator\models\vcg_model.py:17
+msgid "Enter a valid WhatsApp number with country code (e.g., +1234567890)."
+msgstr ""
+"நாட்டு குறியீட்டைக் கொண்டு செல்லுபடியாகும் வாட்ஸ்அப் எண்ணை உள்ளிடவும் "
+"(எ.கா., +1234567890)."
+
+#: .\facilitator\models\member_update_model.py:65
+msgid "Request ID"
+msgstr "ஐடி கோரிக்கை"
+
+#: .\facilitator\models\member_update_model.py:66
+msgid "Auto-generated unique request identifier (e.g., REQ-2025-001234)"
+msgstr ""
+"தானாக உருவாக்கிய தனிப்பட்ட கோரிக்கை அடையாளங்காட்டி (எ.கா., REQ-2025-001234)"
+
+#: .\facilitator\models\member_update_model.py:105
+#: .\facilitator\models\vcg_model.py:48 .\facilitator\models\vcg_model.py:445
+#: .\facilitator\models\vcg_model.py:453 .\facilitator\models\vcg_model.py:486
+#: .\feedback\models\feedback_model.py:110
+msgid "Member Code"
+msgstr "உறுப்பினர் குறியீடு"
+
+#: .\facilitator\models\member_update_model.py:108
+#: .\facilitator\models\member_update_model.py:115
+msgid "Unique identifier for the member."
+msgstr "உறுப்பினருக்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\facilitator\models\member_update_model.py:112
+#: .\facilitator\models\vcg_model.py:56
+msgid "Member Ex Code"
+msgstr "உறுப்பினர் முன்னாள் குறியீடு"
+
+#: .\facilitator\models\member_update_model.py:120
+#: .\facilitator\models\vcg_model.py:63 .\facilitator\models\vcg_model.py:460
+#: .\facilitator\models\vcg_model.py:500
+#: .\feedback\models\feedback_model.py:126
+msgid "Member Name"
+msgstr "உறுப்பினர் பெயர்"
+
+#: .\facilitator\models\member_update_model.py:121
+#: .\feedback\models\feedback_model.py:127
+msgid "Full name of the member."
+msgstr "உறுப்பினரின் முழு பெயர்."
+
+#: .\facilitator\models\member_update_model.py:131
+msgid "Member's  contact number."
+msgstr "உறுப்பினரின் தொடர்பு எண்."
+
+#: .\facilitator\models\member_update_model.py:139
+msgid "Role Type"
+msgstr "பங்கு வகை"
+
+#: .\facilitator\models\member_update_model.py:143
+msgid "Update Type"
+msgstr "புதுப்பிப்பு வகை"
+
+#: .\facilitator\models\member_update_model.py:150
+msgid "Status"
+msgstr "நிலை"
+
+#: .\facilitator\models\member_update_model.py:192
+msgid "Reviewed By"
+msgstr "மதிப்பாய்வு செய்யப்பட்டது"
+
+#: .\facilitator\models\member_update_model.py:196
+msgid "Reviewed At"
+msgstr "மதிப்பாய்வு செய்யப்பட்டது"
+
+#: .\facilitator\models\member_update_model.py:199
+msgid "HO Comments"
+msgstr "ஹோ கருத்துரைகள்"
+
+#: .\facilitator\models\member_update_model.py:202
+msgid "Rejection Reason"
+msgstr "நிராகரிப்பு காரணம்"
+
+#: .\facilitator\models\member_update_model.py:206
+msgid "Update Request"
+msgstr "புதுப்பிப்பு கோரிக்கை"
+
+#: .\facilitator\models\member_update_model.py:207
+msgid "Update Requests"
+msgstr "கோரிக்கைகளை புதுப்பிக்கவும்"
+
+#: .\facilitator\models\member_update_model.py:255
+msgid "Approved requests must have a reviewer."
+msgstr "அங்கீகரிக்கப்பட்ட கோரிக்கைகள் மதிப்பாய்வாளரைக் கொண்டிருக்க வேண்டும்."
+
+#: .\facilitator\models\member_update_model.py:258
+msgid "Rejected requests must have a rejection reason."
+msgstr "நிராகரிக்கப்பட்ட கோரிக்கைகளுக்கு நிராகரிப்பு காரணம் இருக்க வேண்டும்."
+
+#: .\facilitator\models\member_update_model.py:289
+#: .\facilitator\models\member_update_model.py:408
+msgid "Field Name"
+msgstr "புலம் பெயர்"
+
+#: .\facilitator\models\member_update_model.py:291
+#: .\facilitator\models\member_update_model.py:411
+msgid "Old Value"
+msgstr "பழைய மதிப்பு"
+
+#: .\facilitator\models\member_update_model.py:293
+#: .\facilitator\models\member_update_model.py:413
+msgid "New Value"
+msgstr "புதிய மதிப்பு"
+
+#: .\facilitator\models\member_update_model.py:298
+msgid "Text"
+msgstr "உரை"
+
+#: .\facilitator\models\member_update_model.py:299
+msgid "Number"
+msgstr "எண்"
+
+#: .\facilitator\models\member_update_model.py:300
+msgid "File"
+msgstr "கோப்பு"
+
+#: .\facilitator\models\member_update_model.py:301
+msgid "JSON"
+msgstr "JSON"
+
+#: .\facilitator\models\member_update_model.py:304
+msgid "Data Type"
+msgstr "தரவு வகை"
+
+#: .\facilitator\models\member_update_model.py:308
+#: .\facilitator\models\member_update_model.py:309
+msgid "Update Request Data"
+msgstr "கோரிக்கை தரவைப் புதுப்பிக்கவும்"
+
+#: .\facilitator\models\member_update_model.py:355
+msgid "Document Type"
+msgstr "ஆவண வகை"
+
+#: .\facilitator\models\member_update_model.py:359
+msgid "Document File"
+msgstr "ஆவணக் கோப்பு"
+
+#: .\facilitator\models\member_update_model.py:363
+msgid "Original Filename"
+msgstr "அசல் கோப்பு பெயர்"
+
+#: .\facilitator\models\member_update_model.py:366
+msgid "File Size (bytes)"
+msgstr "கோப்பு அளவு (பைட்டுகள்)"
+
+#: .\facilitator\models\member_update_model.py:368
+msgid "Content Type"
+msgstr "உள்ளடக்க வகை"
+
+#: .\facilitator\models\member_update_model.py:373
+msgid "Update Request Document"
+msgstr "கோரிக்கை ஆவணத்தைப் புதுப்பிக்கவும்"
+
+#: .\facilitator\models\member_update_model.py:374
+msgid "Update Request Documents"
+msgstr "கோரிக்கை ஆவணங்களைப் புதுப்பிக்கவும்"
+
+#: .\facilitator\models\member_update_model.py:386
+msgid "File size cannot exceed 10MB."
+msgstr "கோப்பு அளவு 10MB ஐ விட அதிகமாக இருக்கக்கூடாது."
+
+#: .\facilitator\models\member_update_model.py:391
+msgid "Only PDF and image files are allowed."
+msgstr "PDF மற்றும் படக் கோப்புகள் மட்டுமே அனுமதிக்கப்படுகின்றன."
+
+#: .\facilitator\models\member_update_model.py:404
+msgid "Change Type"
+msgstr "வகை மாற்றவும்"
+
+#: .\facilitator\models\member_update_model.py:416
+msgid "Changed By"
+msgstr "மாற்றியது"
+
+#: .\facilitator\models\member_update_model.py:420
+msgid "Change Reason"
+msgstr "காரணத்தை மாற்றவும்"
+
+#: .\facilitator\models\member_update_model.py:424
+msgid "IP Address"
+msgstr "ஐபி முகவரி"
+
+#: .\facilitator\models\member_update_model.py:427
+msgid "User Agent"
+msgstr "பயனர் முகவர்"
+
+#: .\facilitator\models\member_update_model.py:430
+msgid "Additional Metadata"
+msgstr "கூடுதல் மெட்டாடேட்டா"
+
+#: .\facilitator\models\member_update_model.py:434
+msgid "Update Request History"
+msgstr "கோரிக்கை வரலாற்றைப் புதுப்பிக்கவும்"
+
+#: .\facilitator\models\member_update_model.py:435
+msgid "Update Request Histories"
+msgstr "கோரிக்கை வரலாறுகளைப் புதுப்பிக்கவும்"
+
+#: .\facilitator\models\user_profile_model.py:12
+msgid "Support"
+msgstr "ஆதரவு"
+
+#: .\facilitator\models\user_profile_model.py:13
+msgid "IT"
+msgstr "அது"
+
+#: .\facilitator\models\user_profile_model.py:14
+msgid "PIB"
+msgstr "பிப்"
+
+#: .\facilitator\models\user_profile_model.py:15
+msgid "Sales"
+msgstr "விற்பனை"
+
+#: .\facilitator\models\user_profile_model.py:16
+msgid "Human Resources"
+msgstr "மனித வளங்கள்"
+
+#: .\facilitator\models\user_profile_model.py:17
+msgid "Engineering"
+msgstr "பொறியியல்"
+
+#: .\facilitator\models\user_profile_model.py:18
+msgid "Administration"
+msgstr "நிர்வாகம்"
+
+#: .\facilitator\models\user_profile_model.py:25
+msgid "The user to whom this profile belongs."
+msgstr "இந்த சுயவிவரம் யாருக்கு சொந்தமானது."
+
+#: .\facilitator\models\user_profile_model.py:32
+msgid "Department"
+msgstr "துறை"
+
+#: .\facilitator\models\user_profile_model.py:33
+msgid "Department or team of the user."
+msgstr "பயனரின் துறை அல்லது குழு."
+
+#: .\facilitator\models\user_profile_model.py:39
+msgid "Avatar"
+msgstr "அவதார்"
+
+#: .\facilitator\models\user_profile_model.py:40
+msgid "User profile picture."
+msgstr "பயனர் சுயவிவரப் படம்."
+
+#: .\facilitator\models\user_profile_model.py:46 .\member\models.py:19
+msgid "Phone Number"
+msgstr "தொலைபேசி எண்"
+
+#: .\facilitator\models\user_profile_model.py:47
+msgid "Contact number of the user."
+msgstr "பயனரின் தொடர்பு எண்."
+
+#: .\facilitator\models\user_profile_model.py:52
+#: .\veterinary\models\case_models.py:82
+#: .\veterinary\models\stock_models.py:34
+msgid "Address"
+msgstr "முகவரி"
+
+#: .\facilitator\models\user_profile_model.py:53
+msgid "Residential or official address."
+msgstr "குடியிருப்பு அல்லது அதிகாரப்பூர்வ முகவரி."
+
+#: .\facilitator\models\user_profile_model.py:59
+msgid "Designation"
+msgstr "பதவி"
+
+#: .\facilitator\models\user_profile_model.py:60
+msgid "Official designation or title."
+msgstr "அதிகாரப்பூர்வ பதவி அல்லது தலைப்பு."
+
+#: .\facilitator\models\user_profile_model.py:64
+msgid "Verified"
+msgstr "சரிபார்க்கப்பட்டது"
+
+#: .\facilitator\models\user_profile_model.py:65
+msgid "Indicates whether the user's profile is verified."
+msgstr "பயனரின் சுயவிவரம் சரிபார்க்கப்பட்டதா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\user_profile_model.py:69
+msgid "Email Verified"
+msgstr "மின்னஞ்சல் சரிபார்க்கப்பட்டது"
+
+#: .\facilitator\models\user_profile_model.py:70
+msgid "Indicates whether the user's email is verified."
+msgstr "பயனரின் மின்னஞ்சல் சரிபார்க்கப்பட்டதா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\user_profile_model.py:93
+msgid "User Profile"
+msgstr "பயனர் சுயவிவரம்"
+
+#: .\facilitator\models\user_profile_model.py:94
+msgid "User Profiles"
+msgstr "பயனர் சுயவிவரங்கள்"
+
+#: .\facilitator\models\vcg_model.py:26
+msgid "Member related to  mpp"
+msgstr "எம்.பி.பி தொடர்பான உறுப்பினர்"
+
+#: .\facilitator\models\vcg_model.py:32
+msgid "Mpp Code"
+msgstr "MPP குறியீடு"
+
+#: .\facilitator\models\vcg_model.py:33
+msgid "Unique mpp code."
+msgstr "தனித்துவமான எம்.பி.பி குறியீடு."
+
+#: .\facilitator\models\vcg_model.py:40
+msgid "WhatsApp Number"
+msgstr "வாட்ஸ்அப் எண்"
+
+#: .\facilitator\models\vcg_model.py:41
+msgid "Member's WhatsApp contact number."
+msgstr "உறுப்பினரின் வாட்ஸ்அப் தொடர்பு எண்."
+
+#: .\facilitator\models\vcg_model.py:49 .\facilitator\models\vcg_model.py:57
+#: .\facilitator\models\vcg_model.py:446 .\facilitator\models\vcg_model.py:454
+#: .\facilitator\models\vcg_model.py:487
+msgid "Unique identifier for the VCG member."
+msgstr "வி.சி.ஜி உறுப்பினருக்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\facilitator\models\vcg_model.py:64 .\facilitator\models\vcg_model.py:461
+#: .\facilitator\models\vcg_model.py:501
+msgid "Full name of the VCG member."
+msgstr "வி.சி.ஜி உறுப்பினரின் முழு பெயர்."
+
+#: .\facilitator\models\vcg_model.py:70
+msgid "Timestamp when the member was added."
+msgstr "உறுப்பினர் சேர்க்கப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:75
+msgid "Timestamp when the member record was last updated."
+msgstr "உறுப்பினர் பதிவு கடைசியாக புதுப்பிக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:83
+msgid "VCG Group"
+msgstr "வி.சி.ஜி குழு"
+
+#: .\facilitator\models\vcg_model.py:84
+msgid "VCG Groups"
+msgstr "வி.சி.ஜி குழுக்கள்"
+
+#: .\facilitator\models\vcg_model.py:102
+msgid "Started"
+msgstr "தொடங்கியது"
+
+#: .\facilitator\models\vcg_model.py:103 .\veterinary\choices\choices.py:145
+#: .\veterinary\choices\choices.py:166
+msgid "Completed"
+msgstr "முடிந்தது"
+
+#: .\facilitator\models\vcg_model.py:111
+msgid "Unique identifier for the meeting."
+msgstr "கூட்டத்திற்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\facilitator\models\vcg_model.py:120
+msgid "User who initiated the meeting."
+msgstr "கூட்டத்தைத் தொடங்கிய பயனர்."
+
+#: .\facilitator\models\vcg_model.py:129 .\facilitator\models\vcg_model.py:526
+msgid "Name of the MPP associated with the meeting."
+msgstr "கூட்டத்துடன் தொடர்புடைய MPP இன் பெயர்."
+
+#: .\facilitator\models\vcg_model.py:136 .\facilitator\models\vcg_model.py:531
+msgid "MPP EX Code"
+msgstr "MPP EX குறியீடு"
+
+#: .\facilitator\models\vcg_model.py:137 .\facilitator\models\vcg_model.py:532
+msgid "External MPP Code for reference."
+msgstr "குறிப்புக்கான வெளிப்புற எம்.பி.பி குறியீடு."
+
+#: .\facilitator\models\vcg_model.py:144 .\facilitator\models\vcg_model.py:537
+msgid "Unique MPP code assigned."
+msgstr "ஒதுக்கப்பட்ட தனித்துவமான MPP குறியீடு."
+
+#: .\facilitator\models\vcg_model.py:151
+#: .\veterinary\models\stock_models.py:59
+msgid "Latitude"
+msgstr "அட்சரேகை"
+
+#: .\facilitator\models\vcg_model.py:152
+msgid "Geographical latitude of the meeting location."
+msgstr "சந்திப்பு இருப்பிடத்தின் புவியியல் அட்சரேகை."
+
+#: .\facilitator\models\vcg_model.py:158
+#: .\veterinary\models\stock_models.py:68
+msgid "Longitude"
+msgstr "தீர்க்கரேகை"
+
+#: .\facilitator\models\vcg_model.py:159
+msgid "Geographical longitude of the meeting location."
+msgstr "சந்திப்பு இருப்பிடத்தின் புவியியல் தீர்க்கரேகை."
+
+#: .\facilitator\models\vcg_model.py:165
+msgid "Started At"
+msgstr "தொடங்கியது"
+
+#: .\facilitator\models\vcg_model.py:166
+msgid "Timestamp when the meeting started."
+msgstr "சந்திப்பு தொடங்கியபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:171
+msgid "Completed At"
+msgstr "இல் முடிந்தது"
+
+#: .\facilitator\models\vcg_model.py:172
+msgid "Timestamp when the meeting was completed."
+msgstr "கூட்டம் முடிந்ததும் நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:179
+msgid "Meeting Status"
+msgstr "சந்திப்பு நிலை"
+
+#: .\facilitator\models\vcg_model.py:180
+msgid "Current status of the meeting."
+msgstr "கூட்டத்தின் தற்போதைய நிலை."
+
+#: .\facilitator\models\vcg_model.py:184
+#: .\veterinary\models\common_models.py:52
+msgid "Synced"
+msgstr "ஒத்திசைக்கப்பட்டது"
+
+#: .\facilitator\models\vcg_model.py:185
+msgid "Indicated whether data is synced from mobile app or not."
+msgstr ""
+"மொபைல் பயன்பாட்டிலிருந்து தரவு ஒத்திசைக்கப்பட்டதா இல்லையா என்பதைக் "
+"குறிக்கிறது."
+
+#: .\facilitator\models\vcg_model.py:189
+msgid "deleted"
+msgstr "நீக்கப்பட்டது"
+
+#: .\facilitator\models\vcg_model.py:190
+msgid "Indicated whether data is deleted or not."
+msgstr "தரவு நீக்கப்பட்டதா இல்லையா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\vcg_model.py:210
+msgid "VCG Meeting"
+msgstr "வி.சி.ஜி கூட்டம்"
+
+#: .\facilitator\models\vcg_model.py:211
+msgid "VCG Meetings"
+msgstr "வி.சி.ஜி கூட்டங்கள்"
+
+#: .\facilitator\models\vcg_model.py:245
+msgid "Present"
+msgstr "தற்போது"
+
+#: .\facilitator\models\vcg_model.py:246
+msgid "Absent"
+msgstr "இல்லாதது"
+
+#: .\facilitator\models\vcg_model.py:255 .\facilitator\models\vcg_model.py:321
+msgid "Meeting"
+msgstr "கூட்டம்"
+
+#: .\facilitator\models\vcg_model.py:256
+msgid "The meeting to which this attendance record belongs."
+msgstr "இந்த வருகை பதிவு சொந்தமான கூட்டம்."
+
+#: .\facilitator\models\vcg_model.py:265
+msgid "Group Member"
+msgstr "குழு உறுப்பினர்"
+
+#: .\facilitator\models\vcg_model.py:266
+msgid "The VCG member attending the meeting."
+msgstr "கூட்டத்தில் கலந்து கொண்ட வி.சி.ஜி உறுப்பினர்."
+
+#: .\facilitator\models\vcg_model.py:273
+msgid "Attendance Status"
+msgstr "வருகை நிலை"
+
+#: .\facilitator\models\vcg_model.py:274
+msgid "Indicates whether the member was present or absent."
+msgstr "உறுப்பினர் இருக்கிறாரா அல்லது இல்லையா என்பதைக் குறிக்கிறது."
+
+#: .\facilitator\models\vcg_model.py:279
+msgid "Attendance Date"
+msgstr "வருகை தேதி"
+
+#: .\facilitator\models\vcg_model.py:280
+msgid "Timestamp of when the attendance was recorded."
+msgstr "வருகை பதிவு செய்யப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:286
+msgid "Timestamp of when this record was created."
+msgstr "இந்த பதிவு எப்போது உருவாக்கப்பட்டது என்பதற்கான நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:292 .\facilitator\models\vcg_model.py:340
+msgid "Timestamp of the last update to this record."
+msgstr "இந்த பதிவுக்கான கடைசி புதுப்பிப்பின் நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:300
+msgid "VCG Member Attendance"
+msgstr "வி.சி.ஜி உறுப்பினர் வருகை"
+
+#: .\facilitator\models\vcg_model.py:301
+msgid "VCG Member Attendances"
+msgstr "வி.சி.ஜி உறுப்பினர் வருகை"
+
+#: .\facilitator\models\vcg_model.py:322
+msgid "The meeting associated with this image."
+msgstr "இந்த படத்துடன் தொடர்புடைய சந்திப்பு."
+
+#: .\facilitator\models\vcg_model.py:327
+msgid "Meeting Image"
+msgstr "சந்திப்பு படம்"
+
+#: .\facilitator\models\vcg_model.py:328
+msgid "Upload an image related to the meeting."
+msgstr "கூட்டம் தொடர்பான படத்தை பதிவேற்றவும்."
+
+#: .\facilitator\models\vcg_model.py:334
+msgid "Timestamp of when this image was uploaded."
+msgstr "இந்த படம் பதிவேற்றப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:364
+msgid "VCG Meeting Image"
+msgstr "வி.சி.ஜி சந்திப்பு படம்"
+
+#: .\facilitator\models\vcg_model.py:365
+msgid "VCG Meeting Images"
+msgstr "வி.சி.ஜி சந்திப்பு படங்கள்"
+
+#: .\facilitator\models\vcg_model.py:377 .\facilitator\models\vcg_model.py:410
+msgid "Reason"
+msgstr "காரணம்"
+
+#: .\facilitator\models\vcg_model.py:378
+msgid "Reason for zero days pouring."
+msgstr "பூஜ்ஜிய நாட்கள் கொட்டுவதற்கான காரணம்."
+
+#: .\facilitator\models\vcg_model.py:384 .\facilitator\models\vcg_model.py:417
+msgid "Timestamp when this reason was added."
+msgstr "இந்த காரணம் சேர்க்கப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:390 .\facilitator\models\vcg_model.py:423
+msgid "Timestamp when this reason was last updated."
+msgstr "இந்த காரணம் கடைசியாக புதுப்பிக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\facilitator\models\vcg_model.py:398
+msgid "Zero Days Pouring Reason"
+msgstr "பூஜ்ஜிய நாட்கள் காரணத்தை ஊற்றுகின்றன"
+
+#: .\facilitator\models\vcg_model.py:399
+msgid "Zero Days Pouring Reasons"
+msgstr "பூஜ்ஜிய நாட்கள் காரணங்களை ஊற்றுகின்றன"
+
+#: .\facilitator\models\vcg_model.py:411
+msgid "Reason for a member complaint."
+msgstr "உறுப்பினர் புகாருக்கான காரணம்."
+
+#: .\facilitator\models\vcg_model.py:431
+msgid "Member Complaint Reason"
+msgstr "உறுப்பினர் புகார் காரணம்"
+
+#: .\facilitator\models\vcg_model.py:432
+msgid "Member Complaint Reasons"
+msgstr "உறுப்பினர் புகார் காரணங்கள்"
+
+#: .\facilitator\models\vcg_model.py:493
+msgid "Member External Code"
+msgstr "உறுப்பினர் வெளிப்புற குறியீடு"
+
+#: .\facilitator\models\vcg_model.py:494
+msgid "External identifier for the VCG member."
+msgstr "வி.சி.ஜி உறுப்பினருக்கான வெளிப்புற அடையாளங்காட்டி."
+
+#: .\facilitator\models\vcg_model.py:541 .\member\models.py:92
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:109
+msgid "Month"
+msgstr "மாதம்"
+
+#: .\facilitator\models\vcg_model.py:542
+msgid "The month for which the assignment is created."
+msgstr "பணி உருவாக்கப்பட்ட மாதம்."
+
+#: .\facilitator\models\vcg_model.py:548
+msgid "Milk Collection (Liters/Day)"
+msgstr "பால் சேகரிப்பு (லிட்டர்/நாள்)"
+
+#: .\facilitator\models\vcg_model.py:549
+msgid "Total milk collected per day in liters."
+msgstr "ஒரு நாளைக்கு மொத்த பால் லிட்டரில் சேகரிக்கப்பட்டது."
+
+#: .\facilitator\models\vcg_model.py:552
+msgid "No of Members"
+msgstr "உறுப்பினர்கள் இல்லை"
+
+#: .\facilitator\models\vcg_model.py:555
+msgid ">=15 Days Pourers"
+msgstr "> = 15 நாட்கள் பவுர்ஸ்"
+
+#: .\facilitator\models\vcg_model.py:558
+msgid ">=25 Days Pourers"
+msgstr "> = 25 நாட்கள் ஊற்றிகள்"
+
+#: .\facilitator\models\vcg_model.py:561
+msgid "Zero Days Pourers"
+msgstr "பூஜ்ஜிய நாட்கள் ஊற்றுபவர்கள்"
+
+#: .\facilitator\models\vcg_model.py:566
+msgid "Cattle Feed Sale (KG)"
+msgstr "கால்நடை தீவன விற்பனை (கிலோ)"
+
+#: .\facilitator\models\vcg_model.py:571
+msgid "Mineral Mixture Sale (KG)"
+msgstr "கனிம கலவை விற்பனை (கிலோ)"
+
+#: .\facilitator\models\vcg_model.py:576
+msgid "Sahayak Recovery (%)"
+msgstr "சஹாயக் மீட்பு (%)"
+
+#: .\facilitator\models\vcg_model.py:586
+msgid "Month Assignment"
+msgstr "மாத ஒதுக்கீடு"
+
+#: .\facilitator\models\vcg_model.py:587
+msgid "Month Assignments"
+msgstr "மாத பணிகள்"
+
+#: .\facilitator\views\auth.py:27
+msgid "Phone number is required."
+msgstr "தொலைபேசி எண் தேவை."
+
+#: .\facilitator\views\auth.py:35
+msgid "User does not exist. Please contact support."
+msgstr "பயனர் இல்லை. ஆதரவைத் தொடர்பு கொள்ளவும்."
+
+#: .\facilitator\views\auth.py:51
+msgid "Failed to send OTP. Please try again later."
+msgstr ""
+"OTP ஐ அனுப்பத் தவறிவிட்டது. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்."
+
+#: .\facilitator\views\auth.py:58 .\facilitator\views\views.py:886
+msgid "OTP sent successfully."
+msgstr "OTP வெற்றிகரமாக அனுப்பப்பட்டது."
+
+#: .\facilitator\views\auth.py:196
+msgid "Refresh token is required"
+msgstr "புதுப்பிப்பு டோக்கன் தேவை"
+
+#: .\facilitator\views\auth.py:204
+msgid "Logout successful"
+msgstr "வெளியேறுதல் வெற்றிகரமாக"
+
+#: .\facilitator\views\auth.py:210
+msgid "Invalid refresh token or already blacklisted"
+msgstr "தவறான புதுப்பிப்பு டோக்கன் அல்லது ஏற்கனவே தடுப்புப்பட்டியலில் உள்ளது"
+
+#: .\facilitator\views\member_update_view.py:99
+msgid "Update request created successfully"
+msgstr "புதுப்பிப்பு கோரிக்கை வெற்றிகரமாக உருவாக்கப்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:106
+#: .\facilitator\views\member_update_view.py:189
+msgid "Validation failed"
+msgstr "சரிபார்ப்பு தோல்வியடைந்தது"
+
+#: .\facilitator\views\member_update_view.py:113
+#: .\facilitator\views\member_update_view.py:120
+msgid "An error occurred while creating the request"
+msgstr "கோரிக்கையை உருவாக்கும் போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:133
+msgid "Request retrieved successfully"
+msgstr "கோரிக்கை வெற்றிகரமாக மீட்டெடுக்கப்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:140
+#: .\facilitator\views\member_update_view.py:196
+#: .\facilitator\views\member_update_view.py:240
+msgid "Request not found"
+msgstr "கோரிக்கை கிடைக்கவில்லை"
+
+#: .\facilitator\views\member_update_view.py:146
+msgid "An error occurred while retrieving the request"
+msgstr "கோரிக்கையை மீட்டெடுக்கும் போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:161
+msgid "You don't have permission to update this request"
+msgstr "இந்த கோரிக்கையை புதுப்பிக்க உங்களுக்கு அனுமதி இல்லை"
+
+#: .\facilitator\views\member_update_view.py:170
+msgid "Cannot update a request that has already been processed"
+msgstr "ஏற்கனவே செயலாக்கப்பட்ட கோரிக்கையை புதுப்பிக்க முடியாது"
+
+#: .\facilitator\views\member_update_view.py:182
+msgid "Request updated successfully"
+msgstr "கோரிக்கை வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:202
+msgid "An error occurred while updating the request"
+msgstr "கோரிக்கையை புதுப்பிக்கும்போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:216
+msgid "You don't have permission to delete this request"
+msgstr "இந்த கோரிக்கையை நீக்க உங்களுக்கு அனுமதி இல்லை"
+
+#: .\facilitator\views\member_update_view.py:225
+msgid "Cannot delete a request that has already been processed"
+msgstr "ஏற்கனவே செயலாக்கப்பட்ட கோரிக்கையை நீக்க முடியாது"
+
+#: .\facilitator\views\member_update_view.py:234
+msgid "Request deleted successfully"
+msgstr "கோரிக்கை வெற்றிகரமாக நீக்கப்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:246
+msgid "An error occurred while deleting the request"
+msgstr "கோரிக்கையை நீக்கும்போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:261
+msgid "You don't have permission to approve requests"
+msgstr "கோரிக்கைகளை அங்கீகரிக்க உங்களுக்கு அனுமதி இல்லை"
+
+#: .\facilitator\views\member_update_view.py:269
+msgid "Only pending requests can be approved"
+msgstr "நிலுவையில் உள்ள கோரிக்கைகளை மட்டுமே அங்கீகரிக்க முடியும்"
+
+#: .\facilitator\views\member_update_view.py:283
+msgid "Request approved successfully"
+msgstr "ஒப்புதல் அளிக்கப்பட்ட கோரிக்கை வெற்றிகரமாக"
+
+#: .\facilitator\views\member_update_view.py:290
+msgid "An error occurred while approving the request"
+msgstr "கோரிக்கையை அங்கீகரிக்கும் போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:305
+msgid "You don't have permission to reject requests"
+msgstr "கோரிக்கைகளை நிராகரிக்க உங்களுக்கு அனுமதி இல்லை"
+
+#: .\facilitator\views\member_update_view.py:313
+msgid "Only pending requests can be rejected"
+msgstr "நிலுவையில் உள்ள கோரிக்கைகளை மட்டுமே நிராகரிக்க முடியும்"
+
+#: .\facilitator\views\member_update_view.py:322
+msgid "Rejection reason is required"
+msgstr "நிராகரிப்பு காரணம் தேவை"
+
+#: .\facilitator\views\member_update_view.py:323
+msgid "This field is required"
+msgstr "இந்த புலம் தேவை"
+
+#: .\facilitator\views\member_update_view.py:338
+msgid "Request rejected successfully"
+msgstr "கோரிக்கை வெற்றிகரமாக நிராகரிக்கப்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:345
+msgid "An error occurred while rejecting the request"
+msgstr "கோரிக்கையை நிராகரிக்கும் போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\member_update_view.py:379
+msgid "Statistics retrieved successfully"
+msgstr "புள்ளிவிவரங்கள் வெற்றிகரமாக மீட்டெடுக்கப்பட்டன"
+
+#: .\facilitator\views\member_update_view.py:386
+msgid "An error occurred while retrieving statistics"
+msgstr "புள்ளிவிவரங்களை மீட்டெடுக்கும் போது பிழை ஏற்பட்டது"
+
+#: .\facilitator\views\vcg_api_views.py:953
+msgid "A meeting with the same details already exists."
+msgstr "அதே விவரங்களுடன் ஒரு சந்திப்பு ஏற்கனவே உள்ளது."
+
+#: .\facilitator\views\vcg_api_views.py:965
+msgid "Your meeting has started"
+msgstr "உங்கள் கூட்டம் தொடங்கியது"
+
+#: .\facilitator\views\vcg_api_views.py:974
+#: .\facilitator\views\vcg_api_views.py:1006
+#: .\facilitator\views\vcg_api_views.py:1050
+#: .\facilitator\views\vcg_api_views.py:1067
+msgid "Invalid data"
+msgstr "தவறான தரவு"
+
+#: .\facilitator\views\vcg_api_views.py:997
+msgid "Meeting updated successfully"
+msgstr "சந்திப்பு வெற்றிகரமாக புதுப்பிக்கப்பட்டது"
+
+#: .\facilitator\views\vcg_api_views.py:1044
+msgid "VCG Member created successfully"
+msgstr "வி.சி.ஜி உறுப்பினர் வெற்றிகரமாக உருவாக்கினார்"
+
+#: .\facilitator\views\vcg_api_views.py:1061
+msgid "VCG Member updated successfully"
+msgstr "வி.சி.ஜி உறுப்பினர் வெற்றிகரமாக புதுப்பிக்கப்பட்டார்"
+
+#: .\facilitator\views\vcg_api_views.py:1075
+msgid "VCG Member deleted successfully"
+msgstr "வி.சி.ஜி உறுப்பினர் வெற்றிகரமாக நீக்கப்பட்டார்"
+
+#: .\facilitator\views\views.py:837
+msgid "All fields are required."
+msgstr "அனைத்து புலங்களும் தேவை."
+
+#: .\facilitator\views\views.py:843
+msgid "Passwords do not match."
+msgstr "கடவுச்சொற்கள் பொருந்தவில்லை."
+
+#: .\facilitator\views\views.py:849
+msgid "Old password is incorrect."
+msgstr "பழைய கடவுச்சொல் தவறானது."
+
+#: .\facilitator\views\views.py:865
+msgid "Password changed successfully."
+msgstr "கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது."
+
+#: .\facilitator\views\views.py:874
+msgid "Username is required"
+msgstr "பயனர்பெயர் தேவை"
+
+#: .\facilitator\views\views.py:881 .\facilitator\views\views.py:910
+msgid "User not found"
+msgstr "பயனர் கண்டுபிடிக்கப்படவில்லை"
+
+#: .\facilitator\views\views.py:897
+msgid "All fields are required"
+msgstr "அனைத்து புலங்களும் தேவை"
+
+#: .\facilitator\views\views.py:903
+msgid "Invalid or expired OTP"
+msgstr "தவறான அல்லது காலாவதியான OTP"
+
+#: .\facilitator\views\views.py:916
+msgid "Password reset successfully."
+msgstr "கடவுச்சொல் மீட்டமைக்கவும் வெற்றிகரமாக."
+
+#: .\feedback\models\feedback_model.py:12
+msgid "Open"
+msgstr "திறந்த"
+
+#: .\feedback\models\feedback_model.py:13
+msgid "Assigned"
+msgstr "ஒதுக்கப்பட்டுள்ளது"
+
+#: .\feedback\models\feedback_model.py:14
+msgid "In Progress"
+msgstr "முன்னேற்றத்தில் உள்ளது"
+
+#: .\feedback\models\feedback_model.py:15
+msgid "Resolved"
+msgstr "தீர்க்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:16
+msgid "Closed"
+msgstr "மூடப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:17
+msgid "Reopened"
+msgstr "மீண்டும் திறக்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:24
+msgid "Low"
+msgstr "குறைந்த"
+
+#: .\feedback\models\feedback_model.py:25
+msgid "Medium"
+msgstr "நடுத்தர"
+
+#: .\feedback\models\feedback_model.py:26
+msgid "High"
+msgstr "உயர்ந்த"
+
+#: .\feedback\models\feedback_model.py:27 .\veterinary\choices\choices.py:160
+msgid "Critical"
+msgstr "விமர்சன"
+
+#: .\feedback\models\feedback_model.py:61
+msgid "Feedback ID"
+msgstr "கருத்து ஐடி"
+
+#: .\feedback\models\feedback_model.py:62
+msgid "Unique identifier for this feedback entry. Auto-generated."
+msgstr ""
+"இந்த பின்னூட்ட நுழைவுக்கான தனிப்பட்ட அடையாளங்காட்டி. தானாக உருவாக்கிய."
+
+#: .\feedback\models\feedback_model.py:69 .\notifications\models.py:37
+msgid "Sender"
+msgstr "அனுப்புநர்"
+
+#: .\feedback\models\feedback_model.py:70
+msgid "User who submitted the feedback."
+msgstr "பின்னூட்டத்தை சமர்ப்பித்த பயனர்."
+
+#: .\feedback\models\feedback_model.py:79
+msgid "Assigned To"
+msgstr "ஒதுக்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:80
+msgid "User assigned to review or resolve this feedback."
+msgstr ""
+"இந்த கருத்தை மதிப்பாய்வு செய்ய அல்லது தீர்க்க பயனர் நியமிக்கப்பட்டார்."
+
+#: .\feedback\models\feedback_model.py:86
+msgid "Assigned At"
+msgstr "ஒதுக்கப்பட்டுள்ளது"
+
+#: .\feedback\models\feedback_model.py:87
+msgid "Timestamp when the feedback was assigned."
+msgstr "பின்னூட்டங்கள் ஒதுக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\feedback\models\feedback_model.py:95
+msgid "MPP Code related to the feedback. Must be exactly 9 characters."
+msgstr ""
+"பின்னூட்டத்துடன் தொடர்புடைய MPP குறியீடு. சரியாக 9 எழுத்துக்கள் இருக்க "
+"வேண்டும்."
+
+#: .\feedback\models\feedback_model.py:102 .\member\models.py:81
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:97
+msgid "MCC Code"
+msgstr "MCC குறியீடு"
+
+#: .\feedback\models\feedback_model.py:103
+msgid "Milk Collection Center code linked to this feedback."
+msgstr "இந்த பின்னூட்டத்துடன் இணைக்கப்பட்ட பால் சேகரிப்பு மைய குறியீடு."
+
+#: .\feedback\models\feedback_model.py:111
+msgid "Unique identifier for the member associated with this feedback."
+msgstr ""
+"இந்த பின்னூட்டத்துடன் தொடர்புடைய உறுப்பினருக்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\feedback\models\feedback_model.py:118
+msgid "Member Transaction Code"
+msgstr "உறுப்பினர் பரிவர்த்தனை குறியீடு"
+
+#: .\feedback\models\feedback_model.py:119
+msgid "Transaction code related to the member, if applicable."
+msgstr "பொருந்தினால், உறுப்பினருடன் தொடர்புடைய பரிவர்த்தனைக் குறியீடு."
+
+#: .\feedback\models\feedback_model.py:135
+msgid "Contact mobile number of the member."
+msgstr "உறுப்பினரின் மொபைல் எண்ணைத் தொடர்பு கொள்ளுங்கள்."
+
+#: .\feedback\models\feedback_model.py:142 .\member\models.py:227
+msgid "Feedback Status"
+msgstr "கருத்து நிலை"
+
+#: .\feedback\models\feedback_model.py:143
+msgid "Current status of the feedback."
+msgstr "பின்னூட்டத்தின் தற்போதைய நிலை."
+
+#: .\feedback\models\feedback_model.py:150
+msgid "Priority"
+msgstr "முன்னுரிமை"
+
+#: .\feedback\models\feedback_model.py:151
+msgid "Priority level of the feedback."
+msgstr "பின்னூட்டத்தின் முன்னுரிமை நிலை."
+
+#: .\feedback\models\feedback_model.py:158
+#: .\veterinary\models\stock_models.py:171
+msgid "Category"
+msgstr "வகை"
+
+#: .\feedback\models\feedback_model.py:159
+msgid "Category or type of feedback."
+msgstr "வகை அல்லது பின்னூட்ட வகை."
+
+#: .\feedback\models\feedback_model.py:165
+msgid "Timestamp when the feedback was created."
+msgstr "பின்னூட்டங்கள் உருவாக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\feedback\models\feedback_model.py:171 .\member\models.py:232
+msgid "Resolved At"
+msgstr "இல் தீர்க்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:172
+msgid "Timestamp when the feedback was marked as resolved."
+msgstr "நேர முத்திரை பின்னூட்டம் தீர்க்கப்பட்டதாகக் குறிக்கப்பட்டபோது."
+
+#: .\feedback\models\feedback_model.py:177
+msgid "Progress"
+msgstr "முன்னேற்றம்"
+
+#: .\feedback\models\feedback_model.py:178
+msgid "Progress of feedback resolution in percentage."
+msgstr "சதவீதத்தில் பின்னூட்டத் தீர்மானத்தின் முன்னேற்றம்."
+
+#: .\feedback\models\feedback_model.py:185
+msgid "Rating"
+msgstr "மதிப்பீடு"
+
+#: .\feedback\models\feedback_model.py:186
+msgid "Rating given by the user after feedback resolution."
+msgstr "பின்னூட்டத் தீர்மானத்திற்குப் பிறகு பயனரால் வழங்கப்பட்ட மதிப்பீடு."
+
+#: .\feedback\models\feedback_model.py:190
+#: .\veterinary\models\case_models.py:23
+msgid "Last Updated At"
+msgstr "கடைசியாக புதுப்பிக்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:191
+msgid "Timestamp of the most recent update to the feedback."
+msgstr "பின்னூட்டத்திற்கான மிக சமீபத்திய புதுப்பிப்பின் நேர முத்திரை."
+
+#: .\feedback\models\feedback_model.py:195 .\member\models.py:236
+#: .\notifications\models.py:60
+msgid "Message"
+msgstr "செய்தி"
+
+#: .\feedback\models\feedback_model.py:196
+msgid "Detailed description or content of the feedback."
+msgstr "விரிவான விளக்கம் அல்லது பின்னூட்டத்தின் உள்ளடக்கம்."
+
+#: .\feedback\models\feedback_model.py:221
+#: .\veterinary\models\common_models.py:47
+msgid "Is Deleted"
+msgstr "நீக்கப்பட்டது"
+
+#: .\feedback\models\feedback_model.py:222
+msgid "Indicates whether this feedback is deleted (soft delete)."
+msgstr "இந்த கருத்து நீக்கப்பட்டதா என்பதைக் குறிக்கிறது (மென்மையான நீக்கு)."
+
+#: .\feedback\models\feedback_model.py:226
+msgid "Feedback"
+msgstr "கருத்து"
+
+#: .\feedback\models\feedback_model.py:227
+msgid "Feedbacks"
+msgstr "பின்னூட்டங்கள்"
+
+#: .\feedback\models\feedback_model.py:243
+msgid "Cannot set resolved time if feedback is not resolved or closed."
+msgstr ""
+"பின்னூட்டம் தீர்க்கப்படாவிட்டால் அல்லது மூடப்படாவிட்டால் தீர்க்கப்பட்ட "
+"நேரத்தை அமைக்க முடியாது."
+
+#: .\feedback\models\feedback_model.py:253
+msgid "Assigned to cannot be empty when assigned time is set."
+msgstr ""
+"ஒதுக்கப்பட்ட நேரம் அமைக்கப்படும்போது ஒதுக்கப்பட்டவை காலியாக இருக்க முடியாது."
+
+#: .\feedback\models\feedback_model.py:294
+#, python-brace-format
+msgid "Invalid status transition from '{self.status}' to '{new_status}'"
+msgstr "'{Self.status}' இலிருந்து '{new_status}' க்கு தவறான நிலை மாற்றம்"
+
+#: .\feedback\models\feedback_model.py:325
+msgid "Previous Status"
+msgstr "முந்தைய நிலை"
+
+#: .\feedback\models\feedback_model.py:327
+msgid "New Status"
+msgstr "புதிய நிலை"
+
+#: .\feedback\models\feedback_model.py:328
+msgid "Log Remark"
+msgstr "பதிவு கருத்து"
+
+#: .\member\apps.py:8
+msgid "Kashee Member"
+msgstr "காஷி உறுப்பினர்"
+
+#: .\member\models.py:21
+msgid "OTP"
+msgstr "OTP"
+
+#: .\member\models.py:22
+msgid "Created AT"
+msgstr "உருவாக்கப்பட்டது"
+
+#: .\member\models.py:43
+msgid "User OTP"
+msgstr "பயனர் OTP"
+
+#: .\member\models.py:44
+msgid "Users' OTPs"
+msgstr "பயனர்களின் OTP கள்"
+
+#: .\member\models.py:52
+msgid "Device"
+msgstr "சாதனம்"
+
+#: .\member\models.py:57
+msgid "FCM Token"
+msgstr "FCM டோக்கன்"
+
+#: .\member\models.py:59
+msgid "Module Code"
+msgstr "தொகுதி குறியீடு"
+
+#: .\member\models.py:69
+msgid "User Device"
+msgstr "பயனர் சாதனம்"
+
+#: .\member\models.py:70
+msgid "Users' Devices"
+msgstr "பயனர்களின் சாதனங்கள்"
+
+#: .\member\models.py:84
+msgid "MCC Name"
+msgstr "MCC பெயர்"
+
+#: .\member\models.py:93
+msgid "Year"
+msgstr "ஆண்டு"
+
+#: .\member\models.py:94
+msgid "Opening Balance"
+msgstr "இருப்பு திறக்கும்"
+
+#: .\member\models.py:95
+msgid "Milk Qty"
+msgstr "பால் Qty"
+
+#: .\member\models.py:96
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:115
+msgid "Milk Incentive"
+msgstr "பால் ஊக்கத்தொகை"
+
+#: .\member\models.py:97
+msgid "TDS(%)"
+msgstr "டி.டி.எஸ் (%)"
+
+#: .\member\models.py:98
+msgid "TDS (AMT)"
+msgstr "TDS (AMT)"
+
+#: .\member\models.py:99
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:118
+msgid "Other Incentive"
+msgstr "பிற ஊக்கத்தொகை"
+
+#: .\member\models.py:101
+msgid "Cattle Feed Incentive"
+msgstr "கால்நடை தீவன ஊக்கத்தொகை"
+
+#: .\member\models.py:104
+msgid "Mineral Mixture Incentive"
+msgstr "கனிம கலவை ஊக்கத்தொகை"
+
+#: .\member\models.py:106
+msgid "C.D.A Recovery"
+msgstr "C.D.A மீட்பு"
+
+#: .\member\models.py:107
+msgid "Asset Recovery"
+msgstr "சொத்து மீட்பு"
+
+#: .\member\models.py:109
+msgid "Milk Incentive Payable"
+msgstr "பால் ஊக்கத்தொகை செலுத்த வேண்டும்"
+
+#: .\member\models.py:111
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:121
+msgid "Payable"
+msgstr "செலுத்த வேண்டியது"
+
+#: .\member\models.py:112
+msgid "Closing Balance"
+msgstr "நிறைவு சமநிலை"
+
+#: .\member\models.py:114
+msgid "Additional Data"
+msgstr "கூடுதல் தரவு"
+
+#: .\member\models.py:117
+msgid "Add additional data to be shown in sahayak recovery"
+msgstr "சஹாயக் மீட்பில் காட்டப்பட வேண்டிய கூடுதல் தரவைச் சேர்க்கவும்"
+
+#: .\member\models.py:126
+msgid "Sahayak Incentive"
+msgstr "சஹாயக் ஊக்கத்தொகை"
+
+#: .\member\models.py:127
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:45
+msgid "Sahayak Incentives"
+msgstr "சஹாயக் சலுகைகள்"
+
+#: .\member\models.py:138
+msgid "Product Name"
+msgstr "தயாரிப்பு பெயர்"
+
+#: .\member\models.py:139
+msgid "The name of product"
+msgstr "தயாரிப்பின் பெயர்"
+
+#: .\member\models.py:144
+msgid "Product Price"
+msgstr "தயாரிப்பு விலை"
+
+#: .\member\models.py:145
+msgid "Rate of the product"
+msgstr "உற்பத்தியின் வீதம்"
+
+#: .\member\models.py:151
+msgid "Product Image"
+msgstr "தயாரிப்பு படம்"
+
+#: .\member\models.py:152
+msgid "Image of the product to display as icon, size should be 100x100"
+msgstr "தயாரிப்பின் படம் ஐகானாக காண்பிக்க, அளவு 100x100 ஆக இருக்க வேண்டும்"
+
+#: .\member\models.py:158 .\veterinary\models\common_models.py:58
+msgid "Locale"
+msgstr "இடம்"
+
+#: .\member\models.py:159
+msgid "Locale of the product data (e.g., en for English, hi for Hindi)"
+msgstr ""
+"தயாரிப்பு தரவின் இருப்பிடம் (எ.கா., ஆங்கிலத்திற்கு en, இந்திக்கு ஹாய்)"
+
+#: .\member\models.py:166
+msgid "Translated Product Name"
+msgstr "மொழிபெயர்க்கப்பட்ட தயாரிப்பு பெயர்"
+
+#: .\member\models.py:167
+msgid "Translated name of the product in the selected locale"
+msgstr "தேர்ந்தெடுக்கப்பட்ட இடத்தில் தயாரிப்பின் மொழிபெயர்க்கப்பட்ட பெயர்"
+
+#: .\member\models.py:173
+msgid "Price Description"
+msgstr "விலை விளக்கம்"
+
+#: .\member\models.py:174
+msgid "Description of the product price, e.g., price of 1 bag or 1 pill"
+msgstr "தயாரிப்பு விலையின் விளக்கம், எ.கா., 1 பை அல்லது 1 மாத்திரையின் விலை"
+
+#: .\member\models.py:189 .\veterinary\models\common_models.py:37
+msgid "Updated By"
+msgstr "புதுப்பித்தார்"
+
+#: .\member\models.py:202
+msgid "Product Rate"
+msgstr "தயாரிப்பு வீதம்"
+
+#: .\member\models.py:203
+msgid "Product Rates"
+msgstr "தயாரிப்பு விகிதங்கள்"
+
+#: .\member\models.py:235 .\veterinary\models\case_models.py:346
+msgid "Remark"
+msgstr "கருத்து"
+
+#: .\member\models.py:240
+msgid "Files"
+msgstr "கோப்புகள்"
+
+#: .\member\models.py:279
+msgid "Sahayak Feedback"
+msgstr "சஹாயக் கருத்து"
+
+#: .\member\models.py:280
+msgid "Sahayak Feedbacks"
+msgstr "சஹாயக் பின்னூட்டங்கள்"
+
+#: .\member\models.py:299
+msgid "Feedback Log"
+msgstr "கருத்து பதிவு"
+
+#: .\member\models.py:300
+msgid "Feedback Logs"
+msgstr "பின்னூட்ட பதிவுகள்"
+
+#: .\member\views.py:1088
+msgid ""
+"No valid data to import. Ensure your file has the correct headers or data "
+"for import."
+msgstr ""
+"இறக்குமதி செய்ய சரியான தரவு இல்லை. உங்கள் கோப்பில் சரியான தலைப்புகள் அல்லது "
+"இறக்குமதிக்கான தரவு இருப்பதை உறுதிசெய்க."
+
+#: .\member\views.py:1123
+msgid "Import Sahayak Incentive Preview"
+msgstr "சஹாயக் ஊக்க முன்னோட்டத்தை இறக்குமதி செய்யுங்கள்"
+
+#: .\member\views.py:1163 .\templates\member\form\confirm_excel_import.html:18
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:56
+msgid "Import"
+msgstr "இறக்குமதி"
+
+#: .\member\views.py:1347
+msgid "Months retrieved successfully"
+msgstr "மாதங்கள் வெற்றிகரமாக மீட்டெடுக்கப்பட்டன"
+
+#: .\member\views.py:2180
+msgid "Data Retrieved"
+msgstr "தரவு மீட்டெடுக்கப்பட்டது"
+
+#: .\mpms\apps.py:10
+msgid "MPMS"
+msgstr "எம்.பி.எம்"
+
+#: .\notifications\models.py:13
+msgid "Information"
+msgstr "தகவல்"
+
+#: .\notifications\models.py:14
+msgid "Warning"
+msgstr "எச்சரிக்கை"
+
+#: .\notifications\models.py:15
+msgid "Alert"
+msgstr "விழிப்புணர்வு"
+
+#: .\notifications\models.py:16
+msgid "Success"
+msgstr "வெற்றி"
+
+#: .\notifications\models.py:20
+msgid "Sent"
+msgstr "அனுப்பப்பட்டது"
+
+#: .\notifications\models.py:21 .\veterinary\choices\choices.py:167
+msgid "Failed"
+msgstr "தோல்வியுற்றது"
+
+#: .\notifications\models.py:25 .\veterinary\models\case_models.py:235
+msgid "System"
+msgstr "அமைப்பு"
+
+#: .\notifications\models.py:26
+msgid "Firebase Push"
+msgstr "ஃபயர்பேஸ் புஷ்"
+
+#: .\notifications\models.py:27
+msgid "Email"
+msgstr "மின்னஞ்சல்"
+
+#: .\notifications\models.py:38
+msgid "User who triggered the notification."
+msgstr "அறிவிப்பைத் தூண்டிய பயனர்."
+
+#: .\notifications\models.py:44
+msgid "Recipient"
+msgstr "பெறுநர்"
+
+#: .\notifications\models.py:45
+msgid "User who will receive the notification."
+msgstr "அறிவிப்பைப் பெறும் பயனர்."
+
+#: .\notifications\models.py:49
+msgid "Title"
+msgstr "தலைப்பு"
+
+#: .\notifications\models.py:50
+msgid "Title or heading for the notification."
+msgstr "தலைப்பு அல்லது அறிவிப்புக்கு தலைப்பு."
+
+#: .\notifications\models.py:56
+msgid "Body"
+msgstr "உடல்"
+
+#: .\notifications\models.py:57
+msgid "Short summary or preview for the notification."
+msgstr "அறிவிப்புக்கான குறுகிய சுருக்கம் அல்லது முன்னோட்டம்."
+
+#: .\notifications\models.py:61
+msgid "Detailed notification message to be shown."
+msgstr "காண்பிக்கப்பட வேண்டிய விரிவான அறிவிப்பு செய்தி."
+
+#: .\notifications\models.py:66
+msgid "Model Type"
+msgstr "மாதிரி வகை"
+
+#: .\notifications\models.py:68
+msgid ""
+"Name of the model related to this notification, e.g., 'feedback', 'report'."
+msgstr ""
+"இந்த அறிவிப்பு தொடர்பான மாதிரியின் பெயர், எ.கா., 'கருத்து', 'அறிக்கை'."
+
+#: .\notifications\models.py:72
+msgid "Object ID"
+msgstr "பொருள் ஐடி"
+
+#: .\notifications\models.py:73
+msgid "Primary key of the related model instance."
+msgstr "தொடர்புடைய மாதிரி நிகழ்வின் முதன்மை விசை."
+
+#: .\notifications\models.py:77
+msgid "Route"
+msgstr "பாதை"
+
+#: .\notifications\models.py:78
+msgid "Frontend route name for redirection."
+msgstr "திசைதிருப்பலுக்கான முன் பாதை பெயர்."
+
+#: .\notifications\models.py:84
+msgid "Custom Key"
+msgstr "தனிப்பயன் விசை"
+
+#: .\notifications\models.py:85
+msgid "Optional key used for grouping or client-side logic."
+msgstr ""
+"குழு அல்லது கிளையன்ட் பக்க தர்க்கத்திற்கு பயன்படுத்தப்படும் விருப்ப விசை."
+
+#: .\notifications\models.py:89
+msgid "Is Subroute"
+msgstr "சப்ரூட்"
+
+#: .\notifications\models.py:90
+msgid "Indicates if the route is a sub-path or detail view."
+msgstr "பாதை ஒரு துணை பாதை அல்லது விரிவான பார்வையா என்பதைக் குறிக்கிறது."
+
+#: .\notifications\models.py:96
+msgid "Notification Type"
+msgstr "அறிவிப்பு வகை"
+
+#: .\notifications\models.py:97
+msgid "Classifies the type of notification."
+msgstr "அறிவிப்பின் வகையை வகைப்படுத்துகிறது."
+
+#: .\notifications\models.py:103
+msgid "Sent Via"
+msgstr "வழியாக அனுப்பப்பட்டது"
+
+#: .\notifications\models.py:104
+msgid "Medium through which the notification was sent."
+msgstr "அறிவிப்பு அனுப்பப்பட்ட நடுத்தர."
+
+#: .\notifications\models.py:108
+msgid "Is Read"
+msgstr "படிக்கப்படுகிறது"
+
+#: .\notifications\models.py:109
+msgid "Indicates whether the user has read the notification."
+msgstr "பயனர் அறிவிப்பைப் படித்தாரா என்பதைக் குறிக்கிறது."
+
+#: .\notifications\models.py:113
+msgid "Allowed Email"
+msgstr "அனுமதிக்கப்பட்ட மின்னஞ்சல்"
+
+#: .\notifications\models.py:114
+msgid "Used to handle if email notification allowed or not."
+msgstr ""
+"மின்னஞ்சல் அறிவிப்பு அனுமதிக்கப்பட்டதா இல்லையா என்பதைக் கையாளப் "
+"பயன்படுகிறது."
+
+#: .\notifications\models.py:119
+msgid "Read At"
+msgstr "படிக்கவும்"
+
+#: .\notifications\models.py:120
+msgid "Timestamp when the notification was read."
+msgstr "அறிவிப்பு வாசிக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\notifications\models.py:125
+msgid "Timestamp when the notification was created."
+msgstr "அறிவிப்பு உருவாக்கப்பட்டபோது நேர முத்திரை."
+
+#: .\notifications\models.py:129
+msgid "Indicates whether this object has been deleted or not."
+msgstr "இந்த பொருள் நீக்கப்பட்டதா இல்லையா என்பதைக் குறிக்கிறது."
+
+#: .\notifications\models.py:136
+msgid "Delivery Status"
+msgstr "விநியோக நிலை"
+
+#: .\notifications\models.py:137
+msgid "Tracks whether the notification was successfully delivered."
+msgstr "அறிவிப்பு வெற்றிகரமாக வழங்கப்பட்டதா என்பதைக் கண்காணிக்கிறது."
+
+#: .\notifications\models.py:142
+msgid "Delivery Response"
+msgstr "விநியோக பதில்"
+
+#: .\notifications\models.py:143
+msgid "Raw response from the notification delivery system (e.g., FCM)."
+msgstr "அறிவிப்பு விநியோக அமைப்பிலிருந்து (எ.கா., FCM) மூல பதில்."
+
+#: .\notifications\models.py:148
+msgid "Delivery Attempted At"
+msgstr "டெலிவரி முயற்சித்தது"
+
+#: .\notifications\models.py:149
+msgid "Timestamp of the last delivery attempt."
+msgstr "கடைசி விநியோக முயற்சியின் நேர முத்திரை."
+
+#: .\notifications\models.py:153
+msgid "App Notification"
+msgstr "பயன்பாட்டு அறிவிப்பு"
+
+#: .\notifications\models.py:154
+msgid "App Notifications"
+msgstr "பயன்பாட்டு அறிவிப்புகள்"
+
+#: .\notifications\views.py:209
+msgid "Unread notification count retrieved successfully."
+msgstr "படிக்காத அறிவிப்பு எண்ணிக்கை வெற்றிகரமாக மீட்டெடுக்கப்பட்டது."
+
+#: .\templates\admin\request_reason_form.html:30
+msgid "Cancel"
+msgstr "ரத்துசெய்"
+
+#: .\templates\member\form\confirm_excel_import.html:42
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+"இறக்குமதி செய்யப்பட வேண்டிய தரவின் முன்னோட்டம் கீழே. முடிவுகளில் நீங்கள் "
+"திருப்தி அடைந்தால், 'இறக்குமதியை உறுதிப்படுத்த' என்பதைக் கிளிக் செய்க"
+
+#: .\templates\member\form\confirm_excel_import.html:45
+msgid "Confirm import"
+msgstr "இறக்குமதியை உறுதிப்படுத்தவும்"
+
+#: .\templates\member\form\confirm_excel_import.html:53
+#: .\templates\member\form\confirm_excel_import.html:99
+msgid "Errors"
+msgstr "பிழைகள்"
+
+#: .\templates\member\form\confirm_excel_import.html:68
+msgid "Line number"
+msgstr "வரி எண்"
+
+#: .\templates\member\form\confirm_excel_import.html:86
+msgid "Some rows failed to validate"
+msgstr "சில வரிசைகள் சரிபார்க்கத் தவறிவிட்டன"
+
+#: .\templates\member\form\confirm_excel_import.html:89
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+"தயவுசெய்து இந்த பிழைகளை உங்கள் தரவில் முடிந்தவரை சரிசெய்து, மேலே உள்ள "
+"படிவத்தைப் பயன்படுத்தி அதை மீண்டும் ஏற்றவும்."
+
+#: .\templates\member\form\confirm_excel_import.html:96
+msgid "Row"
+msgstr "வரிசை"
+
+#: .\templates\member\form\confirm_excel_import.html:126
+msgid "Non field specific"
+msgstr "புலம் அல்லாத குறிப்பிட்ட"
+
+#: .\templates\member\form\confirm_excel_import.html:147
+msgid "Preview"
+msgstr "முன்னோட்டம்"
+
+#: .\templates\member\form\confirm_excel_import.html:162
+msgid "New"
+msgstr "புதியது"
+
+#: .\templates\member\form\confirm_excel_import.html:164
+msgid "Skipped"
+msgstr "தவிர்க்கப்பட்டது"
+
+#: .\templates\member\form\confirm_excel_import.html:166
+msgid "Delete"
+msgstr "நீக்கு"
+
+#: .\templates\member\form\confirm_excel_import.html:168
+msgid "Update"
+msgstr "புதுப்பிப்பு"
+
+#: .\templates\member\form\export.html:17
+msgid "Export"
+msgstr "ஏற்றுமதி"
+
+#: .\templates\member\form\export.html:44
+#, python-format
+msgid ""
+"\n"
+"                          Export %(len)s selected item.\n"
+"                          "
+msgid_plural ""
+"\n"
+"                          Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\member\form\export.html:71
+msgid "This exporter will export the following fields: "
+msgstr "இந்த ஏற்றுமதியாளர் பின்வரும் புலங்களை ஏற்றுமதி செய்வார்:"
+
+#: .\templates\member\form\export.html:105
+msgid "Submit"
+msgstr "சமர்ப்பிக்கவும்"
+
+#: .\templates\member\pages\dashboards\default.html:19
+msgid "ERP :: Dashboard"
+msgstr "ஈஆர்பி :: டாஷ்போர்டு"
+
+#: .\templates\member\pages\dashboards\default.html:28
+msgid "Kashee E-Dairy App Installation Report"
+msgstr "காஷி மின்-பால் பயன்பாட்டு நிறுவல் அறிக்கை"
+
+#: .\templates\member\pages\dashboards\default.html:63
+msgid "Sahayak Mitra Installed By MCCs"
+msgstr "MCCS ஆல் நிறுவப்பட்ட சஹாயக் மித்ரா"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:32
+msgid "Filter"
+msgstr "வடிகட்டி"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:33
+#: .\templates\rangefilter\numeric_filter.html:65
+#: .\templates\rangefilter\numeric_filter_4_0.html:61
+msgid "Reset"
+msgstr "மீட்டமை"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:47
+msgid "Sahayak incentive data"
+msgstr "சஹாயக் ஊக்கத் தரவு"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:55
+msgid "Add"
+msgstr "சேர்"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:72
+msgid "Choose Action"
+msgstr "செயலைத் தேர்வுசெய்க"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:83
+msgid "Total Rows"
+msgstr "மொத்த வரிசைகள்"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:84
+msgid "Selected Rows"
+msgstr "தேர்ந்தெடுக்கப்பட்ட வரிசைகள்"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:94
+msgid "MCC"
+msgstr "எம்.சி.சி."
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:106
+msgid "Sahayak Name"
+msgstr "சஹாயக் பெயர்"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:112
+msgid "Opening"
+msgstr "திறப்பு"
+
+#: .\templates\member\pages\dashboards\sahayak_incentives_all.html:190
+msgid "Import Excel To Populate the Data"
+msgstr "தரவை விரிவுபடுத்த எக்செல் இறக்குமதி செய்யுங்கள்"
+
+#: .\templates\member\pages\sidebar.html:7
+msgid "ERP Dashboard"
+msgstr "ஈஆர்பி டாஷ்போர்டு"
+
+#: .\templates\member\pages\sidebar.html:17
+msgid "Dashboard"
+msgstr "டாஷ்போர்டு"
+
+#: .\templates\rangefilter\date_filter.html:4
+#, python-format
+msgid "By %(filter_title)s "
+msgstr "மூலம் %(filter_title) கள்"
+
+#: .\templates\rangefilter\numeric_filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr "மூலம் %(filter_title) கள்"
+
+#: .\templates\rangefilter\numeric_filter.html:64
+#: .\templates\rangefilter\numeric_filter_4_0.html:60
+msgid "Search"
+msgstr "தேடல்"
+
+#: .\templates\registration\logged_out.html:4
+#: .\templates\registration\password_change_done.html:13
+#: .\templates\registration\password_change_form.html:14
+#: .\templates\registration\password_reset_complete.html:6
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_done.html:6
+#: .\templates\registration\password_reset_form.html:7
+msgid "Home"
+msgstr "வீடு"
+
+#: .\templates\registration\logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr "இன்று வலைத்தளத்துடன் சில தரமான நேரத்தை செலவிட்டதற்கு நன்றி."
+
+#: .\templates\registration\logged_out.html:12
+msgid "Log in again"
+msgstr "மீண்டும் உள்நுழைக"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Documentation"
+msgstr "ஆவணம்"
+
+#: .\templates\registration\password_change_done.html:4
+#: .\templates\registration\password_change_form.html:5
+msgid "Change password"
+msgstr "கடவுச்சொல்லை மாற்றவும்"
+
+#: .\templates\registration\password_change_done.html:7
+#: .\templates\registration\password_change_form.html:8
+msgid "Log out"
+msgstr "வெளியேறு"
+
+#: .\templates\registration\password_change_done.html:14
+#: .\templates\registration\password_change_form.html:15
+msgid "Password change"
+msgstr "கடவுச்சொல் மாற்றம்"
+
+#: .\templates\registration\password_change_done.html:19
+msgid "Your password was changed."
+msgstr "உங்கள் கடவுச்சொல் மாற்றப்பட்டது."
+
+#: .\templates\registration\password_change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\templates\registration\password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new"
+" password twice so we can verify you typed it in correctly."
+msgstr ""
+"பாதுகாப்பிற்காக உங்கள் பழைய கடவுச்சொல்லை உள்ளிடவும், பின்னர் உங்கள் புதிய "
+"கடவுச்சொல்லை இரண்டு முறை உள்ளிடவும், எனவே நீங்கள் அதை சரியாக தட்டச்சு "
+"செய்ததை நாங்கள் சரிபார்க்கலாம்."
+
+#: .\templates\registration\password_change_form.html:58
+#: .\templates\registration\password_reset_confirm.html:37
+msgid "Change my password"
+msgstr "எனது கடவுச்சொல்லை மாற்றவும்"
+
+#: .\templates\registration\password_reset_complete.html:7
+#: .\templates\registration\password_reset_done.html:7
+#: .\templates\registration\password_reset_form.html:8
+msgid "Password reset"
+msgstr "கடவுச்சொல் மீட்டமைப்பு"
+
+#: .\templates\registration\password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+"உங்கள் கடவுச்சொல் அமைக்கப்பட்டுள்ளது.  நீங்கள் மேலே சென்று இப்போது "
+"உள்நுழையலாம்."
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Log in"
+msgstr "உள்நுழைக"
+
+#: .\templates\registration\password_reset_confirm.html:8
+msgid "Password reset confirmation"
+msgstr "கடவுச்சொல் மீட்டமைப்பு உறுதிப்படுத்தல்"
+
+#: .\templates\registration\password_reset_confirm.html:16
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"தயவுசெய்து உங்கள் புதிய கடவுச்சொல்லை இரண்டு முறை உள்ளிடவும், எனவே அதை சரியாக"
+" தட்டச்சு செய்ததை நாங்கள் சரிபார்க்கலாம்."
+
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "New password:"
+msgstr "புதிய கடவுச்சொல்:"
+
+#: .\templates\registration\password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr "கடவுச்சொல்லை உறுதிப்படுத்தவும்:"
+
+#: .\templates\registration\password_reset_confirm.html:43
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"கடவுச்சொல் மீட்டமைப்பு இணைப்பு தவறானது, ஏனெனில் அது ஏற்கனவே "
+"பயன்படுத்தப்பட்டிருப்பதால்.  புதிய கடவுச்சொல் மீட்டமைப்பைக் கோரவும்."
+
+#: .\templates\registration\password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"நீங்கள் உள்ளிட்ட மின்னஞ்சலுடன் ஒரு கணக்கு இருந்தால், உங்கள் கடவுச்சொல்லை "
+"அமைப்பதற்கான வழிமுறைகளை நாங்கள் உங்களுக்கு மின்னஞ்சல் செய்துள்ளோம். நீங்கள் "
+"விரைவில் அவற்றைப் பெற வேண்டும்."
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"நீங்கள் ஒரு மின்னஞ்சலைப் பெறவில்லை என்றால், நீங்கள் பதிவுசெய்த முகவரியை "
+"உள்ளிட்டுள்ளீர்கள் என்பதை உறுதிப்படுத்தவும், உங்கள் ஸ்பேம் கோப்புறையை "
+"சரிபார்க்கவும்."
+
+#: .\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"உங்கள் பயனர் கணக்கிற்கான கடவுச்சொல் மீட்டமைப்பை %(site_name) s இல் கோரியதால்"
+" இந்த மின்னஞ்சலைப் பெறுகிறீர்கள்."
+
+#: .\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+"தயவுசெய்து பின்வரும் பக்கத்திற்குச் சென்று புதிய கடவுச்சொல்லைத் தேர்வுசெய்க:"
+
+#: .\templates\registration\password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr "உங்கள் பயனர்பெயர், நீங்கள் மறந்துவிட்டால்:"
+
+#: .\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "எங்கள் தளத்தைப் பயன்படுத்தியதற்கு நன்றி!"
+
+#: .\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "%(Site_name) குழு"
+
+#: .\templates\registration\password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"உங்கள் கடவுச்சொல்லை மறந்துவிட்டீர்களா? உங்கள் மின்னஞ்சல் முகவரியை கீழே "
+"உள்ளிடவும், புதிய ஒன்றை அமைப்பதற்கான வழிமுறைகளை நாங்கள் மின்னஞ்சல் செய்வோம்."
+
+#: .\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr "மின்னஞ்சல் முகவரி:"
+
+#: .\templates\registration\password_reset_form.html:27
+msgid "Reset my password"
+msgstr "எனது கடவுச்சொல்லை மீட்டமைக்கவும்"
+
+#: .\veterinary\choices\choices.py:7
+msgid "Online"
+msgstr "ஆன்லைனில்"
+
+#: .\veterinary\choices\choices.py:8
+msgid "Cash"
+msgstr "ரொக்கம்"
+
+#: .\veterinary\choices\choices.py:20
+msgid "Dairy"
+msgstr "பால்"
+
+#: .\veterinary\choices\choices.py:21
+msgid "Beef"
+msgstr "மாட்டிறைச்சி"
+
+#: .\veterinary\choices\choices.py:22
+msgid "Dual Purpose"
+msgstr "இரட்டை நோக்கம்"
+
+#: .\veterinary\choices\choices.py:23 .\veterinary\choices\choices.py:45
+#: .\veterinary\choices\choices.py:60 .\veterinary\choices\choices.py:109
+msgid "Other"
+msgstr "மற்றொன்று"
+
+#: .\veterinary\choices\choices.py:28
+msgid "Primarily used for milk production"
+msgstr "முதன்மையாக பால் உற்பத்திக்கு பயன்படுத்தப்படுகிறது"
+
+#: .\veterinary\choices\choices.py:29
+msgid "Primarily used for meat production"
+msgstr "முதன்மையாக இறைச்சி உற்பத்திக்கு பயன்படுத்தப்படுகிறது"
+
+#: .\veterinary\choices\choices.py:30
+msgid "Used for both dairy and beef purposes"
+msgstr "பால் மற்றும் மாட்டிறைச்சி நோக்கங்களுக்காகப் பயன்படுத்தப்படுகிறது"
+
+#: .\veterinary\choices\choices.py:31
+msgid "Uncategorized or other specific use"
+msgstr "வகைப்படுத்தப்படாத அல்லது பிற குறிப்பிட்ட பயன்பாடு"
+
+#: .\veterinary\choices\choices.py:32 .\veterinary\models\case_models.py:302
+msgid "Unknown"
+msgstr "தெரியவில்லை"
+
+#: .\veterinary\choices\choices.py:37
+msgid "Male"
+msgstr "ஆண்"
+
+#: .\veterinary\choices\choices.py:38
+msgid "Female"
+msgstr "பெண்"
+
+#: .\veterinary\choices\choices.py:43
+msgid "Doctor"
+msgstr "மருத்துவர்"
+
+#: .\veterinary\choices\choices.py:44
+msgid "MAT"
+msgstr "பாய்"
+
+#: .\veterinary\choices\choices.py:50
+msgid "Manual"
+msgstr "கையேடு"
+
+#: .\veterinary\choices\choices.py:51
+msgid "RFID Tag"
+msgstr "RFID குறிச்சொல்"
+
+#: .\veterinary\choices\choices.py:52
+msgid "QR Code"
+msgstr "QR குறியீடு"
+
+#: .\veterinary\choices\choices.py:57
+msgid "Left Ear"
+msgstr "இடது காது"
+
+#: .\veterinary\choices\choices.py:58
+msgid "Right Ear"
+msgstr "வலது காது"
+
+#: .\veterinary\choices\choices.py:59
+msgid "Neck"
+msgstr "கழுத்து"
+
+#: .\veterinary\choices\choices.py:65
+msgid "New Tag"
+msgstr "புதிய குறிச்சொல்"
+
+#: .\veterinary\choices\choices.py:66
+msgid "Replaced"
+msgstr "மாற்றப்பட்டது"
+
+#: .\veterinary\choices\choices.py:86
+msgid "Tablet"
+msgstr "டேப்லெட்"
+
+#: .\veterinary\choices\choices.py:87
+msgid "Liquid"
+msgstr "திரவ"
+
+#: .\veterinary\choices\choices.py:88
+msgid "Injection"
+msgstr "ஊசி"
+
+#: .\veterinary\choices\choices.py:89
+msgid "Capsule"
+msgstr "காப்ஸ்யூல்"
+
+#: .\veterinary\choices\choices.py:90
+msgid "Ointment"
+msgstr "களிம்பு"
+
+#: .\veterinary\choices\choices.py:91
+msgid "Powder"
+msgstr "தூள்"
+
+#: .\veterinary\choices\choices.py:92
+msgid "Paste"
+msgstr "ஒட்டவும்"
+
+#: .\veterinary\choices\choices.py:93
+msgid "Bolus"
+msgstr "போலஸ்"
+
+#: .\veterinary\choices\choices.py:94
+msgid "Suspension"
+msgstr "இடைநீக்கம்"
+
+#: .\veterinary\choices\choices.py:95
+msgid "Solution"
+msgstr "தீர்வு"
+
+#: .\veterinary\choices\choices.py:96
+msgid "Spray"
+msgstr "தெளிப்பு"
+
+#: .\veterinary\choices\choices.py:97
+msgid "Eye/Ear/Nose Drops"
+msgstr "கண்/காது/மூக்கு சொட்டுகள்"
+
+#: .\veterinary\choices\choices.py:98
+msgid "Cream"
+msgstr "கிரீம்"
+
+#: .\veterinary\choices\choices.py:99
+msgid "Lotion"
+msgstr "லோஷன்"
+
+#: .\veterinary\choices\choices.py:100
+msgid "Medicated Shampoo"
+msgstr "மருந்து ஷாம்பு"
+
+#: .\veterinary\choices\choices.py:101
+msgid "Feed Additive"
+msgstr "சேர்க்கை"
+
+#: .\veterinary\choices\choices.py:102
+msgid "Implant"
+msgstr "உள்வைப்பு"
+
+#: .\veterinary\choices\choices.py:103
+msgid "Inhalant"
+msgstr "உள்ளிழுக்கும்"
+
+#: .\veterinary\choices\choices.py:104
+msgid "Transdermal Patch"
+msgstr "டிரான்ஸ்டெர்மல் பேட்ச்"
+
+#: .\veterinary\choices\choices.py:105
+msgid "Suppository"
+msgstr "சப்போசிட்டரி"
+
+#: .\veterinary\choices\choices.py:106
+msgid "Drench"
+msgstr "நனை"
+
+#: .\veterinary\choices\choices.py:107
+msgid "Pour-On"
+msgstr "ஊற்றவும்"
+
+#: .\veterinary\choices\choices.py:108
+msgid "Intramammary"
+msgstr "இன்ட்ராமாமரி"
+
+#: .\veterinary\choices\choices.py:114
+msgid "Stock In"
+msgstr "பங்கு"
+
+#: .\veterinary\choices\choices.py:115
+msgid "Stock Out"
+msgstr "சேமித்து வைக்கவும்"
+
+#: .\veterinary\choices\choices.py:116
+msgid "Adjustment"
+msgstr "சரிசெய்தல்"
+
+#: .\veterinary\choices\choices.py:121
+msgid "Allocated"
+msgstr "ஒதுக்கப்பட்டது"
+
+#: .\veterinary\choices\choices.py:122
+msgid "Used"
+msgstr "பயன்படுத்தப்பட்டது"
+
+#: .\veterinary\choices\choices.py:123
+msgid "Returned"
+msgstr "திரும்பினார்"
+
+#: .\veterinary\choices\choices.py:128
+msgid "Normal Case"
+msgstr "சாதாரண வழக்கு"
+
+#: .\veterinary\choices\choices.py:129
+msgid "Special Case"
+msgstr "சிறப்பு வழக்கு"
+
+#: .\veterinary\choices\choices.py:130
+msgid "Operational Case"
+msgstr "செயல்பாட்டு வழக்கு"
+
+#: .\veterinary\choices\choices.py:135
+msgid "Morning"
+msgstr "காலை"
+
+#: .\veterinary\choices\choices.py:136
+msgid "Afternoon"
+msgstr "பிற்பகல்"
+
+#: .\veterinary\choices\choices.py:137
+msgid "Evening"
+msgstr "மாலை"
+
+#: .\veterinary\choices\choices.py:138
+msgid "Night"
+msgstr "இரவு"
+
+#: .\veterinary\choices\choices.py:144
+msgid "Confirmed"
+msgstr "உறுதிப்படுத்தப்பட்டது"
+
+#: .\veterinary\choices\choices.py:150
+msgid "Dry"
+msgstr "உலர்"
+
+#: .\veterinary\choices\choices.py:151
+msgid "Pregnant"
+msgstr "கர்ப்பிணி"
+
+#: .\veterinary\choices\choices.py:152
+msgid "Milking"
+msgstr "பால் கறத்தல்"
+
+#: .\veterinary\choices\choices.py:153
+msgid "Milking & Pregnant"
+msgstr "பால் கறத்தல் & கர்ப்பிணி"
+
+#: .\veterinary\choices\choices.py:157
+msgid "Mild"
+msgstr "லேசான"
+
+#: .\veterinary\choices\choices.py:158
+msgid "Moderate"
+msgstr "மிதமான"
+
+#: .\veterinary\choices\choices.py:159
+msgid "Severe"
+msgstr "கடுமையான"
+
+#: .\veterinary\choices\choices.py:168
+msgid "Refunded"
+msgstr "திரும்பப் பெறப்பட்டது"
+
+#: .\veterinary\choices\choices.py:172
+msgid "Inward"
+msgstr "உள்"
+
+#: .\veterinary\choices\choices.py:173
+msgid "Outward"
+msgstr "வெளிப்புறமாக"
+
+#: .\veterinary\choices\choices.py:174
+msgid "Return"
+msgstr "திரும்ப"
+
+#: .\veterinary\choices\choices.py:178
+msgid "Approved"
+msgstr "அங்கீகரிக்கப்பட்டது"
+
+#: .\veterinary\choices\choices.py:179
+msgid "Cancelled"
+msgstr "ரத்து செய்யப்பட்டது"
+
+#: .\veterinary\choices\choices.py:182
+msgid "Central Warehouse"
+msgstr "மத்திய கிடங்கு"
+
+#: .\veterinary\choices\choices.py:183
+msgid "Field Office"
+msgstr "கள அலுவலகம்"
+
+#: .\veterinary\choices\choices.py:184
+msgid "Mobile Veterinary Unit"
+msgstr "மொபைல் கால்நடை பிரிவு"
+
+#: .\veterinary\choices\choices.py:185
+msgid "Clinic"
+msgstr "கிளினிக்"
+
+#: .\veterinary\choices\choices.py:186
+msgid "Veterinarian"
+msgstr "கால்நடை மருத்துவர்"
+
+#: .\veterinary\models\case_models.py:16
+msgid "Diagnosis Route Name"
+msgstr "நோயறிதல் பாதை பெயர்"
+
+#: .\veterinary\models\case_models.py:18
+msgid ""
+"Short name or label of the diagnosis route, e.g., Oral, Injection, etc."
+msgstr ""
+"நோயறிதல் வழியின் குறுகிய பெயர் அல்லது லேபிள், எ.கா., வாய்வழி, ஊசி போன்றவை."
+
+#: .\veterinary\models\case_models.py:24
+msgid "Timestamp of the last update. Automatically set on update."
+msgstr "கடைசி புதுப்பிப்பின் நேர முத்திரை. புதுப்பிப்பில் தானாக அமைக்கவும்."
+
+#: .\veterinary\models\case_models.py:28
+msgid "Is Synced"
+msgstr "ஒத்திசைக்கப்படுகிறது"
+
+#: .\veterinary\models\case_models.py:30
+msgid "Flag to track if the record has been synced with external systems."
+msgstr ""
+"பதிவு வெளிப்புற அமைப்புகளுடன் ஒத்திசைக்கப்பட்டிருந்தால் கண்காணிக்க கொடி."
+
+#: .\veterinary\models\case_models.py:39
+msgid "Diagnosis Route"
+msgstr "நோயறிதல் பாதை"
+
+#: .\veterinary\models\case_models.py:40
+msgid "Diagnosis Routes"
+msgstr "நோயறிதல் வழிகள்"
+
+#: .\veterinary\models\case_models.py:56
+msgid "The cattle associated with this case entry."
+msgstr "இந்த வழக்கு நுழைவுடன் தொடர்புடைய கால்நடைகள்."
+
+#: .\veterinary\models\case_models.py:57 .\veterinary\models\models.py:357
+msgid "Cattle"
+msgstr "கால்நடைகள்"
+
+#: .\veterinary\models\case_models.py:66
+msgid "User who applied or recorded this case."
+msgstr "இந்த வழக்கைப் பயன்படுத்திய அல்லது பதிவுசெய்த பயனர்."
+
+#: .\veterinary\models\case_models.py:67
+msgid "Applied By"
+msgstr "பயன்படுத்தப்பட்டது"
+
+#: .\veterinary\models\case_models.py:74
+msgid "Current status of the case."
+msgstr "வழக்கின் தற்போதைய நிலை."
+
+#: .\veterinary\models\case_models.py:75
+#: .\veterinary\models\common_models.py:416
+msgid "Case Status"
+msgstr "வழக்கு நிலை"
+
+#: .\veterinary\models\case_models.py:81
+msgid "Address where the case occurred or was reported."
+msgstr "வழக்கு நிகழ்ந்த அல்லது அறிவிக்கப்பட்ட முகவரி."
+
+#: .\veterinary\models\case_models.py:88
+msgid "Additional notes or remarks about the case."
+msgstr "வழக்கு குறித்த கூடுதல் குறிப்புகள் அல்லது கருத்துக்கள்."
+
+#: .\veterinary\models\case_models.py:89
+#: .\veterinary\models\case_models.py:222
+msgid "Remarks"
+msgstr "கருத்துக்கள்"
+
+#: .\veterinary\models\case_models.py:96
+msgid "Unique identifier for the case."
+msgstr "வழக்குக்கான தனிப்பட்ட அடையாளங்காட்டி."
+
+#: .\veterinary\models\case_models.py:97
+msgid "Case Number"
+msgstr "வழக்கு எண்"
+
+#: .\veterinary\models\case_models.py:102
+msgid "Indicates whether the entry is synced with the server."
+msgstr "நுழைவு சேவையகத்துடன் ஒத்திசைக்கப்பட்டதா என்பதைக் குறிக்கிறது."
+
+#: .\veterinary\models\case_models.py:103
+msgid "Sync Status"
+msgstr "நிலையை ஒத்திசைக்கவும்"
+
+#: .\veterinary\models\case_models.py:120
+msgid "Both 'case_no' and 'to_user' are required."
+msgstr "'Case_no' மற்றும் 'to_user' இரண்டும் தேவை."
+
+#: .\veterinary\models\case_models.py:126
+#, python-brace-format
+msgid "Case with number '{case_no}' does not exist."
+msgstr "'{Case_no}' என்ற எண்ணுடன் வழக்கு இல்லை."
+
+#: .\veterinary\models\case_models.py:135
+msgid "The case is already assigned to this user."
+msgstr "வழக்கு ஏற்கனவே இந்த பயனருக்கு ஒதுக்கப்பட்டுள்ளது."
+
+#: .\veterinary\models\case_models.py:146
+msgid "Assigned via system action."
+msgstr "கணினி நடவடிக்கை வழியாக ஒதுக்கப்படுகிறது."
+
+#: .\veterinary\models\case_models.py:152
+#: .\veterinary\models\case_models.py:234
+#: .\veterinary\models\case_models.py:304
+#: .\veterinary\models\case_models.py:533
+#: .\veterinary\models\case_models.py:604
+msgid "N/A"
+msgstr "N/a"
+
+#: .\veterinary\models\case_models.py:157
+#: .\veterinary\models\case_models.py:197
+#: .\veterinary\models\case_models.py:259
+#: .\veterinary\models\case_models.py:381
+#: .\veterinary\models\case_models.py:451
+#: .\veterinary\models\case_models.py:559
+msgid "Case Entry"
+msgstr "வழக்கு நுழைவு"
+
+#: .\veterinary\models\case_models.py:158
+msgid "Case Entries"
+msgstr "வழக்கு உள்ளீடுகள்"
+
+#: .\veterinary\models\case_models.py:198
+msgid "Reference to the case entry being transferred."
+msgstr "வழக்கு நுழைவு மாற்றப்படுவதற்கான குறிப்பு."
+
+#: .\veterinary\models\case_models.py:207
+msgid "Transferred From"
+msgstr "இருந்து மாற்றப்பட்டது"
+
+#: .\veterinary\models\case_models.py:208
+msgid "User who previously handled the case."
+msgstr "முன்னர் வழக்கைக் கையாண்ட பயனர்."
+
+#: .\veterinary\models\case_models.py:215
+msgid "Transferred To"
+msgstr "மாற்றப்பட்டது"
+
+#: .\veterinary\models\case_models.py:216
+msgid "User who is receiving the case."
+msgstr "வழக்கைப் பெறும் பயனர்."
+
+#: .\veterinary\models\case_models.py:223
+msgid "Optional remarks for the transfer."
+msgstr "பரிமாற்றத்திற்கான விருப்ப கருத்துக்கள்."
+
+#: .\veterinary\models\case_models.py:228
+msgid "Transferred At"
+msgstr "மாற்றப்பட்டது"
+
+#: .\veterinary\models\case_models.py:229
+msgid "Timestamp of when the case was transferred."
+msgstr "வழக்கு மாற்றப்பட்டபோது நேர முத்திரை."
+
+#: .\veterinary\models\case_models.py:233
+#, python-brace-format
+msgid "Case: {case_no} | {from_user} ➝ {to_user} @ {timestamp}"
+msgstr "வழக்கு: {case_no} | {from_user} ➝ {to_user} @ {timestamp}"
+
+#: .\veterinary\models\case_models.py:242
+msgid "Case Receiver Log"
+msgstr "வழக்கு ரிசீவர் பதிவு"
+
+#: .\veterinary\models\case_models.py:243
+msgid "Case Receiver Logs"
+msgstr "வழக்கு ரிசீவர் பதிவுகள்"
+
+#: .\veterinary\models\case_models.py:260
+msgid "The case entry associated with this diagnosis."
+msgstr "இந்த நோயறிதலுடன் தொடர்புடைய வழக்கு நுழைவு."
+
+#: .\veterinary\models\case_models.py:268
+msgid "Disease"
+msgstr "நோய்"
+
+#: .\veterinary\models\case_models.py:269
+msgid "Identified disease during the diagnosis."
+msgstr "நோயறிதலின் போது அடையாளம் காணப்பட்ட நோய்."
+
+#: .\veterinary\models\case_models.py:277
+msgid "Cattle Status"
+msgstr "கால்நடை நிலை"
+
+#: .\veterinary\models\case_models.py:278
+msgid "Current physiological or production status of the animal."
+msgstr "விலங்கின் தற்போதைய உடலியல் அல்லது உற்பத்தி நிலை."
+
+#: .\veterinary\models\case_models.py:285
+msgid "Milk Production"
+msgstr "பால் உற்பத்தி"
+
+#: .\veterinary\models\case_models.py:286
+msgid "Optional note on milk production (e.g., '2.5L/day')."
+msgstr "பால் உற்பத்தி குறித்த விருப்ப குறிப்பு (எ.கா., '2.5 எல்/நாள்')."
+
+#: .\veterinary\models\case_models.py:294
+msgid "Case Type"
+msgstr "வழக்கு வகை"
+
+#: .\veterinary\models\case_models.py:296
+msgid "Type of the veterinary case (e.g., Normal, Special, Operational)."
+msgstr "கால்நடை வழக்கின் வகை (எ.கா., சாதாரண, சிறப்பு, செயல்பாட்டு)."
+
+#: .\veterinary\models\case_models.py:306
+msgid "Unknown Disease"
+msgstr "தெரியாத நோய்"
+
+#: .\veterinary\models\case_models.py:307
+#, python-brace-format
+msgid "{tag} - {disease} @ {date}"
+msgstr "{குறிச்சொல்} - {நோய்} @ {தேதி}"
+
+#: .\veterinary\models\case_models.py:315
+#: .\veterinary\models\case_models.py:339
+msgid "Animal Diagnosis"
+msgstr "விலங்குகளின் நோயறிதல்"
+
+#: .\veterinary\models\case_models.py:316
+msgid "Animal Diagnoses"
+msgstr "விலங்கு நோயறிதல்கள்"
+
+#: .\veterinary\models\case_models.py:331
+msgid "Symptom"
+msgstr "அறிகுறி"
+
+#: .\veterinary\models\case_models.py:332
+msgid "Symptom associated with this diagnosis."
+msgstr "இந்த நோயறிதலுடன் தொடர்புடைய அறிகுறி."
+
+#: .\veterinary\models\case_models.py:340
+msgid "Diagnosis entry this symptom is related to."
+msgstr "நோயறிதல் நுழைவு இந்த அறிகுறி தொடர்புடையது."
+
+#: .\veterinary\models\case_models.py:347
+msgid "Additional notes or observations about the symptom."
+msgstr "அறிகுறி பற்றிய கூடுதல் குறிப்புகள் அல்லது அவதானிப்புகள்."
+
+#: .\veterinary\models\case_models.py:354
+msgid "Unknown Diagnosis"
+msgstr "தெரியாத நோயறிதல்"
+
+#: .\veterinary\models\case_models.py:356
+msgid "Unknown Symptom"
+msgstr "தெரியாத அறிகுறி"
+
+#: .\veterinary\models\case_models.py:357
+#, python-brace-format
+msgid "{diagnosis} - {symptom} @ {date}"
+msgstr "{நோயறிதல்} - {அறிகுறி} @ {தேதி}"
+
+#: .\veterinary\models\case_models.py:365
+msgid "Diagnosed Symptom"
+msgstr "கண்டறியப்பட்ட அறிகுறி"
+
+#: .\veterinary\models\case_models.py:366
+msgid "Diagnosed Symptoms"
+msgstr "கண்டறியப்பட்ட அறிகுறிகள்"
+
+#: .\veterinary\models\case_models.py:382
+msgid "The case entry to which this treatment belongs."
+msgstr "இந்த சிகிச்சை எந்த வழக்கு நுழைவு."
+
+#: .\veterinary\models\case_models.py:389
+msgid "Treatment Provider"
+msgstr "சிகிச்சை வழங்குநர்"
+
+#: .\veterinary\models\case_models.py:390
+msgid "User (doctor or vet) who performed the treatment."
+msgstr "சிகிச்சையைச் செய்த பயனர் (மருத்துவர் அல்லது கால்நடை)."
+
+#: .\veterinary\models\case_models.py:398
+#: .\veterinary\models\stock_models.py:209
+msgid "Medicine"
+msgstr "மருந்து"
+
+#: .\veterinary\models\case_models.py:399
+msgid "Medicine used in the treatment, if any."
+msgstr "சிகிச்சையில் பயன்படுத்தப்படும் மருந்து, ஏதேனும் இருந்தால்."
+
+#: .\veterinary\models\case_models.py:407
+msgid "Administration Route"
+msgstr "நிர்வாக பாதை"
+
+#: .\veterinary\models\case_models.py:408
+msgid "Route of administration for the medicine."
+msgstr "மருத்துவத்திற்கான நிர்வாகத்தின் பாதை."
+
+#: .\veterinary\models\case_models.py:414
+msgid "Notes"
+msgstr "குறிப்புகள்"
+
+#: .\veterinary\models\case_models.py:415
+msgid "Additional notes or instructions for the treatment."
+msgstr "சிகிச்சைக்கான கூடுதல் குறிப்புகள் அல்லது வழிமுறைகள்."
+
+#: .\veterinary\models\case_models.py:420
+msgid "OTP Verified"
+msgstr "OTP சரிபார்க்கப்பட்டது"
+
+#: .\veterinary\models\case_models.py:421
+msgid "Indicates whether the treatment has been verified via OTP."
+msgstr "OTP வழியாக சிகிச்சை சரிபார்க்கப்பட்டுள்ளதா என்பதைக் குறிக்கிறது."
+
+#: .\veterinary\models\case_models.py:425
+msgid "No Case"
+msgstr "வழக்கு இல்லை"
+
+#: .\veterinary\models\case_models.py:426
+msgid "No Medicine"
+msgstr "மருந்து இல்லை"
+
+#: .\veterinary\models\case_models.py:427
+#, python-brace-format
+msgid "Treatment for Case: {case} | Medicine: {med} | By: {user}"
+msgstr ""
+"வழக்குக்கான சிகிச்சை: {வழக்கு} | மருத்துவம்: {மெட்} | வழங்கியவர்: {பயனர்}"
+
+#: .\veterinary\models\case_models.py:435
+msgid "Animal Treatment"
+msgstr "விலங்கு சிகிச்சை"
+
+#: .\veterinary\models\case_models.py:436
+msgid "Animal Treatments"
+msgstr "விலங்கு சிகிச்சைகள்"
+
+#: .\veterinary\models\case_models.py:452
+msgid "Case associated with this payment."
+msgstr "இந்த கட்டணத்துடன் தொடர்புடைய வழக்கு."
+
+#: .\veterinary\models\case_models.py:458
+msgid "Payment Method"
+msgstr "கட்டண முறை"
+
+#: .\veterinary\models\case_models.py:459
+msgid "Method used for payment."
+msgstr "கட்டணத்திற்கு பயன்படுத்தப்படும் முறை."
+
+#: .\veterinary\models\case_models.py:465
+msgid "Amount"
+msgstr "தொகை"
+
+#: .\veterinary\models\case_models.py:466
+msgid "Amount paid."
+msgstr "செலுத்தப்பட்ட தொகை."
+
+#: .\veterinary\models\case_models.py:471
+msgid "Payment Date"
+msgstr "கட்டண தேதி"
+
+#: .\veterinary\models\case_models.py:472
+msgid "Date and time when the payment was made."
+msgstr "கட்டணம் செலுத்தப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\veterinary\models\case_models.py:479
+msgid "Transaction ID"
+msgstr "பரிவர்த்தனை ஐடி"
+
+#: .\veterinary\models\case_models.py:480
+msgid "Payment gateway reference or manual receipt ID."
+msgstr "கட்டண நுழைவாயில் குறிப்பு அல்லது கையேடு ரசீது ஐடி."
+
+#: .\veterinary\models\case_models.py:487
+msgid "Payment Status"
+msgstr "கட்டண நிலை"
+
+#: .\veterinary\models\case_models.py:488
+msgid "Current status of the payment."
+msgstr "கட்டணத்தின் தற்போதைய நிலை."
+
+#: .\veterinary\models\case_models.py:494
+msgid "Gateway Response"
+msgstr "நுழைவாயில் பதில்"
+
+#: .\veterinary\models\case_models.py:495
+msgid "Raw payment gateway response data (online payments only)."
+msgstr "மூல கட்டண நுழைவாயில் மறுமொழி தரவு (ஆன்லைன் கொடுப்பனவுகள் மட்டும்)."
+
+#: .\veterinary\models\case_models.py:500
+msgid "Is Reconciled"
+msgstr "சமரசம் செய்யப்படுகிறது"
+
+#: .\veterinary\models\case_models.py:501
+msgid "Whether this payment is reconciled in accounting."
+msgstr "இந்த கட்டணம் கணக்கியலில் சமரசம் செய்யப்பட்டதா என்பது."
+
+#: .\veterinary\models\case_models.py:506
+msgid "Is Cash Collected"
+msgstr "ரொக்கம் சேகரிக்கப்பட்டுள்ளது"
+
+#: .\veterinary\models\case_models.py:507
+msgid "Indicates if cash has been collected for offline payments."
+msgstr ""
+"ஆஃப்லைன் கொடுப்பனவுகளுக்கு பணம் சேகரிக்கப்பட்டுள்ளதா என்பதைக் குறிக்கிறது."
+
+#: .\veterinary\models\case_models.py:516
+msgid "Collected By"
+msgstr "சேகரித்தவர்"
+
+#: .\veterinary\models\case_models.py:517
+msgid "User who collected the payment (for COD)."
+msgstr "கட்டணத்தை சேகரித்த பயனர் (COD க்கு)."
+
+#: .\veterinary\models\case_models.py:523
+msgid "Collected Date"
+msgstr "சேகரிக்கப்பட்ட தேதி"
+
+#: .\veterinary\models\case_models.py:524
+msgid "Date and time when cash was collected."
+msgstr "பணம் சேகரிக்கப்பட்ட தேதி மற்றும் நேரம்."
+
+#: .\veterinary\models\case_models.py:530
+msgid "Unknown Method"
+msgstr "தெரியாத முறை"
+
+#: .\veterinary\models\case_models.py:531
+#, python-brace-format
+msgid "Payment: ₹{amount} for Case: {case} via {method} [{status}]"
+msgstr "கட்டணம்: வழக்குக்கு {{தொகை}: {வழக்கு} வழியாக {முறை} [{நிலை}]"
+
+#: .\veterinary\models\case_models.py:540
+msgid "Case Payment"
+msgstr "வழக்கு கட்டணம்"
+
+#: .\veterinary\models\case_models.py:541
+msgid "Case Payments"
+msgstr "வழக்கு கொடுப்பனவுகள்"
+
+#: .\veterinary\models\case_models.py:560
+msgid "Case related to this travel record."
+msgstr "இந்த பயண பதிவு தொடர்பான வழக்கு."
+
+#: .\veterinary\models\case_models.py:566
+msgid "From Latitude"
+msgstr "அட்சரேகையிலிருந்து"
+
+#: .\veterinary\models\case_models.py:567
+msgid "Starting point latitude."
+msgstr "தொடக்க புள்ளி அட்சரேகை."
+
+#: .\veterinary\models\case_models.py:572
+msgid "From Longitude"
+msgstr "தீர்க்கரேகையிலிருந்து"
+
+#: .\veterinary\models\case_models.py:573
+msgid "Starting point longitude."
+msgstr "தொடக்க புள்ளி தீர்க்கரேகை."
+
+#: .\veterinary\models\case_models.py:578
+msgid "To Latitude"
+msgstr "அட்சரேகை"
+
+#: .\veterinary\models\case_models.py:579
+msgid "Destination latitude."
+msgstr "இலக்கு அட்சரேகை."
+
+#: .\veterinary\models\case_models.py:584
+msgid "To Longitude"
+msgstr "தீர்க்கரேகை"
+
+#: .\veterinary\models\case_models.py:585
+msgid "Destination longitude."
+msgstr "இலக்கு தீர்க்கரேகை."
+
+#: .\veterinary\models\case_models.py:591
+msgid "Distance Travelled (km)"
+msgstr "தூரம் பயணித்தது (கி.மீ)"
+
+#: .\veterinary\models\case_models.py:592
+msgid "Calculated distance in kilometers."
+msgstr "கிலோமீட்டரில் கணக்கிடப்பட்ட தூரம்."
+
+#: .\veterinary\models\case_models.py:596
+msgid "Travel Date"
+msgstr "பயண தேதி"
+
+#: .\veterinary\models\case_models.py:597
+msgid "Date of the travel."
+msgstr "பயணத்தின் தேதி."
+
+#: .\veterinary\models\case_models.py:602
+#, python-brace-format
+msgid "Case Entry: {case_no} | Distance: {distance} km | Date: {date}"
+msgstr "வழக்கு நுழைவு: {case_no} | தூரம்: {தூரம்} கி.மீ | தேதி: {தேதி}"
+
+#: .\veterinary\models\case_models.py:648
+#: .\veterinary\models\case_models.py:662
+msgid "Travel Record"
+msgstr "பயண பதிவு"
+
+#: .\veterinary\models\case_models.py:649
+msgid "Travel Records"
+msgstr "பயண பதிவுகள்"
+
+#: .\veterinary\models\case_models.py:663
+msgid "Travel record associated with this image."
+msgstr "இந்த படத்துடன் தொடர்புடைய பயண பதிவு."
+
+#: .\veterinary\models\case_models.py:668
+msgid "Image"
+msgstr "படம்"
+
+#: .\veterinary\models\case_models.py:669
+msgid ""
+"Upload image related to the travel, such as vehicle dashboard, odometer, or "
+"scene."
+msgstr ""
+"வாகன டாஷ்போர்டு, ஓடோமீட்டர் அல்லது காட்சி போன்ற பயணம் தொடர்பான படத்தை "
+"பதிவேற்றவும்."
+
+#: .\veterinary\models\case_models.py:674
+msgid "Uploaded At"
+msgstr "பதிவேற்றியது"
+
+#: .\veterinary\models\case_models.py:675
+msgid "Time when image was uploaded."
+msgstr "படம் பதிவேற்றப்பட்ட நேரம்."
+
+#: .\veterinary\models\case_models.py:682
+msgid "Optional notes about this image."
+msgstr "இந்த படத்தைப் பற்றிய விருப்ப குறிப்புகள்."
+
+#: .\veterinary\models\case_models.py:686
+#, python-brace-format
+msgid "Image for Travel Record ID: {id}"
+msgstr "பயண பதிவு ஐடியுக்கான படம்: {ஐடி}"
+
+#: .\veterinary\models\case_models.py:690
+msgid "Travel Record Image"
+msgstr "பயண பதிவு படம்"
+
+#: .\veterinary\models\case_models.py:691
+msgid "Travel Record Images"
+msgstr "பயண பதிவு படங்கள்"
+
+#: .\veterinary\models\common_models.py:59
+msgid "Locale used for this entry (e.g. en, hi, te)"
+msgstr "இந்த நுழைவுக்கு பயன்படுத்தப்படும் இடம் (எ.கா. en, hi, te)"
+
+#: .\veterinary\models\common_models.py:415
+msgid "case status of cattle"
+msgstr "கால்நடைகளின் வழக்கு நிலை"
+
+#: .\veterinary\models\models.py:221
+msgid "Member who currently owns this cattle."
+msgstr "தற்போது இந்த கால்நடைகளை வைத்திருக்கும் உறுப்பினர்."
+
+#: .\veterinary\models\models.py:222
+msgid "Owner"
+msgstr "உரிமையாளர்"
+
+#: .\veterinary\models\models.py:231
+msgid "Breed of the cattle."
+msgstr "கால்நடைகளின் இனம்."
+
+#: .\veterinary\models\models.py:232
+msgid "Breed"
+msgstr "இனம்"
+
+#: .\veterinary\models\models.py:239
+msgid "Gender of the cattle."
+msgstr "கால்நடைகளின் பாலினம்."
+
+#: .\veterinary\models\models.py:240
+msgid "Gender"
+msgstr "பாலினம்"
+
+#: .\veterinary\models\models.py:244
+msgid "Age of the cattle in months."
+msgstr "மாதங்களில் கால்நடைகளின் வயது."
+
+#: .\veterinary\models\models.py:245
+msgid "Age (months)"
+msgstr "வயது (மாதங்கள்)"
+
+#: .\veterinary\models\models.py:248
+msgid "Age of the cattle in year."
+msgstr "ஆண்டுக்கு கால்நடைகளின் வயது."
+
+#: .\veterinary\models\models.py:249 .\veterinary\models\models.py:255
+msgid "Age (year)"
+msgstr "வயது (ஆண்டு)"
+
+#: .\veterinary\models\models.py:254
+msgid "No Of Calving."
+msgstr "கன்று ஈன்றது இல்லை."
+
+#: .\veterinary\models\models.py:266
+msgid "The mother of this cattle."
+msgstr "இந்த கால்நடைகளின் தாய்."
+
+#: .\veterinary\models\models.py:267
+msgid "Mother"
+msgstr "அம்மா"
+
+#: .\veterinary\models\models.py:276
+msgid "The father of this cattle."
+msgstr "இந்த கால்நடைகளின் தந்தை."
+
+#: .\veterinary\models\models.py:277
+msgid "Father"
+msgstr "தந்தை"
+
+#: .\veterinary\models\models.py:358
+msgid "Cattles"
+msgstr "கேடில்ஸ்"
+
+#: .\veterinary\models\models.py:447
+msgid "Last Calving Month"
+msgstr "கடைசி கன்று ஈன்ற மாதம்"
+
+#: .\veterinary\models\models.py:468
+msgid "Pregnancy Status"
+msgstr "கர்ப்ப நிலை"
+
+#: .\veterinary\models\models.py:469
+msgid "Indicates whether the cattle is pregnant."
+msgstr "கால்நடைகள் கர்ப்பமாக இருக்கிறதா என்பதைக் குறிக்கிறது."
+
+#: .\veterinary\models\stock_models.py:11
+msgid "Name of the location (e.g., Central Store, Block Office)"
+msgstr "இருப்பிடத்தின் பெயர் (எ.கா., மத்திய கடை, தொகுதி அலுவலகம்)"
+
+#: .\veterinary\models\stock_models.py:12
+msgid "Location Name"
+msgstr "இருப்பிட பெயர்"
+
+#: .\veterinary\models\stock_models.py:18
+msgid "Unique identifier for the location (e.g., for integration)"
+msgstr ""
+"இருப்பிடத்திற்கான தனித்துவமான அடையாளங்காட்டி (எ.கா., ஒருங்கிணைப்புக்கு)"
+
+#: .\veterinary\models\stock_models.py:19
+msgid "Location Code"
+msgstr "இருப்பிட குறியீடு"
+
+#: .\veterinary\models\stock_models.py:26
+msgid "Category or type of the location"
+msgstr "இருப்பிடத்தின் வகை அல்லது வகை"
+
+#: .\veterinary\models\stock_models.py:27
+msgid "Location Type"
+msgstr "இருப்பிட வகை"
+
+#: .\veterinary\models\stock_models.py:33
+msgid "Full address of the location"
+msgstr "இருப்பிடத்தின் முழு முகவரி"
+
+#: .\veterinary\models\stock_models.py:41
+msgid "District in which the location falls"
+msgstr "இருப்பிடம் விழும் மாவட்டம்"
+
+#: .\veterinary\models\stock_models.py:42
+msgid "District"
+msgstr "மாவட்டம்"
+
+#: .\veterinary\models\stock_models.py:49
+msgid "State or province"
+msgstr "மாநில அல்லது மாகாணம்"
+
+#: .\veterinary\models\stock_models.py:50
+msgid "State"
+msgstr "மாநிலம்"
+
+#: .\veterinary\models\stock_models.py:58
+msgid "Latitude coordinate for map integration"
+msgstr "வரைபட ஒருங்கிணைப்புக்கான அட்சரேகை ஒருங்கிணைப்பு"
+
+#: .\veterinary\models\stock_models.py:67
+msgid "Longitude coordinate for map integration"
+msgstr "வரைபட ஒருங்கிணைப்புக்கான தீர்க்கரேகை ஒருங்கிணைப்பு"
+
+#: .\veterinary\models\stock_models.py:73
+msgid "Location"
+msgstr "இடம்"
+
+#: .\veterinary\models\stock_models.py:74
+msgid "Locations"
+msgstr "இருப்பிடங்கள்"
+
+#: .\veterinary\models\stock_models.py:150
+msgid "Severity level of the disease"
+msgstr "நோயின் தீவிர நிலை"
+
+#: .\veterinary\models\stock_models.py:151
+msgid "Severity"
+msgstr "தீவிரம்"
+
+#: .\veterinary\models\stock_models.py:170
+msgid "eg. tablet, liquid, injection, etc"
+msgstr "எ.கா. டேப்லெட், திரவ, ஊசி போன்றவை"
+
+#: .\veterinary\models\stock_models.py:192
+msgid "Parent Category"
+msgstr "பெற்றோர் வகை"
+
+#: .\veterinary\models\stock_models.py:209
+msgid "Name of the medicine"
+msgstr "மருத்துவத்தின் பெயர்"
+
+#: .\veterinary\models\stock_models.py:214
+msgid "Some description of the medicine"
+msgstr "மருத்துவத்தின் சில விளக்கம்"
+
+#: .\veterinary\models\stock_models.py:240
+msgid "Packaging"
+msgstr "பேக்கேஜிங்"
+
+#: .\veterinary\models\stock_models.py:246
+msgid "Expiry Date of the medicine"
+msgstr "மருத்துவத்தின் காலாவதி தேதி"
+
+#: .\veterinary\models\stock_models.py:247
+msgid "Expiry Date"
+msgstr "காலாவதி தேதி"
+
+#: .\veterinary\models\stock_models.py:252
+msgid "Diseases this medicine is commonly prescribed for."
+msgstr "நோய்கள் இந்த மருந்து பொதுவாக பரிந்துரைக்கப்படுகிறது."
+
+#: .\veterinary\models\stock_models.py:253
+msgid "Diseases"
+msgstr "நோய்கள்"
+
+#: .\veterinary\models\stock_models.py:312
+msgid "Location sending the medicine"
+msgstr "மருத்துவத்தை அனுப்பும் இடம்"
+
+#: .\veterinary\models\stock_models.py:319
+msgid "Location receiving the medicine"
+msgstr "மருத்துவத்தைப் பெறும் இடம்"
+
+#: .\veterinary\models\stock_models.py:325
+msgid "The batch of medicine being transferred"
+msgstr "மருத்துவத்தின் தொகுதி மாற்றப்படுகிறது"
+
+#: .\veterinary\models\stock_models.py:329
+msgid "Exact quantity of medicine transferred from stock"
+msgstr "பங்குகளிலிருந்து மாற்றப்படும் மருந்தின் சரியான அளவு"
+
+#: .\veterinary\models\stock_models.py:336
+msgid "Type of transfer (inward, outward, return)"
+msgstr "பரிமாற்ற வகை (உள், வெளிப்புற, வருவாய்)"
+
+#: .\veterinary\models\stock_models.py:343
+msgid "Current status of the stock transfer"
+msgstr "பங்கு பரிமாற்றத்தின் தற்போதைய நிலை"
+
+#: .\veterinary\models\stock_models.py:350
+msgid "Snapshot of the batch number at the time of transfer"
+msgstr "பரிமாற்ற நேரத்தில் தொகுதி எண்ணின் ஸ்னாப்ஷாட்"
+
+#: .\veterinary\models\stock_models.py:356
+msgid "Snapshot of expiry date at time of transfer"
+msgstr "பரிமாற்ற நேரத்தில் காலாவதி தேதியின் ஸ்னாப்ஷாட்"
+
+#: .\veterinary\models\stock_models.py:364
+msgid "User who initiated the stock transfer"
+msgstr "பங்கு பரிமாற்றத்தைத் தொடங்கிய பயனர்"
+
+#: .\veterinary\models\stock_models.py:373
+msgid "User who received the stock at destination"
+msgstr "இலக்கு பங்கைப் பெற்ற பயனர்"
+
+#: .\veterinary\models\stock_models.py:378
+msgid "Timestamp when the stock was transferred"
+msgstr "பங்கு மாற்றப்பட்டபோது நேர முத்திரை"
+
+#: .\veterinary\models\stock_models.py:384
+msgid "Timestamp when stock was received and confirmed"
+msgstr "பங்கு பெறப்பட்டு உறுதிப்படுத்தப்பட்டபோது நேர முத்திரை"
+
+#: .\veterinary\models\stock_models.py:390
+msgid "Optional comments or notes on the transfer"
+msgstr "பரிமாற்றத்தில் விருப்ப கருத்துகள் அல்லது குறிப்புகள்"
+
+#: .\veterinary\models\stock_models.py:398
+msgid "Cost per unit for tracking valuation"
+msgstr "மதிப்பீட்டைக் கண்காணிப்பதற்கான ஒரு யூனிட்டுக்கு செலவு"
+
+#: .\veterinary\models\stock_models.py:406
+msgid "Total cost of transferred quantity"
+msgstr "மாற்றப்பட்ட அளவின் மொத்த செலவு"
+
+#: .\veterinary\models\stock_models.py:411
+msgid "Medicine Stock Transfer Log"
+msgstr "மருந்து பங்கு பரிமாற்ற பதிவு"
+
+#: .\veterinary\models\stock_models.py:412
+msgid "Medicine Stock Transfer Logs"
+msgstr "மருந்து பங்கு பரிமாற்ற பதிவுகள்"
+
+#: .\veterinary\signals.py:15
+msgid "Initial assignment on case creation."
+msgstr "வழக்கு உருவாக்கம் குறித்த ஆரம்ப பணி."

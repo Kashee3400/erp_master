@@ -4,7 +4,7 @@ from .models import Feedback, FeedbackComment
 from django.db.models.signals import pre_save, post_save
 
 logger = logging.getLogger(__name__)
-from notifications.models import AppNotification, NotificationMedium, NotificationType
+from notifications.model import AppNotification, NotificationMedium, NotificationType
 
 
 @receiver(pre_save, sender=Feedback)

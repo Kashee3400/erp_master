@@ -1,0 +1,822 @@
+[
+  {
+    "model": "veterinary.disease",
+    "pk": 1,
+    "fields": {
+      "disease": "Foot and Mouth Disease",
+      "description": "Highly contagious viral disease affecting cloven-hoofed animals",
+      "treatment": "Vaccination, isolation, and supportive care",
+      "severity": "HIGH",
+      "symptoms": [
+        1,
+        3,
+        5,
+        15,
+        25
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 2,
+    "fields": {
+      "disease": "खुरपका-मुंहपका रोग",
+      "description": "दो खुर वाले जानवरों में होने वाली अत्यधिक संक्रामक वायरल बीमारी",
+      "treatment": "टीकाकरण, अलगाव, और सहायक देखभाल",
+      "severity": "HIGH",
+      "symptoms": [
+        2,
+        4,
+        6,
+        16,
+        26
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 3,
+    "fields": {
+      "disease": "Mastitis",
+      "description": "Inflammation of mammary gland tissue",
+      "treatment": "Antibiotics, anti-inflammatory drugs, proper milking hygiene",
+      "severity": "MEDIUM",
+      "symptoms": [
+        1,
+        19,
+        17,
+        21
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 4,
+    "fields": {
+      "disease": "थनैला रोग",
+      "description": "स्तन ग्रंथि के ऊतक में सूजन",
+      "treatment": "एंटीबायोटिक्स, सूजनरोधी दवाएं, उचित दूध निकालने की स्वच्छता",
+      "severity": "MEDIUM",
+      "symptoms": [
+        2,
+        20,
+        18,
+        22
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 5,
+    "fields": {
+      "disease": "Bovine Respiratory Disease",
+      "description": "Complex respiratory infection affecting cattle",
+      "treatment": "Antibiotics, bronchodilators, supportive care",
+      "severity": "MEDIUM",
+      "symptoms": [
+        1,
+        7,
+        11,
+        13,
+        9
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 6,
+    "fields": {
+      "disease": "बोवाइन श्वसन रोग",
+      "description": "गोवंश को प्रभावित करने वाला जटिल श्वसन संक्रमण",
+      "treatment": "एंटीबायोटिक्स, ब्रोंकोडायलेटर्स, सहायक देखभाल",
+      "severity": "MEDIUM",
+      "symptoms": [
+        2,
+        8,
+        12,
+        14,
+        10
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 7,
+    "fields": {
+      "disease": "Bloat",
+      "description": "Accumulation of gas in the rumen causing abdominal distension",
+      "treatment": "Trocar insertion, anti-foaming agents, dietary management",
+      "severity": "HIGH",
+      "symptoms": [
+        27,
+        49,
+        11,
+        9
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 8,
+    "fields": {
+      "disease": "अफारा रोग",
+      "description": "रूमेन में गैस का संचय जिससे पेट की सूजन होती है",
+      "treatment": "ट्रोकार डालना, एंटी-फोमिंग एजेंट्स, आहार प्रबंधन",
+      "severity": "HIGH",
+      "symptoms": [
+        28,
+        50,
+        12,
+        10
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 9,
+    "fields": {
+      "disease": "Milk Fever",
+      "description": "Calcium deficiency in dairy cows around calving",
+      "treatment": "Intravenous calcium supplementation",
+      "severity": "HIGH",
+      "symptoms": [
+        33,
+        9,
+        41,
+        23
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 10,
+    "fields": {
+      "disease": "दूध बुखार",
+      "description": "ब्याने के समय दुधारू गायों में कैल्शियम की कमी",
+      "treatment": "अंतःशिरा कैल्शियम पूरकता",
+      "severity": "HIGH",
+      "symptoms": [
+        34,
+        10,
+        42,
+        24
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 11,
+    "fields": {
+      "disease": "Ketosis",
+      "description": "Metabolic disorder due to negative energy balance",
+      "treatment": "Glucose or propylene glycol administration, dietary adjustment",
+      "severity": "MEDIUM",
+      "symptoms": [
+        3,
+        9,
+        23,
+        43
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 12,
+    "fields": {
+      "disease": "कीटोसिस",
+      "description": "नकारात्मक ऊर्जा संतुलन के कारण चयापचय संबंधी विकार",
+      "treatment": "ग्लूकोज या प्रोपिलीन ग्लाइकॉल प्रशासन, आहार समायोजन",
+      "severity": "MEDIUM",
+      "symptoms": [
+        4,
+        10,
+        24,
+        44
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 13,
+    "fields": {
+      "disease": "Bovine Tuberculosis",
+      "description": "Chronic bacterial infection caused by Mycobacterium bovis",
+      "treatment": "Culling infected animals, vaccination programs",
+      "severity": "HIGH",
+      "symptoms": [
+        7,
+        23,
+        9,
+        1
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 14,
+    "fields": {
+      "disease": "बोवाइन तपेदिक",
+      "description": "माइकोबैक्टीरियम बोविस के कारण होने वाला पुराना बैक्टीरियल संक्रमण",
+      "treatment": "संक्रमित जानवरों का बध, टीकाकरण कार्यक्रम",
+      "severity": "HIGH",
+      "symptoms": [
+        8,
+        24,
+        10,
+        2
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 15,
+    "fields": {
+      "disease": "Brucellosis",
+      "description": "Bacterial infection causing reproductive problems",
+      "treatment": "Vaccination, culling infected animals",
+      "severity": "HIGH",
+      "symptoms": [
+        21,
+        1,
+        3
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 16,
+    "fields": {
+      "disease": "ब्रूसेलोसिस",
+      "description": "प्रजनन संबंधी समस्याएं पैदा करने वाला बैक्टीरियल संक्रमण",
+      "treatment": "टीकाकरण, संक्रमित जानवरों का बध",
+      "severity": "HIGH",
+      "symptoms": [
+        22,
+        2,
+        4
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 17,
+    "fields": {
+      "disease": "Black Quarter",
+      "description": "Acute bacterial disease causing muscle necrosis",
+      "treatment": "Antibiotics, vaccination",
+      "severity": "HIGH",
+      "symptoms": [
+        1,
+        15,
+        17,
+        9
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 18,
+    "fields": {
+      "disease": "गलघोंटू",
+      "description": "मांसपेशियों के नेक्रोसिस का कारण बनने वाली तीव्र बैक्टीरियल बीमारी",
+      "treatment": "एंटीबायोटिक्स, टीकाकरण",
+      "severity": "HIGH",
+      "symptoms": [
+        2,
+        16,
+        18,
+        10
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 19,
+    "fields": {
+      "disease": "Anthrax",
+      "description": "Acute bacterial infection caused by Bacillus anthracis",
+      "treatment": "Antibiotics, vaccination, isolation",
+      "severity": "HIGH",
+      "symptoms": [
+        1,
+        17,
+        11,
+        45
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 20,
+    "fields": {
+      "disease": "एंथ्रेक्स",
+      "description": "बैसिलस एंथ्राकिस के कारण होने वाला तीव्र बैक्टीरियल संक्रमण",
+      "treatment": "एंटीबायोटिक्स, टीकाकरण, अलगाव",
+      "severity": "HIGH",
+      "symptoms": [
+        2,
+        18,
+        12,
+        46
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 21,
+    "fields": {
+      "disease": "Pneumonia",
+      "description": "Infection and inflammation of lung tissue",
+      "treatment": "Antibiotics, supportive care, proper ventilation",
+      "severity": "MEDIUM",
+      "symptoms": [
+        7,
+        11,
+        1,
+        13
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 22,
+    "fields": {
+      "disease": "निमोनिया",
+      "description": "फेफड़े के ऊतक का संक्रमण और सूजन",
+      "treatment": "एंटीबायोटिक्स, सहायक देखभाल, उचित वेंटिलेशन",
+      "severity": "MEDIUM",
+      "symptoms": [
+        8,
+        12,
+        2,
+        14
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 23,
+    "fields": {
+      "disease": "Diarrhea",
+      "description": "Loose watery stools due to various causes",
+      "treatment": "Fluid therapy, antibiotics if bacterial, dietary management",
+      "severity": "MEDIUM",
+      "symptoms": [
+        5,
+        3,
+        23,
+        39
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 24,
+    "fields": {
+      "disease": "दस्त",
+      "description": "विभिन्न कारणों से पतले पानी जैसे मल",
+      "treatment": "तरल पदार्थ चिकित्सा, यदि बैक्टीरियल हो तो एंटीबायोटिक्स, आहार प्रबंधन",
+      "severity": "MEDIUM",
+      "symptoms": [
+        6,
+        4,
+        24,
+        40
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 25,
+    "fields": {
+      "disease": "Pink Eye",
+      "description": "Infectious eye disease causing conjunctivitis",
+      "treatment": "Antibiotic eye drops, isolation",
+      "severity": "LOW",
+      "symptoms": [
+        31,
+        17
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 26,
+    "fields": {
+      "disease": "गुलाबी आंख",
+      "description": "नेत्रश्लेष्मलाशोथ का कारण बनने वाली संक्रामक आंख की बीमारी",
+      "treatment": "एंटीबायोटिक आई ड्रॉप्स, अलगाव",
+      "severity": "LOW",
+      "symptoms": [
+        32,
+        18
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 27,
+    "fields": {
+      "disease": "Lumpy Skin Disease",
+      "description": "Viral disease causing skin nodules",
+      "treatment": "Vaccination, supportive care, isolation",
+      "severity": "MEDIUM",
+      "symptoms": [
+        37,
+        1,
+        3,
+        17
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 28,
+    "fields": {
+      "disease": "लम्पी स्किन डिजीज",
+      "description": "त्वचा की गांठ का कारण बनने वाली वायरल बीमारी",
+      "treatment": "टीकाकरण, सहायक देखभाल, अलगाव",
+      "severity": "MEDIUM",
+      "symptoms": [
+        38,
+        2,
+        4,
+        18
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 29,
+    "fields": {
+      "disease": "Ringworm",
+      "description": "Fungal skin infection causing circular lesions",
+      "treatment": "Antifungal medications, topical treatments",
+      "severity": "LOW",
+      "symptoms": [
+        37,
+        47
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 30,
+    "fields": {
+      "disease": "दाद",
+      "description": "गोलाकार घावों का कारण बनने वाला फंगल त्वचा संक्रमण",
+      "treatment": "एंटीफंगल दवाएं, स्थानीय उपचार",
+      "severity": "LOW",
+      "symptoms": [
+        38,
+        48
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 31,
+    "fields": {
+      "disease": "Displaced Abomasum",
+      "description": "Abnormal positioning of the fourth stomach compartment",
+      "treatment": "Surgical correction, dietary management",
+      "severity": "HIGH",
+      "symptoms": [
+        3,
+        49,
+        9
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 32,
+    "fields": {
+      "disease": "विस्थापित अबोमासम",
+      "description": "चौथे पेट के डिब्बे की असामान्य स्थिति",
+      "treatment": "सर्जिकल सुधार, आहार प्रबंधन",
+      "severity": "HIGH",
+      "symptoms": [
+        4,
+        50,
+        10
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 33,
+    "fields": {
+      "disease": "Hardware Disease",
+      "description": "Ingestion of metal objects causing internal injury",
+      "treatment": "Magnet administration, surgery if needed",
+      "severity": "MEDIUM",
+      "symptoms": [
+        3,
+        49,
+        9,
+        23
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 34,
+    "fields": {
+      "disease": "हार्डवेयर डिजीज",
+      "description": "धातु की वस्तुओं के सेवन से आंतरिक चोट",
+      "treatment": "चुंबक प्रशासन, यदि आवश्यक हो तो सर्जरी",
+      "severity": "MEDIUM",
+      "symptoms": [
+        4,
+        50,
+        10,
+        24
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 35,
+    "fields": {
+      "disease": "Bovine Viral Diarrhea",
+      "description": "Viral infection causing diarrhea and reproductive issues",
+      "treatment": "Vaccination, supportive care, isolation",
+      "severity": "MEDIUM",
+      "symptoms": [
+        5,
+        1,
+        21,
+        23
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.disease",
+    "pk": 36,
+    "fields": {
+      "disease": "बोवाइन वायरल डायरिया",
+      "description": "दस्त और प्रजनन संबंधी समस्याएं पैदा करने वाला वायरल संक्रमण",
+      "treatment": "टीकाकरण, सहायक देखभाल, अलगाव",
+      "severity": "MEDIUM",
+      "symptoms": [
+        6,
+        2,
+        22,
+        24
+      ],
+      "created_at": "2025-07-29T10:41:00Z",
+      "updated_at": "2025-07-29T10:41:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  }
+]

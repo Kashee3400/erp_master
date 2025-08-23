@@ -99,6 +99,7 @@ class CattleStatusType(BaseModel):
         verbose_name="Status Code",
         help_text="e.g., DRY, MILKING, PREGNANT",
     )
+
     label = models.CharField(
         max_length=100, verbose_name="Status Label", help_text="Human-readable label"
     )
@@ -250,31 +251,7 @@ class SpeciesBreed(BaseModel):
     def save(self, *args, **kwargs):
         if not self.locale:
             self.locale = get_language() or "en"
-        if not self.slug:
-            base_slug = slugify(self.breed)
-            self.slug = f"{base_slug}-{self.locale}-{self.animal_type.slug}"
         super().save(*args, **kwargs)
-
-
-class VeterinaryAuditLog(models.Model):
-    action = models.CharField(
-        max_length=50,
-        choices=[
-            ("created", "Created"),
-            ("updated", "Updated"),
-            ("deleted", "Deleted"),
-        ],
-    )
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.CharField(max_length=100)
-    content_object = GenericForeignKey("content_type", "object_id")
-
-    changed_by = models.CharField(max_length=100)  # or FK to a User
-    changed_at = models.DateTimeField(auto_now_add=True)
-    change_data = models.JSONField()
-
-    class Meta:
-        ordering = ["-changed_at"]
 
 
 class AICharge(models.Model):
@@ -424,6 +401,27 @@ class CattleCaseStatus(BaseModel):
         verbose_name_plural = "Case Statuses"
 
 
+class VeterinaryAuditLog(models.Model):
+    action = models.CharField(
+        max_length=50,
+        choices=[
+            ("created", "Created"),
+            ("updated", "Updated"),
+            ("deleted", "Deleted"),
+        ],
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.CharField(max_length=100)
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    changed_by = models.CharField(max_length=100)  # or FK to a User
+    changed_at = models.DateTimeField(auto_now_add=True)
+    change_data = models.JSONField()
+
+    class Meta:
+        ordering = ["-changed_at"]
+
+
 class PaymentMethod(BaseModel):
     method = models.CharField(
         max_length=100, choices=PaymentMethodChoices.choices, unique=True
@@ -451,3 +449,259 @@ class OnlinePayment(models.Model):
         verbose_name = "Online Payment Method"
         verbose_name_plural = "Online Payment Methods"
 
+
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+
+class Vehicle(BaseModel):
+    """Production-ready Vehicle master model"""
+
+    registration_number = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name=_("Registration Number"),
+        help_text=_("Unique registration number of the vehicle (e.g., UP65AB1234)."),
+    )
+
+    model_name = models.CharField(
+        max_length=100,
+        verbose_name=_("Model Name"),
+        help_text=_("Manufacturer and model name (e.g., Tata 407, Maruti Swift)."),
+    )
+
+    vehicle_type = models.CharField(
+        max_length=20,
+        choices=VehicleTypeChoices.choices,
+        default=VehicleTypeChoices.OTHER,
+        verbose_name=_("Vehicle Type"),
+        help_text=_("Type of vehicle."),
+    )
+
+    chassis_number = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_("Chassis Number"),
+        help_text=_("Unique chassis number of the vehicle."),
+    )
+
+    engine_number = models.CharField(
+        max_length=50,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name=_("Engine Number"),
+        help_text=_("Unique engine number of the vehicle."),
+    )
+
+    purchase_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Purchase Date"),
+        help_text=_("Date when the vehicle was purchased."),
+    )
+
+    registration_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Registration Date"),
+        help_text=_("Date when the vehicle was registered with RTO."),
+    )
+
+    seating_capacity = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Seating Capacity"),
+        help_text=_("Number of seats in the vehicle."),
+    )
+
+    fuel_type = models.CharField(
+        max_length=20,
+        choices=[
+            ("PETROL", _("Petrol")),
+            ("DIESEL", _("Diesel")),
+            ("CNG", _("CNG")),
+            ("ELECTRIC", _("Electric")),
+            ("HYBRID", _("Hybrid")),
+        ],
+        verbose_name=_("Fuel Type"),
+        help_text=_("Primary fuel type of the vehicle."),
+    )
+
+    insurance_valid_upto = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Insurance Valid Upto"),
+        help_text=_("Date until which the vehicle insurance is valid."),
+    )
+
+    puc_valid_upto = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("PUC Valid Upto"),
+        help_text=_(
+            "Date until which the Pollution Under Control certificate is valid."
+        ),
+    )
+
+    class Meta:
+        verbose_name = _("Vehicle")
+        verbose_name_plural = _("Vehicles")
+        ordering = ["registration_number"]
+        indexes = [
+            models.Index(fields=["registration_number"]),
+            models.Index(fields=["vehicle_type"]),
+            models.Index(fields=["is_active"]),
+        ]
+
+    def __str__(self):
+        return f"{self.registration_number} - {self.model_name}"
+
+    # ----------------------------
+    # Helper Methods
+    # ----------------------------
+    @property
+    def is_insurance_valid(self) -> bool:
+        """Check if insurance is still valid"""
+        from django.utils import timezone
+
+        return (
+            self.insurance_valid_upto
+            and self.insurance_valid_upto >= timezone.now().date()
+        )
+
+    @property
+    def is_puc_valid(self) -> bool:
+        """Check if PUC is still valid"""
+        from django.utils import timezone
+
+        return self.puc_valid_upto and self.puc_valid_upto >= timezone.now().date()
+
+    def deactivate(self, reason: str = None):
+        """Mark vehicle as inactive"""
+        self.is_active = False
+        self.save(update_fields=["is_active"])
+        # Could log reason to an audit table if needed
+
+
+class VehicleKiloMeterLog(BaseModel):
+    """Log entry for vehicle journeys and kilometer usage"""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text=_("Log associated with user"),
+        verbose_name=_("User"),
+    )
+
+    district = models.CharField(
+        max_length=100,
+        verbose_name=_("District"),
+        help_text=_("District where the journey took place."),
+    )
+
+    vehicle = models.ForeignKey(
+        Vehicle,
+        on_delete=models.CASCADE,
+        related_name="kilometer_logs",
+        verbose_name=_("Vehicle"),
+        help_text=_("Vehicle for which this journey log is recorded."),
+    )
+
+    driver_name = models.CharField(
+        max_length=150,
+        verbose_name=_("Driver Name"),
+        help_text=_("Full name of the driver."),
+    )
+
+    opening_datetime = models.DateTimeField(
+        verbose_name=_("Opening Date & Time"),
+        help_text=_("Date and time when the journey started."),
+    )
+    closing_datetime = models.DateTimeField(
+        verbose_name=_("Closing Date & Time"),
+        help_text=_("Date and time when the journey ended."),
+    )
+
+    opening_km = models.PositiveIntegerField(
+        verbose_name=_("Opening Kilometer Reading"),
+        help_text=_("Odometer reading at the start of the journey."),
+    )
+    closing_km = models.PositiveIntegerField(
+        verbose_name=_("Closing Kilometer Reading"),
+        help_text=_("Odometer reading at the end of the journey."),
+    )
+
+    place_of_visit = models.TextField(
+        verbose_name=_("Place of Visit"),
+        help_text=_("Locations or places visited during the journey."),
+    )
+    purpose_of_journey = models.TextField(
+        verbose_name=_("Purpose of Journey"),
+        help_text=_("Reason or objective of the journey."),
+    )
+
+    class Meta:
+        verbose_name = _("Vehicle Kilometer Log")
+        verbose_name_plural = _("Vehicle Kilometer Logs")
+        ordering = ["-opening_datetime"]
+        indexes = [
+            models.Index(fields=["vehicle", "opening_datetime"]),
+            models.Index(fields=["district"]),
+        ]
+
+    def __str__(self):
+        return f"{self.vehicle} | {self.opening_datetime:%Y-%m-%d} | {self.driver_name}"
+
+    # ----------------------------
+    # Validation
+    # ----------------------------
+    def clean(self):
+        """Custom validations"""
+        if self.closing_datetime < self.opening_datetime:
+            raise ValidationError(
+                _("Closing datetime cannot be earlier than opening datetime.")
+            )
+
+        if self.closing_km < self.opening_km:
+            raise ValidationError(
+                _(
+                    "Closing kilometer reading cannot be less than opening kilometer reading."
+                )
+            )
+
+        if (
+            self.opening_datetime > timezone.now()
+            or self.closing_datetime > timezone.now()
+        ):
+            raise ValidationError(_("Journey datetimes cannot be in the future."))
+
+    # ----------------------------
+    # Helper Methods
+    # ----------------------------
+    @property
+    def distance_travelled(self) -> int:
+        """Total kilometers traveled in this journey"""
+        return (
+            self.closing_km - self.opening_km
+            if self.closing_km and self.opening_km
+            else 0
+        )
+
+    @property
+    def journey_duration(self):
+        """Return journey duration as timedelta"""
+        return (
+            self.closing_datetime - self.opening_datetime
+            if self.closing_datetime and self.opening_datetime
+            else None
+        )
+
+    def is_round_trip(self) -> bool:
+        """Helper to check if place_of_visit suggests a round trip"""
+        return (
+            "return" in self.place_of_visit.lower()
+            or "back" in self.place_of_visit.lower()
+        )

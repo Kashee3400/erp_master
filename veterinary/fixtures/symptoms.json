@@ -1,0 +1,752 @@
+[
+    {
+        "model": "veterinary.symptoms",
+        "pk": 1,
+        "fields": {
+            "symptom": "Fever",
+            "description": "Elevated body temperature, often first sign of infection or stress",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 2,
+        "fields": {
+            "symptom": "बुखार",
+            "description": "शरीर का तापमान बढ़ना, अक्सर संक्रमण या तनाव का पहला संकेत",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 3,
+        "fields": {
+            "symptom": "Loss of Appetite",
+            "description": "Reduced or complete lack of interest in food",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 4,
+        "fields": {
+            "symptom": "भूख न लगना",
+            "description": "खाने में रुचि कम होना या बिल्कुल न होना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 5,
+        "fields": {
+            "symptom": "Diarrhea",
+            "description": "Loose, watery stools indicating digestive upset or infection",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 6,
+        "fields": {
+            "symptom": "दस्त",
+            "description": "पतले, पानी जैसे मल, पाचन संबंधी समस्या या संक्रमण का संकेत",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 7,
+        "fields": {
+            "symptom": "Coughing",
+            "description": "Persistent cough indicating respiratory issues",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 8,
+        "fields": {
+            "symptom": "खांसी",
+            "description": "लगातार खांसी, श्वसन संबंधी समस्याओं का संकेत",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 9,
+        "fields": {
+            "symptom": "Lethargy",
+            "description": "Unusual tiredness, lack of energy and activity",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 10,
+        "fields": {
+            "symptom": "सुस्ती",
+            "description": "असामान्य थकान, ऊर्जा और गतिविधि की कमी",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 11,
+        "fields": {
+            "symptom": "Difficulty Breathing",
+            "description": "Labored or rapid breathing, respiratory distress",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 12,
+        "fields": {
+            "symptom": "सांस लेने में कठिनाई",
+            "description": "मुश्किल या तेज़ सांस, श्वसन संकट",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 13,
+        "fields": {
+            "symptom": "Nasal Discharge",
+            "description": "Abnormal discharge from nostrils",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 14,
+        "fields": {
+            "symptom": "नाक से स्राव",
+            "description": "नाक से असामान्य स्राव",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 15,
+        "fields": {
+            "symptom": "Lameness",
+            "description": "Difficulty walking, limping, or favoring one leg",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 16,
+        "fields": {
+            "symptom": "लंगड़ाहट",
+            "description": "चलने में कठिनाई, लंगड़ाना, या एक पैर को बचाना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 17,
+        "fields": {
+            "symptom": "Swelling",
+            "description": "Abnormal enlargement of body parts or joints",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 18,
+        "fields": {
+            "symptom": "सूजन",
+            "description": "शरीर के अंगों या जोड़ों का असामान्य बढ़ना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 19,
+        "fields": {
+            "symptom": "Milk Production Drop",
+            "description": "Sudden decrease in milk yield",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 20,
+        "fields": {
+            "symptom": "दूध उत्पादन में कमी",
+            "description": "दूध की मात्रा में अचानक कमी",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 21,
+        "fields": {
+            "symptom": "Abnormal Discharge",
+            "description": "Unusual discharge from reproductive organs",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 22,
+        "fields": {
+            "symptom": "असामान्य स्राव",
+            "description": "प्रजनन अंगों से असामान्य स्राव",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 23,
+        "fields": {
+            "symptom": "Weight Loss",
+            "description": "Gradual or sudden loss of body weight",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 24,
+        "fields": {
+            "symptom": "वजन कम होना",
+            "description": "शरीर के वजन में धीरे-धीरे या अचानक कमी",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 25,
+        "fields": {
+            "symptom": "Excessive Salivation",
+            "description": "Abnormal drooling or excessive saliva production",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 26,
+        "fields": {
+            "symptom": "अत्यधिक लार आना",
+            "description": "असामान्य लार टपकना या अत्यधिक लार का उत्पादन",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 27,
+        "fields": {
+            "symptom": "Bloating",
+            "description": "Abnormal swelling of the abdomen due to gas accumulation",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 28,
+        "fields": {
+            "symptom": "पेट फूलना",
+            "description": "गैस जमा होने के कारण पेट की असामान्य सूजन",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 29,
+        "fields": {
+            "symptom": "Difficulty Urinating",
+            "description": "Straining or inability to urinate normally",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 30,
+        "fields": {
+            "symptom": "पेशाब करने में कठिनाई",
+            "description": "पेशाब करने में तकलीफ या सामान्य रूप से पेशाब न कर पाना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 31,
+        "fields": {
+            "symptom": "Eye Discharge",
+            "description": "Abnormal discharge or tearing from eyes",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 32,
+        "fields": {
+            "symptom": "आंख से स्राव",
+            "description": "आंखों से असामान्य स्राव या आंसू आना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 33,
+        "fields": {
+            "symptom": "Trembling",
+            "description": "Involuntary shaking or tremors",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 34,
+        "fields": {
+            "symptom": "कंपकंपी",
+            "description": "अनैच्छिक हिलना या कंपन",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 35,
+        "fields": {
+            "symptom": "Constipation",
+            "description": "Difficulty or inability to defecate",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 36,
+        "fields": {
+            "symptom": "कब्ज",
+            "description": "मल त्याग में कठिनाई या असमर्थता",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 37,
+        "fields": {
+            "symptom": "Skin Lesions",
+            "description": "Abnormal patches, sores, or wounds on skin",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 38,
+        "fields": {
+            "symptom": "त्वचा के घाव",
+            "description": "त्वचा पर असामान्य धब्बे, घाव या जख्म",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 39,
+        "fields": {
+            "symptom": "Excessive Thirst",
+            "description": "Abnormally increased water consumption",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 40,
+        "fields": {
+            "symptom": "अत्यधिक प्यास",
+            "description": "असामान्य रूप से बढ़ा हुआ पानी का सेवन",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 41,
+        "fields": {
+            "symptom": "Abnormal Gait",
+            "description": "Unusual walking pattern or posture",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 42,
+        "fields": {
+            "symptom": "असामान्य चाल",
+            "description": "असामान्य चलने का तरीका या मुद्रा",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 43,
+        "fields": {
+            "symptom": "Vomiting",
+            "description": "Forceful expulsion of stomach contents",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 44,
+        "fields": {
+            "symptom": "उल्टी",
+            "description": "पेट की सामग्री का जबरदस्ती निकलना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 45,
+        "fields": {
+            "symptom": "Pale Mucous Membranes",
+            "description": "Loss of normal pink color in gums and inner eyelids",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 46,
+        "fields": {
+            "symptom": "पीले श्लेष्म झिल्ली",
+            "description": "मसूड़ों और आंखों की भीतरी पलकों में सामान्य गुलाबी रंग का न होना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 47,
+        "fields": {
+            "symptom": "Hair Loss",
+            "description": "Abnormal loss of hair or coat",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 48,
+        "fields": {
+            "symptom": "बाल झड़ना",
+            "description": "बालों या कोट का असामान्य गिरना",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 49,
+        "fields": {
+            "symptom": "Abdominal Pain",
+            "description": "Signs of discomfort or pain in the abdominal area",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.symptoms",
+        "pk": 50,
+        "fields": {
+            "symptom": "पेट दर्द",
+            "description": "पेट के क्षेत्र में असहजता या दर्द के संकेत",
+            "created_at": "2025-07-29T12:00:00Z",
+            "updated_at": "2025-07-29T12:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "hi"
+        }
+    }
+]

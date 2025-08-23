@@ -51,6 +51,11 @@ class UserDevice(models.Model):
     device = models.CharField(
         max_length=255, unique=True, blank=True, null=True, verbose_name=_("Device")
     )
+    device_type = models.CharField(
+        max_length=10,
+        choices=[("android", "Android"), ("ios", "iOS"), ("web", "Web")],
+        default="android",
+    )
     mpp_code = models.CharField(
         max_length=200, blank=True, null=True, verbose_name=_("MPP Code")
     )
@@ -59,6 +64,7 @@ class UserDevice(models.Model):
         max_length=200, blank=True, null=True, verbose_name=_("Module Code")
     )
     last_updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user} - {self.device}"

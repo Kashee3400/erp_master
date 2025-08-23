@@ -1,0 +1,317 @@
+[
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 1,
+        "fields": {
+            "code": "DRY-EN",
+            "label": "Dry",
+            "locale": "en",
+            "created_at": "2025-07-29T10:00:00Z",
+            "updated_at": "2025-07-29T10:00:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 2,
+        "fields": {
+            "code": "DRY-HI",
+            "label": "सूखी",
+            "locale": "hi",
+            "created_at": "2025-07-29T10:00:01Z",
+            "updated_at": "2025-07-29T10:00:01Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 3,
+        "fields": {
+            "code": "DRY-GU",
+            "label": "સૂકી",
+            "locale": "gu",
+            "created_at": "2025-07-29T10:00:02Z",
+            "updated_at": "2025-07-29T10:00:02Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 4,
+        "fields": {
+            "code": "DRY-OR",
+            "label": "ଶୁଖିଲା",
+            "locale": "or",
+            "created_at": "2025-07-29T10:00:03Z",
+            "updated_at": "2025-07-29T10:00:03Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 5,
+        "fields": {
+            "code": "DRY-TA",
+            "label": "உலர்ந்த",
+            "locale": "ta",
+            "created_at": "2025-07-29T10:00:04Z",
+            "updated_at": "2025-07-29T10:00:04Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 6,
+        "fields": {
+            "code": "DRY-TE",
+            "label": "ఎండిపోయిన",
+            "locale": "te",
+            "created_at": "2025-07-29T10:00:05Z",
+            "updated_at": "2025-07-29T10:00:05Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 7,
+        "fields": {
+            "code": "DRY-PA",
+            "label": "ਸੁੱਕੀ",
+            "locale": "pa",
+            "created_at": "2025-07-29T10:00:06Z",
+            "updated_at": "2025-07-29T10:00:06Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 8,
+        "fields": {
+            "code": "MILKING-EN",
+            "label": "Milking",
+            "locale": "en",
+            "created_at": "2025-07-29T10:01:00Z",
+            "updated_at": "2025-07-29T10:01:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 9,
+        "fields": {
+            "code": "MILKING-HI",
+            "label": "दूध दुहना",
+            "locale": "hi",
+            "created_at": "2025-07-29T10:01:01Z",
+            "updated_at": "2025-07-29T10:01:01Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 10,
+        "fields": {
+            "code": "MILKING-GU",
+            "label": "દૂધ આપતી",
+            "locale": "gu",
+            "created_at": "2025-07-29T10:01:02Z",
+            "updated_at": "2025-07-29T10:01:02Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 11,
+        "fields": {
+            "code": "MILKING-OR",
+            "label": "ଦୁଧ ଦେଉଥିବା",
+            "locale": "or",
+            "created_at": "2025-07-29T10:01:03Z",
+            "updated_at": "2025-07-29T10:01:03Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 12,
+        "fields": {
+            "code": "MILKING-TA",
+            "label": "பால்தரும்",
+            "locale": "ta",
+            "created_at": "2025-07-29T10:01:04Z",
+            "updated_at": "2025-07-29T10:01:04Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 13,
+        "fields": {
+            "code": "MILKING-TE",
+            "label": "పాలు ఇచ్చే",
+            "locale": "te",
+            "created_at": "2025-07-29T10:01:05Z",
+            "updated_at": "2025-07-29T10:01:05Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 14,
+        "fields": {
+            "code": "MILKING-PA",
+            "label": "ਦੁੱਧ ਦੇਣ ਵਾਲੀ",
+            "locale": "pa",
+            "created_at": "2025-07-29T10:01:06Z",
+            "updated_at": "2025-07-29T10:01:06Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 15,
+        "fields": {
+            "code": "PREGNANT-EN",
+            "label": "Pregnant",
+            "locale": "en",
+            "created_at": "2025-07-29T10:02:00Z",
+            "updated_at": "2025-07-29T10:02:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 16,
+        "fields": {
+            "code": "PREGNANT-HI",
+            "label": "गर्भवती",
+            "locale": "hi",
+            "created_at": "2025-07-29T10:02:01Z",
+            "updated_at": "2025-07-29T10:02:01Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 17,
+        "fields": {
+            "code": "PREGNANT-GU",
+            "label": "ગર્ભવતી",
+            "locale": "gu",
+            "created_at": "2025-07-29T10:02:02Z",
+            "updated_at": "2025-07-29T10:02:02Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 18,
+        "fields": {
+            "code": "PREGNANT-OR",
+            "label": "ଗର୍ଭବତୀ",
+            "locale": "or",
+            "created_at": "2025-07-29T10:02:03Z",
+            "updated_at": "2025-07-29T10:02:03Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 19,
+        "fields": {
+            "code": "PREGNANT-TA",
+            "label": "கர்ப்பமாக",
+            "locale": "ta",
+            "created_at": "2025-07-29T10:02:04Z",
+            "updated_at": "2025-07-29T10:02:04Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 20,
+        "fields": {
+            "code": "PREGNANT-TE",
+            "label": "గర్భవతిగా",
+            "locale": "te",
+            "created_at": "2025-07-29T10:02:05Z",
+            "updated_at": "2025-07-29T10:02:05Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    },
+    {
+        "model": "veterinary.cattlestatustype",
+        "pk": 21,
+        "fields": {
+            "code": "PREGNANT-PA",
+            "label": "ਗਰਭਵਤੀ",
+            "locale": "pa",
+            "created_at": "2025-07-29T10:02:06Z",
+            "updated_at": "2025-07-29T10:02:06Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false
+        }
+    }
+]

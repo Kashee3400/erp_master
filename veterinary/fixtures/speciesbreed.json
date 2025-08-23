@@ -1,0 +1,182 @@
+[
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 1,
+        "fields": {
+            "breed": "Gir",
+            "animal_type": 1,
+            "origin_country": "India",
+            "average_milk_yield": null,
+            "color": null,
+            "adaptability": null,
+            "description": "Indigenous high-yield dairy breed from Gujarat",
+            "created_at": "2025-07-29T10:10:00Z",
+            "updated_at": "2025-07-29T10:10:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 2,
+        "fields": {
+            "breed": "Sahiwal",
+            "animal_type": 1,
+            "origin_country": "India/Pakistan",
+            "average_milk_yield": null,
+            "color": "Reddish dun",
+            "adaptability": null,
+            "description": "One of the best indigenous dairy cows",
+            "created_at": "2025-07-29T10:10:30Z",
+            "updated_at": "2025-07-29T10:10:30Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 3,
+        "fields": {
+            "breed": "Red Sindhi",
+            "animal_type": 1,
+            "origin_country": "Pakistan/India",
+            "average_milk_yield": null,
+            "color": "Red-brown",
+            "adaptability": null,
+            "description": "Heat and disease resistant milch breed",
+            "created_at": "2025-07-29T10:11:00Z",
+            "updated_at": "2025-07-29T10:11:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 4,
+        "fields": {
+            "breed": "Holstein Friesian",
+            "animal_type": 1,
+            "origin_country": "Netherlands/UK",
+            "average_milk_yield": null,
+            "color": "Black and white",
+            "adaptability": null,
+            "description": "Exotic high‑yield dairy breed",
+            "created_at": "2025-07-29T10:11:30Z",
+            "updated_at": "2025-07-29T10:11:30Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 5,
+        "fields": {
+            "breed": "Murrah",
+            "animal_type": 2,
+            "origin_country": "India",
+            "average_milk_yield": null,
+            "color": "Jet Black",
+            "adaptability": null,
+            "description": "Highest milk‑yielding Indian buffalo breed",
+            "created_at": "2025-07-29T10:12:00Z",
+            "updated_at": "2025-07-29T10:12:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 6,
+        "fields": {
+            "breed": "Surti",
+            "animal_type": 2,
+            "origin_country": "India",
+            "average_milk_yield": null,
+            "color": null,
+            "adaptability": null,
+            "description": "Gujarat buffalo noted for high fat content",
+            "created_at": "2025-07-29T10:12:30Z",
+            "updated_at": "2025-07-29T10:12:30Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 7,
+        "fields": {
+            "breed": "Mehsana",
+            "animal_type": 2,
+            "origin_country": "India",
+            "average_milk_yield": null,
+            "color": null,
+            "adaptability": null,
+            "description": "Cross between Murrah & Surti, high‑yielding",
+            "created_at": "2025-07-29T10:13:00Z",
+            "updated_at": "2025-07-29T10:13:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 8,
+        "fields": {
+            "breed": "Bhadawari",
+            "animal_type": 2,
+            "origin_country": "India",
+            "average_milk_yield": null,
+            "color": "Copper/light brown",
+            "adaptability": null,
+            "description": "High butter‑fat buffalo from UP/Madhya Pradesh",
+            "created_at": "2025-07-29T10:13:30Z",
+            "updated_at": "2025-07-29T10:13:30Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    },
+    {
+        "model": "veterinary.speciesbreed",
+        "pk": 9,
+        "fields": {
+            "breed": "Nili Ravi",
+            "animal_type": 2,
+            "origin_country": "India/Pakistan",
+            "average_milk_yield": null,
+            "color": null,
+            "adaptability": null,
+            "description": "Punjab–Ravi valley dairy buffalo",
+            "created_at": "2025-07-29T10:14:00Z",
+            "updated_at": "2025-07-29T10:14:00Z",
+            "updated_by": 1,
+            "is_active": true,
+            "is_deleted": false,
+            "sync": false,
+            "locale": "en"
+        }
+    }
+]
