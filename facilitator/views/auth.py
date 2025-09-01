@@ -102,7 +102,9 @@ class VerifyOTPView(generics.GenericAPIView):
 
         # Delete OTP
         otp.delete()
-        role = user.profile.department if user.profile else None
+        # Ensure user has a profile (create if missing)
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        role = profile.department
         return self._success_response(
             "Authentication successful.",
             data={
