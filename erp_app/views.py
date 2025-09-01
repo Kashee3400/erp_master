@@ -578,7 +578,7 @@ class MemberShareFinalInfoView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        member = MemberMaster.objects.filter(mobile_no=self.request.user.username)
+        member = MemberMaster.objects.filter(mobile_no=self.request.user.username,is_active=True)
         if not member.exists():
             return Response(
                 {
