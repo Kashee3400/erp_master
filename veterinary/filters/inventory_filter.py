@@ -1,17 +1,15 @@
 # filters.py
 import django_filters
-from django.db.models import Q, F, Sum
-from django.utils import timezone
-from datetime import timedelta
+from django.db.models import Q, F
 
-from ..models.stock_models import MedicineStock, UserMedicineStock, Medicine
+from ..models.stock_models import MedicineStock, UserMedicineStock
 
 
 class MedicineStockFilter(django_filters.FilterSet):
     medicine_name = django_filters.CharFilter(
         field_name="medicine__medicine", lookup_expr="icontains", label="Medicine Name"
     )
-
+    locale = django_filters.CharFilter(field_name='locale',lookup_expr='exact',label="Locale")
     category = django_filters.CharFilter(
         field_name="medicine__category__category",
         lookup_expr="icontains",
@@ -29,6 +27,7 @@ class MedicineStockFilter(django_filters.FilterSet):
             ("expiring_soon", "Expiring Soon (30 days)"),
             ("expiring_week", "Expiring This Week"),
             ("valid", "Valid"),
+            ("no_expiry", "No Expiry"),
         ],
         label="Expiry Status",
     )
@@ -40,6 +39,7 @@ class MedicineStockFilter(django_filters.FilterSet):
             ("low_stock", "Low Stock (≤10)"),
             ("critical_stock", "Critical Stock (≤5)"),
             ("adequate", "Adequate Stock"),
+            ("overstock", "Over Stock"),
         ],
         label="Stock Level",
     )
@@ -77,58 +77,38 @@ class MedicineStockFilter(django_filters.FilterSet):
         }
 
     def filter_by_expiry_status(self, queryset, name, value):
-        now = timezone.now().date()
 
         if value == "expired":
-            return queryset.filter(expiry_date__lt=now)
+            return queryset.expired()
         elif value == "expiring_soon":
-            future_date = now + timedelta(days=30)
-            return queryset.filter(expiry_date__gte=now, expiry_date__lte=future_date)
+            return queryset.expiring(day=30)
         elif value == "expiring_week":
-            future_date = now + timedelta(days=7)
-            return queryset.filter(expiry_date__gte=now, expiry_date__lte=future_date)
+            return queryset.expiring_soon(day=7)
         elif value == "valid":
-            return queryset.filter(Q(expiry_date__gt=now) | Q(expiry_date__isnull=True))
+            return queryset.valid_stock()
+        
+        elif value == "no_expiry":
+            return queryset.no_expiry()
 
         return queryset
 
     def filter_by_stock_level(self, queryset, name, value):
-        queryset = queryset.annotate(
-            allocated_quantity=Sum("user_allocations__allocated_quantity"),
-            available_quantity=F("total_quantity") - F("allocated_quantity"),
-        )
-
+        
         if value == "out_of_stock":
-            return queryset.filter(
-                Q(available_quantity__lte=0)
-                | Q(available_quantity__isnull=True, total_quantity__lte=0)
-            )
+            return queryset.out_of_stock()
         elif value == "critical_stock":
-            return queryset.filter(
-                Q(available_quantity__lte=5, available_quantity__gt=0)
-                | Q(
-                    available_quantity__isnull=True,
-                    total_quantity__lte=5,
-                    total_quantity__gt=0,
-                )
-            )
+            return queryset.critical_stock()
+        
         elif value == "low_stock":
-            return queryset.filter(
-                Q(available_quantity__lte=10, available_quantity__gt=5)
-                | Q(
-                    available_quantity__isnull=True,
-                    total_quantity__lte=10,
-                    total_quantity__gt=5,
-                )
-            )
+            return queryset.low_stock(threshold=10)
+        
         elif value == "adequate":
-            return queryset.filter(
-                Q(available_quantity__gt=10)
-                | Q(available_quantity__isnull=True, total_quantity__gt=10)
-            )
-
+            return queryset.healthy_stock(threshold=10)
+        
+        elif value == "overstock":
+            return queryset.overstocked(threshold=1000)
         return queryset
-
+    
     def filter_has_allocations(self, queryset, name, value):
         if value:
             return queryset.filter(user_allocations__isnull=False).distinct()

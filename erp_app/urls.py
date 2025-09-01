@@ -6,3 +6,4 @@ urlpatterns = [
     
 ]
 
+# All url defined in member.urs file for all views inside erp_app

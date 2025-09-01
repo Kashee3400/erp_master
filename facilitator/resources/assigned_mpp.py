@@ -22,10 +22,6 @@ class FacilitatorResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
 
-    # def before_import_row(self, row, **kwargs):
-    #     # Optional: Validate or manipulate data before importing each row
-    #     pass
-
-    def before_import(self, dataset, using_transactions, dry_run, **kwargs):
+    def before_import(self, dataset, **kwargs):
         set_importing(True)
-        return super().before_import(dataset, using_transactions, dry_run, **kwargs)
+        return super().before_import(dataset, **kwargs)

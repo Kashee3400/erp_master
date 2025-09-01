@@ -28,6 +28,8 @@ class CattleViewSet(viewsets.ModelViewSet):
     filterset_fields = [
         "owner",
         "is_deleted",
+        "is_active",
+        "is_alive",
         "breed__animal_type__id",
         "breed",
         "gender",
@@ -221,7 +223,14 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     parser_classes = (MultiPartParser, FormParser)
-    filterset_fields = ["cattle", "tag_method", "tag_location", "tag_action"]
+    filterset_fields = [
+        "cattle",
+        "tag_method",
+        "tag_location", 
+        "tag_action",
+        "is_deleted",
+        "is_active",
+        ]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
     lookup_field = "pk"
@@ -265,6 +274,8 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
     def stats(self, request):
         period = request.query_params.get("type", "week")
         date_str = request.query_params.get("date")
+        is_active = request.GET.get("is_active", "true").lower() == "true"
+        is_deleted = request.GET.get("is_deleted", "false").lower() == "true"
 
         start, end, prev_start, prev_end, input_date = get_period_range(
             date_str, period
@@ -282,7 +293,8 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
         def get_role_based_cattle_qs(from_date, to_date):
             qs = Cattle.objects.select_related(
                 "owner", "breed", "current_status", "cattle_tagged"
-            ).filter(created_at__gte=from_date, created_at__lt=to_date)
+            ).filter(created_at__gte=from_date, created_at__lt=to_date,
+                     is_deleted=is_deleted, is_active=is_active)
 
             if user.is_superuser or user.is_staff:
                 return qs
@@ -303,12 +315,14 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
         def pct_change(curr, prev):
             return round(((curr - prev) / (prev + 1e-6)) * 100, 2)
 
+
+        cattle_qs = get_role_based_cattle_qs(start, end)
         # 🔄 Current period
         tagging_qs = self.get_queryset().filter(
-            created_at__gte=start, created_at__lt=end
+            cattle__in=cattle_qs,
+            created_at__gte=start, created_at__lt=end,
+            is_active=is_active, is_deleted=is_deleted
         )
-        cattle_qs = get_role_based_cattle_qs(start, end)
-
         # ⏮️ Previous period
         prev_tagging_qs = self.get_queryset().filter(
             created_at__gte=prev_start, created_at__lt=prev_end

@@ -46,8 +46,82 @@ admin.site.register(ProductRate, ProductRateAdmin)
 @admin.register(SahayakIncentives)
 class SahayakIncentivesAdmin(ImportExportModelAdmin):
     resource_class = SahayakIncentivesResource
-    list_display = ("user",'mcc_code','mcc_name','mpp_code','mpp_name','year','month','opening','milk_incentive','other_incentive','payable','closing')
-    search_fields = ('user__first_name','user__last_name','user__username','mcc_code','mcc_name','mpp_code','mpp_name','month',)
+
+    # Show key summary fields in the list view
+    list_display = (
+        "user",
+        "mcc_code",
+        "mpp_code",
+        "year",
+        "month",
+        "opening",
+        "milk_incentive",
+        "other_incentive",
+        "payable",
+        "closing",
+    )
+
+    # Enable searching across related user & code/name fields
+    search_fields = (
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+        "mcc_code",
+        "mcc_name",
+        "mpp_code",
+        "mpp_name",
+    )
+
+    # Filters on the right-hand sidebar
+    list_filter = (
+        "year",
+        "month",
+        "mcc_code",
+        "mpp_code",
+    )
+
+    # Add date hierarchy for quicker drilldown
+    date_hierarchy = "created_at" if hasattr(SahayakIncentives, "created_at") else None
+
+    # Keep related user info inline editable
+    autocomplete_fields = ("user",)
+
+    # Make list view more performant on large datasets
+    list_select_related = ("user",)
+
+    # Default ordering (newest records first)
+    ordering = ("-year", "-month", "user")
+
+    # Optional: group fields in admin form for readability
+    fieldsets = (
+        ("User & Location", {
+            "fields": ("user", "mcc_code", "mcc_name", "mpp_code", "mpp_name")
+        }),
+        ("Period", {
+            "fields": ("year", "month")
+        }),
+        ("Incentives & Recovery", {
+            "fields": (
+                "opening",
+                "milk_qty",
+                "milk_incentive",
+                "cf_incentive",
+                "mm_incentive",
+                "other_incentive",
+                "tds",
+                "tds_amt",
+                "cda_recovery",
+                "asset_recovery",
+            )
+        }),
+        ("Final Calculation", {
+            "fields": ("milk_incentive_payable", "payable", "closing")
+        }),
+    )
+
+    # Make some fields read-only (e.g. calculated ones)
+    readonly_fields = ("milk_incentive_payable", "payable", "closing")
+
 
 @admin.register(SahayakFeedback)
 class SahayakFeedbackAdmin(ImportExportModelAdmin):

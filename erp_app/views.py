@@ -496,12 +496,13 @@ class MppCollectionDetailView(generics.GenericAPIView):
         provided_date = self.validate_date(date_str, today)
         if isinstance(provided_date, Response):
             return provided_date
+        # username = "7054151714"
         username = self.request.user.username
         cache_key_member = f"member_{username}"
         member = cache.get(cache_key_member)
         if member is None:
-            member = MemberMaster.objects.filter(mobile_no=username).values('member_code').first()
-            cache.set(cache_key_member, member, timeout=3600)  # Cache for 1 hour
+            member = MemberMaster.objects.filter(mobile_no=username,is_active=True).values('member_code').last()
+            cache.set(cache_key_member, member, timeout=3600)
 
         if not member:
             return Response({
@@ -517,9 +518,12 @@ class MppCollectionDetailView(generics.GenericAPIView):
         cache_key_date = f"mpp_collection_{member_code}_{provided_date}"
         date_queryset = cache.get(cache_key_date)
         if date_queryset is None:
+            print(provided_date)
+            print(member_code)
             date_queryset = list(MppCollection.objects.filter(
                 collection_date__date=provided_date, member_code=member_code
             ))
+            print(date_queryset)
             cache.set(cache_key_date, date_queryset, timeout=3600)
         cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
         fiscal_data = cache.get(cache_key_fy)

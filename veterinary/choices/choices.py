@@ -104,6 +104,7 @@ class MedicineFormChoices(models.TextChoices):
     OINTMENT = "ointment", _("Ointment")
     POWDER = "powder", _("Powder")
     PASTE = "paste", _("Paste")
+    TUBE = "tube", _("Tube")
     BOLUS = "bolus", _("Bolus")  # Large pill/tablet for large animals
     SUSPENSION = "suspension", _("Suspension")
     SOLUTION = "solution", _("Solution")
@@ -216,3 +217,15 @@ class VehicleTypeChoices(models.TextChoices):
     TWO_WHEELER = "2W", _("Two-Wheeler")
     TRACTOR = "TRACTOR", _("Tractor")
     OTHER = "OTHER", _("Other")
+
+
+
+class SyncStatusChoices(models.TextChoices):
+    PENDING = "PENDING", "Pending"
+    SYNCED = "SYNCED", "Synced"
+    FAILED = "FAILED", "Failed"
+    
+class ApprovalStatusChoices(models.TextChoices):
+    PENDING = "PENDING", "Pending Approval"
+    APPROVED = "APPROVED", "Approved"
+    REJECTED = "REJECTED", "Rejected"

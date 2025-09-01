@@ -80,6 +80,7 @@ class MedicineStockSerializer(serializers.ModelSerializer):
             "locale",
             "created_at",
             "updated_by",
+            "updated_by_name",
             "sync",
             "is_deleted",
         ]

@@ -460,9 +460,6 @@ class UserMedicineStockAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at", "allocation_date")
     ordering = ("-allocation_date",)
 
-
-
-
 from .models.models import FarmerMeeting
 
 

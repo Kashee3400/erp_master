@@ -231,3 +231,25 @@ class ExceptionHandlerMixin:
             message=self.default_error_message,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+class ResponseMixin:
+    """Mixin for standardized API responses"""
+    
+    def success_response(self, data=None, message="Success", status_code=status.HTTP_200_OK):
+        """Return standardized success response"""
+        return custom_response(
+            data=data,
+            status_text="success",
+            status_code=status_code,
+            message=message,
+        )
+    
+    def error_response(self, message="Error", status_code=status.HTTP_400_BAD_REQUEST, errors=None):
+        """Return standardized error response"""
+        return custom_response(
+            data=errors,
+            status_text="error",
+            status_code=status_code,
+            message=message,
+        )

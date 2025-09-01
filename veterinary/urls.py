@@ -20,11 +20,12 @@ from .views.choices_view import (
 )
 from .views.medicine_stock_view import (
     MedicineStockViewSet,
-    DashboardViewSet,
+    InventoryDashboardViewSet,
     UserMedicineStockViewSet,
 )
 from django.urls import path, include
 from .views.choices_view import ChoicesAPIView
+from  .views.medicine_transaction import UserMedicineTransactionViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -68,7 +69,9 @@ router.register(r"medicine-stocks", MedicineStockViewSet, basename="medicinestoc
 router.register(
     r"user-medicine-stocks", UserMedicineStockViewSet, basename="usermedicinestock"
 )
-router.register(r"inventory-dashboard", DashboardViewSet, basename="inventory-dashboard")
+router.register(r"inventory-dashboard", InventoryDashboardViewSet, basename="inventory-dashboard")
+
+router.register(r'medicine-transactions', UserMedicineTransactionViewSet, basename='medicine-transactions')
 
 urlpatterns = [
     path("", include(router.urls)),
