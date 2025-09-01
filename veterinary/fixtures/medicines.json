@@ -1,0 +1,990 @@
+[
+  {
+    "model": "veterinary.medicine",
+    "pk": 1,
+    "fields": {
+      "medicine": "Penicillin G Procaine",
+      "description": "Long-acting penicillin injection for bacterial infections in cattle. Effective against gram-positive bacteria.",
+      "category": 2,
+      "strength": "300,000 IU/ml",
+      "packaging": "100ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:18:00Z",
+      "updated_at": "2024-01-01T10:18:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 39,
+    "fields": {
+      "medicine": "GnRH Injection",
+      "description": "Gonadotropin-releasing hormone for ovulation synchronization and treatment of cystic ovaries.",
+      "category": 23,
+      "strength": "100mcg/ml",
+      "packaging": "20ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:19:00Z",
+      "updated_at": "2024-01-01T10:19:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 40,
+    "fields": {
+      "medicine": "जीएनआरएच इंजेक्शन",
+      "description": "ओव्यूलेशन सिंक्रोनाइजेशन और सिस्टिक ओवरी के इलाज के लिए गोनैडोट्रोपिन-रिलीजिंग हार्मोन।",
+      "category": 53,
+      "strength": "100mcg/ml",
+      "packaging": "20ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:19:00Z",
+      "updated_at": "2024-01-01T10:19:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 41,
+    "fields": {
+      "medicine": "Antacid Liquid",
+      "description": "Oral antacid solution for treatment of acidosis and digestive disorders in cattle.",
+      "category": 27,
+      "strength": "500ml",
+      "packaging": "500ml bottle",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:20:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 42,
+    "fields": {
+      "medicine": "एंटासिड लिक्विड",
+      "description": "मवेशियों में एसिडोसिस और पाचन संबंधी विकारों के इलाज के लिए मुंह से लेने वाला एंटासिड समाधान।",
+      "category": 57,
+      "strength": "500ml",
+      "packaging": "500ml बोतल",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:20:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 43,
+    "fields": {
+      "medicine": "Black Quarter Vaccine",
+      "description": "Clostridial vaccine for prevention of blackleg disease in cattle and buffalo.",
+      "category": 15,
+      "strength": "1 dose/2ml",
+      "packaging": "20 dose vial",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:21:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 44,
+    "fields": {
+      "medicine": "ब्लैक क्वार्टर टीका",
+      "description": "गाय और भैंस में ब्लैकलेग रोग की रोकथाम के लिए क्लोस्ट्रिडियल टीका।",
+      "category": 45,
+      "strength": "1 dose/2ml",
+      "packaging": "20 डोज शीशी",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:21:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 45,
+    "fields": {
+      "medicine": "Ceftriaxone Injection",
+      "description": "Third-generation cephalosporin antibiotic for serious bacterial infections in cattle.",
+      "category": 2,
+      "strength": "1gm per vial",
+      "packaging": "10 vials per box",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:22:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 46,
+    "fields": {
+      "medicine": "सेफ्ट्रिआक्सोन इंजेक्शन",
+      "description": "मवेशियों में गंभीर बैक्टीरियल संक्रमण के लिए तीसरी पीढ़ी का सेफलोस्पोरिन एंटीबायोटिक।",
+      "category": 32,
+      "strength": "1gm प्रति शीशी",
+      "packaging": "प्रति बॉक्स 10 शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:22:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 47,
+    "fields": {
+      "medicine": "Dexamethasone Injection",
+      "description": "Potent corticosteroid for anti-inflammatory treatment and allergy management.",
+      "category": 6,
+      "strength": "4mg/ml",
+      "packaging": "30ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:23:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 48,
+    "fields": {
+      "medicine": "डेक्सामेथासोन इंजेक्शन",
+      "description": "सूजन रोधी उपचार और एलर्जी प्रबंधन के लिए शक्तिशाली कॉर्टिकोस्टेरॉयड।",
+      "category": 36,
+      "strength": "4mg/ml",
+      "packaging": "30ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:23:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 49,
+    "fields": {
+      "medicine": "Enrofloxacin Injection",
+      "description": "Broad-spectrum fluoroquinolone antibiotic for respiratory and digestive tract infections.",
+      "category": 3,
+      "strength": "100mg/ml",
+      "packaging": "100ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:24:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 50,
+    "fields": {
+      "medicine": "एन्रोफ्लॉक्सासिन इंजेक्शन",
+      "description": "श्वसन और पाचन तंत्र के संक्रमण के लिए व्यापक स्पेक्ट्रम फ्लूरोक्विनोलोन एंटीबायोटिक।",
+      "category": 33,
+      "strength": "100mg/ml",
+      "packaging": "100ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:24:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 2,
+    "fields": {
+      "medicine": "पेनिसिलिन जी प्रोकेन",
+      "description": "मवेशियों में बैक्टीरियल संक्रमण के लिए लंबे समय तक काम करने वाला पेनिसिलिन इंजेक्शन। ग्राम-पॉजिटिव बैक्टीरिया के खिलाफ प्रभावी।",
+      "category": 32,
+      "strength": "300,000 IU/ml",
+      "packaging": "100ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 3,
+    "fields": {
+      "medicine": "Oxytetracycline LA",
+      "description": "Long-acting broad-spectrum antibiotic for respiratory and systemic infections in cattle.",
+      "category": 3,
+      "strength": "200mg/ml",
+      "packaging": "50ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:01:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 4,
+    "fields": {
+      "medicine": "ऑक्सीटेट्रासाइक्लिन एलए",
+      "description": "मवेशियों में श्वसन और प्रणालीगत संक्रमण के लिए लंबे समय तक काम करने वाला ब्रॉड-स्पेक्ट्रम एंटीबायोटिक।",
+      "category": 33,
+      "strength": "200mg/ml",
+      "packaging": "50ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:01:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 5,
+    "fields": {
+      "medicine": "Amoxicillin Tablets",
+      "description": "Oral antibiotic tablets for mild to moderate bacterial infections in cattle.",
+      "category": 4,
+      "strength": "500mg",
+      "packaging": "20 tablets per strip",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:02:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 6,
+    "fields": {
+      "medicine": "एमोक्सिसिलिन गोलियां",
+      "description": "मवेशियों में हल्के से मध्यम बैक्टीरियल संक्रमण के लिए मुंह से लेने वाली एंटीबायोटिक गोलियां।",
+      "category": 34,
+      "strength": "500mg",
+      "packaging": "प्रति स्ट्रिप 20 गोलियां",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:02:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 7,
+    "fields": {
+      "medicine": "Meloxicam Injection",
+      "description": "Non-steroidal anti-inflammatory drug for pain and inflammation in cattle and buffalo.",
+      "category": 6,
+      "strength": "20mg/ml",
+      "packaging": "30ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:03:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 8,
+    "fields": {
+      "medicine": "मेलॉक्सिकैम इंजेक्शन",
+      "description": "गाय और भैंस में दर्द और सूजन के लिए नॉन-स्टेरायडल सूजन रोधी दवा।",
+      "category": 36,
+      "strength": "20mg/ml",
+      "packaging": "30ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:03:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 9,
+    "fields": {
+      "medicine": "Flunixin Meglumine",
+      "description": "Powerful anti-inflammatory and analgesic for severe pain and endotoxemia in cattle.",
+      "category": 7,
+      "strength": "50mg/ml",
+      "packaging": "20ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:04:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 10,
+    "fields": {
+      "medicine": "फ्लूनिक्सिन मेग्लुमाइन",
+      "description": "मवेशियों में गंभीर दर्द और एंडोटॉक्सिमिया के लिए शक्तिशाली सूजन रोधी और दर्द निवारक।",
+      "category": 37,
+      "strength": "50mg/ml",
+      "packaging": "20ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:04:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 11,
+    "fields": {
+      "medicine": "Albendazole Tablets",
+      "description": "Broad-spectrum anthelmintic for treatment of roundworms, tapeworms, and flukes in cattle.",
+      "category": 9,
+      "strength": "600mg",
+      "packaging": "10 tablets per strip",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:05:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 12,
+    "fields": {
+      "medicine": "एल्बेंडाजोल गोलियां",
+      "description": "मवेशियों में गोल कृमि, फीताकृमि और फ्लूक के इलाज के लिए व्यापक स्पेक्ट्रम कृमिनाशक।",
+      "category": 39,
+      "strength": "600mg",
+      "packaging": "प्रति स्ट्रिप 10 गोलियां",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:05:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 13,
+    "fields": {
+      "medicine": "Ivermectin Injection",
+      "description": "Effective against internal and external parasites in cattle and buffalo.",
+      "category": 10,
+      "strength": "10mg/ml",
+      "packaging": "50ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:06:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 14,
+    "fields": {
+      "medicine": "आइवरमेक्टिन इंजेक्शन",
+      "description": "गाय और भैंस में आंतरिक और बाहरी परजीवियों के खिलाफ प्रभावी।",
+      "category": 40,
+      "strength": "10mg/ml",
+      "packaging": "50ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:06:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 15,
+    "fields": {
+      "medicine": "FMD Vaccine (Type O)",
+      "description": "Foot and Mouth Disease vaccine for protection against Type O strain in cattle and buffalo.",
+      "category": 13,
+      "strength": "1 dose/2ml",
+      "packaging": "20 dose vial",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:07:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 16,
+    "fields": {
+      "medicine": "एफएमडी टीका (टाइप ओ)",
+      "description": "गाय और भैंस में टाइप ओ स्ट्रेन के खिलाफ सुरक्षा के लिए मुंह खुर रोग टीका।",
+      "category": 43,
+      "strength": "1 dose/2ml",
+      "packaging": "20 डोज शीशी",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:07:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 17,
+    "fields": {
+      "medicine": "HS Vaccine",
+      "description": "Haemorrhagic Septicaemia vaccine for prevention of HS in cattle and buffalo.",
+      "category": 14,
+      "strength": "1 dose/1ml",
+      "packaging": "20 dose vial",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:08:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 18,
+    "fields": {
+      "medicine": "एचएस टीका",
+      "description": "गाय और भैंस में एचएस की रोकथाम के लिए हेमोरेजिक सेप्टीसीमिया टीका।",
+      "category": 44,
+      "strength": "1 dose/1ml",
+      "packaging": "20 डोज शीशी",
+      "expiry_date": "2025-06-30T23:59:59Z",
+      "created_at": "2024-01-01T10:08:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 19,
+    "fields": {
+      "medicine": "Vitamin B Complex Injection",
+      "description": "Multi-vitamin injection containing B1, B6, B12 and other B vitamins for metabolic support.",
+      "category": 17,
+      "strength": "100ml",
+      "packaging": "100ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:09:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 20,
+    "fields": {
+      "medicine": "विटामिन बी कॉम्प्लेक्स इंजेक्शन",
+      "description": "चयापचय सहायता के लिए B1, B6, B12 और अन्य बी विटामिन युक्त मल्टी-विटामिन इंजेक्शन।",
+      "category": 47,
+      "strength": "100ml",
+      "packaging": "100ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:09:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 21,
+    "fields": {
+      "medicine": "Calcium Borogluconate",
+      "description": "Injectable calcium supplement for treatment of milk fever and hypocalcemia in dairy cattle.",
+      "category": 18,
+      "strength": "20% w/v",
+      "packaging": "450ml bottle",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:10:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 22,
+    "fields": {
+      "medicine": "कैल्शियम बोरोग्लूकोनेट",
+      "description": "डेयरी गायों में मिल्क फीवर और हाइपोकैल्सीमिया के इलाज के लिए इंजेक्शन योग्य कैल्शियम सप्लीमेंट।",
+      "category": 48,
+      "strength": "20% w/v",
+      "packaging": "450ml बोतल",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:10:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 23,
+    "fields": {
+      "medicine": "Oxytocin Injection",
+      "description": "Hormone injection for milk let-down and to aid in uterine contractions during calving.",
+      "category": 21,
+      "strength": "10 IU/ml",
+      "packaging": "30ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:11:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 24,
+    "fields": {
+      "medicine": "ऑक्सीटोसिन इंजेक्शन",
+      "description": "दूध निकासी और प्रसव के दौरान गर्भाशय के संकुचन में सहायता के लिए हार्मोन इंजेक्शन।",
+      "category": 51,
+      "strength": "10 IU/ml",
+      "packaging": "30ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:11:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 25,
+    "fields": {
+      "medicine": "Prostaglandin F2α",
+      "description": "Hormone for synchronization of estrus and treatment of pyometra in cattle.",
+      "category": 22,
+      "strength": "5mg/ml",
+      "packaging": "20ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:12:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 26,
+    "fields": {
+      "medicine": "प्रोस्टाग्लैंडिन F2α",
+      "description": "मवेशियों में गर्मी के समकालीकरण और पायोमेट्रा के इलाज के लिए हार्मोन।",
+      "category": 52,
+      "strength": "5mg/ml",
+      "packaging": "20ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:12:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 27,
+    "fields": {
+      "medicine": "Probiotics Powder",
+      "description": "Beneficial bacteria supplement to improve gut health and digestion in cattle.",
+      "category": 25,
+      "strength": "10 billion CFU/gm",
+      "packaging": "500gm container",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:13:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 28,
+    "fields": {
+      "medicine": "प्रोबायोटिक्स पाउडर",
+      "description": "मवेशियों में आंत के स्वास्थ्य और पाचन में सुधार के लिए लाभकारी बैक्टीरिया सप्लीमेंट।",
+      "category": 55,
+      "strength": "10 billion CFU/gm",
+      "packaging": "500gm कंटेनर",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:13:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 29,
+    "fields": {
+      "medicine": "Digestive Enzyme Liquid",
+      "description": "Enzyme supplement to aid digestion and improve feed conversion efficiency.",
+      "category": 26,
+      "strength": "500ml",
+      "packaging": "500ml bottle",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:14:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 30,
+    "fields": {
+      "medicine": "पाचन एंजाइम लिक्विड",
+      "description": "पाचन में सहायता और चारा रूपांतरण दक्षता में सुधार के लिए एंजाइम सप्लीमेंट।",
+      "category": 56,
+      "strength": "500ml",
+      "packaging": "500ml बोतल",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:14:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 31,
+    "fields": {
+      "medicine": "Cloxacillin Mastitis Tube",
+      "description": "Intramammary antibiotic for treatment of clinical and subclinical mastitis in dairy cows.",
+      "category": 29,
+      "strength": "200mg per tube",
+      "packaging": "12 tubes per box",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:15:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 32,
+    "fields": {
+      "medicine": "क्लॉक्सासिलिन मास्टाइटिस ट्यूब",
+      "description": "डेयरी गायों में क्लिनिकल और सबक्लिनिकल मास्टाइटिस के इलाज के लिए इंट्रामैमेरी एंटीबायोटिक।",
+      "category": 59,
+      "strength": "200mg प्रति ट्यूब",
+      "packaging": "प्रति बॉक्स 12 ट्यूब",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:15:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 33,
+    "fields": {
+      "medicine": "Bismuth Subnitrate Teat Sealer",
+      "description": "Internal teat sealant for prevention of new intramammary infections during dry period.",
+      "category": 30,
+      "strength": "4gm per tube",
+      "packaging": "20 tubes per box",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:16:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 34,
+    "fields": {
+      "medicine": "बिस्मथ सबनाइट्रेट टीट सीलर",
+      "description": "सूखी अवधि के दौरान नए इंट्रामैमेरी संक्रमण की रोकथाम के लिए आंतरिक टीट सीलेंट।",
+      "category": 60,
+      "strength": "4gm प्रति ट्यूब",
+      "packaging": "प्रति बॉक्स 20 ट्यूब",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:16:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 35,
+    "fields": {
+      "medicine": "Iron Dextran Injection",
+      "description": "Injectable iron supplement for treatment and prevention of iron deficiency anemia in cattle.",
+      "category": 19,
+      "strength": "100mg/ml",
+      "packaging": "100ml vial",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:17:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 36,
+    "fields": {
+      "medicine": "आयरन डेक्सट्रान इंजेक्शन",
+      "description": "मवेशियों में आयरन की कमी से होने वाले एनीमिया के इलाज और रोकथाम के लिए इंजेक्शन योग्य आयरन सप्लीमेंट।",
+      "category": 49,
+      "strength": "100mg/ml",
+      "packaging": "100ml शीशी",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:17:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 37,
+    "fields": {
+      "medicine": "Fenbendazole Oral Suspension",
+      "description": "Liquid dewormer effective against lungworms, stomach worms, and intestinal worms.",
+      "category": 11,
+      "strength": "25mg/ml",
+      "packaging": "1 liter bottle",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:18:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 38,
+    "fields": {
+      "medicine": "फेनबेंडाजोल ओरल सस्पेंशन",
+      "description": "फेफड़े के कृमि, पेट के कृमि और आंतों के कृमि के खिलाफ प्रभावी तरल कृमिनाशक।",
+      "category": 41,
+      "strength": "25mg/ml",
+      "packaging": "1 लीटर बोतल",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:17:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 39,
+    "fields": {
+      "medicine": "Antacid Liquid",
+      "description": "Oral antacid solution for treatment of acidosis and digestive disorders in cattle.",
+      "category": 27,
+      "strength": "500ml",
+      "packaging": "500ml bottle",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:20:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "en"
+    }
+  },
+  {
+    "model": "veterinary.medicine",
+    "pk": 40,
+    "fields": {
+      "medicine": "एंटासिड लिक्विड",
+      "description": "मवेशियों में एसिडोसिस और पाचन संबंधी विकारों के इलाज के लिए मुंह से लेने वाला एंटासिड समाधान।",
+      "category": 57,
+      "strength": "500ml",
+      "packaging": "500ml बोतल",
+      "expiry_date": "2025-12-31T23:59:59Z",
+      "created_at": "2024-01-01T10:20:00Z",
+      "updated_at": "2024-01-01T10:20:00Z",
+      "updated_by": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "sync": false,
+      "locale": "hi"
+    }
+  }
+]

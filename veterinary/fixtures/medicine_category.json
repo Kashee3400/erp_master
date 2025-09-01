@@ -1,0 +1,1022 @@
+[
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 1,
+        "fields": {
+            "category": "Antibiotics",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "tablets",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:00:00Z",
+            "updated_at": "2024-01-01T10:00:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 2,
+        "fields": {
+            "category": "Penicillin",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 1,
+            "created_at": "2024-01-01T10:01:00Z",
+            "updated_at": "2024-01-01T10:01:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 3,
+        "fields": {
+            "category": "Oxytetracycline",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 1,
+            "created_at": "2024-01-01T10:02:00Z",
+            "updated_at": "2024-01-01T10:02:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 4,
+        "fields": {
+            "category": "Amoxicillin",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "tablets",
+            "parent_category": 1,
+            "created_at": "2024-01-01T10:03:00Z",
+            "updated_at": "2024-01-01T10:03:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 5,
+        "fields": {
+            "category": "Anti-inflammatory",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "tablets",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:04:00Z",
+            "updated_at": "2024-01-01T10:04:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 6,
+        "fields": {
+            "category": "Meloxicam",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 5,
+            "created_at": "2024-01-01T10:05:00Z",
+            "updated_at": "2024-01-01T10:05:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 7,
+        "fields": {
+            "category": "Flunixin",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 5,
+            "created_at": "2024-01-01T10:06:00Z",
+            "updated_at": "2024-01-01T10:06:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 8,
+        "fields": {
+            "category": "Dewormers",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "ml",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:07:00Z",
+            "updated_at": "2024-01-01T10:07:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 9,
+        "fields": {
+            "category": "Albendazole",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "tablets",
+            "parent_category": 8,
+            "created_at": "2024-01-01T10:08:00Z",
+            "updated_at": "2024-01-01T10:08:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 10,
+        "fields": {
+            "category": "Ivermectin",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 8,
+            "created_at": "2024-01-01T10:09:00Z",
+            "updated_at": "2024-01-01T10:09:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 11,
+        "fields": {
+            "category": "Fenbendazole",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "ml",
+            "parent_category": 8,
+            "created_at": "2024-01-01T10:10:00Z",
+            "updated_at": "2024-01-01T10:10:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 12,
+        "fields": {
+            "category": "Vaccines",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:11:00Z",
+            "updated_at": "2024-01-01T10:11:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 13,
+        "fields": {
+            "category": "FMD Vaccine",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 12,
+            "created_at": "2024-01-01T10:12:00Z",
+            "updated_at": "2024-01-01T10:12:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 14,
+        "fields": {
+            "category": "HS Vaccine",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 12,
+            "created_at": "2024-01-01T10:13:00Z",
+            "updated_at": "2024-01-01T10:13:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 15,
+        "fields": {
+            "category": "Black Quarter Vaccine",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 12,
+            "created_at": "2024-01-01T10:14:00Z",
+            "updated_at": "2024-01-01T10:14:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 16,
+        "fields": {
+            "category": "Vitamins & Minerals",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:15:00Z",
+            "updated_at": "2024-01-01T10:15:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 17,
+        "fields": {
+            "category": "Vitamin B Complex",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 16,
+            "created_at": "2024-01-01T10:16:00Z",
+            "updated_at": "2024-01-01T10:16:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 18,
+        "fields": {
+            "category": "Calcium",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 16,
+            "created_at": "2024-01-01T10:17:00Z",
+            "updated_at": "2024-01-01T10:17:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 19,
+        "fields": {
+            "category": "Iron",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 16,
+            "created_at": "2024-01-01T10:18:00Z",
+            "updated_at": "2024-01-01T10:18:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 20,
+        "fields": {
+            "category": "Reproductive Health",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:19:00Z",
+            "updated_at": "2024-01-01T10:19:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 21,
+        "fields": {
+            "category": "Oxytocin",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 20,
+            "created_at": "2024-01-01T10:20:00Z",
+            "updated_at": "2024-01-01T10:20:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 22,
+        "fields": {
+            "category": "Prostaglandin",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 20,
+            "created_at": "2024-01-01T10:21:00Z",
+            "updated_at": "2024-01-01T10:21:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 23,
+        "fields": {
+            "category": "GnRH",
+            "medicine_form": "injection",
+            "unit_of_quantity": "ml",
+            "parent_category": 20,
+            "created_at": "2024-01-01T10:22:00Z",
+            "updated_at": "2024-01-01T10:22:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 24,
+        "fields": {
+            "category": "Digestive Health",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "ml",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:23:00Z",
+            "updated_at": "2024-01-01T10:23:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 25,
+        "fields": {
+            "category": "Probiotics",
+            "medicine_form": "powder",
+            "unit_of_quantity": "gm",
+            "parent_category": 24,
+            "created_at": "2024-01-01T10:24:00Z",
+            "updated_at": "2024-01-01T10:24:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 26,
+        "fields": {
+            "category": "Digestive Enzymes",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "ml",
+            "parent_category": 24,
+            "created_at": "2024-01-01T10:25:00Z",
+            "updated_at": "2024-01-01T10:25:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 27,
+        "fields": {
+            "category": "Antacids",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "ml",
+            "parent_category": 24,
+            "created_at": "2024-01-01T10:26:00Z",
+            "updated_at": "2024-01-01T10:26:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 28,
+        "fields": {
+            "category": "Mastitis Treatment",
+            "medicine_form": "tube",
+            "unit_of_quantity": "tubes",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:27:00Z",
+            "updated_at": "2024-01-01T10:27:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 29,
+        "fields": {
+            "category": "Intramammary Antibiotics",
+            "medicine_form": "tube",
+            "unit_of_quantity": "tubes",
+            "parent_category": 28,
+            "created_at": "2024-01-01T10:28:00Z",
+            "updated_at": "2024-01-01T10:28:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 30,
+        "fields": {
+            "category": "Teat Sealers",
+            "medicine_form": "tube",
+            "unit_of_quantity": "tubes",
+            "parent_category": 28,
+            "created_at": "2024-01-01T10:29:00Z",
+            "updated_at": "2024-01-01T10:29:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "en",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 31,
+        "fields": {
+            "category": "एंटीबायोटिक्स",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "गोलियां",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:30:00Z",
+            "updated_at": "2024-01-01T10:30:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 32,
+        "fields": {
+            "category": "पेनिसिलिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 31,
+            "created_at": "2024-01-01T10:31:00Z",
+            "updated_at": "2024-01-01T10:31:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 33,
+        "fields": {
+            "category": "ऑक्सीटेट्रासाइक्लिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 31,
+            "created_at": "2024-01-01T10:32:00Z",
+            "updated_at": "2024-01-01T10:32:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 34,
+        "fields": {
+            "category": "एमोक्सिसिलिन",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "गोलियां",
+            "parent_category": 31,
+            "created_at": "2024-01-01T10:33:00Z",
+            "updated_at": "2024-01-01T10:33:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 35,
+        "fields": {
+            "category": "सूजन रोधी",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "गोलियां",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:34:00Z",
+            "updated_at": "2024-01-01T10:34:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 36,
+        "fields": {
+            "category": "मेलॉक्सिकैम",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 35,
+            "created_at": "2024-01-01T10:35:00Z",
+            "updated_at": "2024-01-01T10:35:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 37,
+        "fields": {
+            "category": "फ्लूनिक्सिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 35,
+            "created_at": "2024-01-01T10:36:00Z",
+            "updated_at": "2024-01-01T10:36:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 38,
+        "fields": {
+            "category": "कृमिनाशक",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "एमएल",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:37:00Z",
+            "updated_at": "2024-01-01T10:37:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 39,
+        "fields": {
+            "category": "एल्बेंडाजोल",
+            "medicine_form": "tablet",
+            "unit_of_quantity": "गोलियां",
+            "parent_category": 38,
+            "created_at": "2024-01-01T10:38:00Z",
+            "updated_at": "2024-01-01T10:38:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 40,
+        "fields": {
+            "category": "आइवरमेक्टिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 38,
+            "created_at": "2024-01-01T10:39:00Z",
+            "updated_at": "2024-01-01T10:39:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 41,
+        "fields": {
+            "category": "फेनबेंडाजोल",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 38,
+            "created_at": "2024-01-01T10:40:00Z",
+            "updated_at": "2024-01-01T10:40:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 42,
+        "fields": {
+            "category": "टीके",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:41:00Z",
+            "updated_at": "2024-01-01T10:41:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 43,
+        "fields": {
+            "category": "एफएमडी टीका",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 42,
+            "created_at": "2024-01-01T10:42:00Z",
+            "updated_at": "2024-01-01T10:42:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 44,
+        "fields": {
+            "category": "एचएस टीका",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 42,
+            "created_at": "2024-01-01T10:43:00Z",
+            "updated_at": "2024-01-01T10:43:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 45,
+        "fields": {
+            "category": "ब्लैक क्वार्टर टीका",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 42,
+            "created_at": "2024-01-01T10:44:00Z",
+            "updated_at": "2024-01-01T10:44:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 46,
+        "fields": {
+            "category": "विटामिन और खनिज",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:45:00Z",
+            "updated_at": "2024-01-01T10:45:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 47,
+        "fields": {
+            "category": "विटामिन बी कॉम्प्लेक्स",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 46,
+            "created_at": "2024-01-01T10:46:00Z",
+            "updated_at": "2024-01-01T10:46:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 48,
+        "fields": {
+            "category": "कैल्शियम",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 46,
+            "created_at": "2024-01-01T10:47:00Z",
+            "updated_at": "2024-01-01T10:47:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 49,
+        "fields": {
+            "category": "आयरन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 46,
+            "created_at": "2024-01-01T10:48:00Z",
+            "updated_at": "2024-01-01T10:48:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 50,
+        "fields": {
+            "category": "प्रजनन स्वास्थ्य",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:49:00Z",
+            "updated_at": "2024-01-01T10:49:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 51,
+        "fields": {
+            "category": "ऑक्सीटोसिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 50,
+            "created_at": "2024-01-01T10:50:00Z",
+            "updated_at": "2024-01-01T10:50:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 52,
+        "fields": {
+            "category": "प्रोस्टाग्लैंडिन",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 50,
+            "created_at": "2024-01-01T10:51:00Z",
+            "updated_at": "2024-01-01T10:51:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 53,
+        "fields": {
+            "category": "जीएनआरएच",
+            "medicine_form": "injection",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 50,
+            "created_at": "2024-01-01T10:52:00Z",
+            "updated_at": "2024-01-01T10:52:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 54,
+        "fields": {
+            "category": "पाचन स्वास्थ्य",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "एमएल",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:53:00Z",
+            "updated_at": "2024-01-01T10:53:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 55,
+        "fields": {
+            "category": "प्रोबायोटिक्स",
+            "medicine_form": "powder",
+            "unit_of_quantity": "ग्राम",
+            "parent_category": 54,
+            "created_at": "2024-01-01T10:54:00Z",
+            "updated_at": "2024-01-01T10:54:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 56,
+        "fields": {
+            "category": "पाचन एंजाइम",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 54,
+            "created_at": "2024-01-01T10:55:00Z",
+            "updated_at": "2024-01-01T10:55:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 57,
+        "fields": {
+            "category": "एंटासिड",
+            "medicine_form": "liquid",
+            "unit_of_quantity": "एमएल",
+            "parent_category": 54,
+            "created_at": "2024-01-01T10:56:00Z",
+            "updated_at": "2024-01-01T10:56:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 58,
+        "fields": {
+            "category": "मास्टाइटिस इलाज",
+            "medicine_form": "tube",
+            "unit_of_quantity": "ट्यूब",
+            "parent_category": null,
+            "created_at": "2024-01-01T10:57:00Z",
+            "updated_at": "2024-01-01T10:57:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 59,
+        "fields": {
+            "category": "इंट्रामैमेरी एंटीबायोटिक्स",
+            "medicine_form": "tube",
+            "unit_of_quantity": "ट्यूब",
+            "parent_category": 58,
+            "created_at": "2024-01-01T10:58:00Z",
+            "updated_at": "2024-01-01T10:58:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    },
+    {
+        "model": "veterinary.medicinecategory",
+        "pk": 60,
+        "fields": {
+            "category": "टीट सीलर",
+            "medicine_form": "tube",
+            "unit_of_quantity": "ट्यूब",
+            "parent_category": 58,
+            "created_at": "2024-01-01T10:59:00Z",
+            "updated_at": "2024-01-01T10:59:00Z",
+            "is_active": true,
+            "is_deleted": false,
+            "sync": true,
+            "locale": "hi",
+            "updated_by": 1
+        }
+    }
+]
