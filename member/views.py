@@ -604,6 +604,7 @@ class MyHomePage(LoginRequiredMixin, View):
 
 from collections import defaultdict, Counter
 
+
 class AppInstalledData(APIView):
     permission_classes = [AllowAny]
 
@@ -777,6 +778,7 @@ class AppInstalledData(APIView):
 
         return Response(result, status=status.HTTP_200_OK)
 
+
 class SahayakAppInstalledData(APIView):
     permission_classes = [AllowAny]
 
@@ -784,13 +786,16 @@ class SahayakAppInstalledData(APIView):
         # Build installed flag lookup (Yes/No) for each mpp_code
         # Step 1: Get all sahayak mpp_codes (with or without device)
         all_mpp_codes = set(
-            UserDevice.objects.filter(module="sahayak").values_list("mpp_code", flat=True)
+            UserDevice.objects.filter(module="sahayak").values_list(
+                "mpp_code", flat=True
+            )
         )
 
         # Step 2: Get only those with installed devices
         installed_mpp_codes = set(
-            UserDevice.objects.filter(module="sahayak", device__isnull=False)
-            .values_list("mpp_code", flat=True)
+            UserDevice.objects.filter(
+                module="sahayak", device__isnull=False
+            ).values_list("mpp_code", flat=True)
         )
 
         # Step 3: Build the lookup
@@ -814,7 +819,9 @@ class SahayakAppInstalledData(APIView):
 
         # Facilitator name by mpp_code
         facilitator_lookup = {
-            row["mpp_code"]: f"{row['sahayak__first_name']} {row['sahayak__last_name']}".strip()
+            row[
+                "mpp_code"
+            ]: f"{row['sahayak__first_name']} {row['sahayak__last_name']}".strip()
             for row in AssignedMppToFacilitator.objects.select_related("sahayak")
             .filter(mpp_ex_code__in=mpp_ex_codes)
             .values("mpp_code", "sahayak__first_name", "sahayak__last_name")
@@ -843,17 +850,19 @@ class SahayakAppInstalledData(APIView):
         for mpp_code in mpp_ex_codes:
             mpp_data = mpp_map.get(mpp_code, {})
             mcc_code = mcc_lookup.get(mpp_data.get("mpp_code"))
-            mcc_data = mcc_map.get(mcc_code, {})                
-            result.append({
-                "mcc_code": mcc_code or "NA",
-                "mcc_name": mcc_data.get("name", "NA"),
-                "mcc_ex_code": mcc_data.get("mcc_ex_code", "NA"),
-                "mpp_code": mpp_code,
-                "mpp_name": mpp_data.get("name", "NA"),
-                "mpp_ex_code": mpp_data.get("mpp_ex_code", "NA"),
-                "fs_name": facilitator_lookup.get(mpp_data.get("mpp_code"), "NA"),
-                "installed": mpp_codes_lookup.get(mpp_code, "No"),
-            })
+            mcc_data = mcc_map.get(mcc_code, {})
+            result.append(
+                {
+                    "mcc_code": mcc_code or "NA",
+                    "mcc_name": mcc_data.get("name", "NA"),
+                    "mcc_ex_code": mcc_data.get("mcc_ex_code", "NA"),
+                    "mpp_code": mpp_code,
+                    "mpp_name": mpp_data.get("name", "NA"),
+                    "mpp_ex_code": mpp_data.get("mpp_ex_code", "NA"),
+                    "fs_name": facilitator_lookup.get(mpp_data.get("mpp_code"), "NA"),
+                    "installed": mpp_codes_lookup.get(mpp_code, "No"),
+                }
+            )
 
         return Response(result, status=status.HTTP_200_OK)
 
@@ -1627,7 +1636,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["is_published"]
+    filterset_fields = ["is_published", "is_read", "module"]
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
     authentication_classes = [ApiKeyAuthentication]
@@ -1635,12 +1644,19 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally filter queryset by date range.
+        Optionally filter queryset by date range, search term,
+        and default module='member'
         """
         queryset = super().get_queryset()
-        start_date = self.request.GET.get("start_date")
-        end_date = self.request.GET.get("end_date")
-        search = self.request.GET.get("search")
+        request = self.request
+
+        # --- default module filtering ---
+        module = request.GET.get("module", "member")
+        queryset = queryset.filter(module=module)
+
+        # --- optional date filtering ---
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
         if start_date and end_date:
             try:
                 queryset = queryset.filter(
@@ -1651,6 +1667,8 @@ class NewsViewSet(viewsets.ModelViewSet):
                     {"error": f"Invalid date range provided: {str(e)}"}
                 )
 
+        # --- optional search filtering ---
+        search = request.GET.get("search")
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search)
@@ -1670,6 +1688,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(data=serializer.data)
+
             serializer = self.get_serializer(queryset, many=True)
             return Response(
                 {
@@ -2024,7 +2043,7 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["mpp_ex_code"]
-    search_fields = ["mpp_name","mpp_ex_code"]
+    search_fields = ["mpp_name", "mpp_ex_code"]
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
@@ -2043,7 +2062,7 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
-    
+
     # def mpp_ex_code_object(self, request, *args, **kwargs):
     #     instance = self.get_object()
     #     serializer = self.get_serializer(instance)
@@ -2055,7 +2074,6 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
     #             "results": serializer.data,
     #         }
     #     )
-
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -2117,6 +2135,7 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
+
 
 # TODO: after deployment this code should be reomved
 class SahayakDashboardAPI(APIView):
@@ -2229,6 +2248,7 @@ class SahayakDashboardAPI(APIView):
             for key, value in aggregates.items()
         }
 
+
 class NewSahayakDashboardAPI(APIView):
     authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
@@ -2306,7 +2326,6 @@ class NewSahayakDashboardAPI(APIView):
             key: round(value, 2) if value is not None else 0.0
             for key, value in aggregates.items()
         }
-
 
 
 class ShiftViewSet(viewsets.ModelViewSet):
