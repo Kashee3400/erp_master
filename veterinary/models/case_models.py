@@ -1,13 +1,16 @@
 from django.utils.translation import gettext_lazy as _
+
+from .managers.case_entry_manager import CaseEntryManager
 from ..choices.choices import *
 from django.db import models
 from django.conf import settings
 import random
-from .common_models import BaseModel, User, CattleCaseType,PaymentMethod
-from .models import Cattle,CattleStatusType
+from .common_models import BaseModel, User, CattleCaseType, PaymentMethod, TreatmentCostConfiguration
+from .models import Cattle, CattleStatusType, NonMemberCattle
 from django.utils import timezone
 from .stock_models import Symptoms, Disease, Medicine
 from django.core.validators import MinLengthValidator
+from django.db import transaction
 
 
 class DiagnosisRoute(models.Model):
@@ -52,17 +55,27 @@ class DiagnosisRoute(models.Model):
             models.Index(fields=["sync"], name="idx_diagnosisroute_sync"),
         ]
 
-
-from django.db import transaction
-
-
 class CaseEntry(BaseModel):
+    # Existing cattle field (for members)
     cattle = models.ForeignKey(
         Cattle,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name="cattle_cases",
-        help_text=_("The cattle associated with this case entry."),
-        verbose_name=_("Cattle"),
+        help_text=_("The member cattle associated with this case entry."),
+        verbose_name=_("Member Cattle"),
+    )
+
+    # New field for non-member cattle
+    non_member_cattle = models.ForeignKey(
+        NonMemberCattle,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="non_member_cattle_cases",
+        help_text=_("The non-member cattle associated with this case entry."),
+        verbose_name=_("Non-Member Cattle"),
     )
 
     created_by = models.ForeignKey(
@@ -105,23 +118,137 @@ class CaseEntry(BaseModel):
         verbose_name=_("Case Number"),
     )
 
+    disease_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=_("Disease name in Hindi or English")
+    )
+
+    visit_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text=_("Scheduled visit date and time")
+    )
+
+    is_tagged_animal = models.BooleanField(
+        default=True,
+        help_text=_("Whether the animal is tagged or non-tagged for cost calculation")
+    )
+
+    is_emergency = models.BooleanField(
+        default=False,
+        help_text=_("Whether this is an emergency treatment")
+    )
+
+    calculated_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("Calculated treatment cost")
+    )
+
     sync = models.BooleanField(
         default=False,
         help_text=_("Indicates whether the entry is synced with the server."),
         verbose_name=_("Sync Status"),
     )
+    objects = CaseEntryManager()
+
+    class Meta:
+        db_table = "tbl_case_entries"
+        verbose_name = _("Case Entry")
+        verbose_name_plural = _("Case Entries")
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["case_no"], name="idx_caseentry_case_no"),
+            models.Index(fields=["cattle"], name="idx_caseentry_cattle"),
+            models.Index(fields=["status"], name="idx_caseentry_status"),
+        ]
+
+    def clean(self):
+        """Validation to ensure either cattle or non_member_cattle is provided"""
+        from django.core.exceptions import ValidationError
+
+        if not self.cattle and not self.non_member_cattle:
+            raise ValidationError(_("Either member cattle or non-member cattle must be specified."))
+
+        if self.cattle and self.non_member_cattle:
+            raise ValidationError(_("Cannot specify both member cattle and non-member cattle."))
+
+    @property
+    def is_member_case(self):
+        """Check if this is a member case"""
+        return self.cattle is not None
+
+    @property
+    def is_non_member_case(self):
+        """Check if this is a non-member case"""
+        return self.non_member_cattle is not None
+
+    @property
+    def owner_name(self):
+        """Get owner name regardless of member type"""
+        if self.cattle:
+            return self.cattle.owner.name if hasattr(self.cattle, 'owner') else "N/A"
+        elif self.non_member_cattle:
+            return self.non_member_cattle.non_member.name
+        return "N/A"
+
+    @property
+    def owner_mobile(self):
+        """Get owner mobile regardless of member type"""
+        if self.cattle:
+            return self.cattle.owner.mobile_no if hasattr(self.cattle, 'owner') else "N/A"
+        elif self.non_member_cattle:
+            return self.non_member_cattle.non_member.mobile_no
+        return "N/A"
+
+    @property
+    def animal_tag(self):
+        """Get animal tag regardless of member type"""
+        if self.cattle and hasattr(self.cattle, 'tag_detail') and self.cattle.tag_detail:
+            return getattr(self.cattle.tag_detail, 'tag_number', 'N/A')
+        elif self.non_member_cattle:
+            return self.non_member_cattle.tag_number
+        return "N/A"
+
+    # Updated method for CaseEntry model
+
+    def calculate_treatment_cost(self):
+        """Calculate treatment cost based on configuration table"""
+        from datetime import time
+
+        if not self.visit_date:
+            return 0
+
+        # Determine parameters
+        visit_time = self.visit_date.time()
+        is_member = self.is_member_case
+
+        # Map to configuration choices
+        membership_type = MembershipTypeChoices.MEMBER if is_member else MembershipTypeChoices.NON_MEMBER
+        time_slot = TimeSlotChoices.BEFORE_10AM if visit_time < time(10, 0) else TimeSlotChoices.AFTER_10AM
+        animal_tag_type = AnimalTagChoices.TAGGED if self.is_tagged_animal else AnimalTagChoices.NON_TAGGED
+        treatment_type = TreatmentTypeChoices.EMERGENCY if self.is_emergency else TreatmentTypeChoices.NORMAL
+
+        # Get cost from configuration table
+        cost_amount = TreatmentCostConfiguration.get_cost(
+            membership_type=membership_type,
+            time_slot=time_slot,
+            animal_tag_type=animal_tag_type,
+            treatment_type=treatment_type,
+            visit_date=self.visit_date.date()
+        )
+
+        return float(cost_amount)
 
     @classmethod
     def assign_to(cls, case_no, to_user, remarks=None):
         """
         Assign a case to a user and log the transfer.
-
-        Args:
-            case_no (str): The case number to assign.
-            to_user (User): The user receiving the case.
-            remarks (str, optional): Additional remarks.
+        (Your existing method - unchanged)
         """
-        from .models import CaseReceiverLog  # avoid circular import
         from django.core.exceptions import ObjectDoesNotExist
 
         if not case_no or not to_user:
@@ -137,16 +264,16 @@ class CaseEntry(BaseModel):
             )
 
         with transaction.atomic():
-            previous_user = case.applied_by
+            previous_user = case.created_by
 
             if previous_user == to_user:
                 raise ValueError(_("The case is already assigned to this user."))
 
             # Update assignment
-            case.applied_by = to_user
-            case.save(update_fields=["applied_by", "updated_at"])
+            case.created_by = to_user
+            case.save(update_fields=["created_by", "updated_at"])
 
-            # Create transfer log
+            # Create transfer log (assuming you have CaseReceiverLog model)
             CaseReceiverLog.objects.create(
                 case_entry=case,
                 from_user=previous_user,
@@ -158,41 +285,51 @@ class CaseEntry(BaseModel):
 
     def __str__(self):
         created_by = self.created_by.get_full_name() if self.created_by else _("N/A")
-        return f"{self.case_no} - {created_by}"
-
-    class Meta:
-        db_table = "tbl_case_entries"
-        verbose_name = _("Case Entry")
-        verbose_name_plural = _("Case Entries")
-        ordering = ["-created_at"]
-        indexes = [
-            models.Index(fields=["case_no"], name="idx_caseentry_case_no"),
-            models.Index(fields=["cattle"], name="idx_caseentry_cattle"),
-        ]
+        owner = self.owner_name
+        return f"{self.case_no} - {owner} - {created_by}"
 
     def save(self, *args, **kwargs):
+        # Auto-calculate cost before saving
+        if self.visit_date:
+            self.calculated_cost = self.calculate_treatment_cost()
+
         if not self.case_no:
             farmer_code = "UNKNOWN"
             tag_number = "NA"
             timestamp = timezone.now().strftime("%Y%m%d-%H%M%S")
 
-            if (
-                self.cattle
-                and hasattr(self.cattle, "owner")
-                and self.cattle.owner
-                and self.cattle.owner.member_tr_code
-            ):
-                farmer_code = self.cattle.owner.member_tr_code[-6:]
+            # Handle member cattle
+            if self.cattle and hasattr(self.cattle, "owner") and self.cattle.owner:
+                if hasattr(self.cattle.owner, 'member_tr_code'):
+                    farmer_code = self.cattle.owner.member_tr_code[-6:]
+                elif hasattr(self.cattle.owner, 'member_code'):
+                    farmer_code = self.cattle.owner.member_code[-6:]
 
-            tag_detail = getattr(self.cattle, "tag_detail", None)
-            if tag_detail and getattr(tag_detail, "tag_number", None):
-                tag_number = tag_detail.tag_number
+                if hasattr(self.cattle, 'tag_detail') and self.cattle.tag_detail:
+                    tag_number = getattr(self.cattle.tag_detail, 'tag_number', 'NA')
+                elif hasattr(self.cattle, 'tag_number'):
+                    tag_number = self.cattle.tag_number
+
+            # Handle non-member cattle
+            elif self.non_member_cattle:
+                farmer_code = self.non_member_cattle.non_member.non_member_id[-6:]
+                tag_number = self.non_member_cattle.tag_number
+
+            if tag_number != "NA":
                 self.case_no = f"{farmer_code}-{tag_number}-{timestamp}"
             else:
                 rand_suffix = random.randint(100, 999)
                 self.case_no = f"{farmer_code}-{tag_number}-{timestamp}-{rand_suffix}"
 
         super().save(*args, **kwargs)
+
+        # Update visit count for non-members
+        if self.non_member_cattle:
+            non_member = self.non_member_cattle.non_member
+            non_member.visit_count = CaseEntry.objects.filter(
+                non_member_cattle__non_member=non_member
+            ).count()
+            non_member.save(update_fields=['visit_count'])
 
 
 class CaseReceiverLog(BaseModel):
@@ -240,8 +377,8 @@ class CaseReceiverLog(BaseModel):
     def __str__(self):
         return _("Case: {case_no} | {from_user} ➝ {to_user} @ {timestamp}").format(
             case_no=self.case_entry.case_no if self.case_entry else _("N/A"),
-            from_user=self.from_user or _("System"),
-            to_user=self.to_user,
+            from_user=self.assigned_from or _("System"),
+            to_user=self.assigned_to,
             timestamp=self.transferred_at.strftime("%Y-%m-%d %H:%M"),
         )
 
@@ -450,7 +587,6 @@ class AnimalTreatment(BaseModel):
         ]
 
 
-
 class CasePayment(models.Model):
     case_entry = models.ForeignKey(
         CaseEntry,
@@ -617,12 +753,12 @@ class TravelRecord(models.Model):
     def save(self, *args, **kwargs):
         # Automatically calculate distance before saving
         if all(
-            [
-                self.from_latitude,
-                self.from_longitude,
-                self.to_latitude,
-                self.to_longitude,
-            ]
+                [
+                    self.from_latitude,
+                    self.from_longitude,
+                    self.to_latitude,
+                    self.to_longitude,
+                ]
         ):
             self.distance_travelled = self.calculate_distance()
         super().save(*args, **kwargs)

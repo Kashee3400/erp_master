@@ -3,7 +3,14 @@
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
-from .utils.inventory_utils import get_inventory_alerts, calculate_stock_metrics
+
+from .models.excel_model import ExcelUploadSession
+from .utils.exce_util import process_import_enhanced
+from .utils.inventory_utils import get_inventory_alerts
+
+import os, logging
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -48,7 +55,7 @@ def check_expiring_medicines():
     """
     from django.utils import timezone
     from datetime import timedelta
-    from .models import MedicineStock
+    from .models.stock_models import MedicineStock
 
     future_date = timezone.now().date() + timedelta(days=7)
 
@@ -80,3 +87,49 @@ def check_expiring_medicines():
         )
 
     return f"Checked {expiring_stocks.count()} expiring medicines"
+
+
+@shared_task()
+def process_excel_import(session_id, temp_file_path, selected_sheets, target_model):
+    session = None
+    try:
+        session = ExcelUploadSession.objects.get(id=session_id)
+        session.status = ExcelUploadSession.Status.PROCESSING
+        session.save(update_fields=["status"])
+
+        # Perform import
+        results = process_import_enhanced(temp_file_path, selected_sheets, target_model)
+        print(f"Has Results: {results}")
+
+        # Check for errors in any sheet
+        has_errors = any(
+            sheet_result.get('errors') for sheet_result in results.values()
+        )
+        print(f"Has Errors: {has_errors}")
+        if has_errors:
+            session.status = ExcelUploadSession.Status.FAILED
+            session.error_message = str(results)
+            session.results = results
+            session.processed = False
+        else:
+            session.status = ExcelUploadSession.Status.SUCCESS
+            session.results = results
+            session.processed = True
+
+        session.save()
+
+        # Cleanup temporary file
+        try:
+            os.remove(temp_file_path)
+        except Exception as e:
+            logger.warning(f"Cleanup failed: {e}")
+
+        return results
+
+    except Exception as e:
+        logger.error(f"Excel import task failed: {e}", exc_info=True)
+        if session:
+            session.status = ExcelUploadSession.Status.FAILED
+            session.error_message = str(e)
+            session.save()
+        raise

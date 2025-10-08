@@ -133,7 +133,7 @@ class CattleTaggingSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data.get("tag_action") == TagActionChoices.REPLACED and not data.get(
-            "replaced_on"
+                "replaced_on"
         ):
             raise serializers.ValidationError(
                 {"replaced_on": "This field is required when tag action is 'REPLACED'."}
@@ -194,6 +194,8 @@ class CattleStatusLogSerializer(serializers.ModelSerializer):
             "to_date",
             "notes",
             "pregnancy_status",
+            "lactation_count",  # 🔹 new field
+            "milk_production_lpd",  # 🔹 new field
             "created_at",
         ]
         read_only_fields = [
@@ -307,6 +309,7 @@ class CattleTagSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "tag_number",
+            "virtual_tag_no",  # 🔹 include virtual tag no
             "tag_method",
             "tag_method_display",
             "tag_location",
@@ -317,6 +320,7 @@ class CattleTagSerializer(serializers.ModelSerializer):
             "remarks",
             "image",
         ]
+        read_only_fields = ["virtual_tag_no"]  # ensure it cannot be set manually
 
 
 class CattleDetailSerializer(serializers.ModelSerializer):
@@ -420,9 +424,9 @@ class CattleDetailSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if (
-            hasattr(obj, "cattle_tagged")
-            and obj.cattle_tagged
-            and obj.cattle_tagged.image
+                hasattr(obj, "cattle_tagged")
+                and obj.cattle_tagged
+                and obj.cattle_tagged.image
         ):
             if request:
                 return request.build_absolute_uri(obj.cattle_tagged.image.url)
@@ -451,13 +455,14 @@ class CattleStatsSerializer(serializers.Serializer):
             "total_calving": instance.get("total_calving", 0),
             "mortality_rate": round(
                 (
-                    (instance.get("total_cattle", 0) - instance.get("alive_cattle", 0))
-                    / max(instance.get("total_cattle", 1), 1)
+                        (instance.get("total_cattle", 0) - instance.get("alive_cattle", 0))
+                        / max(instance.get("total_cattle", 1), 1)
                 )
                 * 100,
                 2,
             ),
         }
+
 
 from ..utils.base64field import Base64ImageField
 

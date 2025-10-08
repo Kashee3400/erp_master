@@ -72,8 +72,9 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/product-rates/', ProductRateListView.as_view(), name='product_rate_list'),
     path('api/months/', MonthListAPIView.as_view(), name='month-list'),
-    path('api/news/not-read-count/', NewsNotReadCountAPIView.as_view(), name='news-not-read-count'),
+    path('api/news/unread-count/', NewsNotReadCountAPIView.as_view(), name='news-not-read-count'),
     path('api/sahayak-dashboard-data/', SahayakDashboardAPI.as_view(), name='sahayak-dashboard-data'),
+    path('api/new-sahayak-dashboard-data/', SahayakDashboardAPI.as_view(), name='new-sahayak-dashboard-data'),
     path('api/app-installed-data/', AppInstalledData.as_view(), name='app-installed-data'),
     path('api/sahayak-app-installed-data/', SahayakAppInstalledData.as_view(), name='sahayak-app-installed-data'),
     ]

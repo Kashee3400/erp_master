@@ -1,11 +1,11 @@
+from util.response import StandardResultsSetPagination, custom_response
 from .serializers import *
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 from django.db import models
 from rest_framework.views import APIView
-from django.db.models import Q, Sum, Count, Avg, Max, Count
+from django.db.models import Q, Sum, Avg, Count
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -13,56 +13,6 @@ from django.db.models.functions import TruncDate, Cast
 from rest_framework.pagination import PageNumberPagination
 from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import ValidationError
-from math import ceil
-
-
-def custom_response(status_text, data=None, message=None, status_code=200, errors=None):
-    return Response(
-        {
-            "status": status_text,
-            "message": message or "Success",
-            "data": data,
-            "errors": errors,
-        },
-        status=status_code,
-    )
-
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-    # Optional: Attach extra data externally before calling pagination
-    extra_data = {}
-
-    def get_paginated_response(self, data):
-        total_items = self.page.paginator.count
-        current_page = self.page.number
-        per_page = self.page.paginator.per_page
-        total_pages = ceil(total_items / int(per_page))
-
-        base_response = {
-            "count": total_items,
-            "next": self.get_next_link(),
-            "previous": self.get_previous_link(),
-            "current_page": current_page,
-            "total_pages": total_pages,
-            "page_size": int(per_page),
-            "has_next": self.page.has_next(),
-            "has_previous": self.page.has_previous(),
-            "results": data,
-        }
-
-        # Merge extra dynamic data if any
-        base_response.update(self.extra_data)
-
-        return custom_response(
-            status_text="success",
-            message="Success",
-            data=base_response,
-            status_code=status.HTTP_200_OK,
-        )
 
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
@@ -75,7 +25,7 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         try:
             return (
                 MemberMaster.objects.using("sarthak_kashee")
-                .filter(mobile_no=phone_number)
+                .filter(mobile_no=phone_number, is_active=True)
                 .last()
             )
         except MemberMaster.DoesNotExist:
@@ -94,6 +44,7 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
         mpp_aggregations = MppCollectionAggregation.objects.filter(
             member_code=instance.member_code
         ).first()
+        response_data = {}
         if mpp_aggregations:
             mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
             mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
@@ -195,7 +146,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
             QuerySet: A queryset of BillingMemberDetail objects filtered by the member code.
         """
         if not MemberMaster.objects.filter(
-            mobile_no=self.request.user.username
+                mobile_no=self.request.user.username, is_active=True
         ).exists():
             return Response(
                 {
@@ -207,9 +158,9 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        member = MemberMaster.objects.get(mobile_no=self.request.user.username)
-        from_date_str = self.request.query_params.get("from_date")
-        to_date_str = self.request.query_params.get("to_date")
+        member = MemberMaster.objects.get(mobile_no=self.request.user.username, is_active=True)
+        from_date_str = self.request.GET.get("from_date")
+        to_date_str = self.request.GET.get("to_date")
 
         from_date = parse_datetime(from_date_str)
         to_date = parse_datetime(to_date_str)
@@ -241,11 +192,11 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
             serializer = self.get_serializer(instance)
             local_sale_txns = []
             if (
-                BillingMemberMaster.objects.using("sarthak_kashee")
-                .filter(
-                    billing_member_master_code=instance.billing_member_master_code.billing_member_master_code
-                )
-                .exists()
+                    BillingMemberMaster.objects.using("sarthak_kashee")
+                            .filter(
+                        billing_member_master_code=instance.billing_member_master_code.billing_member_master_code
+                    )
+                            .exists()
             ):
                 billing_master_instance = BillingMemberMaster.objects.using(
                     "sarthak_kashee"
@@ -287,6 +238,7 @@ class CustomPageNumberPagination(PageNumberPagination):
     max_page_size = 100
 
 
+# TODO: to be deleted after successful testing of new logic
 class MppCollectionAggregationListView(generics.ListAPIView):
     """
     This class provides the latest payments of cycle
@@ -301,12 +253,12 @@ class MppCollectionAggregationListView(generics.ListAPIView):
         queryset = MppCollectionAggregation.objects.all()
 
         if not MemberMaster.objects.filter(
-            mobile_no=self.request.user.username
+                mobile_no=self.request.user.username
         ).exists():
             return MppCollectionAggregation.objects.none()
 
-        member = MemberMaster.objects.get(mobile_no=self.request.user.username)
-        year = self.request.query_params.get("year")
+        member = MemberMaster.objects.filter(mobile_no=self.request.user.username, is_active=True).last()
+        year = self.request.GET.get("year")
         queryset = queryset.filter(member_code=member.member_code).order_by(
             "-created_at"
         )
@@ -396,7 +348,7 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
 
     def get_queryset(self):
         mobile_no = self.request.user.username
-        member = MemberMaster.objects.filter(mobile_no=mobile_no).first()
+        member = MemberMaster.objects.filter(mobile_no=mobile_no, is_active=True).first()
 
         if not member:
             return MppCollectionAggregation.objects.none()
@@ -405,7 +357,7 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
             member_code=member.member_code
         ).order_by("-created_at")
 
-        year = self.request.query_params.get("year")
+        year = self.request.GET.get("year")
         if year:
             try:
                 year = int(year)
@@ -460,7 +412,7 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
 
             # Serialize and respond
             serializer = self.get_serializer(paginated_queryset, many=True)
-            paginator.extra_data = {"totals": totals}  # ✅ set before calling get_paginated_response
+            paginator.extra_data = {"totals": totals}
             return paginator.get_paginated_response(serializer.data)
 
         except ValidationError as e:
@@ -479,7 +431,9 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
                 errors=str(e),
             )
 
+
 from django.core.cache import cache
+
 
 class MppCollectionDetailView(generics.GenericAPIView):
     """
@@ -490,7 +444,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
-        
+
         # Fetch date parameter and validate format
         date_str = request.query_params.get('date', None)
         provided_date = self.validate_date(date_str, today)
@@ -501,7 +455,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
         cache_key_member = f"member_{username}"
         member = cache.get(cache_key_member)
         if member is None:
-            member = MemberMaster.objects.filter(mobile_no=username,is_active=True).values('member_code').last()
+            member = MemberMaster.objects.filter(mobile_no=username, is_active=True).values('member_code').last()
             cache.set(cache_key_member, member, timeout=3600)
 
         if not member:
@@ -518,12 +472,9 @@ class MppCollectionDetailView(generics.GenericAPIView):
         cache_key_date = f"mpp_collection_{member_code}_{provided_date}"
         date_queryset = cache.get(cache_key_date)
         if date_queryset is None:
-            print(provided_date)
-            print(member_code)
             date_queryset = list(MppCollection.objects.filter(
                 collection_date__date=provided_date, member_code=member_code
             ))
-            print(date_queryset)
             cache.set(cache_key_date, date_queryset, timeout=3600)
         cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
         fiscal_data = cache.get(cache_key_fy)
@@ -532,7 +483,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
                 collection_date__range=(start_date, end_date),
                 member_code=member_code
             ).annotate(date_only=TruncDate('collection_date'))
-            
+
             fiscal_data = aggregated_data.aggregate(
                 total_days=Count('date_only', distinct=True),
                 total_qty=Sum('qty', default=0),
@@ -550,7 +501,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
                 "dashboard_fy_data": fiscal_data,
             }
         }
-        
+
         return Response(response_data, status=status.HTTP_200_OK)
 
     def get_fiscal_year_range(self, provided_date):
@@ -578,7 +529,7 @@ class MemberShareFinalInfoView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        member = MemberMaster.objects.filter(mobile_no=self.request.user.username,is_active=True)
+        member = MemberMaster.objects.filter(mobile_no=self.request.user.username, is_active=True)
         if not member.exists():
             return Response(
                 {
@@ -590,8 +541,8 @@ class MemberShareFinalInfoView(APIView):
         first_member = member.first()
         records = MemberShareFinalInfo.objects.filter(to_code=first_member.member_code)
         total_sum = (
-            records.aggregate(total_no_of_share=Sum("no_of_share"))["total_no_of_share"]
-            or 0
+                records.aggregate(total_no_of_share=Sum("no_of_share"))["total_no_of_share"]
+                or 0
         )
         serializer = MemberShareFinalInfoSerializer(records, many=True)
         response_data = {

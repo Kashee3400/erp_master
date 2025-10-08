@@ -1,6 +1,8 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from reversion import is_active
+
 from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
 from erp_app.models import (
     CdaAggregation,
@@ -28,6 +30,7 @@ from erp_app.serializers import (
 from .models import News
 from django.utils.timezone import now
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -49,7 +52,6 @@ class OTPSerializer(serializers.ModelSerializer):
 class VerifyOTPSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=10)
     otp = serializers.CharField(max_length=6)
-
 
 
 class LogoutSerializer(serializers.Serializer):
@@ -131,7 +133,8 @@ class LocalSaleSerializer(serializers.ModelSerializer):
         Fetch the member data from MemberMaster using module_code.
         """
         try:
-            member = MemberHierarchyView.objects.get(member_code=obj.module_code)
+            member = MemberHierarchyView.objects.filter(member_code=obj.module_code, is_active=True,
+                                                        is_default=True).first()
             return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
             return None
@@ -269,7 +272,6 @@ class SahayakFeedbackSerializer(serializers.ModelSerializer):
             validated_data["mpp_code"] = request.user.device.mpp_code
 
         return super().create(validated_data)
-
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -411,14 +413,15 @@ class BillingMemberDetailSerializer(serializers.ModelSerializer):
 
     def get_member(self, obj):
         try:
-            member = MemberHierarchyView.objects.filter(member_code=obj.member_code,is_default=True).last()
+            member = MemberHierarchyView.objects.filter(member_code=obj.member_code,is_active=True, is_default=True).last()
             return MemberHierarchyViewSerializer(member, context=self.context).data
         except MemberHierarchyView.DoesNotExist:
-            
+
             return None
-        
+
     def get_total_qty(self, obj):
         return str(obj.qty)
+
 
 class BillingMemberMasterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -486,6 +489,7 @@ class MppDispatchTxnSerializer(serializers.ModelSerializer):
     qty = serializers.DecimalField(
         source="dispatch_qty", max_digits=10, decimal_places=2
     )
+
     class Meta:
         model = MppDispatchTxn
         fields = ["qty", "fat", "snf", "amount"]

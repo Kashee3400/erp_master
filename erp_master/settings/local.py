@@ -1,4 +1,5 @@
 from .base import *
+from django.conf import settings
 
 
 CACHES = {
@@ -11,7 +12,6 @@ CACHES = {
     }
 }
 
-
 DB_ENGINE = config("DB_ENGINE", None)
 
 DB_NAME_SARTHAK = config("DB_NAME_SARTHAK", None)
@@ -19,7 +19,6 @@ DB_USER_SARTHAK = config("DB_USER_SARTHAK", None)
 DB_PASSWORD_SARTHAK = config("DB_PASSWORD_SARTHAK", None)
 DB_HOST_SARTHAK = config("DB_HOST_SARTHAK", None)
 DB_PORT_SARTHAK = config("DB_PORT_SARTHAK", None)
-
 
 # cred for connecting member db
 DB_NAME_MEMBER = config("DB_NAME_MEMBER", None)
@@ -71,3 +70,38 @@ REST_FRAMEWORK.update({
     "DEFAULT_THROTTLE_CLASSES": [],
     "DEFAULT_THROTTLE_RATES": {},
 })
+
+
+def setup_log_directory():
+    """Ensure log directory exists"""
+    log_dir = getattr(settings, 'LOG_DIR', os.path.join(BASE_DIR, 'logs'))
+    os.makedirs(log_dir, exist_ok=True)
+    return log_dir
+
+
+# Call this in your Django app's ready() method or in settings
+setup_log_directory()
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'excel_import.log'),
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'your_app': {  # Replace with your app name
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

@@ -20,6 +20,27 @@ class PaymentMethodChoices(models.TextChoices):
         }.get(value, "")
 
 
+class MembershipTypeChoices(models.TextChoices):
+    MEMBER = 'member', _('Member')
+    NON_MEMBER = 'non_member', _('Non-Member')
+
+
+class TimeSlotChoices(models.TextChoices):
+    BEFORE_10AM = 'before_10am', _('Before 10:00 AM (6:00 to 10:00)')
+    AFTER_10AM = 'after_10am', _('After 10:00 AM')
+
+
+class AnimalTagChoices(models.TextChoices):
+    TAGGED = 'tagged', _('Tagged Animal')
+    NON_TAGGED = 'non_tagged', _('Non-Tagged Animal')
+
+
+class TreatmentTypeChoices(models.TextChoices):
+    NORMAL = 'normal', _('Normal Treatment')
+    EMERGENCY = 'emergency', _('Emergency Treatment')
+    OPERATION = 'operation', _('Operation Cost')
+
+
 class AnimalUse(models.TextChoices):
     """Use case classification of the animal."""
 
@@ -123,6 +144,7 @@ class MedicineFormChoices(models.TextChoices):
     INTRAMAMMARY = "intramammary", _("Intramammary")
     OTHER = "other", _("Other")
 
+
 class TransactionTypeChoices(models.TextChoices):
     """Inventory transaction types."""
 
@@ -170,6 +192,7 @@ class CattleStatusChoices(models.TextChoices):
     DRY = "dry", _("Dry")
     PREGNANT = "pregnant", _("Pregnant")
     MILKING = "milking", _("Milking")
+    HEIFER = "heifer", _("Heifer")
 
 
 class DiseaseSeverity(models.TextChoices):
@@ -219,13 +242,14 @@ class VehicleTypeChoices(models.TextChoices):
     OTHER = "OTHER", _("Other")
 
 
-
 class SyncStatusChoices(models.TextChoices):
     PENDING = "PENDING", "Pending"
     SYNCED = "SYNCED", "Synced"
     FAILED = "FAILED", "Failed"
-    
+
+
 class ApprovalStatusChoices(models.TextChoices):
     PENDING = "PENDING", "Pending Approval"
+    REQUESTED = "REQUESTED", "Requested"
     APPROVED = "APPROVED", "Approved"
     REJECTED = "REJECTED", "Rejected"

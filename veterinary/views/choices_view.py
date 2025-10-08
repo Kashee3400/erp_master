@@ -1,5 +1,8 @@
 # views/choice_view.py
+
 from rest_framework.views import APIView
+
+from error_formatter import simplify_errors
 from ..choices.choices import serialize_choices
 from ..choices.choices import (
     PaymentMethodChoices,
@@ -23,7 +26,7 @@ from ..choices.choices import (
     TransferStatusChoices,
     LocationTypeChoices,
 )
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import viewsets, status
 from facilitator.authentication import ApiKeyAuthentication
 from util.response import custom_response, StandardResultsSetPagination
@@ -37,6 +40,7 @@ from ..serializers.cattle_entry_serializers import (
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from facilitator.models.user_profile_model import UserProfile
+from veterinary.models.case_models import Disease, Symptoms
 
 
 class ChoicesAPIView(APIView):
@@ -88,8 +92,8 @@ class BaseModelViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    ordering_fields = ["created_at"]
-    ordering = ["-created_at"]
+    ordering_fields = None
+    ordering = None
     lookup_field = "pk"
 
     def list(self, request, *args, **kwargs):
@@ -114,11 +118,9 @@ class BaseModelViewSet(viewsets.ModelViewSet):
         )
         try:
             serializer.is_valid(raise_exception=True)
-            instance = serializer.save(updated_by=request.user)
-
-            # 🔑 refresh instance to include M2M members
+            self.perform_create(serializer)
+            instance = serializer.instance
             instance.refresh_from_db()
-
             response_serializer = self.get_serializer(instance)
             return custom_response(
                 status_text="success",
@@ -130,7 +132,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
             return custom_response(
                 status_text="error",
                 message="Validation failed.",
-                errors=e.detail,
+                errors=simplify_errors(error_dict=e.detail),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -145,6 +147,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
         try:
             serializer.is_valid(raise_exception=True)
             instance = serializer.save(updated_by=request.user)
+            self.perform_update(serializer)
 
             # 🔑 refresh instance to include M2M members
             instance.refresh_from_db()
@@ -160,7 +163,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
             return custom_response(
                 status_text="error",
                 message="Validation failed.",
-                errors=e.detail,
+                errors=simplify_errors(error_dict=e.detail),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -171,7 +174,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
             status_text="success",
             message="Record deleted successfully.",
             data=None,
-            status_code=status.HTTP_204_NO_CONTENT,
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -259,7 +262,7 @@ class MemberMasterCopyViewSet(BaseModelViewSet):
         serializer = self.get_serializer(member)
         return custom_response(
             status_text="success",
-            message="Cattle details retrieved successfully.",
+            message="Member details retrieved successfully.",
             data=serializer.data,
             status_code=status.HTTP_200_OK,
         )
@@ -332,14 +335,11 @@ from ..serializers.cattle_entry_serializers import (
 )
 
 
-from rest_framework.parsers import MultiPartParser, FormParser
-
-
 class FarmerMeetingViewSet(BaseModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = FarmerMeetingSerializer
-    filterset_fields = ["mcc_code", "mpp_code", "updated_by", "members","is_deleted"]
+    filterset_fields = ["mcc_code", "mpp_code", "updated_by", "members", "is_deleted"]
 
     def get_queryset(self):
         user = self.request.user
@@ -405,3 +405,40 @@ class FarmerObservationViewSet(BaseModelViewSet):
             return base_qs.filter(updated_by__in=[user.id, *reportee_ids])
 
         return base_qs.filter(updated_by=user)
+
+
+from ..serializers.disease_serializer import SymptomSerializer, DiseaseSerializer
+
+
+class SymptomViewset(BaseModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SymptomSerializer
+    filterset_fields = ["locale"]
+    queryset = Disease.objects.all()
+
+
+from django_filters import rest_framework as filters
+
+
+class DiseaseFilter(filters.FilterSet):
+    symptoms = filters.CharFilter(method="filter_symptoms")
+
+    def filter_symptoms(self, queryset, name, value):
+        """
+        Support comma-separated IDs in ?symptoms=1,2,3
+        """
+        ids = value.split(",")
+        return queryset.filter(symptoms__id__in=ids).distinct()
+
+    class Meta:
+        model = Disease
+        fields = ["symptoms", "severity", "locale"]
+
+
+class DiseaseViewset(BaseModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = DiseaseSerializer
+    queryset = Disease.objects.all()
+    filterset_class = DiseaseFilter

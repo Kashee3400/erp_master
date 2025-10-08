@@ -10,7 +10,7 @@ from ..models.common_models import (
     Vehicle,
     VehicleKiloMeterLog,
 )
-from erp_app.models import Mcc
+from erp_app.models import Mcc, Mpp
 from ..models.models import MembersMasterCopy
 
 
@@ -101,12 +101,17 @@ class CattleCaseStatusSerializer(serializers.ModelSerializer):
 
 
 class MembersMasterListSerializer(serializers.ModelSerializer):
+    mcc_name = serializers.SerializerMethodField()
+    mpp_name = serializers.SerializerMethodField()
+
     class Meta:
         model = MembersMasterCopy
         fields = [
             "mcc_code",
+            "mcc_name",
             "bmc_code",
             "mpp_code",
+            "mpp_name",
             "member_code",
             "member_tr_code",
             "member_name",
@@ -118,16 +123,29 @@ class MembersMasterListSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def get_mcc_name(self, obj):
+        mcc = Mcc.objects.get(mcc_code=obj.mcc_code)
+        return f"{mcc.mcc_name} ({mcc.mcc_ex_code})"
+
+    def get_mpp_name(self, obj):
+        mpp = Mpp.objects.get(mpp_code=obj.mpp_code)
+        return f"{mpp.mpp_name} ({mpp.mpp_ex_code})"
+
 
 class MembersMasterDetailSerializer(serializers.ModelSerializer):
+    mcc_name = serializers.SerializerMethodField()
+    mpp_name = serializers.SerializerMethodField()
+
     class Meta:
         model = MembersMasterCopy
         fields = [
             "company_code",
             "plant_code",
             "mcc_code",
+            "mcc_name",
             "bmc_code",
             "mpp_code",
+            "mpp_name",
             "member_code",
             "member_tr_code",
             "member_name",
@@ -153,9 +171,16 @@ class MembersMasterDetailSerializer(serializers.ModelSerializer):
             "user",
         ]
 
+    def get_mcc_name(self, obj):
+        mcc = Mcc.objects.get(mcc_code=obj.mcc_code)
+        return f"{mcc.mcc_name} ({mcc.mcc_ex_code})"
+
+    def get_mpp_name(self, obj):
+        mpp = Mpp.objects.get(mpp_code=obj.mpp_code)
+        return f"{mpp.mpp_name} ({mpp.mpp_ex_code})"
+
 
 class MccSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Mcc
         fields = ["mcc_code", "mcc_ex_code", "mcc_name", "is_active"]
@@ -186,9 +211,7 @@ class BusinessHierarchySnapshotSerializer(serializers.ModelSerializer):
 
 
 class VehicleSerializer(serializers.ModelSerializer):
-
     class Meta:
-
         model = Vehicle
         fields = [
             "id",
@@ -219,6 +242,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class VehicleKilometerLogSerializer(serializers.ModelSerializer):
     vehicle = serializers.PrimaryKeyRelatedField(queryset=Vehicle.objects.all())
     vehicle_detail = VehicleSerializer(source="vehicle", read_only=True)
@@ -232,7 +256,7 @@ class VehicleKilometerLogSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-            "user_name",        # 👈 added
+            "user_name",  # 👈 added
             "district",
             "vehicle",
             "vehicle_detail",
@@ -260,4 +284,3 @@ class VehicleKilometerLogSerializer(serializers.ModelSerializer):
             "user_full_name",
             "updated_by_full_name",
         ]
-

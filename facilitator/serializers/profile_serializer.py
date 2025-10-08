@@ -36,5 +36,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         full_name = f"{first_name} {last_name}".strip()
 
         return full_name if full_name else obj.user.username
+
     def get_reportee_count(self,obj):
         return 0

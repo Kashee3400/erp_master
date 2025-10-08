@@ -467,7 +467,7 @@ class ProductRateListView(generics.ListAPIView):
     filterset_fields = ("locale",)
 
     def get_queryset(self):
-        locale = self.request.query_params.get("locale", "en")
+        locale = self.request.GET.get("locale", "en")
         return ProductRate.objects.filter(locale=locale)
 
     def get(self, request, *args, **kwargs):
@@ -1638,9 +1638,9 @@ class NewsViewSet(viewsets.ModelViewSet):
         Optionally filter queryset by date range.
         """
         queryset = super().get_queryset()
-        start_date = self.request.query_params.get("start_date")
-        end_date = self.request.query_params.get("end_date")
-        search = self.request.query_params.get("search")
+        start_date = self.request.GET.get("start_date")
+        end_date = self.request.GET.get("end_date")
+        search = self.request.GET.get("search")
         if start_date and end_date:
             try:
                 queryset = queryset.filter(
@@ -2043,6 +2043,19 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
+    
+    # def mpp_ex_code_object(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance)
+    #     return Response(
+    #         {
+    #             "status": "success",
+    #             "status_code": status.HTTP_200_OK,
+    #             "message": "Mpp retrieved successfully",
+    #             "results": serializer.data,
+    #         }
+    #     )
+
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -2105,8 +2118,9 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
             }
         )
 
-
+# TODO: after deployment this code should be reomved
 class SahayakDashboardAPI(APIView):
+    # authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
@@ -2214,6 +2228,85 @@ class SahayakDashboardAPI(APIView):
             key: round(value, 2) if value is not None else 0.0
             for key, value in aggregates.items()
         }
+
+class NewSahayakDashboardAPI(APIView):
+    authentication_classes = [ApiKeyAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        created_date = request.GET.get("date", timezone.now().date())
+        mpp_code = request.GET.get("mpp_code")
+        shift_code = request.GET.get("shift_code")
+
+        if not mpp_code:
+            return Response(
+                {"status": "error", "message": "Please provide the MPP code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Caching: Store and retrieve results from cache
+        cache_key = f"sahayak_dashboard_{mpp_code}_{shift_code}_{created_date}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        dispatches = self.get_aggregates(
+            MppDispatchTxn,
+            "dispatch_qty",
+            "fat",
+            "snf",
+            mpp_dispatch_code__mpp_code=mpp_code,
+            mpp_dispatch_code__from_date__date=created_date,
+            mpp_dispatch_code__from_shift=shift_code,
+        )
+
+        # Construct response data
+        response_data = {
+            "status": 200,
+            "message": _("Data Retrieved"),
+            "data": {
+                "dispatch": self.format_aggregates(dispatches),
+            },
+        }
+
+        # Store in cache for 5 minutes
+        cache.set(cache_key, response_data, timeout=300)
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def get_aggregates(self, model, qty_field, fat_field, snf_field, **filters):
+        """
+        Optimized function to compute aggregations efficiently.
+        """
+        aggregation = model.objects.filter(**filters).aggregate(
+            qty=Sum(qty_field),
+            fat=Coalesce(
+                Cast(
+                    Sum(F(qty_field) * F(fat_field), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum(qty_field), FloatField()),
+                0.0,
+            ),
+            snf=Coalesce(
+                Cast(
+                    Sum(F(qty_field) * F(snf_field), output_field=FloatField()),
+                    FloatField(),
+                )
+                / Cast(Sum(qty_field), FloatField()),
+                0.0,
+            ),
+        )
+        return aggregation
+
+    def format_aggregates(self, aggregates):
+        """
+        Rounds float values for better readability.
+        """
+        return {
+            key: round(value, 2) if value is not None else 0.0
+            for key, value in aggregates.items()
+        }
+
 
 
 class ShiftViewSet(viewsets.ModelViewSet):

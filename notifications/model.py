@@ -1,16 +1,15 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MaxLengthValidator
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from django.db.models import JSONField
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.urls import reverse, NoReverseMatch
 import uuid
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
-User = get_user_model()
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MaxLengthValidator
+from django.db import models
+from django.db.models import JSONField
+from django.urls import reverse, NoReverseMatch
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 

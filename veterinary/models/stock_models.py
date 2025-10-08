@@ -2,10 +2,9 @@ from django.utils.translation import gettext_lazy as _
 from ..choices.choices import *
 from django.db import models
 from django.conf import settings
-from .common_models import BaseModel, User
+from .common_models import BaseModel
 from django.utils import timezone
 from datetime import timedelta
-from django.db.models import Q, F
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from decimal import Decimal
@@ -537,11 +536,8 @@ class UserMedicineStock(BaseModel):
 
     # --- Business logic helpers ---
     def remaining_quantity(self):
-        return self.allocated_quantity - self.used_quantity
-
-    def remaining_quantity(self):
         if not self.is_approved():
-            return Decimal("0.00")  # No remaining quantity if not approved
+            return Decimal("0.00")
         return self.allocated_quantity - self.used_quantity
 
     def is_below_threshold(self):
@@ -575,11 +571,17 @@ class UserMedicineStock(BaseModel):
         verbose_name = "User Medicine Allocation"
         verbose_name_plural = "User Medicine Allocations"
         ordering = ["-allocation_date"]
+    
         indexes = [
             models.Index(fields=["user"]),
             models.Index(fields=["medicine_stock"]),
         ]
         constraints = [
+            models.UniqueConstraint(
+            fields=["user", "medicine_stock"],
+            condition=Q(is_active=True),
+            name="unique_active_user_medicine_allocation"
+            ),
             models.CheckConstraint(
                 check=Q(used_quantity__lte=F("allocated_quantity")),
                 name="used_lte_allocated",
@@ -727,7 +729,7 @@ class MedicineStockAudit(models.Model):
             )
             last_balance = last_log.balance_after if last_log else 0
 
-            if self.transaction_type == TransactionTypeChoices.INWARD:
+            if self.transaction_type == TransactionTypeChoices.IN:
                 self.balance_after = last_balance + self.quantity
             else:
                 self.balance_after = last_balance - self.quantity

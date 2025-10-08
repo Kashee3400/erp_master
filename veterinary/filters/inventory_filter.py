@@ -120,6 +120,8 @@ class UserMedicineStockFilter(django_filters.FilterSet):
     user_name = django_filters.CharFilter(
         method="filter_by_user_name", label="User Name"
     )
+    is_deleted = django_filters.BooleanFilter(field_name="is_deleted")
+    is_active = django_filters.BooleanFilter(field_name="is_active")
 
     username = django_filters.CharFilter(
         field_name="user__username", lookup_expr="icontains", label="Username"
@@ -180,6 +182,8 @@ class UserMedicineStockFilter(django_filters.FilterSet):
         model = UserMedicineStock
         fields = {
             "user": ["exact"],
+            "is_deleted": ["exact"],
+            "is_active": ["exact"],
             "medicine_stock": ["exact"],
             "allocated_quantity": ["gte", "lte"],
             "used_quantity": ["gte", "lte"],

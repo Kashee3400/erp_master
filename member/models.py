@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import uuid
-
+from django_ckeditor_5.fields import CKEditor5Field
+from django.db import models
 
 User = get_user_model()
 
@@ -309,10 +310,6 @@ class FeedbackLog(models.Model):
         return f"{self.status} - {self.feedback.feedback_id} by {self.user.username}"
 
 
-from django_ckeditor_5.fields import CKEditor5Field
-from django.db import models
-
-
 class News(models.Model):
     title = models.CharField(
         max_length=255,
@@ -370,6 +367,13 @@ class News(models.Model):
         default=False,
         verbose_name="Is Read",
         help_text="Check this box to mark the article as read.",
+    )
+
+    module = models.CharField(
+        max_length=255,
+        default= "member",
+        verbose_name="Module",
+        help_text="Module Specific News. For ex:- member, facilitator, sahayak",
     )
 
     @classmethod

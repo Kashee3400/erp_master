@@ -1,12 +1,9 @@
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from ..models.models import Cattle, CattleTagging
-from django.db.models import Count, Q, OuterRef, Subquery, Exists
-from facilitator.authentication import ApiKeyAuthentication
+from django.db.models import Count, Q
 from util.response import custom_response, StandardResultsSetPagination
 from ..serializers.cattle_entry_serializers import (
-    CattleSerializer,
     CattleListSerializer,
     serializers,
     CattleTaggingListSerializer,
@@ -14,10 +11,10 @@ from ..serializers.cattle_entry_serializers import (
     CattleDetailSerializer,
 )
 from facilitator.models.user_profile_model import UserProfile
-from django.core.cache import cache
 from rest_framework.decorators import action
 from ..utils.compute_tag_stats import get_period_range
 from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 
@@ -41,8 +38,8 @@ class CattleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["list"]:
             return CattleListSerializer
-        elif self.action in ["create", "update", "partial_update"]:
-            return CattleDetailSerializer
+        # elif self.action in ["create", "update", "partial_update"]:
+        #     return CattleDetailSerializer
         return CattleDetailSerializer
 
     def get_queryset(self):
@@ -226,11 +223,11 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
     filterset_fields = [
         "cattle",
         "tag_method",
-        "tag_location", 
+        "tag_location",
         "tag_action",
         "is_deleted",
         "is_active",
-        ]
+    ]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
     lookup_field = "pk"
@@ -314,7 +311,6 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
 
         def pct_change(curr, prev):
             return round(((curr - prev) / (prev + 1e-6)) * 100, 2)
-
 
         cattle_qs = get_role_based_cattle_qs(start, end)
         # 🔄 Current period

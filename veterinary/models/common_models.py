@@ -1,17 +1,19 @@
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from ..choices.choices import *
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
-import random
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.utils.translation import get_language
-
+from django.core.validators import MinValueValidator
+from decimal import Decimal
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 User = get_user_model()
+
 
 # ************************  Veterinary Tables ************************ #
 
@@ -92,7 +94,6 @@ class BaseModel(models.Model):
 
 
 class CattleStatusType(BaseModel):
-
     code = models.CharField(
         max_length=30,
         unique=True,
@@ -255,7 +256,6 @@ class SpeciesBreed(BaseModel):
 
 
 class AICharge(models.Model):
-
     user_role = models.CharField(
         max_length=20,
         choices=UserRoleChoices.choices,
@@ -323,7 +323,6 @@ class CattleCaseType(BaseModel):
 
 
 class TimeSlot(BaseModel):
-
     start_time = models.TimeField(
         help_text="Start time of the slot", verbose_name="Start Time"
     )
@@ -450,10 +449,6 @@ class OnlinePayment(models.Model):
         verbose_name_plural = "Online Payment Methods"
 
 
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-
-
 class Vehicle(BaseModel):
     """Production-ready Vehicle master model"""
 
@@ -566,8 +561,8 @@ class Vehicle(BaseModel):
         from django.utils import timezone
 
         return (
-            self.insurance_valid_upto
-            and self.insurance_valid_upto >= timezone.now().date()
+                self.insurance_valid_upto
+                and self.insurance_valid_upto >= timezone.now().date()
         )
 
     @property
@@ -673,8 +668,8 @@ class VehicleKiloMeterLog(BaseModel):
             )
 
         if (
-            self.opening_datetime > timezone.now()
-            or self.closing_datetime > timezone.now()
+                self.opening_datetime > timezone.now()
+                or self.closing_datetime > timezone.now()
         ):
             raise ValidationError(_("Journey datetimes cannot be in the future."))
 
@@ -702,6 +697,209 @@ class VehicleKiloMeterLog(BaseModel):
     def is_round_trip(self) -> bool:
         """Helper to check if place_of_visit suggests a round trip"""
         return (
-            "return" in self.place_of_visit.lower()
-            or "back" in self.place_of_visit.lower()
+                "return" in self.place_of_visit.lower()
+                or "back" in self.place_of_visit.lower()
         )
+
+
+class TreatmentCostConfiguration(BaseModel):
+    """
+    Configuration table for treatment costs
+    Allows dynamic cost management from frontend
+    """
+
+    # Configuration identifiers
+    membership_type = models.CharField(
+        max_length=20,
+        choices=MembershipTypeChoices.choices,
+        help_text=_("Member type")
+    )
+
+    time_slot = models.CharField(
+        max_length=20,
+        choices=TimeSlotChoices.choices,
+        help_text=_("Time slot for the visit")
+    )
+
+    animal_tag_type = models.CharField(
+        max_length=20,
+        choices=AnimalTagChoices.choices,
+        help_text=_("Whether animal is tagged or not")
+    )
+
+    treatment_type = models.CharField(
+        max_length=20,
+        choices=TreatmentTypeChoices.choices,
+        help_text=_("Type of treatment")
+    )
+
+    # Cost details
+    cost_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))],
+        help_text=_("Treatment cost amount")
+    )
+
+    # Additional configuration
+    is_active = models.BooleanField(
+        default=True,
+        help_text=_("Whether this cost configuration is active")
+    )
+
+    effective_from = models.DateField(
+        help_text=_("Date from which this cost is effective")
+    )
+
+    effective_to = models.DateField(
+        null=True,
+        blank=True,
+        help_text=_("Date until which this cost is effective (null for indefinite)")
+    )
+
+    description = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=_("Description or notes about this cost configuration")
+    )
+
+    created_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cost_configurations",
+        help_text=_("User who created this configuration")
+    )
+
+    class Meta:
+        db_table = "tbl_treatment_cost_config"
+        verbose_name = _("Treatment Cost Configuration")
+        verbose_name_plural = _("Treatment Cost Configurations")
+        ordering = ['-created_at']
+
+        # Ensure unique combinations for active records
+        unique_together = [
+            ['membership_type', 'time_slot', 'animal_tag_type', 'treatment_type', 'effective_from','locale']
+        ]
+
+        indexes = [
+            models.Index(fields=['membership_type'], name='idx_cost_membership'),
+            models.Index(fields=['time_slot'], name='idx_cost_timeslot'),
+            models.Index(fields=['treatment_type'], name='idx_cost_treatment'),
+            models.Index(fields=['is_active'], name='idx_cost_active'),
+            models.Index(fields=['effective_from', 'effective_to'], name='idx_cost_effective_dates'),
+        ]
+
+    def __str__(self):
+        return f"{self.get_membership_type_display()} - {self.get_time_slot_display()} - {self.get_treatment_type_display()} - ₹{self.cost_amount}"
+
+    @classmethod
+    def get_cost(cls, membership_type, time_slot, animal_tag_type, treatment_type, visit_date=None):
+        """
+        Get cost for given parameters
+
+        Args:
+            membership_type: 'member' or 'non_member'
+            time_slot: 'before_10am' or 'after_10am'
+            animal_tag_type: 'tagged' or 'non_tagged'
+            treatment_type: 'normal' or 'emergency' or 'operation'
+            visit_date: Date for which cost is needed (defaults to today)
+
+        Returns:
+            Decimal: Cost amount or 0 if not found
+        """
+        from django.utils import timezone
+
+        if visit_date is None:
+            visit_date = timezone.now().date()
+
+        try:
+            cost_config = cls.objects.filter(
+                membership_type=membership_type,
+                time_slot=time_slot,
+                animal_tag_type=animal_tag_type,
+                treatment_type=treatment_type,
+                is_active=True,
+                effective_from__lte=visit_date
+            ).filter(
+                models.Q(effective_to__gte=visit_date) | models.Q(effective_to__isnull=True)
+            ).order_by('-effective_from').first()
+
+            return cost_config.cost_amount if cost_config else Decimal('0.00')
+
+        except Exception as e:
+            return Decimal('0.00')
+
+    def clean(self):
+        """Validation for effective dates"""
+        from django.core.exceptions import ValidationError
+
+        if self.effective_to and self.effective_to < self.effective_from:
+            raise ValidationError(_("Effective to date cannot be before effective from date."))
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+
+class CostConfigurationHistory(BaseModel):
+    """
+    History table to track cost configuration changes
+    """
+
+    cost_configuration = models.ForeignKey(
+        TreatmentCostConfiguration,
+        on_delete=models.CASCADE,
+        related_name='history',
+        help_text=_("Related cost configuration")
+    )
+
+    action = models.CharField(
+        max_length=20,
+        choices=[
+            ('created', _('Created')),
+            ('updated', _('Updated')),
+            ('deactivated', _('Deactivated')),
+            ('deleted', _('Deleted')),
+        ],
+        help_text=_("Action performed")
+    )
+
+    old_cost_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("Previous cost amount")
+    )
+
+    new_cost_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("New cost amount")
+    )
+
+    changed_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text=_("User who made the change")
+    )
+
+    change_reason = models.TextField(
+        blank=True,
+        help_text=_("Reason for the change")
+    )
+
+    class Meta:
+        db_table = "tbl_cost_config_history"
+        verbose_name = _("Cost Configuration History")
+        verbose_name_plural = _("Cost Configuration History")
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.action} - {self.cost_configuration} - {self.created_at}"

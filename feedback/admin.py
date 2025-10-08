@@ -1,9 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
 from .models import Feedback, FeedbackComment, FeedbackLog
-from import_export.admin import ImportExportActionModelAdmin
+from import_export.admin import ImportExportModelAdmin
 from .models import FeedbackFile
 
 
@@ -25,7 +22,7 @@ from .forms.feedback_form import FeedbackAdminForm
 
 
 @admin.register(Feedback)
-class FeedbackAdmin(ImportExportActionModelAdmin):
+class FeedbackAdmin(ImportExportModelAdmin):
     form = FeedbackAdminForm
 
     list_display = (
@@ -33,6 +30,7 @@ class FeedbackAdmin(ImportExportActionModelAdmin):
         "sender",
         "assigned_to",
         "status",
+        "message",
         "priority",
         "progress",
         "rating",

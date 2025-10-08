@@ -13,7 +13,6 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
 
 GEOIP_PATH = os.path.join(BASE_DIR, "geoip")
 
-
 LOCAL_APPS = [
     "member",
     "mpms",
@@ -115,7 +114,6 @@ LOGIN_URL = "/admin/login/"
 
 LOGIN_REDIRECT_URL = "/admin/"
 
-
 LOG_DIR = os.path.join(BASE_DIR, "logs")  # Adjust this path if necessary
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -136,7 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -170,12 +167,10 @@ LOCALE_PATHS = [
 
 TIME_ZONE = "Asia/Kolkata"
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/static/"
-
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -228,7 +223,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=180),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
     "BLACKLIST_AFTER_ROTATION": True,
-    "BLACKLIST_AFTER_ROTATION": True,
     "ROTATE_REFRESH_TOKENS": True,
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
@@ -251,8 +245,6 @@ SIMPLE_JWT = {
 }
 
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
-
-from .jazzmin_settings import *
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -295,6 +287,7 @@ FEEDBACK_STATUS = [
     (RE_OPENED, "Re-opened"),
 ]
 
+from .jazzmin_settings import *
 customColorPalette = [
     {"color": "hsl(4, 90%, 58%)", "label": "Red"},
     {"color": "hsl(340, 82%, 52%)", "label": "Pink"},
@@ -437,9 +430,10 @@ CKEDITOR_5_CONFIGS = {
 }
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
 
-
 CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+CELERY_RESULT_EXTENDED = True   # allows storing progress meta
+
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
@@ -455,8 +449,8 @@ CELERY_TASK_QUEUES = {
 CELERY_TASK_ROUTES = {
     "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
     "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+    "veterinary.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
 }
-
 
 # Email Configuration
 
@@ -469,5 +463,14 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
 HRMS_DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
 
-
 SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")
+
+
+EXCEL_IMPORT_SETTINGS = {
+    'MAX_FILE_SIZE': 50 * 1024 * 1024,  # 50MB
+    'ALLOWED_EXTENSIONS': ['.xlsx', '.xls'],
+    'MAX_PREVIEW_ROWS': 100,
+    'TEMP_FILE_TIMEOUT': 3600,  # 1 hour in seconds
+    'DEFAULT_DATE_FORMAT': '%Y-%m-%d',
+    'DEFAULT_DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+}

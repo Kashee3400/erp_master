@@ -306,14 +306,7 @@ class MedicineStockManager(models.Manager):
    
     def get_queryset(self):
         return MedicineStockQuerySet(self.model, using=self._db)
-    # def get_queryset(self):
-    #     """
-    #     Override get_queryset to apply default filtering/optimization
-    #     You can customize this based on your needs
-    #     """
-    #     # Example: Always select related fields for performance
-    #     return super().get_queryset()
-        
+
     # === QUERYSET METHOD PROXIES ===
     
     def with_available_qty(self):
@@ -482,7 +475,7 @@ class MedicineStockManager(models.Manager):
         }
     
     def get_transfer_candidates(self, medicine_id, target_location_id, required_quantity):
-        """Find best candidates for stock transfer"""
+        """Find the best candidates for stock transfer"""
         return self.filter(
             medicine_id=medicine_id
         ).exclude(
@@ -800,7 +793,7 @@ class ActiveUserMedicineStockManager(UserMedicineStockManager):
     def get_queryset(self):
         return super().get_queryset().filter(
             used_quantity__lt=F('allocated_quantity'),
-            approval_status=ApprovalStatusChoices.APPROVED  # Add this
+            approval_status=ApprovalStatusChoices.APPROVED
         )
 
 

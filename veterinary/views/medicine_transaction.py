@@ -2,18 +2,18 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
 from django.utils import timezone
 from datetime import timedelta
 from ..models.stock_models import UserMedicineTransaction
-from util.response import custom_response,StandardResultsSetPagination
-from ..permissions import CanManageMedicineTransactions, CanCreateTransactions,UserHierarchyChecker
+from util.response import custom_response, StandardResultsSetPagination
+from ..permissions import CanManageMedicineTransactions, CanCreateTransactions, UserHierarchyChecker
 from ..serializers.medicine_transaction import (
     UserMedicineTransactionSerializer,
     CreateTransactionSerializer
 )
+from ..choices.choices import ActionTypeChoices
 from django.contrib.auth import get_user_model
-
 
 User = get_user_model()
 
@@ -24,7 +24,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         'user_medicine_stock__medicine_stock__medicine',
         'performed_by'
     ).all()
-    
+
     pagination_class = StandardResultsSetPagination
     permission_classes = [CanManageMedicineTransactions, CanCreateTransactions]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -49,14 +49,14 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         """
         queryset = super().get_queryset()
         user = self.request.user
-        
+
         # Superuser sees all transactions
         if user.is_superuser:
             return queryset
-        
+
         # Get all users this user can access using the hierarchy checker
         manageable_user_ids = self._get_manageable_users(user)
-        
+
         return queryset.filter(
             user_medicine_stock__user__id__in=manageable_user_ids
         )
@@ -67,24 +67,24 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         Uses the centralized UserHierarchyChecker for consistent logic.
         """
         manageable_ids = [user.id]
-        
+
         try:
             # For superusers, return all users
             if user.is_superuser:
                 return list(User.objects.values_list('id', flat=True))
-            
+
             # Get all users by checking hierarchy for each user
             all_users = User.objects.select_related('profile').exclude(id=user.id)
-            
+
             for potential_subordinate in all_users:
                 if self.hierarchy_checker.is_supervisor_of(user, potential_subordinate):
                     manageable_ids.append(potential_subordinate.id)
-        
+
         except Exception as e:
             # Log the exception if you have logging setup
             # logger.error(f"Error getting manageable users for {user}: {e}")
             pass
-        
+
         return manageable_ids
 
     def perform_create(self, serializer):
@@ -96,15 +96,15 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Enhanced create method with better error handling."""
         serializer = self.get_serializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
                 # Use perform_create to ensure performed_by is set
                 self.perform_create(serializer)
                 transaction_obj = serializer.instance
-                
+
                 response_serializer = UserMedicineTransactionSerializer(transaction_obj)
-                
+
                 return custom_response(
                     status_text="success",
                     message="Transaction created successfully",
@@ -118,7 +118,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
                     errors={"detail": str(e)},
                     status_code=status.HTTP_400_BAD_REQUEST
                 )
-        
+
         return custom_response(
             status_text="error",
             message="Validation failed",
@@ -131,7 +131,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         try:
             queryset = self.filter_queryset(self.get_queryset())
             page = self.paginate_queryset(queryset)
-            
+
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
@@ -177,7 +177,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
             queryset = self.get_queryset().filter(
                 user_medicine_stock__user=request.user
             )
-            
+
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -204,7 +204,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         try:
             last_week = timezone.now() - timedelta(days=7)
             queryset = self.get_queryset().filter(timestamp__gte=last_week)
-            
+
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -230,25 +230,26 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
         """Get transaction summary statistics for manageable users."""
         try:
             queryset = self.get_queryset()
-            
+
             summary = queryset.aggregate(
                 total_transactions=Count('id'),
                 total_allocated=Sum('quantity', filter=Q(action=ActionTypeChoices.ALLOCATED)) or 0,
                 total_used=Sum('quantity', filter=Q(action=ActionTypeChoices.USED)) or 0,
                 total_returned=Sum('quantity', filter=Q(action=ActionTypeChoices.RETURNED)) or 0,
             )
-            
+
             # Add additional summary data
             summary.update({
                 'net_consumption': (summary['total_allocated'] or 0) - (summary['total_returned'] or 0),
-                'consumption_rate': round((summary['total_used'] or 0) / max(summary['total_allocated'] or 1, 1) * 100, 2),
+                'consumption_rate': round((summary['total_used'] or 0) / max(summary['total_allocated'] or 1, 1) * 100,
+                                          2),
             })
-            
+
             # Convert None to 0 for cleaner response
             for key, value in summary.items():
                 if value is None:
                     summary[key] = 0
-            
+
             return custom_response(
                 status_text="success",
                 message="Transaction summary retrieved successfully",
@@ -274,7 +275,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
                 'id', 'username', 'first_name', 'last_name', 'email',
                 'profile__department'
             )
-            
+
             return custom_response(
                 status_text="success",
                 message="Manageable users retrieved successfully",
@@ -300,7 +301,7 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
                     message="user_id parameter is required",
                     status_code=status.HTTP_400_BAD_REQUEST
                 )
-            
+
             # Check if the requested user is manageable
             manageable_user_ids = self._get_manageable_users(request.user)
             if int(user_id) not in manageable_user_ids:
@@ -309,11 +310,11 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
                     message="You don't have permission to view this user's transactions",
                     status_code=status.HTTP_403_FORBIDDEN
                 )
-            
+
             queryset = self.get_queryset().filter(
                 user_medicine_stock__user_id=user_id
             )
-            
+
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -333,6 +334,8 @@ class UserMedicineTransactionViewSet(viewsets.ModelViewSet):
                 errors={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
 # Example API Usage:
 
 """

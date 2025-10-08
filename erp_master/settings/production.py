@@ -1,4 +1,8 @@
 from .base import *
+from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # settings.py
@@ -65,56 +69,36 @@ DATABASES = {
     },
 }
 
+def setup_log_directory():
+    """Ensure log directory exists"""
+    log_dir = getattr(settings, 'LOG_DIR', os.path.join(BASE_DIR, 'logs'))
+    os.makedirs(log_dir, exist_ok=True)
+    return log_dir
 
+
+# Call this in your Django app's ready() method or in settings
+setup_log_directory()
+
+# Logging configuration
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": True,
-    "root": {
-        "level": "DEBUG" if DEBUG else "INFO",
-        "handlers": ["console", "file"],
-    },
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(message)s",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'excel_import.log'),
         },
-        "simple": {"format": "[%(asctime)s] %(message)s"},
-    },
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
-    "handlers": {
-        "null": {
-            "level": "DEBUG",
-            "class": "logging.NullHandler",
-        },
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-        "file": {  # Added file handler for error logging
-            "level": "ERROR",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(LOG_DIR, "error.log"),
-            "formatter": "verbose",
-        },
-        "mail_admins": {
-            "level": "ERROR",
-            "class": "django.utils.log.AdminEmailHandler",
-            "filters": ["require_debug_false"],
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
         },
     },
-    "loggers": {
-        # Django loggers
-        "django": {
-            "propagate": True,
-        },
-        "django.db": {"level": "WARNING"},
-        "django.request": {
-            "handlers": ["mail_admins", "file"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "template_timings_panel": {
-            "handlers": ["null"],
+    'loggers': {
+        'your_app': {  # Replace with your app name
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
         },
     },
 }

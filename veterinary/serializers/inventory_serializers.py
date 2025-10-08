@@ -178,6 +178,7 @@ class UserMedicineStockSerializer(serializers.ModelSerializer):
             "allocated_by_name",
             "sync",
             "is_deleted",
+            "is_active",
             "locale",
         ]
         read_only_fields = ["id","allocation_date"]
@@ -195,6 +196,7 @@ class UserMedicineStockCreateSerializer(serializers.ModelSerializer):
         fields = [
             "user",
             "medicine_stock",
+            "approval_status",
             "allocated_quantity",
             "remarks",
             "min_threshold",
@@ -226,6 +228,7 @@ class UserMedicineStockCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Set allocated_by to current user
         validated_data["allocated_by"] = self.context["request"].user
+        validated_data["updated_by"] = self.context["request"].user
         return super().create(validated_data)
 
 

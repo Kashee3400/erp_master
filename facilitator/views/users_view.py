@@ -12,53 +12,16 @@ from ..serializers.users_serializers import (
 )
 
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.exceptions import ValidationError
+from util.response import StandardResultsSetPagination, custom_response
+
+from ..serializers.profile_serializer import UserProfile, UserProfileSerializer
+from error_formatter import *
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class CustomPageNumberPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
-
-
-def custom_response(status_text, data=None, message=None, status_code=200, errors=None):
-    return Response(
-        {
-            "status": status_text,
-            "message": message or "Success",
-            "data": data,
-            "errors": errors,
-        },
-        status=status_code,
-    )
-
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-    def get_paginated_response(self, data):
-        total_items = self.page.paginator.count
-        current_page = self.page.number
-        per_page = self.page.paginator.per_page
-        total_pages = ceil(total_items / int(per_page))
-
-        return custom_response(
-            status_text="success",
-            message="Success",
-            data={
-                "count": total_items,
-                "next": self.get_next_link(),
-                "previous": self.get_previous_link(),
-                "current_page": current_page,
-                "total_pages": total_pages,
-                "page_size": int(per_page),
-                "has_next": self.page.has_next(),
-                "has_previous": self.page.has_previous(),
-                "results": data,
-            },
-            status_code=status.HTTP_200_OK,
-        )
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -68,7 +31,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
+    pagination_class = StandardResultsSetPagination
     filterset_fields = ["is_active", "is_staff", "groups", "is_superuser"]
     search_fields = ["username", "email", "first_name", "last_name"]
     ordering_fields = ["username", "email", "date_joined", "last_login"]
@@ -90,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
         ids = request.data.get("ids", [])
         user = self.request.user
         if not (
-            (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
+                (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
         ):
             return custom_response(
                 status_text="error",
@@ -123,30 +86,6 @@ class UserViewSet(viewsets.ModelViewSet):
             status_code=status.HTTP_200_OK,
         )
 
-    def get_paginated_response(self, data):
-        page = self.paginator.page
-        page_size = self.request.GET.get("page_size", self.paginator.page_size)
-        total_items = page.paginator.count
-        current_page = page.number
-        total_pages = ceil(total_items / int(page_size))
-
-        return custom_response(
-            status_text="success",
-            message="Users fetched",
-            data={
-                "count": total_items,
-                "next": self.paginator.get_next_link(),
-                "previous": self.paginator.get_previous_link(),
-                "current_page": current_page,
-                "total_pages": total_pages,
-                "page_size": int(page_size),
-                "has_next": page.has_next(),
-                "has_previous": page.has_previous(),
-                "results": data,
-            },
-            status_code=status.HTTP_200_OK,
-        )
-
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(user)
@@ -164,7 +103,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 status_code=status.HTTP_201_CREATED,
             )
 
-        except ValidationError as e:
+        except DjangoValidationError as e:
             flat_message = (
                 "; ".join(
                     f"{field}: {', '.join(map(str, errors))}"
@@ -239,6 +178,193 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_destroy(user)
         return custom_response("success", message="User deleted", data=None)
 
+    @action(detail=False, methods=['get'])
+    def stats(self, request):
+        """
+        Get comprehensive user statistics
+        """
+        total_users = self.get_queryset().count()
+        active_users = self.get_queryset().filter(is_active=True).count()
+        inactive_users = self.get_queryset().filter(is_active=False).count()
+        staff_users = self.get_queryset().filter(is_staff=True).count()
+        superusers = self.get_queryset().filter(is_superuser=True).count()
+
+        # Users with groups
+        users_with_groups = self.get_queryset().filter(groups__isnull=False).distinct().count()
+        users_without_groups = total_users - users_with_groups
+
+        return custom_response(status_text="success", data={
+            'total_users': total_users,
+            'active_users': active_users,
+            'inactive_users': inactive_users,
+            'staff_users': staff_users,
+            'superusers': superusers,
+            'users_with_groups': users_with_groups,
+            'users_without_groups': users_without_groups,
+            'activity_rate': round((active_users / total_users * 100), 2) if total_users > 0 else 0
+        }, message="Stats fetched", status_code=status.HTTP_200_OK
+                               )
+
+    @action(detail=False, methods=['get'])
+    def registration_stats(self, request):
+        """
+        Get user registration statistics by time periods
+        """
+        now = timezone.now()
+        today = now.date()
+
+        # Registration counts
+        today_registrations = self.get_queryset().filter(
+            date_joined__date=today
+        ).count()
+
+        week_ago = now - timedelta(days=7)
+        week_registrations = self.get_queryset().filter(
+            date_joined__gte=week_ago
+        ).count()
+
+        month_ago = now - timedelta(days=30)
+        month_registrations = self.get_queryset().filter(
+            date_joined__gte=month_ago
+        ).count()
+
+        year_ago = now - timedelta(days=365)
+        year_registrations = self.get_queryset().filter(
+            date_joined__gte=year_ago
+        ).count()
+
+        return custom_response(
+            status_text="success",
+            status_code=status.HTTP_200_OK,
+            message="User registration stats fetched",
+            data={
+                'today': today_registrations,
+                'last_7_days': week_registrations,
+                'last_30_days': month_registrations,
+                'last_365_days': year_registrations
+            }
+        )
+
+    @action(detail=False, methods=['get'])
+    def login_stats(self, request):
+        """
+        Get user login activity statistics
+        """
+        now = timezone.now()
+
+        # Users who logged in recently
+        day_ago = now - timedelta(days=1)
+        week_ago = now - timedelta(days=7)
+        month_ago = now - timedelta(days=30)
+
+        logged_in_today = self.get_queryset().filter(
+            last_login__gte=day_ago
+        ).count()
+
+        logged_in_week = self.get_queryset().filter(
+            last_login__gte=week_ago
+        ).count()
+
+        logged_in_month = self.get_queryset().filter(
+            last_login__gte=month_ago
+        ).count()
+
+        never_logged_in = self.get_queryset().filter(
+            last_login__isnull=True
+        ).count()
+
+        return custom_response(
+            status_text="success",
+            status_code=status.HTTP_200_OK,
+            message="User login activity stats fetched",
+            data={
+                'logged_in_last_24h': logged_in_today,
+                'logged_in_last_7_days': logged_in_week,
+                'logged_in_last_30_days': logged_in_month,
+                'never_logged_in': never_logged_in
+            }
+        )
+
+    @action(detail=False, methods=['get'])
+    def group_stats(self, request):
+        """
+        Get statistics about user groups
+        """
+        # Group distribution
+        group_stats = self.get_queryset().values('groups__name').annotate(
+            user_count=Count('id')
+        ).filter(groups__name__isnull=False).order_by('-user_count')
+
+        # Users per group count
+        users_by_group_count = self.get_queryset().annotate(
+            group_count=Count('groups')
+        ).values('group_count').annotate(
+            user_count=Count('id')
+        ).order_by('group_count')
+
+        group_data = {
+            'groups_distribution': list(group_stats),
+            'users_by_group_count': list(users_by_group_count)
+        }
+
+        return custom_response(
+            status_text="success",
+            data=group_data,
+            message="Group statistics retrieved successfully"
+        )
+
+    @action(detail=False, methods=['get'])
+    def monthly_registration_trend(self, request):
+        """
+        Get monthly registration trend for the last 12 months
+        """
+
+        now = timezone.now()
+        year_ago = now - timedelta(days=365)
+
+        monthly_stats = self.get_queryset().filter(
+            date_joined__gte=year_ago
+        ).extra(
+            select={'month': 'EXTRACT(month FROM date_joined)', 'year': 'EXTRACT(year FROM date_joined)'}
+        ).values('month', 'year').annotate(
+            count=Count('id')
+        ).order_by('year', 'month')
+
+        return custom_response(
+            status_text="success",
+            data=list(monthly_stats),
+            message="Registration trend retrieved successfully"
+        )
+
+    @action(detail=False, methods=['get'])
+    def user_type_breakdown(self, request):
+        """
+        Get breakdown of different user types
+        """
+        breakdown = {
+            'regular_users': self.get_queryset().filter(
+                is_staff=False, is_superuser=False
+            ).count(),
+            'staff_only': self.get_queryset().filter(
+                is_staff=True, is_superuser=False
+            ).count(),
+            'superusers': self.get_queryset().filter(
+                is_superuser=True
+            ).count(),
+            'active_regular': self.get_queryset().filter(
+                is_active=True, is_staff=False, is_superuser=False
+            ).count(),
+            'inactive_regular': self.get_queryset().filter(
+                is_active=False, is_staff=False, is_superuser=False
+            ).count()
+        }
+        return custom_response(
+            status_text="success",
+            data=breakdown,
+            message="Breakdown retrieved successfully",
+            status_code=status.HTTP_200_OK
+        )
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
@@ -305,7 +431,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         ids = request.data.get("ids", [])
         user = self.request.user
         if not (
-            (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
+                (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
         ):
             return custom_response(
                 status_text="error",
@@ -460,31 +586,50 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
 
-from ..serializers.profile_serializer import UserProfile, UserProfileSerializer
-from error_formatter import *
-from rest_framework.parsers import MultiPartParser, FormParser
-
-
 class UserProfileViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import SearchFilter, OrderingFilter
-
     pagination_class = StandardResultsSetPagination
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
-    lookup_field = "pk"
-    filter_backends = [
-        DjangoFilterBackend,
-        SearchFilter,
-        OrderingFilter,
-    ]
-    filterset_fields = ["department", "user__id", "is_verified", "designation"]
+    lookup_field = "user_id"  # this will appear in URL: /user-profiles/<user_id>/
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["department", "user", "is_verified", "designation"]
     search_fields = [
         "phone_number",
         "user__username",
         "user__first_name",
         "user__email",
     ]
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        user_id = self.kwargs.get(self.lookup_field)
+        return get_object_or_404(queryset, user__id=user_id)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return custom_response(
+                status_text="success",
+                status_code=status.HTTP_200_OK,
+                message="User profile retrieved successfully.",
+                data=serializer.data,
+            )
+
+        except serializers.ValidationError as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=simplify_errors(exc.detail),
+            )
+        except Exception as exc:
+            return custom_response(
+                status_text="error",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=format_exception(str(exc)),
+            )
 
     def get_queryset(self):
         queryset = UserProfile.objects.select_related("user").all()
@@ -523,30 +668,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page or queryset, many=True)
         return self.get_paginated_response(serializer.data)
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        try:
-            instance = get_object_or_404(self.get_queryset(), pk=pk)
-            serializer = self.get_serializer(instance)
-            return custom_response(
-                status_text="success",
-                status_code=status.HTTP_200_OK,
-                message="User profile retrieved successfully.",
-                data=serializer.data,
-            )
-        except serializers.ValidationError as exc:
-            return custom_response(
-                status_text="error",
-                status_code=status.HTTP_400_BAD_REQUEST,
-                message=simplify_errors(exc.detail),
-            )
-
-        except Exception as exc:
-            return custom_response(
-                status_text="error",
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                message=format_exception(str(exc)),
-            )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -681,7 +802,7 @@ class SendOTPView(APIView):
                     status_text="error",
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     message=f"Failed to send email",
-                    errors= str(e)
+                    errors=str(e)
                 )
 
             return custom_response(
