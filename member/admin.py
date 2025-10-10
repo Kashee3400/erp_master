@@ -131,7 +131,7 @@ class SahayakFeedbackAdmin(ImportExportModelAdmin):
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_date', 'is_published')
-    list_filter = ('is_published', 'published_date')
+    list_display = ('title', 'author','module', 'published_date', 'is_published')
+    list_filter = ('is_published', 'published_date','module')
     search_fields = ('title', 'author', 'tags')
     prepopulated_fields = {'slug': ('title',)}

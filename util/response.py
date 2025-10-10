@@ -8,8 +8,7 @@ from django.core.exceptions import (
     ValidationError as DjangoValidationError,
     ObjectDoesNotExist,
 )
-from django.http import Http404
-from django.db import IntegrityError, DatabaseError, transaction
+from django.db import IntegrityError, DatabaseError
 from rest_framework.exceptions import (
     APIException,
     ValidationError as DRFValidationError,
@@ -22,11 +21,13 @@ logger = logging.getLogger(__name__)
 
 from math import ceil
 
-
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
+
+    # Optional: Attach extra data externally before calling pagination
+    extra_data = {}
 
     def get_paginated_response(self, data):
         total_items = self.page.paginator.count
@@ -34,23 +35,27 @@ class StandardResultsSetPagination(PageNumberPagination):
         per_page = self.page.paginator.per_page
         total_pages = ceil(total_items / int(per_page))
 
+        base_response = {
+            "count": total_items,
+            "next": self.get_next_link(),
+            "previous": self.get_previous_link(),
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "page_size": int(per_page),
+            "has_next": self.page.has_next(),
+            "has_previous": self.page.has_previous(),
+            "results": data,
+        }
+
+        # Merge extra dynamic data if any
+        base_response.update(self.extra_data)
+
         return custom_response(
             status_text="success",
             message="Success",
-            data={
-                "count": total_items,
-                "next": self.get_next_link(),
-                "previous": self.get_previous_link(),
-                "current_page": current_page,
-                "total_pages": total_pages,
-                "page_size": int(per_page),
-                "has_next": self.page.has_next(),
-                "has_previous": self.page.has_previous(),
-                "results": data,
-            },
+            data=base_response,
             status_code=status.HTTP_200_OK,
         )
-
 
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
@@ -235,8 +240,10 @@ class ExceptionHandlerMixin:
 
 class ResponseMixin:
     """Mixin for standardized API responses"""
-    
-    def success_response(self, data=None, message="Success", status_code=status.HTTP_200_OK):
+
+    def success_response(
+        self, data=None, message="Success", status_code=status.HTTP_200_OK
+    ):
         """Return standardized success response"""
         return custom_response(
             data=data,
@@ -244,8 +251,10 @@ class ResponseMixin:
             status_code=status_code,
             message=message,
         )
-    
-    def error_response(self, message="Error", status_code=status.HTTP_400_BAD_REQUEST, errors=None):
+
+    def error_response(
+        self, message="Error", status_code=status.HTTP_400_BAD_REQUEST, errors=None
+    ):
         """Return standardized error response"""
         return custom_response(
             data=errors,
