@@ -146,7 +146,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
             QuerySet: A queryset of BillingMemberDetail objects filtered by the member code.
         """
         if not MemberMaster.objects.filter(
-                mobile_no=self.request.user.username, is_active=True
+            mobile_no=self.request.user.username, is_active=True
         ).exists():
             return Response(
                 {
@@ -158,7 +158,9 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        member = MemberMaster.objects.get(mobile_no=self.request.user.username, is_active=True)
+        member = MemberMaster.objects.get(
+            mobile_no=self.request.user.username, is_active=True
+        )
         from_date_str = self.request.GET.get("from_date")
         to_date_str = self.request.GET.get("to_date")
 
@@ -192,11 +194,11 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
             serializer = self.get_serializer(instance)
             local_sale_txns = []
             if (
-                    BillingMemberMaster.objects.using("sarthak_kashee")
-                            .filter(
-                        billing_member_master_code=instance.billing_member_master_code.billing_member_master_code
-                    )
-                            .exists()
+                BillingMemberMaster.objects.using("sarthak_kashee")
+                .filter(
+                    billing_member_master_code=instance.billing_member_master_code.billing_member_master_code
+                )
+                .exists()
             ):
                 billing_master_instance = BillingMemberMaster.objects.using(
                     "sarthak_kashee"
@@ -253,11 +255,13 @@ class MppCollectionAggregationListView(generics.ListAPIView):
         queryset = MppCollectionAggregation.objects.all()
 
         if not MemberMaster.objects.filter(
-                mobile_no=self.request.user.username
+            mobile_no=self.request.user.username
         ).exists():
             return MppCollectionAggregation.objects.none()
 
-        member = MemberMaster.objects.filter(mobile_no=self.request.user.username, is_active=True).last()
+        member = MemberMaster.objects.filter(
+            mobile_no=self.request.user.username, is_active=True
+        ).last()
         year = self.request.GET.get("year")
         queryset = queryset.filter(member_code=member.member_code).order_by(
             "-created_at"
@@ -348,7 +352,9 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
 
     def get_queryset(self):
         mobile_no = self.request.user.username
-        member = MemberMaster.objects.filter(mobile_no=mobile_no, is_active=True).first()
+        member = MemberMaster.objects.filter(
+            mobile_no=mobile_no, is_active=True
+        ).first()
 
         if not member:
             return MppCollectionAggregation.objects.none()
@@ -391,7 +397,9 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
             duplicate_count = sum(item["count"] - 1 for item in duplicate_periods)
 
             total_days_expr = Sum("no_of_pouring_days") or 0
-            effective_days = (queryset.aggregate(days=total_days_expr)["days"] or 0) - duplicate_count
+            effective_days = (
+                queryset.aggregate(days=total_days_expr)["days"] or 0
+            ) - duplicate_count
 
             totals = queryset.aggregate(
                 total_qty=Sum("qty"),
@@ -405,10 +413,9 @@ class NewMppCollectionAggregationListView(generics.ListAPIView):
                 ),
                 total_amount=Sum("amount"),
             )
-            totals.update({
-                "total_days": effective_days,
-                "total_shift": effective_days * 2
-            })
+            totals.update(
+                {"total_days": effective_days, "total_shift": effective_days * 2}
+            )
 
             # Serialize and respond
             serializer = self.get_serializer(paginated_queryset, many=True)
@@ -439,6 +446,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
     """
     API endpoint for fetching other dashboard data.
     """
+
     serializer_class = MppCollectionSerializer
     permission_classes = [AllowAny]
 
@@ -446,7 +454,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
         today = timezone.now().date()
 
         # Fetch date parameter and validate format
-        date_str = request.query_params.get('date', None)
+        date_str = request.query_params.get("date", None)
         provided_date = self.validate_date(date_str, today)
         if isinstance(provided_date, Response):
             return provided_date
@@ -455,39 +463,47 @@ class MppCollectionDetailView(generics.GenericAPIView):
         cache_key_member = f"member_{username}"
         member = cache.get(cache_key_member)
         if member is None:
-            member = MemberMaster.objects.filter(mobile_no=username, is_active=True).values('member_code').last()
+            member = (
+                MemberMaster.objects.filter(mobile_no=username, is_active=True)
+                .values("member_code")
+                .last()
+            )
             cache.set(cache_key_member, member, timeout=3600)
 
         if not member:
-            return Response({
-                "status": 400,
-                "message": "No member found on this mobile number",
-                "data": {}
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": 400,
+                    "message": "No member found on this mobile number",
+                    "data": {},
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        member_code = member['member_code']
+        member_code = member["member_code"]
         start_date, end_date = self.get_fiscal_year_range(provided_date)
 
         # Cache key for collections on provided date
         cache_key_date = f"mpp_collection_{member_code}_{provided_date}"
         date_queryset = cache.get(cache_key_date)
         if date_queryset is None:
-            date_queryset = list(MppCollection.objects.filter(
-                collection_date__date=provided_date, member_code=member_code
-            ))
+            date_queryset = list(
+                MppCollection.objects.filter(
+                    collection_date__date=provided_date, member_code=member_code
+                )
+            )
             cache.set(cache_key_date, date_queryset, timeout=3600)
         cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
         fiscal_data = cache.get(cache_key_fy)
         if fiscal_data is None:
             aggregated_data = MppCollection.objects.filter(
-                collection_date__range=(start_date, end_date),
-                member_code=member_code
-            ).annotate(date_only=TruncDate('collection_date'))
+                collection_date__range=(start_date, end_date), member_code=member_code
+            ).annotate(date_only=TruncDate("collection_date"))
 
             fiscal_data = aggregated_data.aggregate(
-                total_days=Count('date_only', distinct=True),
-                total_qty=Sum('qty', default=0),
-                total_payment=Sum('amount', default=0)
+                total_days=Count("date_only", distinct=True),
+                total_qty=Sum("qty", default=0),
+                total_payment=Sum("amount", default=0),
             )
             cache.set(cache_key_fy, fiscal_data, timeout=3600)
 
@@ -499,7 +515,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
             "data": {
                 "dashboard_data": date_serializer.data,
                 "dashboard_fy_data": fiscal_data,
-            }
+            },
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -508,20 +524,25 @@ class MppCollectionDetailView(generics.GenericAPIView):
         current_year = provided_date.year
         start_year = current_year - 1 if provided_date.month < 4 else current_year
         start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
-        end_date = timezone.make_aware(timezone.datetime(start_year + 1, 3, 31, 23, 59, 59))
+        end_date = timezone.make_aware(
+            timezone.datetime(start_year + 1, 3, 31, 23, 59, 59)
+        )
         return start_date, end_date
 
     def validate_date(self, date_str, default_date):
         if not date_str:
             return default_date
         try:
-            return timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+            return timezone.datetime.strptime(date_str, "%Y-%m-%d").date()
         except ValueError:
-            return Response({
-                "status": 400,
-                "message": "Date must be in YYYY-MM-DD format",
-                "data": {}
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": 400,
+                    "message": "Date must be in YYYY-MM-DD format",
+                    "data": {},
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class MemberShareFinalInfoView(APIView):
@@ -529,7 +550,9 @@ class MemberShareFinalInfoView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        member = MemberMaster.objects.filter(mobile_no=self.request.user.username, is_active=True)
+        member = MemberMaster.objects.filter(
+            mobile_no=self.request.user.username, is_active=True
+        )
         if not member.exists():
             return Response(
                 {
@@ -541,8 +564,8 @@ class MemberShareFinalInfoView(APIView):
         first_member = member.first()
         records = MemberShareFinalInfo.objects.filter(to_code=first_member.member_code)
         total_sum = (
-                records.aggregate(total_no_of_share=Sum("no_of_share"))["total_no_of_share"]
-                or 0
+            records.aggregate(total_no_of_share=Sum("no_of_share"))["total_no_of_share"]
+            or 0
         )
         serializer = MemberShareFinalInfoSerializer(records, many=True)
         response_data = {

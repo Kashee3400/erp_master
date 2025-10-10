@@ -8,7 +8,8 @@ from django.core.exceptions import (
     ValidationError as DjangoValidationError,
     ObjectDoesNotExist,
 )
-from django.db import IntegrityError, DatabaseError
+from django.http import Http404
+from django.db import IntegrityError, DatabaseError, transaction
 from rest_framework.exceptions import (
     APIException,
     ValidationError as DRFValidationError,
@@ -20,6 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from math import ceil
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -56,6 +58,7 @@ class StandardResultsSetPagination(PageNumberPagination):
             data=base_response,
             status_code=status.HTTP_200_OK,
         )
+
 
 def custom_response(status_text, data=None, message=None, errors=None, status_code=200):
     return Response(
