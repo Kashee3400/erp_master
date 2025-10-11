@@ -181,7 +181,6 @@ class VerifyOTPView(generics.GenericAPIView):
 class GenerateSahayakOTPView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [OTPThrottle]
-    throttle_scope = "otp"
 
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get("phone_number")
