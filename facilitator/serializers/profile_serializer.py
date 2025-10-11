@@ -8,6 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     avatar = serializers.ImageField(required=False, allow_null=True)
     reportee_count = serializers.SerializerMethodField()
+
     class Meta:
         model = UserProfile
         fields = [
@@ -34,8 +35,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
         first_name = obj.user.first_name or ""
         last_name = obj.user.last_name or ""
         full_name = f"{first_name} {last_name}".strip()
-
         return full_name if full_name else obj.user.username
 
-    def get_reportee_count(self,obj):
+    def get_reportee_count(self, obj):
         return 0
+
+    def to_representation(self, instance):
+        """Override default representation to ensure no null values are returned."""
+        data = super().to_representation(instance)
+
+        # Define default values for any potentially null fields
+        defaults = {
+            "avatar": "",
+            "salutation": "",
+            "address": "",
+            "designation": "",
+            "phone_number": "",
+            "email": "",
+            "department": "",
+            "name": "",
+        }
+
+        # Replace None values with defaults
+        for field, default in defaults.items():
+            if data.get(field) is None:
+                data[field] = default
+
+        return data
