@@ -14,10 +14,12 @@ from django.contrib.auth.models import update_last_login
 from  ..models.user_profile_model import UserProfile
 
 User = get_user_model()
-
+from member.throttle import OTPThrottle
 
 class GenerateOTPView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OTPThrottle]
+
 
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get("phone_number")

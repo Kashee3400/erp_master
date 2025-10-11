@@ -4,7 +4,6 @@ from rest_framework_simplejwt.token_blacklist.models import (
     BlacklistedToken,
     OutstandingToken,
 )
-from .throttle import OTPRateThrottle
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 
@@ -17,10 +16,13 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 
+from .throttle import OTPThrottle
+
+
 class GenerateOTPView(APIView):
     authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
-    throttle_classes = [OTPRateThrottle]
+    throttle_classes = [OTPThrottle]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -178,6 +180,8 @@ class VerifyOTPView(generics.GenericAPIView):
 
 class GenerateSahayakOTPView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OTPThrottle]
+    throttle_scope = "otp"
 
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get("phone_number")
@@ -295,6 +299,7 @@ class GenerateSahayakOTPView(APIView):
 #         }
 #         return Response(response, status=status.HTTP_200_OK)
 
+
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -313,7 +318,10 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
         if not otp:
             return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": "Invalid OTP. Try again."},
+                {
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": "Invalid OTP. Try again.",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

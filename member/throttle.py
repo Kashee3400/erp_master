@@ -1,5 +1,6 @@
-from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
 
 
-class OTPRateThrottle(AnonRateThrottle):
+class OTPThrottle(ScopedRateThrottle):
     scope = "otp"
+    rate = "5/minute"
