@@ -7,6 +7,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from facilitator.models.user_profile_model import UserProfile
+
 logger = logging.getLogger(__name__)
 
 
@@ -1724,8 +1725,8 @@ class NewsViewSet(viewsets.ModelViewSet):
     filterset_fields = ["is_published", "is_read", "module"]
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
-    authentication_classes = [ApiKeyAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -2221,117 +2222,6 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
             }
         )
 
-
-# TODO: after deployment this code should be reomved
-class SahayakDashboardAPI(APIView):
-    # authentication_classes = [ApiKeyAuthentication]
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        created_date = request.GET.get("date", timezone.now().date())
-        mpp_code = request.GET.get("mpp_code")
-        shift_code = request.GET.get("shift_code")
-
-        if not mpp_code:
-            return Response(
-                {"status": "error", "message": "Please provide the MPP code"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Caching: Store and retrieve results from cache
-        cache_key = f"sahayak_dashboard_{mpp_code}_{shift_code}_{created_date}"
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            return Response(cached_data, status=status.HTTP_200_OK)
-
-        # Use `.values_list()` to fetch only required field
-        mpp_ref_code = (
-            MppCollectionReferences.objects.filter(
-                collection_date__date=created_date,
-                mpp_code=mpp_code,
-                shift_code=shift_code,
-            )
-            .values_list("mpp_collection_references_code", flat=True)
-            .first()
-        )
-
-        if not mpp_ref_code:
-            return Response(
-                {"status": "error", "message": "No MPP reference found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        # Optimize aggregations
-        mpp_collection_agg = self.get_aggregates(
-            MppCollection, "qty", "fat", "snf", references=mpp_ref_code
-        )
-        actual_agg_data = self.get_aggregates(
-            RmrdMilkCollection,
-            "qty",
-            "fat",
-            "snf",
-            collection_date__date=created_date,
-            module_code=mpp_code,
-            shift_code__shift_code=shift_code,
-        )
-        dispatches = self.get_aggregates(
-            MppDispatchTxn,
-            "dispatch_qty",
-            "fat",
-            "snf",
-            mpp_dispatch_code__mpp_code=mpp_code,
-            mpp_dispatch_code__from_date__date=created_date,
-            mpp_dispatch_code__from_shift=shift_code,
-        )
-
-        # Construct response data
-        response_data = {
-            "status": 200,
-            "message": _("Data Retrieved"),
-            "data": {
-                "composite": self.format_aggregates(mpp_collection_agg),
-                "actual": self.format_aggregates(actual_agg_data),
-                "dispatch": self.format_aggregates(dispatches),
-            },
-        }
-
-        # Store in cache for 5 minutes
-        cache.set(cache_key, response_data, timeout=300)
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    def get_aggregates(self, model, qty_field, fat_field, snf_field, **filters):
-        """
-        Optimized function to compute aggregations efficiently.
-        """
-        aggregation = model.objects.filter(**filters).aggregate(
-            qty=Sum(qty_field),
-            fat=Coalesce(
-                Cast(
-                    Sum(F(qty_field) * F(fat_field), output_field=FloatField()),
-                    FloatField(),
-                )
-                / Cast(Sum(qty_field), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(
-                    Sum(F(qty_field) * F(snf_field), output_field=FloatField()),
-                    FloatField(),
-                )
-                / Cast(Sum(qty_field), FloatField()),
-                0.0,
-            ),
-        )
-        return aggregation
-
-    def format_aggregates(self, aggregates):
-        """
-        Rounds float values for better readability.
-        """
-        return {
-            key: round(value, 2) if value is not None else 0.0
-            for key, value in aggregates.items()
-        }
 
 
 class NewSahayakDashboardAPI(APIView):
