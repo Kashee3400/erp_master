@@ -6,7 +6,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
 )
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
-
+from facilitator.models.user_profile_model import UserProfile
 logger = logging.getLogger(__name__)
 
 
