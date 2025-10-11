@@ -338,12 +338,17 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         # --- 3️⃣ Get or create user profile
         profile, _ = UserProfile.objects.get_or_create(
             user=user,
-            department=UserProfile.Department.SAHAYAK,
-            phone_number=user.username,
-            designation="sahayak",
-            is_verified=True,
-            avatar="",
-            address="",
+            defaults={
+                "department": UserProfile.Department.SAHAYAK,
+                "phone_number": user.username,
+                "designation": "Sahayak",
+                "is_verified": True,
+                "avatar": "",
+                "address": "",
+                "mpp_code": "",
+                "is_email_verified": False,
+                "salutation": "",
+            },
         )
 
         # --- 4️⃣ Ensure MPP Code exists
