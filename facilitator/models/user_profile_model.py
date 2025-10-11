@@ -19,6 +19,8 @@ class UserProfile(models.Model):
         VETERINARIAN = "veterinarian", _("Veterinarian")
         MAIT = "mait", _("MAIT")
         DOCTOR = "doctor", _("Doctor")
+        SAHAYAK = "sahayak", _("Sahayak")
+        MEMBER = "member", _("Member")
 
     user = models.OneToOneField(
         User,

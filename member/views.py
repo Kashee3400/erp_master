@@ -4,6 +4,8 @@ from rest_framework_simplejwt.token_blacklist.models import (
     BlacklistedToken,
     OutstandingToken,
 )
+from .throttle import OTPRateThrottle
+from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 
 logger = logging.getLogger(__name__)
@@ -16,7 +18,9 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class GenerateOTPView(APIView):
+    authentication_classes = [ApiKeyAuthentication]
     permission_classes = [AllowAny]
+    throttle_classes = [OTPRateThrottle]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -216,6 +220,81 @@ class GenerateSahayakOTPView(APIView):
         )
 
 
+# class VerifySahayakOTPView(generics.GenericAPIView):
+#     serializer_class = VerifyOTPSerializer
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [AllowAny]
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         phone_number = serializer.validated_data["phone_number"]
+#         otp_value = serializer.validated_data["otp"]
+#         device_id = request.data.get("device_id")
+#         module = request.data.get("module", "sahayak")
+
+#         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
+#         if not otp:
+#             return Response(
+#                 {
+#                     "status": status.HTTP_400_BAD_REQUEST,
+#                     "message": "Invalid OTP. Try again.",
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         if not otp.is_valid():
+#             otp.delete()
+#             return Response(
+#                 {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+#             # Ensure no duplicate device exists before associating
+#         user, _ = User.objects.get_or_create(username=phone_number)
+
+#         # Step 1: Try fetching existing device object
+#         existing_device_obj = UserDevice.objects.filter(user=user).first()
+
+#         # Step 2: Retain mpp_code before deletion
+#         existing_mpp_code = (
+#             existing_device_obj.mpp_code if existing_device_obj else None
+#         )
+
+#         # Step 3: Handle missing mpp_code
+#         if existing_mpp_code is None:
+#             return Response(
+#                 {
+#                     "status": status.HTTP_400_BAD_REQUEST,
+#                     "message": "MPP code not assigned. Contact support.",
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         # Step 4: Clean up any device conflicts
+#         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
+
+#         # Step 5: Create new device with retained mpp_code
+#         device = UserDevice.objects.create(
+#             user=user, device=device_id, module=module, mpp_code=existing_mpp_code
+#         )
+
+#         # Step 6: Generate tokens and send response
+#         refresh = RefreshToken.for_user(user)
+
+#         # After successful authentication
+#         update_last_login(None, user)
+
+#         response = {
+#             "status": status.HTTP_200_OK,
+#             "phone_number": user.username,
+#             "message": "Authentication successful",
+#             "access_token": str(refresh.access_token),
+#             "refresh_token": str(refresh),
+#             "device_id": device.device,
+#             "mpp_code": device.mpp_code,
+#         }
+#         return Response(response, status=status.HTTP_200_OK)
+
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -224,18 +303,17 @@ class VerifySahayakOTPView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         phone_number = serializer.validated_data["phone_number"]
         otp_value = serializer.validated_data["otp"]
         device_id = request.data.get("device_id")
         module = request.data.get("module", "sahayak")
 
+        # --- 1️⃣ Validate OTP
         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
         if not otp:
             return Response(
-                {
-                    "status": status.HTTP_400_BAD_REQUEST,
-                    "message": "Invalid OTP. Try again.",
-                },
+                {"status": status.HTTP_400_BAD_REQUEST, "message": "Invalid OTP. Try again."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -245,19 +323,15 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-            # Ensure no duplicate device exists before associating
+
+        # --- 2️⃣ Get or create user
         user, _ = User.objects.get_or_create(username=phone_number)
 
-        # Step 1: Try fetching existing device object
-        existing_device_obj = UserDevice.objects.filter(user=user).first()
+        # --- 3️⃣ Get or create user profile
+        profile, _ = UserProfile.objects.get_or_create(user=user)
 
-        # Step 2: Retain mpp_code before deletion
-        existing_mpp_code = (
-            existing_device_obj.mpp_code if existing_device_obj else None
-        )
-
-        # Step 3: Handle missing mpp_code
-        if existing_mpp_code is None:
+        # --- 4️⃣ Ensure MPP Code exists
+        if not profile.mpp_code:
             return Response(
                 {
                     "status": status.HTTP_400_BAD_REQUEST,
@@ -266,30 +340,34 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Step 4: Clean up any device conflicts
+        # --- 5️⃣ Clean up conflicting devices (same user or same device_id)
         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
 
-        # Step 5: Create new device with retained mpp_code
+        # --- 6️⃣ Register new device (MPP code now comes from profile)
         device = UserDevice.objects.create(
-            user=user, device=device_id, module=module, mpp_code=existing_mpp_code
+            user=user,
+            device=device_id,
+            module=module,
+            mpp_code=profile.mpp_code,  # ← retained from profile
         )
 
-        # Step 6: Generate tokens and send response
+        # --- 7️⃣ Generate JWT tokens
         refresh = RefreshToken.for_user(user)
-
-        # After successful authentication
         update_last_login(None, user)
 
-        response = {
-            "status": status.HTTP_200_OK,
-            "phone_number": user.username,
-            "message": "Authentication successful",
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh),
-            "device_id": device.device,
-            "mpp_code": device.mpp_code,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        # --- 8️⃣ Respond
+        return Response(
+            {
+                "status": status.HTTP_200_OK,
+                "phone_number": user.username,
+                "message": "Authentication successful",
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh),
+                "device_id": device.device,
+                "mpp_code": profile.mpp_code,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 def send_sms_api(mobile, otp):

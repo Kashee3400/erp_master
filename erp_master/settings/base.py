@@ -207,8 +207,9 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",  # Throttling for anonymous users
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": "1000/day",  # Allow 1000 requests per user per day
-        "anon": "1000/day",  # Allow 100 requests per anonymous user per day
+        "user": "1000/day",
+        "anon": "10000/day",
+        "otp": "5/minute",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -288,6 +289,7 @@ FEEDBACK_STATUS = [
 ]
 
 from .jazzmin_settings import *
+
 customColorPalette = [
     {"color": "hsl(4, 90%, 58%)", "label": "Red"},
     {"color": "hsl(340, 82%, 52%)", "label": "Pink"},
@@ -432,7 +434,7 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
 
 CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
-CELERY_RESULT_EXTENDED = True   # allows storing progress meta
+CELERY_RESULT_EXTENDED = True
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -467,10 +469,10 @@ SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")
 
 
 EXCEL_IMPORT_SETTINGS = {
-    'MAX_FILE_SIZE': 50 * 1024 * 1024,  # 50MB
-    'ALLOWED_EXTENSIONS': ['.xlsx', '.xls'],
-    'MAX_PREVIEW_ROWS': 100,
-    'TEMP_FILE_TIMEOUT': 3600,  # 1 hour in seconds
-    'DEFAULT_DATE_FORMAT': '%Y-%m-%d',
-    'DEFAULT_DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    "MAX_FILE_SIZE": 50 * 1024 * 1024,  # 50MB
+    "ALLOWED_EXTENSIONS": [".xlsx", ".xls"],
+    "MAX_PREVIEW_ROWS": 100,
+    "TEMP_FILE_TIMEOUT": 3600,  # 1 hour in seconds
+    "DEFAULT_DATE_FORMAT": "%Y-%m-%d",
+    "DEFAULT_DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
 }
