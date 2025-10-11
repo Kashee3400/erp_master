@@ -23,52 +23,91 @@ class UserAdmin(ImportExportModelAdmin, DefaultUserAdmin):
 from django.db import transaction
 
 
-@admin.action(
-    description="Bulk transfer MPP Code from UserDevice → UserProfile (auto-create missing profiles)"
-)
+@admin.action(description="Transfer MPP Code → UserProfile")
 def transfer_mpp_code(modeladmin, request, queryset):
     """
     Efficiently transfers mpp_code from UserDevice to UserProfile.
-    - Auto-creates missing profiles in bulk
+    - Auto-creates missing profiles with defaults
     - Updates mpp_code in bulk
-    - Runs inside one atomic transaction
+    - Normalizes existing profiles with defaults if missing
+    - Runs safely inside one atomic transaction
     """
 
+    from django.db import transaction
+
+    DEFAULTS = {
+        "salutation": "Mrs.",
+        "avatar": "",
+        "department": UserProfile.Department.SAHAYAK,
+        "phone_number": "",
+        "address": "",
+        "designation": "",
+        "mpp_code": "",
+        "is_verified": True,
+    }
+
     with transaction.atomic():
-        # --- 1️⃣ Identify all users from queryset
+        # 1️⃣ Identify all users from queryset
         user_ids = list(queryset.values_list("user_id", flat=True))
 
-        # --- 2️⃣ Determine which users already have profiles
-        existing_profiles = UserProfile.objects.filter(user_id__in=user_ids)
-        existing_user_ids = set(existing_profiles.values_list("user_id", flat=True))
+        # 2️⃣ Determine which users already have profiles
+        existing_profiles_qs = UserProfile.objects.filter(user_id__in=user_ids)
+        existing_user_ids = set(existing_profiles_qs.values_list("user_id", flat=True))
 
-        # --- 3️⃣ Bulk-create missing profiles
+        # 3️⃣ Bulk-create missing profiles with defaults
         missing_user_ids = [uid for uid in user_ids if uid not in existing_user_ids]
-        new_profiles = [UserProfile(user_id=uid) for uid in missing_user_ids]
+        new_profiles = [
+            UserProfile(user_id=uid, **DEFAULTS) for uid in missing_user_ids
+        ]
         UserProfile.objects.bulk_create(new_profiles, ignore_conflicts=True)
 
-        # --- 4️⃣ Build a map of user_id → device.mpp_code (prefer latest updated)
+        # 4️⃣ Build a map of user_id → latest mpp_code
         device_map = {}
         for device in queryset.order_by("user_id", "-last_updated"):
             if device.user_id not in device_map and device.mpp_code:
-                device_map[device.user_id] = device.mpp_code
+                device_map[device.user_id] = device.mpp_code or ""
 
-        # --- 5️⃣ Fetch all profiles again (including newly created)
+        # 5️⃣ Fetch all profiles again (including newly created)
         profiles = list(UserProfile.objects.filter(user_id__in=user_ids))
 
-        # --- 6️⃣ Update mpp_code where needed
+        # 6️⃣ Apply defaults to existing profiles if blank + update mpp_code
+        updated_profiles = []
         for profile in profiles:
-            new_code = device_map.get(profile.user_id)
-            if new_code and profile.mpp_code != new_code:
+            # Fill missing default values
+            for field, default_val in DEFAULTS.items():
+                value = getattr(profile, field, None)
+                if value in [None, ""]:
+                    setattr(profile, field, default_val)
+
+            # Update mpp_code if changed
+            new_code = device_map.get(profile.user_id, "")
+            if new_code is None:
+                new_code = ""
+            if profile.mpp_code != new_code:
                 profile.mpp_code = new_code
 
-        # --- 7️⃣ Bulk update only modified profiles
-        UserProfile.objects.bulk_update(profiles, ["mpp_code"])
+            updated_profiles.append(profile)
+
+        # 7️⃣ Bulk update all modified profiles efficiently
+        UserProfile.objects.bulk_update(
+            updated_profiles,
+            [
+                "salutation",
+                "avatar",
+                "department",
+                "phone_number",
+                "address",
+                "designation",
+                "mpp_code",
+                "is_verified",
+            ],
+        )
 
     modeladmin.message_user(
         request,
         f"✅ Bulk transfer complete — "
-        f"{len(missing_user_ids)} profile(s) created, {len(device_map)} MPP code(s) synced.",
+        f"{len(missing_user_ids)} profile(s) created, "
+        f"{len(updated_profiles)} normalized and updated.",
     )
 
 

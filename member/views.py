@@ -336,7 +336,15 @@ class VerifySahayakOTPView(generics.GenericAPIView):
         user, _ = User.objects.get_or_create(username=phone_number)
 
         # --- 3️⃣ Get or create user profile
-        profile, _ = UserProfile.objects.get_or_create(user=user)
+        profile, _ = UserProfile.objects.get_or_create(
+            user=user,
+            department=UserProfile.Department.SAHAYAK,
+            phone_number=user.username,
+            designation="sahayak",
+            is_verified=True,
+            avatar="",
+            address="",
+        )
 
         # --- 4️⃣ Ensure MPP Code exists
         if not profile.mpp_code:
@@ -2221,7 +2229,6 @@ class LocalSaleTxnViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
-
 
 
 class NewSahayakDashboardAPI(APIView):
