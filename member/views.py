@@ -1739,7 +1739,8 @@ class NewsViewSet(viewsets.ModelViewSet):
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         """
