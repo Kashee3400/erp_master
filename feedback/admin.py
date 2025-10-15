@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import Feedback, FeedbackComment, FeedbackLog
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ImportExportModelAdmin,ExportActionModelAdmin
 from .models import FeedbackFile
-
+from .resources import FeedbackResource
 
 class FeedbackAttachmentInline(admin.TabularInline):
     model = FeedbackFile
@@ -24,16 +24,18 @@ from .forms.feedback_form import FeedbackAdminForm
 @admin.register(Feedback)
 class FeedbackAdmin(ImportExportModelAdmin):
     form = FeedbackAdminForm
-
+    resource_class = FeedbackResource
+    list_editable = ['status','priority']
+    save_on_top  = True
     list_display = (
         "feedback_id",
+        "mpp_code",
+        "mcc_code",
         "sender",
         "assigned_to",
         "status",
         "message",
         "priority",
-        "progress",
-        "rating",
         "created_at",
         "updated_at",
     )

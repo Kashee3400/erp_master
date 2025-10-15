@@ -4,9 +4,10 @@ from django.utils.translation import gettext_lazy as _
 
 from veterinary.choices.choices import *
 
-from ..models.common_models import SpeciesBreed
 from ..models.models import NonMember, NonMemberCattle, Cattle, CattleStatusLog
 from ..models.case_models import CaseEntry, TreatmentCostConfiguration
+from django.utils.timezone import datetime
+from ..serializers.choices_serializers import SpeciesBreedSerializer
 
 
 class NonMemberSerializer(serializers.ModelSerializer):
@@ -90,7 +91,6 @@ class CaseEntrySerializer(serializers.ModelSerializer):
     member_mobile = serializers.CharField(read_only=True)
     animal_tag = serializers.CharField(read_only=True)
     is_member_case = serializers.BooleanField(read_only=True)
-    is_non_member_case = serializers.BooleanField(read_only=True)
 
     # Nested serializers for detailed information
     cattle_detail = serializers.SerializerMethodField()
@@ -119,7 +119,6 @@ class CaseEntrySerializer(serializers.ModelSerializer):
             "member_mobile",
             "animal_tag",
             "is_member_case",
-            "is_non_member_case",
             "cattle_detail",
             "non_member_cattle_detail",
         ]
@@ -127,12 +126,19 @@ class CaseEntrySerializer(serializers.ModelSerializer):
 
     def get_cattle_detail(self, obj):
         if obj.cattle:
+            breed_data = None
+            if getattr(obj.cattle, "breed", None):
+                # Use your existing serializer to serialize the breed
+                breed_data = SpeciesBreedSerializer(obj.cattle.breed).data
+
             return {
                 "id": obj.cattle.id,
                 "tag_number": getattr(obj.cattle, "tag_number", "N/A"),
-                "breed": getattr(obj.cattle, "breed", "N/A"),
+                "breed": breed_data or "N/A",
                 "member_name": (
-                    obj.cattle.owner.name if hasattr(obj.cattle, "owner") else "N/A"
+                    obj.cattle.owner.member_name
+                    if getattr(obj.cattle, "owner", None)
+                    else "N/A"
                 ),
             }
         return None
@@ -200,6 +206,9 @@ class QuickVisitRegistrationSerializer(serializers.Serializer):
     is_member = serializers.BooleanField(
         help_text="True for member, False for non-member"
     )
+    member_code = serializers.CharField(
+        max_length=255, required=False, allow_blank=True
+    )
 
     # Member fields
     cattle_id = serializers.IntegerField(required=False, allow_null=True)
@@ -218,7 +227,11 @@ class QuickVisitRegistrationSerializer(serializers.Serializer):
         max_length=100, required=False, allow_blank=True
     )
     age_month = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    gender = serializers.CharField(max_length=100, required=True)
     age_year = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    weight_kg = serializers.DecimalField(
+        required=False, max_digits=6, decimal_places=2
+    )
     is_pregnant = serializers.BooleanField(required=False)
     pregnancy_months = serializers.CharField(
         max_length=100, required=False, allow_blank=True
@@ -238,9 +251,14 @@ class QuickVisitRegistrationSerializer(serializers.Serializer):
 
     def validate(self, data):
         is_member = data.get("is_member")
+        owner = data.get("member_code")
         is_tagged = data.get("is_tagged_animal", True)
 
         if is_member:
+            if not owner:
+                raise serializers.ValidationError(
+                    _("Member code is required for if type is member")
+                )
             # If the animal is tagged, cattle_id is mandatory
             if is_tagged and not data.get("cattle_id"):
                 raise serializers.ValidationError(
@@ -299,25 +317,33 @@ class QuickVisitRegistrationSerializer(serializers.Serializer):
     def create(self, validated_data):
         is_member = validated_data["is_member"]
         mpp = self._get_mpp(validated_data.get("mpp_code"))
+
         if is_member:
-            # Get or create cattle
-            cattle, created = Cattle.objects.get_or_create(
-                id=validated_data["cattle_id"],
-                defaults={
-                    "owner": validated_data.get("owner"),
-                    "breed_id": validated_data.get("breed_id"),
-                    "gender": validated_data.get("gender"),
-                    "age": validated_data.get("age_month"),
-                    "age_year": validated_data.get("age_year"),
-                    "no_of_calving": validated_data.get("no_of_calving"),
-                },
-            )
+            cattle_id = validated_data.get("cattle_id")
+
+            if cattle_id:
+                # Existing cattle
+                cattle = Cattle.objects.get(id=cattle_id)
+                created = False
+            else:
+                # Create a new cattle
+                cattle = Cattle.objects.create(
+                    owner_id=validated_data.get("member_code"),
+                    breed_id=validated_data.get("breed_id"),
+                    gender=validated_data.get("gender"),
+                    age=validated_data.get("age_month"),
+                    age_year=validated_data.get("age_year"),
+                    weight_kg=validated_data.get("weight_kg"),
+                    no_of_calving=validated_data.get("no_of_calving"),
+                )
+                created = True
 
             if created:
                 CattleStatusLog.objects.create(
                     cattle=cattle,
                     is_current=True,
                     pregnancy_status=validated_data.get("is_pregnant"),
+                    from_date=datetime.today().date(),
                 )
 
             case_entry = self._create_case_entry(cattle, validated_data)

@@ -189,9 +189,9 @@ class CaseEntry(BaseModel):
     @property
     def owner_name(self):
         """Get owner name regardless of member type"""
-        if self.cattle:
-            return self.cattle.owner.name if hasattr(self.cattle, 'owner') else "N/A"
-        elif self.non_member_cattle:
+        if self.cattle and getattr(self.cattle, "owner", None):
+            return self.cattle.owner.member_name
+        elif self.non_member_cattle and getattr(self.non_member_cattle, "non_member", None):
             return self.non_member_cattle.non_member.name
         return "N/A"
 
@@ -300,9 +300,7 @@ class CaseEntry(BaseModel):
 
             # Handle member cattle
             if self.cattle and hasattr(self.cattle, "owner") and self.cattle.owner:
-                if hasattr(self.cattle.owner, 'member_tr_code'):
-                    farmer_code = self.cattle.owner.member_tr_code[-6:]
-                elif hasattr(self.cattle.owner, 'member_code'):
+                if hasattr(self.cattle.owner, 'member_code'):
                     farmer_code = self.cattle.owner.member_code[-6:]
 
                 if hasattr(self.cattle, 'tag_detail') and self.cattle.tag_detail:

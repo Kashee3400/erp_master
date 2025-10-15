@@ -442,6 +442,13 @@ class Cattle(BaseModel):
         blank=True,
         default=0,
     )
+    weight_kg = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("Weight in kilograms"),
+    )
 
     mother = models.ForeignKey(
         "self",
@@ -485,7 +492,6 @@ class Cattle(BaseModel):
     # Add tracking fields
     last_status_update = models.DateTimeField(null=True, blank=True)
 
- 
     def save(self, *args, **kwargs):
         # Auto-generate cattle_code if not exists
         if not self.cattle_code:
@@ -511,8 +517,8 @@ class Cattle(BaseModel):
     def _generate_deterministic_code(self):
         """Generate cattle code based on Member Code + Age + Age_Year + Gender."""
         member_part = (
-            self.owner.member_tr_code[-4:]
-            if self.owner and self.owner.member_tr_code
+            self.owner.member_code[-4:]
+            if self.owner and self.owner.member_code
             else "0000"
         )
 

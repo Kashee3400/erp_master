@@ -21,24 +21,24 @@ class PaymentMethodChoices(models.TextChoices):
 
 
 class MembershipTypeChoices(models.TextChoices):
-    MEMBER = 'member', _('Member')
-    NON_MEMBER = 'non_member', _('Non-Member')
+    MEMBER = "member", _("Member")
+    NON_MEMBER = "non_member", _("Non-Member")
 
 
 class TimeSlotChoices(models.TextChoices):
-    BEFORE_10AM = 'before_10am', _('Before 10:00 AM (6:00 to 10:00)')
-    AFTER_10AM = 'after_10am', _('After 10:00 AM')
+    BEFORE_10AM = "before_10am", _("Before 10:00 AM (6:00 to 10:00)")
+    AFTER_10AM = "after_10am", _("After 10:00 AM")
 
 
 class AnimalTagChoices(models.TextChoices):
-    TAGGED = 'tagged', _('Tagged Animal')
-    NON_TAGGED = 'non_tagged', _('Non-Tagged Animal')
+    TAGGED = "tagged", _("Tagged Animal")
+    NON_TAGGED = "non_tagged", _("Non-Tagged Animal")
 
 
 class TreatmentTypeChoices(models.TextChoices):
-    NORMAL = 'normal', _('Normal Treatment')
-    EMERGENCY = 'emergency', _('Emergency Treatment')
-    OPERATION = 'operation', _('Operation Cost')
+    NORMAL = "normal", _("Normal Treatment")
+    EMERGENCY = "emergency", _("Emergency Treatment")
+    OPERATION = "operation", _("Operation Cost")
 
 
 class AnimalUse(models.TextChoices):
@@ -184,6 +184,7 @@ class StatusChoices(models.TextChoices):
     PENDING = "Pending", _("Pending")
     CONFIRMED = "Confirmed", _("Confirmed")
     COMPLETED = "Completed", _("Completed")
+    CANCELLED = "Cancelled", _("Cancelled")
 
 
 class CattleStatusChoices(models.TextChoices):

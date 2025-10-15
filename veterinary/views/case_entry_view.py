@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from django.utils import timezone
 import error_formatter
 from util.response import custom_response
 from .choices_view import BaseModelViewSet
@@ -21,7 +21,10 @@ from ..serializers.case_entry_serializer import (
     CostCalculationSerializer,
     TreatmentCostConfigurationSerializer,
 )
-
+from rest_framework.decorators import action
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from ..choices import StatusChoices
 
 class NonMemberViewSet(BaseModelViewSet):
     """ViewSet for managing non-members"""
@@ -75,10 +78,18 @@ class NonMemberCattleViewSet(BaseModelViewSet):
 
 class CaseEntryViewSet(BaseModelViewSet):
     """Enhanced ViewSet for managing case entries (both member and non-member)"""
-
     queryset = CaseEntry.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = (
+        "is_deleted",
+        "locale",
+        "sync",
+        "status",
+        "is_tagged_animal",
+        "is_emergency",
+    )
+    lookup_field = "case_no"
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -87,24 +98,17 @@ class CaseEntryViewSet(BaseModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        case_type = self.request.GET.get("type", None)  # 'member' or 'non_member'
-        status_filter = self.request.GET.get("status", None)
-        mobile = self.request.GET.get("mobile", None)
-        emergency_only = self.request.GET.get("emergency", None)
+        request = self.request
+        case_type = request.GET.get("type")
+        mobile = request.GET.get("mobile")
 
         if case_type == "member":
             queryset = queryset.member_cases()
         elif case_type == "non_member":
             queryset = queryset.non_member_cases()
 
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-
         if mobile:
             queryset = queryset.by_owner_mobile(mobile)
-
-        if emergency_only == "true":
-            queryset = queryset.filter(is_emergency=True)
 
         return queryset.select_related(
             "cattle__owner", "non_member_cattle__non_member", "created_by"
@@ -112,6 +116,67 @@ class CaseEntryViewSet(BaseModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+    # ----------------------------
+    # 🧭 Dashboard Statistics API
+    # ----------------------------
+    @action(detail=False, methods=["get"], url_path="dashboard")
+    def dashboard(self, request):
+        """
+        Provides aggregated statistics for case entries.
+        This endpoint replaces multiple client-side filtered requests.
+        """
+        qs = self.get_queryset()
+        qs = qs.filter(created_by=self.request.user)
+        total_cases = qs.count()
+        today = timezone.localdate()
+        today_cases = qs.filter(created_at__date=today).count()
+        member_cases = qs.member_cases().count()
+        non_member_cases = qs.non_member_cases().count()
+        emergency_cases = qs.filter(is_emergency=True).count()
+
+        # Status-based counts
+        pending_cases = qs.filter(status=StatusChoices.PENDING).count()
+        completed_cases = qs.filter(status=StatusChoices.COMPLETED).count()
+        confirmed_cases = qs.filter(status=StatusChoices.CONFIRMED).count()
+        cancelled_cases = qs.filter(status=StatusChoices.CANCELLED).count()
+
+        recent_cases_qs = qs.order_by("-created_at")[:5]
+        recent_cases = CaseEntryListSerializer(recent_cases_qs, many=True).data
+
+        monthly_stats_qs = (
+            qs.annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("case_no"))
+            .order_by("month")
+        )
+        cases_by_month = {
+            entry["month"].strftime("%Y-%m"): entry["count"]
+            for entry in monthly_stats_qs
+            if entry["month"]
+        }
+
+        data = {
+            "total_cases": total_cases,
+            "member_cases": member_cases,
+            "non_member_cases": non_member_cases,
+            "emergency_cases": emergency_cases,
+            "pending_cases": pending_cases,
+            "today_cases": today_cases,
+            "cancelled_cases": cancelled_cases,
+            "completed_cases": completed_cases,
+            "confirmed_cases": confirmed_cases,
+            "recent_cases": recent_cases,
+            "cases_by_month": cases_by_month,
+        }
+
+        return custom_response(
+            status_text="success",
+            data=data,
+            message=_("Dashboard Loaded..."),
+            status_code=status.HTTP_200_OK,
+            errors={}
+        )
 
 
 from rest_framework import serializers
@@ -155,7 +220,7 @@ def quick_visit_registration(request):
         return custom_response(
             status_text="error",
             message=_("An unexpected error occurred during registration."),
-            errors={"detail": str(e)},
+            errors=error_formatter.format_exception(e),
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
