@@ -38,6 +38,7 @@ class SahayakIncentivesResource(resources.ModelResource):
     mm_incentive = fields.Field(column_name="MM Incentive", attribute="mm_incentive")
     payable = fields.Field(column_name="Paid", attribute="payable")
     closing = fields.Field(column_name="Closing", attribute="closing")
+    additional_data = fields.Field(column_name="Additional Data", attribute="additional_data")
 
     def import_row(self, row, instance_loader, **kwargs):
         # Check for missing 'user' value

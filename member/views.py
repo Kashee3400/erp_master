@@ -7,6 +7,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from facilitator.models.user_profile_model import UserProfile
+from erp_app.models import BusinessHierarchySnapshot
 
 logger = logging.getLogger(__name__)
 
@@ -890,20 +891,11 @@ class SahayakAppInstalledData(APIView):
             )
         )
 
-        # Step 2: Get only those with installed devices
-        # installed_mpp_codes = set(
-        #     UserDevice.objects.filter(
-        #         module="sahayak", device__isnull=False
-        #     ).values_list("mpp_code", flat=True)
-        # )
-
         installed_mpp_codes = set(
             UserDevice.objects.filter(
                 module="sahayak", device__isnull=False
             ).values_list("mpp_code", flat=True)
         )
-        print(len(all_mpp_codes))
-        print(len(installed_mpp_codes))
         # Step 3: Build the lookup
         mpp_codes_lookup = {
             mpp_code: "Yes" if mpp_code in installed_mpp_codes else "No"
@@ -946,10 +938,7 @@ class SahayakAppInstalledData(APIView):
         # Map each mpp_code to its mcc_code from active/default members
         mcc_lookup = {
             row["mpp_code"]: row["mcc_code"]
-            for row in MemberHierarchyView.objects.filter(
-                is_active=True,
-                is_default=True,
-            ).values("mpp_code", "mcc_code")
+            for row in BusinessHierarchySnapshot.objects.all().values("mpp_code", "mcc_code")
         }
 
         result = []

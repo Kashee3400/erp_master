@@ -233,7 +233,7 @@ admin.site.register(Product, ProductAdmin)
 class MemberHierarchyViewAdmin(ImportExportModelAdmin,admin.ModelAdmin):
     list_display = [field.name for field in MemberHierarchyView._meta.fields]
     search_fields = ('member_code','mobile_no')
-    list_filter = ('is_active', 'created_at')
+    list_filter = ('is_active', 'created_at','mpp_code')
 
 admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)
 
