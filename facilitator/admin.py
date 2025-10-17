@@ -287,13 +287,83 @@ class MemberComplaintReportAdmin(admin.ModelAdmin):
         ("Details", {"fields": ("reason", "meeting")}),
     )
 
-
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "department", "designation", "phone_number", "is_verified")
-    list_filter = ("department", "is_verified", "created_at")
-    search_fields = ("user__username", "user__email", "phone_number", "designation")
+    """Admin configuration for managing User Profiles efficiently."""
+
+    # Display essentials only for fast listing
+    list_display = (
+        "user",
+        "department",
+        "designation",
+        "phone_number",
+        "is_verified",
+        "mpp_code",
+    )
+    list_filter = (
+        "department",
+        "is_verified",
+        "mpp_code",
+        "is_email_verified",
+        "created_at",
+    )
+    search_fields = (
+        "user__username",
+        "user__email",
+        "phone_number",
+        "designation",
+        "mpp_code",
+    )
     readonly_fields = ("created_at", "updated_at")
+    ordering = ("-created_at",)
+
+    # Reduce memory usage when loading related fields
+    raw_id_fields = ("user", "reports_to")
+
+    # Prepopulated fields are not appropriate here because "user" and "reports_to"
+    # are foreign keys, not text fields. Removing it prevents unnecessary lookups.
+    # prepopulated_fields = {"slug": ("user",)}  # Example if you had a slug
+
+    # Use autocomplete fields (recommended Django approach for large datasets)
+    autocomplete_fields = ("user", "reports_to")
+
+    # Use select_related to avoid N+1 queries in changelist view
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("user", "reports_to")
+
+    # Group related fields logically for clarity
+    fieldsets = (
+        (_("User Information"), {
+            "fields": (
+                "user",
+                "salutation",
+                "designation",
+                "department",
+                "reports_to",
+            ),
+        }),
+        (_("Contact & Identity"), {
+            "fields": (
+                "phone_number",
+                "address",
+                "avatar",
+                "is_verified",
+                "is_email_verified",
+                "mpp_code",
+            ),
+        }),
+        (_("Timestamps"), {
+            "fields": ("created_at", "updated_at"),
+        }),
+    )
+
+    # Pagination to avoid heavy list rendering
+    list_per_page = 25
+
+    # Filter optimization
+    preserve_filters = True
+
 
 
 @admin.register(UpdateRequestData)

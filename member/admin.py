@@ -226,6 +226,7 @@ class SahayakIncentivesAdmin(ImportExportModelAdmin):
                     "tds_amt",
                     "cda_recovery",
                     "asset_recovery",
+                    "additional_data",
                 )
             },
         ),

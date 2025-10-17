@@ -77,6 +77,7 @@ class CattleListSerializer(serializers.ModelSerializer):
         source="cattle_tagged.tag_number", read_only=True
     )
     breed_type = serializers.CharField(source="breed.animal_type", read_only=True)
+    breed_name = serializers.CharField(source="breed.breed", read_only=True)
     status = serializers.CharField(source="current_status.label", read_only=True)
     tagging_url = serializers.HyperlinkedRelatedField(
         source="cattle_tagged",
@@ -93,6 +94,7 @@ class CattleListSerializer(serializers.ModelSerializer):
             "name",
             "owner",
             "breed",
+            "breed_name",
             "breed_type",
             "gender",
             "age",

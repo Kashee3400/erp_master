@@ -877,7 +877,7 @@ class AppInstalledData(APIView):
 
         return Response(result, status=status.HTTP_200_OK)
 
-
+from erp_app.models import Mpp
 class SahayakAppInstalledData(APIView):
     permission_classes = [AllowAny]
 
@@ -885,18 +885,25 @@ class SahayakAppInstalledData(APIView):
         # Build installed flag lookup (Yes/No) for each mpp_code
         # Step 1: Get all sahayak mpp_codes (with or without device)
         all_mpp_codes = set(
-            UserDevice.objects.filter(module="sahayak").values_list(
-                "mpp_code", flat=True
+            Mpp.objects.all().values_list(
+                "mpp_ex_code", flat=True
             )
         )
 
         # Step 2: Get only those with installed devices
+        # installed_mpp_codes = set(
+        #     UserDevice.objects.filter(
+        #         module="sahayak", device__isnull=False
+        #     ).values_list("mpp_code", flat=True)
+        # )
+
         installed_mpp_codes = set(
             UserDevice.objects.filter(
                 module="sahayak", device__isnull=False
             ).values_list("mpp_code", flat=True)
         )
-
+        print(len(all_mpp_codes))
+        print(len(installed_mpp_codes))
         # Step 3: Build the lookup
         mpp_codes_lookup = {
             mpp_code: "Yes" if mpp_code in installed_mpp_codes else "No"

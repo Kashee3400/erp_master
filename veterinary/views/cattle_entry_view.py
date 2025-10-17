@@ -73,6 +73,7 @@ class CattleViewSet(viewsets.ModelViewSet):
             return base_qs.filter(updated_by__in=[user.id, *reportee_ids])
         return base_qs.filter(updated_by=user)
 
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -290,8 +291,12 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
         def get_role_based_cattle_qs(from_date, to_date):
             qs = Cattle.objects.select_related(
                 "owner", "breed", "current_status", "cattle_tagged"
-            ).filter(created_at__gte=from_date, created_at__lt=to_date,
-                     is_deleted=is_deleted, is_active=is_active)
+            ).filter(
+                created_at__gte=from_date,
+                created_at__lt=to_date,
+                is_deleted=is_deleted,
+                is_active=is_active,
+            )
 
             if user.is_superuser or user.is_staff:
                 return qs
@@ -316,8 +321,10 @@ class CattleTaggingViewSet(viewsets.ModelViewSet):
         # 🔄 Current period
         tagging_qs = self.get_queryset().filter(
             cattle__in=cattle_qs,
-            created_at__gte=start, created_at__lt=end,
-            is_active=is_active, is_deleted=is_deleted
+            created_at__gte=start,
+            created_at__lt=end,
+            is_active=is_active,
+            is_deleted=is_deleted,
         )
         # ⏮️ Previous period
         prev_tagging_qs = self.get_queryset().filter(
