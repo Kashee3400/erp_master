@@ -2,7 +2,7 @@ from django.db import connections
 
 
 def get_poured_mpp_data(collection_date, mpp_codes):
-    placeholders = ",".join(["%s"] * len(mpp_codes))  # safely format IN clause
+    placeholders = ",".join(["%s"] * len(mpp_codes))
     query = f"""
             SELECT mpp_code, SUM(total_qty) AS total_qty
             FROM V_PouredMemberSummary

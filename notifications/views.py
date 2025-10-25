@@ -149,7 +149,7 @@ class UnreadNotificationCountView(APIView):
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        count = AppNotification.objects.filter(recipient=user, is_read=False).count()
+        count = Notification.objects.filter(recipient=user, is_read=False).count()
         return custom_response(
             status_text="success",
             data={"unread_count": count},

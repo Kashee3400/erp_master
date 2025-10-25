@@ -184,7 +184,7 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 API_KEY_EXPIRATION_ALLOWED = False
-
+# DATA_UPLOAD_MAX_NUMBER_FIELDS =5000
 REST_FRAMEWORK = {
     # Global authentication classes
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",

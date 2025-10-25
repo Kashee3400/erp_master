@@ -107,17 +107,5 @@ STATIC_ROOT=STATIC_DIR
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5566",
-    "http://1.22.197.176:5566",
+    "https://1.22.197.176:5566",
 ]
-
-
-REST_FRAMEWORK.update({
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.UserRateThrottle",
-        "rest_framework.throttling.AnonRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "user": "1000/day",
-        "anon": "100/day",
-    },
-})

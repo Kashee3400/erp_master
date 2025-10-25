@@ -38,6 +38,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
 
+
 def custom_response(status_text, data=None, message=None, status_code=200):
     return Response(
         {"status": status_text, "message": message or "Success", "data": data},
@@ -265,79 +266,12 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
             )
 
 
-class DashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    pagination_class = StandardResultsSetPagination
-    
-    def get_serializer_class(self):
-        return None
-    
-    def get_queryset(self):
-        created_date = self.request.GET.get("date", timezone.now().date())
-        mpp_codes = self.request.GET.get("mpp_code")
-        if not mpp_codes:
-            mpp_codes = list(
-                AssignedMppToFacilitator.objects.filter(
-                    sahayak=self.request.user
-                ).values_list("mpp_code", flat=True)
-            )
-        else:
-            mpp_codes = mpp_codes.split(",")
-        actual_subquery = (
-            RmrdMilkCollection.objects.filter(
-                collection_date__date=created_date, module_code=OuterRef("mpp_code")
-            )
-            .values("module_code")
-            .annotate(amount=Sum("amount"))
-            .values("amount")
-        )
-        composite_subquery = (
-            MppCollection.objects.filter(
-                references__collection_date__date=created_date,
-                references__mpp_code=OuterRef("mpp_code"),
-            )
-            .select_related("references")
-            .values("references__mpp_code")
-            .annotate(amount=Sum("amount"))
-            .values("amount")
-        )
-
-        # Annotate actual and composite amounts
-        return Mpp.objects.filter(mpp_code__in=mpp_codes).annotate(
-            actual_amount=Subquery(actual_subquery, output_field=FloatField()),
-            composite_amount=Subquery(composite_subquery, output_field=FloatField()),
-        )
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        response_data = [
-            {
-                "mpp_code": mpp.mpp_code,
-                "date": self.request.GET.get("date", timezone.now().date()),
-                "variation": (
-                    round(
-                        float(mpp.actual_amount) - float(mpp.composite_amount or 0), 2
-                    )
-                    if mpp.actual_amount and float(mpp.actual_amount) > 0
-                    else round(float(mpp.composite_amount or 0), 2)
-                ),
-            }
-            for mpp in queryset
-        ]
-        # Sorting by variation
-        response_data.sort(key=lambda x: x["variation"])
-        # Paginate response
-        paginator = self.pagination_class()
-        paginated_data = paginator.paginate_queryset(response_data, request)
-        return paginator.get_paginated_response(paginated_data)
-
-
 import django_filters
 
 
 class DashboardSummaryFilter(django_filters.FilterSet):
     mpp_code = django_filters.CharFilter(method="filter_by_mpp_code")
+
     class Meta:
         model = FacilitatorDashboardSummary
         fields = ["collection_date", "mpp_code", "shift_code"]
@@ -351,6 +285,7 @@ from rest_framework.filters import OrderingFilter
 from math import ceil
 from collections import defaultdict
 
+
 class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -361,7 +296,7 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ["collection_date", "mpp_code", "shift_code"]
 
     def get_queryset(self):
-        qs = FacilitatorDashboardSummary.objects.all().order_by('variation')
+        qs = FacilitatorDashboardSummary.objects.all().order_by("variation")
         # Apply user-based filtering if no mpp_code explicitly provided
         if not self.request.GET.get("mpp_code"):
             assigned_mpps = AssignedMppToFacilitator.objects.filter(
@@ -387,12 +322,14 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         date = self.request.GET.get("collection_date")
 
-        grouped_data = defaultdict(lambda: {
-            "mpp_code": "",
-            "collection_date": "",
-            "total_variation": float("0.0"),
-            "shifts": []
-        })
+        grouped_data = defaultdict(
+            lambda: {
+                "mpp_code": "",
+                "collection_date": "",
+                "total_variation": float("0.0"),
+                "shifts": [],
+            }
+        )
 
         for item in queryset:
             key = (item["mpp_code"], item.get("collection_date"))
@@ -401,21 +338,27 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             group["collection_date"] = date
 
             # Set variation to 0 if actual_qty is 0
-            variation = item["composite_amount"] if item["actual_qty"] == 0 else item["variation"]
+            variation = (
+                item["composite_amount"]
+                if item["actual_qty"] == 0
+                else item["variation"]
+            )
             group["total_variation"] += variation
 
-            group["shifts"].append({
-                "shift_code": item["shift_code"],
-                "actual_qty": item["actual_qty"],
-                "actual_fat": item["actual_fat"],
-                "actual_snf": item["actual_snf"],
-                "composite_qty": item["composite_qty"],
-                "composite_fat": item["composite_fat"],
-                "composite_snf": item["composite_snf"],
-                "composite_amount": item["composite_amount"],
-                "new_actual_amount": item["new_actual_amount"],
-                "variation": variation,
-            })
+            group["shifts"].append(
+                {
+                    "shift_code": item["shift_code"],
+                    "actual_qty": item["actual_qty"],
+                    "actual_fat": item["actual_fat"],
+                    "actual_snf": item["actual_snf"],
+                    "composite_qty": item["composite_qty"],
+                    "composite_fat": item["composite_fat"],
+                    "composite_snf": item["composite_snf"],
+                    "composite_amount": item["composite_amount"],
+                    "new_actual_amount": item["new_actual_amount"],
+                    "variation": variation,
+                }
+            )
 
         grouped_list = list(grouped_data.values())
         page = self.paginate_queryset(grouped_list)
@@ -445,116 +388,6 @@ class NewDashboardSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             status_code=status.HTTP_200_OK,
         )
 
-class DashboardDetailAPI(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        created_date = request.GET.get("date", timezone.now().date())
-        mpp_code = request.GET.get("mpp_code")
-        shift_code = request.GET.get("shift_code")
-
-        if not mpp_code:
-            return Response(
-                {"message": "mpp_code required", "status": "error"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        actual, dispatch, composite = self.get_bulk_data(
-            created_date, mpp_code, shift_code
-        )
-
-        response_data = {
-            "mpp_code": mpp_code,
-            "date": created_date,
-            "shift_code": shift_code,
-            "data": {
-                "actual": actual,
-                "dispatch": dispatch,
-                "composite": composite,
-            },
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    def get_bulk_data(self, created_date, mpp_code, shift_codes):
-        collections = RmrdMilkCollection.objects.filter(
-            collection_date__date=created_date,
-            module_code=mpp_code,
-            shift_code=shift_codes,
-        ).aggregate(
-            qty=Sum("qty"),
-            amount=Sum("amount"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-        )
-
-        dispatches = MppDispatchTxn.objects.filter(
-            mpp_dispatch_code__mpp_code=mpp_code,
-            mpp_dispatch_code__from_date__date=created_date,
-            mpp_dispatch_code__from_shift=shift_codes,
-        ).aggregate(
-            qty=Sum("dispatch_qty"),
-            amount=Sum("amount"),
-            fat=Coalesce(
-                Cast(
-                    Sum(F("dispatch_qty") * F("fat"), output_field=FloatField()),
-                    FloatField(),
-                )
-                / Cast(Sum("dispatch_qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(
-                    Sum(F("dispatch_qty") * F("snf"), output_field=FloatField()),
-                    FloatField(),
-                )
-                / Cast(Sum("dispatch_qty"), FloatField()),
-                0.0,
-            ),
-        )
-
-        aggregated_data = MppCollection.objects.filter(
-            references__collection_date__date=created_date,
-            references__mpp_code=mpp_code,
-            shift_code=shift_codes,
-        ).aggregate(
-            qty=Sum("qty"),
-            amount=Sum("amount"),
-            fat=Coalesce(
-                Cast(Sum(F("qty") * F("fat"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-            snf=Coalesce(
-                Cast(Sum(F("qty") * F("snf"), output_field=FloatField()), FloatField())
-                / Cast(Sum("qty"), FloatField()),
-                0.0,
-            ),
-        )
-        return collections, dispatches, aggregated_data
-
-    def format_aggregates(self, aggregates):
-        return {
-            key: round(value, 2) if value is not None else None
-            for key, value in aggregates.items()
-        }
-
-    def get_shifts(self):
-        shifts = Shift.objects.filter(shift_short_name__in=["M", "E"]).values_list(
-            "shift_short_name", "shift_code"
-        )
-        shift_dict = dict(shifts)
-        return shift_dict.get("M"), shift_dict.get("E")
-
 
 class DashboardNewDetailAPI(APIView):
     authentication_classes = [JWTAuthentication]
@@ -569,18 +402,16 @@ class DashboardNewDetailAPI(APIView):
                 {"message": "mpp_code required", "status": "error"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        dispatch= self.get_bulk_data(
-            created_date, mpp_code, shift_code
-        )
+        dispatch = self.get_bulk_data(created_date, mpp_code, shift_code)
         response_data = {
-            "status":"success",
-            "message":"Dispatch Data Fetched Successfully...",
-            "data":{
-            "mpp_code": mpp_code,
-            "date": created_date,
-            "shift_code": shift_code,
-            "dispatch": dispatch,
-            }
+            "status": "success",
+            "message": "Dispatch Data Fetched Successfully...",
+            "data": {
+                "mpp_code": mpp_code,
+                "date": created_date,
+                "shift_code": shift_code,
+                "dispatch": dispatch,
+            },
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -820,102 +651,6 @@ class ShiftViewSet(viewsets.ModelViewSet):
     serializer_class = ShiftSerializer
 
 
-class ChangePasswordView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        user = request.user
-        data = request.data
-
-        old_password = data.get("old_password")
-        new_password = data.get("new_password")
-        confirm_password = data.get("confirm_password")
-
-        if not old_password or not new_password or not confirm_password:
-            return Response(
-                {"message": _("All fields are required.")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if new_password != confirm_password:
-            return Response(
-                {"message": _("Passwords do not match.")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not user.check_password(old_password):
-            return Response(
-                {"message": _("Old password is incorrect.")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            validate_password(new_password, user)
-        except Exception as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        user.set_password(new_password)
-        user.save()
-
-        # Update last login if required
-        update_last_login(None, user)
-
-        return Response(
-            {"message": _("Password changed successfully.")}, status=status.HTTP_200_OK
-        )
-
-
-class RequestOTPPasswordResetView(APIView):
-    def post(self, request):
-        username = request.data.get("username")
-        if not username:
-            return Response(
-                {"message": _("Username is required")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response(
-                {"message": _("User not found")}, status=status.HTTP_404_NOT_FOUND
-            )
-        otp = str(random.randint(100000, 999999))  # Generate 6-digit OTP
-        cache.set(f"otp_{username}", otp, timeout=300)  # Store OTP for 5 minutes
-        return Response(
-            {"message": _("OTP sent successfully.")}, status=status.HTTP_200_OK
-        )
-
-
-class VerifyOTPResetPasswordView(APIView):
-    def post(self, request):
-        username = request.data.get("username")
-        otp = request.data.get("otp")
-        new_password = request.data.get("new_password")
-        if not username or not otp or not new_password:
-            return Response(
-                {"message": _("All fields are required")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        cached_otp = cache.get(f"otp_{username}")
-        if cached_otp is None or cached_otp != otp:
-            return Response(
-                {"message": _("Invalid or expired OTP")},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response(
-                {"message": _("User not found")}, status=status.HTTP_404_NOT_FOUND
-            )
-        user.set_password(new_password)
-        user.save()
-        cache.delete(f"otp_{username}")
-        return Response(
-            {"message": _("Password reset successfully.")}, status=status.HTTP_200_OK
-        )
-
-
 class GetPouredMembersData(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -1095,36 +830,6 @@ class GetPouredMembersForMppView(APIView):
         cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-
-class GetPouredMembersRawSQLView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        mpp_code = request.GET.get("mpp_code")
-        collection_date = request.GET.get("collection_date")
-
-        if not mpp_code or not collection_date:
-            return Response(
-                {"error": "mpp_code and collection_date are required"}, status=400
-            )
-
-        try:
-            data = get_poured_members_from_view(mpp_code, collection_date)
-        except Exception as e:
-            return Response(
-                {"error": "Database query failed", "details": str(e)}, status=500
-            )
-
-        return Response(
-            {
-                "message": "success",
-                "status": "success",
-                "data": data,
-            },
-            status=200,
-        )
 
 
 class GetTotalMembersData(APIView):
@@ -1506,6 +1211,90 @@ class GetDailyMppCollections(APIView):
         return []
 
 
+# class GetTotalQtyForToday(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     def get_mpps(self, user):
+#         if user.is_authenticated:
+#             return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
+#         return []
+
+#     def get(self, request):
+#         user = request.user
+#         collection_date = request.GET.get("collection_date", str(timezone.now().date()))
+
+#         # Create a unique cache key based on user and date
+#         cache_key = f"total_qty_{user.id}_{collection_date}"
+#         cached_data = cache.get(cache_key)
+#         if cached_data is not None:
+#             return Response(
+#                 {
+#                     "message": "success (cached)",
+#                     "status": "success",
+#                     **cached_data,
+#                 },
+#                 status=status.HTTP_200_OK,
+#             )
+
+#         # Get relevant MPP codes
+#         mpp_codes = list(self.get_mpps(user))
+#         if not mpp_codes:
+#             return Response(
+#                 {"message": "No MPPs assigned", "status": "error", "total_qty": 0.0},
+#                 status=status.HTTP_404_NOT_FOUND,
+#             )
+
+#         base_filter = {
+#             "references__mpp_code__in": mpp_codes,
+#             "references__collection_date__date": collection_date,
+#         }
+
+#         # Total quantity across all shifts
+#         total_qty = (
+#             MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))[
+#                 "total_qty"
+#             ]
+#             or 0
+#         )
+
+#         # Quantity for Morning shift (M)
+#         qty_m = (
+#             MppCollection.objects.filter(
+#                 **base_filter, shift_code__shift_short_name="M"
+#             ).aggregate(qty=Sum("qty"))["qty"]
+#             or 0
+#         )
+
+#         # Quantity for Evening shift (E)
+#         qty_e = (
+#             MppCollection.objects.filter(
+#                 **base_filter, shift_code__shift_short_name="E"
+#             ).aggregate(qty=Sum("qty"))["qty"]
+#             or 0
+#         )
+
+#         response_data = {
+#             "total_qty": float(total_qty),
+#             "qty_m": float(qty_m),
+#             "qty_e": float(qty_e),
+#         }
+
+#         # Cache the result
+#         cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
+
+#         return Response(
+#             {
+#                 "message": "success",
+#                 "status": "success",
+#                 **response_data,
+#             },
+#             status=status.HTTP_200_OK,
+#         )
+
+from django.db.models import Sum, Case, When, FloatField, Value
+
+
 class GetTotalQtyForToday(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -1519,20 +1308,14 @@ class GetTotalQtyForToday(APIView):
         user = request.user
         collection_date = request.GET.get("collection_date", str(timezone.now().date()))
 
-        # Create a unique cache key based on user and date
         cache_key = f"total_qty_{user.id}_{collection_date}"
         cached_data = cache.get(cache_key)
         if cached_data is not None:
             return Response(
-                {
-                    "message": "success (cached)",
-                    "status": "success",
-                    **cached_data,
-                },
+                {"message": "success (cached)", "status": "success", **cached_data},
                 status=status.HTTP_200_OK,
             )
 
-        # Get relevant MPP codes
         mpp_codes = list(self.get_mpps(user))
         if not mpp_codes:
             return Response(
@@ -1545,44 +1328,34 @@ class GetTotalQtyForToday(APIView):
             "references__collection_date__date": collection_date,
         }
 
-        # Total quantity across all shifts
-        total_qty = (
-            MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))[
-                "total_qty"
-            ]
-            or 0
-        )
-
-        # Quantity for Morning shift (M)
-        qty_m = (
-            MppCollection.objects.filter(
-                **base_filter, shift_code__shift_short_name="M"
-            ).aggregate(qty=Sum("qty"))["qty"]
-            or 0
-        )
-
-        # Quantity for Evening shift (E)
-        qty_e = (
-            MppCollection.objects.filter(
-                **base_filter, shift_code__shift_short_name="E"
-            ).aggregate(qty=Sum("qty"))["qty"]
-            or 0
+        # ⚡️ One single query
+        data = MppCollection.objects.filter(**base_filter).aggregate(
+            total_qty=Sum("qty", output_field=FloatField()),
+            qty_m=Sum(
+                Case(
+                    When(shift_code__shift_short_name="M", then="qty"),
+                    default=Value(0),
+                    output_field=FloatField(),
+                )
+            ),
+            qty_e=Sum(
+                Case(
+                    When(shift_code__shift_short_name="E", then="qty"),
+                    default=Value(0),
+                    output_field=FloatField(),
+                )
+            ),
         )
 
         response_data = {
-            "total_qty": float(total_qty),
-            "qty_m": float(qty_m),
-            "qty_e": float(qty_e),
+            "total_qty": float(data["total_qty"] or 0),
+            "qty_m": float(data["qty_m"] or 0),
+            "qty_e": float(data["qty_e"] or 0),
         }
 
-        # Cache the result
         cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
 
         return Response(
-            {
-                "message": "success",
-                "status": "success",
-                **response_data,
-            },
+            {"message": "success", "status": "success", **response_data},
             status=status.HTTP_200_OK,
         )

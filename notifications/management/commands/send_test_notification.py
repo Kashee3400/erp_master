@@ -1,7 +1,8 @@
 # notifications/management/commands/send_test_notification.py
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from ...notification_service import notify
+from ...model import Notification
+from notifications.tasks import deliver_notification
 
 User = get_user_model()
 
@@ -16,24 +17,28 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            user = User.objects.get(email=options["user"])
+            user = User.objects.get(username=options["user"])
         except User.DoesNotExist:
             self.stdout.write(self.style.ERROR(f'User {options["user"]} not found'))
             return
 
-        context = {}
-        if options["context"]:
-            import json
+        notification = Notification.objects.filter(
+            recipient=user, template__name=options["template"]
+        ).first()
 
-            context = json.loads(options["context"])
+        if not notification:
+            self.stdout.write(self.style.ERROR("No matching notification found."))
+            return
 
         try:
-            notification = notify(
-                template_name=options["template"], recipient=user, context=context
-            )
+            async_result = deliver_notification.delay(notification.uuid)
 
             self.stdout.write(
-                self.style.SUCCESS(f"Test notification sent: {notification.uuid}")
+                self.style.SUCCESS(
+                    f"Test notification task queued successfully.\n"
+                    f"Notification UUID: {notification.uuid}\n"
+                    f"Celery Task ID: {async_result.id}"
+                )
             )
 
         except Exception as e:

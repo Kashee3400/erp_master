@@ -47,7 +47,7 @@ urlpatterns = [
                   path("storage/api/", include("facilitator.file_urls")),
                   path("veterinary/api/v1/", include("veterinary.urls")),
                   path("feedback/", include("feedback.urls")),
-                  path("erp-fcm/", include("notifications.urls")),
+                  path("erp-fcm/api/", include("notifications.urls")),
                   path("i18n/", include("django.conf.urls.i18n")),
                   path('excel/api/', include('veterinary.excel_urls')),
                   path("app-ads.txt", app_ads_txt, name="app_ads_txt"),

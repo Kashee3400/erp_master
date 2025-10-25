@@ -7,7 +7,6 @@ from .resources import SahayakIncentivesResource, UserResource, UserDeviceResour
 from .models import *
 from facilitator.models.user_profile_model import UserProfile
 
-# Get the user model
 User = get_user_model()
 
 # Unregister the existing User admin if it’s already registered
@@ -265,3 +264,81 @@ class NewsAdmin(admin.ModelAdmin):
     list_filter = ("is_published", "published_date", "module")
     search_fields = ("title", "author", "tags")
     prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(RewardedAdTransaction)
+class RewardedAdTransactionAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "reward_source",
+        "reward_amount",
+        "is_verified",
+        "ad_unit_id",
+        "created_at",
+    )
+    list_filter = ("reward_source", "is_verified", "created_at")
+    search_fields = ("user__username", "ad_unit_id", "transaction_token")
+    readonly_fields = ("uuid", "created_at", "verified_at", "updated_at")
+    date_hierarchy = "created_at"
+
+
+@admin.register(RewardLedger)
+class RewardLedgerAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "transaction_type",
+        "amount",
+        "balance_after",
+        "description",
+        "created_at",
+    )
+    list_filter = ("transaction_type", "created_at")
+    search_fields = ("user__username", "description")
+    readonly_fields = (
+        "uuid",
+        "balance_after",
+        "created_at",
+        "is_finalized",
+        "source_ad",
+    )
+    ordering = ("-created_at",)
+    date_hierarchy = "created_at"
+
+
+@admin.register(RewardWithdrawalRequest)
+class RewardWithdrawalRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "amount",
+        "status",
+        "transaction_reference",
+        "requested_at",
+        "processed_at",
+    )
+    list_filter = ("status", "requested_at")
+    search_fields = ("user__username", "transaction_reference")
+    readonly_fields = ("requested_at", "processed_at")
+    actions = ["approve_selected", "reject_selected"]
+
+    def approve_selected(self, request, queryset):
+        from .services.reward_service import RewardService
+
+        count = 0
+        for withdrawal in queryset.filter(status="pending"):
+            reference = f"ADMIN-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            RewardService.approve_withdrawal(withdrawal, reference_id=reference)
+            count += 1
+        self.message_user(request, f"{count} withdrawal(s) approved successfully.")
+
+    approve_selected.short_description = "Approve selected withdrawals"
+
+    def reject_selected(self, request, queryset):
+        from .services.reward_service import RewardService
+
+        count = 0
+        for withdrawal in queryset.filter(status="pending"):
+            RewardService.reject_withdrawal(withdrawal, remarks="Admin bulk rejection")
+            count += 1
+        self.message_user(request, f"{count} withdrawal(s) rejected.")
+
+    reject_selected.short_description = "Reject selected withdrawals"

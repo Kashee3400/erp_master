@@ -240,106 +240,6 @@ class CustomPageNumberPagination(PageNumberPagination):
     max_page_size = 100
 
 
-# TODO: to be deleted after successful testing of new logic
-class MppCollectionAggregationListView(generics.ListAPIView):
-    """
-    This class provides the latest payments of cycle
-    """
-
-    serializer_class = MppCollectionAggregationSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
-
-    def get_queryset(self):
-        queryset = MppCollectionAggregation.objects.all()
-
-        if not MemberMaster.objects.filter(
-            mobile_no=self.request.user.username
-        ).exists():
-            return MppCollectionAggregation.objects.none()
-
-        member = MemberMaster.objects.filter(
-            mobile_no=self.request.user.username, is_active=True
-        ).last()
-        year = self.request.GET.get("year")
-        queryset = queryset.filter(member_code=member.member_code).order_by(
-            "-created_at"
-        )
-
-        if year:
-            try:
-                year = int(year)
-                start_date = f"{year}-04-01"
-                end_date = f"{year + 1}-03-31"
-                queryset = queryset.filter(
-                    Q(from_date__gte=start_date, from_date__lte=end_date)
-                    | Q(to_date__gte=start_date, to_date__lte=end_date)
-                    | Q(from_date__lte=start_date, to_date__gte=end_date)
-                )
-            except ValueError:
-                return MppCollectionAggregation.objects.none()
-
-        return queryset
-
-    def list(self, request, *args, **kwargs):
-        try:
-            queryset = self.get_queryset()
-
-            # Perform pagination
-            paginator = self.pagination_class()
-            paginated_queryset = paginator.paginate_queryset(queryset, request)
-
-            # Calculate totals
-            duplicate_count = (
-                queryset.values("from_date", "to_date")
-                .annotate(count=Count("id"))
-                .filter(count__gt=1)
-                .count()
-            )
-            total_pouring_days = Sum("no_of_pouring_days") - duplicate_count
-            totals = queryset.aggregate(
-                total_qty=Sum("qty"),
-                avg_fat=Cast(
-                    Avg("fat"),
-                    output_field=models.DecimalField(decimal_places=3, max_digits=18),
-                ),
-                avg_snf=Cast(
-                    Avg("snf"),
-                    output_field=models.DecimalField(decimal_places=3, max_digits=18),
-                ),
-                total_amount=Sum("amount"),
-                total_days=total_pouring_days,
-                total_shift=total_pouring_days * 2,
-            )
-
-            # Serialize data for the current page
-            serializer = self.get_serializer(paginated_queryset, many=True)
-
-            # Prepare paginated response
-            paginated_response = paginator.get_paginated_response(serializer.data)
-            paginated_response.data["totals"] = totals
-            paginated_response.data["status"] = status.HTTP_200_OK
-            paginated_response.data["message"] = "success"
-
-            return paginated_response
-
-        except ValidationError as e:
-            return Response(
-                {"status": status.HTTP_400_BAD_REQUEST, "message": str(e), "data": []},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            return Response(
-                {
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": f"An unexpected error occurred: {str(e)}",
-                    "data": [],
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-
 class NewMppCollectionAggregationListView(generics.ListAPIView):
     """
     Provides the latest MPP collection aggregation list with totals and pagination.
@@ -448,7 +348,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
     """
 
     serializer_class = MppCollectionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
@@ -458,7 +358,7 @@ class MppCollectionDetailView(generics.GenericAPIView):
         provided_date = self.validate_date(date_str, today)
         if isinstance(provided_date, Response):
             return provided_date
-        # username = "7054151714"
+
         username = self.request.user.username
         cache_key_member = f"member_{username}"
         member = cache.get(cache_key_member)

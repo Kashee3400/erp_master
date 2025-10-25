@@ -13415,9 +13415,7 @@ class MppCollection(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'mpp_collection'
-        # unique_together = (('member_code', 'collection_date', 'shift_code', 'milk_type_code'),)
-        
+        db_table = 'mpp_collection'        
         indexes = [
             models.Index(fields=['member_code']),
             models.Index(fields=['collection_date']),

@@ -49,11 +49,7 @@ router.register(
     basename="upload-meeting-images",
 )
 router.register(r"vcg-meetings", api_view.VCGMeetingViewSet, basename="vcg-meetings")
-router.register(
-    r"dashboard-summary-data",
-    views.DashboardSummaryViewSet,
-    basename="dashboard-summary-data",
-)
+
 router.register(
     r"new-dashboard-summary-data",
     views.NewDashboardSummaryViewSet,
@@ -75,14 +71,7 @@ urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path(
-        "password/change/", views.ChangePasswordView.as_view(), name="password_change"
-    ),
-    path(
-        "dashboard-detail-data/",
-        views.DashboardDetailAPI.as_view(),
-        name="dashboard_detail_data",
-    ),
+
     path(
         "new-dashboard-detail-data/",
         views.DashboardNewDetailAPI.as_view(),
@@ -112,11 +101,7 @@ urlpatterns = [
         views.GetPouredMembersForMppView.as_view(),
         name="mpp_poured_members_list",
     ),
-    path(
-        "mpp-poured-members-sql-list/",
-        views.GetPouredMembersRawSQLView.as_view(),
-        name="mpp_poured_members_sql_list",
-    ),
+    
     path("high-pourers/", views.GetHighPourerData.as_view(), name="high_pourers"),
     path(
         "highest-poured-members/",

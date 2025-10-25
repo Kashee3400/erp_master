@@ -4,31 +4,13 @@ Notification delivery service - separated from main service to avoid circular im
 """
 import logging
 import requests
-from typing import Dict, Any, Optional, TYPE_CHECKING
+from typing import Dict, Any, Optional, List
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from django.utils import timezone
-import argparse
-import json
-import requests
-import google.auth.transport.requests
 
-from google.oauth2 import service_account
-from decouple import config
-
-SERVICE_ACCOUNT_PATH = config("SERVICE_ACCOUNT_PATH")
-
-PROJECT_ID = "kashee-e-dairy"
-BASE_URL = "https://fcm.googleapis.com"
-FCM_ENDPOINT = "v1/projects/" + PROJECT_ID + "/messages:send"
-FCM_URL = BASE_URL + "/" + FCM_ENDPOINT
-SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"]
-
-
-if TYPE_CHECKING:
-    from django.contrib.auth.models import User
-    from .model import Notification
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +21,95 @@ class NotificationDeliveryService:
     Separated from main service to avoid circular imports
     """
 
-    def deliver(self, notification: "Notification"):
+    from .model import Notification, NotificationStatus
+    from member.models import User
+
+    def deliver_batch(self, notifications: List[Notification], max_workers: int = 20):
+        """
+        Deliver a batch of notifications with parallel channel delivery.
+        """
+        from .model import NotificationStatus
+
+        processed_notifs = []
+
+        for notification in notifications:
+            try:
+                notification.status = NotificationStatus.SENDING
+                delivery_results = {}
+                success_count = 0
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    futures = {
+                        executor.submit(
+                            self._deliver_channel_safe, notification, channel
+                        ): channel
+                        for channel in notification.channels
+                    }
+
+                    for future in as_completed(futures):
+                        channel = futures[future]
+                        result = future.result()
+                        delivery_results[channel] = result
+                        if result.get("status") == "success":
+                            success_count += 1
+
+                # Determine final notification status
+                if success_count == len(notification.channels):
+                    notification.status = NotificationStatus.SENT
+                elif success_count == 0:
+                    notification.status = NotificationStatus.FAILED
+                else:
+                    notification.status = NotificationStatus.PARTIALLY_SENT
+
+                notification.delivery_status = delivery_results
+                notification.sent_at = timezone.now()
+                processed_notifs.append(notification)
+
+                logger.info(
+                    f"Notification {notification.uuid} delivered - {success_count}/{len(notification.channels)} channels successful"
+                )
+
+            except Exception as exc:
+                logger.exception(
+                    f"Fatal error processing notification {notification.uuid}: {exc}"
+                )
+                notification.status = NotificationStatus.FAILED
+                notification.delivery_status = {"error": str(exc)}
+                processed_notifs.append(notification)
+
+        # Bulk update at end of batch
+        if processed_notifs:
+            from django.db import transaction
+            from .model import Notification
+
+            with transaction.atomic():
+                Notification.objects.bulk_update(
+                    processed_notifs, ["status", "sent_at", "delivery_status"]
+                )
+
+        return len(processed_notifs)
+
+    def _deliver_channel_safe(self, notification, channel):
+        """
+        Deliver a single channel safely, catching exceptions.
+        """
+        from .choices import NotificationChannel
+
+        try:
+            if channel == NotificationChannel.IN_APP:
+                return self._deliver_in_app(notification)
+            elif channel == NotificationChannel.PUSH:
+                return self._deliver_push(notification)
+            elif channel == NotificationChannel.EMAIL:
+                return self._deliver_email(notification)
+            elif channel == NotificationChannel.WEBHOOK:
+                return self._deliver_webhook(notification)
+            else:
+                return {"status": "skipped", "reason": "Unsupported channel"}
+        except Exception as e:
+            logger.error(f"Delivery failed for channel {channel}: {e}")
+            return {"status": "error", "error": str(e)}
+
+    def deliver(self, notification: Notification):
         """Deliver notification through all configured channels"""
         from .model import NotificationStatus, NotificationChannel
 
@@ -57,8 +127,6 @@ class NotificationDeliveryService:
                     result = self._deliver_push(notification)
                 elif channel == NotificationChannel.EMAIL:
                     result = self._deliver_email(notification)
-                elif channel == NotificationChannel.SMS:
-                    result = self._deliver_sms(notification)
                 elif channel == NotificationChannel.WEBHOOK:
                     result = self._deliver_webhook(notification)
                 else:
@@ -68,23 +136,11 @@ class NotificationDeliveryService:
 
                 if result.get("status") == "success":
                     success_count += 1
-                    self._mark_channel_delivered(notification, channel)
-                else:
-                    self._mark_channel_failed(
-                        notification, channel, result.get("error")
-                    )
 
             except Exception as e:
                 logger.error(f"Delivery failed for channel {channel}: {e}")
                 delivery_results[channel] = {"status": "error", "error": str(e)}
-                self._mark_channel_failed(notification, channel, str(e))
-
-        # Update overall status
-        if success_count > 0:
-            notification.status = NotificationStatus.SENT
-            notification.sent_at = timezone.now()
-        else:
-            notification.status = NotificationStatus.FAILED
+                notification.mark_as_failed(channel=channel, error=str(e))
 
         notification.delivery_status = delivery_results
         notification.save(update_fields=["status", "sent_at", "delivery_status"])
@@ -93,79 +149,35 @@ class NotificationDeliveryService:
             f"Delivery completed for notification {notification.uuid} - {success_count}/{len(notification.channels)} channels successful"
         )
 
-    def _mark_channel_delivered(self, notification: "Notification", channel: str):
-        """Mark specific channel as delivered"""
-        if not notification.delivery_status:
-            notification.delivery_status = {}
-
-        notification.delivery_status[channel] = {
-            "status": "delivered",
-            "delivered_at": timezone.now().isoformat(),
-        }
-
-        # Check if all channels are delivered
-        all_delivered = all(
-            status.get("status") == "delivered"
-            for status in notification.delivery_status.values()
-        )
-
-        if all_delivered:
-            from .model import NotificationStatus
-
-            notification.status = NotificationStatus.DELIVERED
-            notification.delivered_at = timezone.now()
-
-    def _mark_channel_failed(
-        self, notification: "Notification", channel: str, error: Optional[str] = None
-    ):
-        """Mark specific channel as failed"""
-        if not notification.delivery_status:
-            notification.delivery_status = {}
-
-        notification.delivery_status[channel] = {
-            "status": "failed",
-            "error": error,
-            "failed_at": timezone.now().isoformat(),
-        }
-
-    def _deliver_in_app(self, notification: "Notification") -> Dict[str, Any]:
+    def _deliver_in_app(self, notification: Notification) -> Dict[str, Any]:
         """Deliver in-app notification (just mark as available)"""
         return {"status": "success", "message": "In-app notification created"}
 
-    def _deliver_push(self, notification: "Notification") -> Dict[str, Any]:
+    def _deliver_push(self, notification: Notification) -> Dict[str, Any]:
         """Deliver push notification via FCM"""
+        from .fcm import _send_fcm_message
+
         try:
             # Get user's FCM token
             fcm_token = self._get_user_fcm_token(notification.recipient)
             if not fcm_token:
                 return {"status": "skipped", "reason": "No FCM token found"}
-            payload = notification.to_fcm_payload()
-            payload["to"] = fcm_token
-            response = self._send_fcm_request(payload)
 
-            if response.get("success", 0) > 0:
-                return {"status": "success", "response": response}
+            sent, info = _send_fcm_message(
+                notification.to_fcm_payload(
+                    base_url="http://10.10.10.43:8000", device_token=fcm_token
+                )
+            )
+
+            if sent:
+                return {"status": "success", "response": info}
             else:
-                error_msg = "Unknown FCM error"
-                if "results" in response and response["results"]:
-                    error_msg = response["results"][0].get("error", error_msg)
-                return {"status": "failed", "error": error_msg}
+
+                return {"status": "failed", "error": info}
 
         except Exception as e:
             logger.error(f"Push notification delivery failed: {e}")
             return {"status": "error", "error": str(e)}
-
-    def _get_fcm_access_token(self):
-        """Retrieve a valid access token that can be used to authorize requests.
-
-        :return: Access token.
-        """
-        credentials = service_account.Credentials.from_service_account_file(
-            SERVICE_ACCOUNT_PATH, scopes=SCOPES
-        )
-        request = google.auth.transport.requests.Request()
-        credentials.refresh(request)
-        return credentials.token
 
     def _deliver_email(self, notification: "Notification") -> Dict[str, Any]:
         """Deliver email notification"""
@@ -204,20 +216,6 @@ class NotificationDeliveryService:
             logger.error(f"Email delivery failed: {e}")
             return {"status": "error", "error": str(e)}
 
-    def _deliver_sms(self, notification: "Notification") -> Dict[str, Any]:
-        """Deliver SMS notification"""
-        try:
-            phone_number = getattr(notification.recipient, "phone_number", None)
-            if not phone_number:
-                return {"status": "skipped", "reason": "No phone number found"}
-
-            # Example Twilio integration
-            return self._send_twilio_sms(phone_number, notification.body)
-
-        except Exception as e:
-            logger.error(f"SMS delivery failed: {e}")
-            return {"status": "error", "error": str(e)}
-
     def _deliver_webhook(self, notification: "Notification") -> Dict[str, Any]:
         """Deliver notification via webhook"""
         webhook_url = getattr(settings, "NOTIFICATION_WEBHOOK_URL", None)
@@ -250,7 +248,7 @@ class NotificationDeliveryService:
             logger.error(f"Webhook delivery failed: {e}")
             return {"status": "error", "error": str(e)}
 
-    def _get_user_fcm_token(self, user: "User") -> Optional[str]:
+    def _get_user_fcm_token(self, user) -> Optional[str]:
         """Get user's FCM token from your user profile/device model"""
         if hasattr(user, "profile") and hasattr(user.profile, "fcm_token"):
             return user.profile.fcm_token
@@ -262,47 +260,3 @@ class NotificationDeliveryService:
         except ImportError:
             pass
         return None
-
-    def _send_fcm_request(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Send HTTP request to FCM with given message.
-
-        Args:
-        fcm_message: JSON object that will make up the body of the request.
-        """
-        # [START use_access_token]
-        headers = {
-            "Authorization": "Bearer " + self._get_fcm_access_token(),
-            "Content-Type": "application/json; UTF-8",
-        }
-        # [END use_access_token]
-        response = requests.post(FCM_URL, json=payload, headers=headers, timeout=30)
-
-        response.raise_for_status()
-        return response.json()
-
-    def _send_twilio_sms(self, phone_number: str, message: str) -> Dict[str, Any]:
-        """Send SMS via Twilio"""
-        try:
-            from twilio.rest import Client
-
-            account_sid = getattr(settings, "TWILIO_ACCOUNT_SID", "")
-            auth_token = getattr(settings, "TWILIO_AUTH_TOKEN", "")
-            from_number = getattr(settings, "TWILIO_FROM_NUMBER", "")
-
-            if not all([account_sid, auth_token, from_number]):
-                return {"status": "skipped", "reason": "Twilio not configured"}
-
-            client = Client(account_sid, auth_token)
-
-            message = client.messages.create(
-                body=message[:160],  # SMS character limit
-                from_=from_number,
-                to=phone_number,
-            )
-
-            return {"status": "success", "message_sid": message.sid}
-
-        except ImportError:
-            return {"status": "error", "error": "Twilio library not installed"}
-        except Exception as e:
-            return {"status": "error", "error": str(e)}

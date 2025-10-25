@@ -81,15 +81,11 @@ def _build_common_message():
 
 
 def _send_device_specific_notification(device_token, data_payload={}):
-    message = {
-        "message": {
-            "token": device_token,
-            "data": data_payload
-        }
-    }
+    message = {"message": {"token": device_token, "data": data_payload}}
 
     sent, info = _send_fcm_message(fcm_message=message)
-    return sent,info
+    return sent, info
+
 
 def _build_override_message():
     """Construct common notification message with overrides.
@@ -112,36 +108,27 @@ def _build_override_message():
     return fcm_message
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--message")
     args = parser.parse_args()
     if args.message and args.message == "common-message":
         common_message = _build_common_message()
-        print("FCM request body for message using common notification object:")
-        print(json.dumps(common_message, indent=2))
         _send_fcm_message(common_message)
     elif args.message and args.message == "override-message":
         override_message = _build_override_message()
-        print("FCM request body for override message:")
-        print(json.dumps(override_message, indent=2))
         _send_fcm_message(override_message)
     elif args.message and args.message == "device-message":
         data_payload = {
-        "route": "feedback-details",
-        "id": str(4),
-        "customKey": "feedbackNotification",
-    }
-        token = "ewS0HpC0Rr6tP548CvMa83:APA91bGjb2ELGKEiteMnoaeg5tH_7V0YhcnboijYTtDPl2Qw01oOE0xYQ798rE2JilRRQiZo6E9WUCavbVC-kjnG5JgGUf574_pPMzJsI8hUoAJF7qwvgLw"
-        _send_device_specific_notification(
-                token,
-                {
-                    "title": "New Feedback Submitted",
-                    "body": f"Thank you for your feedback (ID: {'FEEDA9071TCV'})",
-                },
-                data_payload=data_payload,
-            )
+            "route": "feedback-details",
+            "id": str(4),
+            "customKey": "feedbackNotification",
+        }
+        token = "ftpUzivwSI24s7h510nKox:APA91bFtcShXhBiOeWwQR5UMeOU7n1Q2tf7lH0VyY0sjFS3TZUheQOyLIKeXMbTQ9-rLrEh9_FDz3daWUF3LWXGeDNOJ0FDH355NirHZOB3iawYrEfZawVs"
+        sent, info = _send_device_specific_notification(
+            token,
+            data_payload=data_payload,
+        )
     else:
         print(
             """Invalid command. Please use one of the following commands:

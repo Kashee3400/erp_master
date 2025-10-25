@@ -597,111 +597,6 @@ class MyHomePage(LoginRequiredMixin, View):
         return render(request, self.template_name)
 
 
-# class AppInstalledData(APIView):
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, *args, **kwargs):
-#         mcc_code = request.GET.get("mcc_code")
-#         mpp_codes_param = request.GET.get("mpp_codes")
-#         year = int(request.GET.get("year", now().year))
-#         month = int(request.GET.get("month", now().month))
-
-#         mpp_codes = (
-#             [code.strip() for code in mpp_codes_param.split(",")]
-#             if mpp_codes_param
-#             else None
-#         )
-
-#         start_date = make_aware(datetime(year, month, 1))
-#         end_date = (
-#             make_aware(datetime(year + 1, 1, 1)) - timedelta(seconds=1)
-#             if month == 12
-#             else make_aware(datetime(year, month + 1, 1)) - timedelta(seconds=1)
-#         )
-
-#         user_device_usernames = set(
-#             UserDevice.objects.filter(Q(module=None) | Q(module="member")).values_list(
-#                 "user__username", flat=True
-#             )
-#         )
-
-#         mcc_queryset = (
-#             Mcc.objects.filter(mcc_code=mcc_code) if mcc_code else Mcc.objects.all()
-#         )
-#         result = []
-#         # Grand totals
-#         total_members_all = 0
-#         installed_count_all = 0
-#         total_pourers_all = 0
-
-#         for mcc in mcc_queryset:
-#             members_qs = MemberHierarchyView.objects.filter(
-#                 mcc_code=mcc.mcc_code,
-#                 is_active=True,
-#                 is_default=True,
-#             )
-
-#             if mpp_codes:
-#                 members_qs = members_qs.filter(mpp_code__in=mpp_codes)
-#                 mpp_list = list(Mpp.objects.filter(mpp_code__in=mpp_codes))
-#                 serialized_mpps = MppSerializer(mpp_list, many=True).data
-#             else:
-#                 mpp_list = list(Mpp.objects.all())
-#                 serialized_mpps = MppSerializer(mpp_list, many=True).data
-
-#             total_members = members_qs.count()
-#             member_mobiles = members_qs.values_list("mobile_no", flat=True)
-#             installed_count = sum(
-#                 1 for mobile in member_mobiles if mobile in user_device_usernames
-#             )
-#             installed_percentage = (
-#                 (installed_count / total_members * 100) if total_members else 0
-#             )
-
-#             member_codes = members_qs.values_list("member_code", flat=True)
-#             collections = MppCollection.objects.filter(
-#                 collection_date__range=(start_date, end_date),
-#                 member_code__in=member_codes,
-#             )
-#             no_of_pourers = (
-#                 collections.values("member_code")
-#                 .annotate(days=Count(TruncDate("collection_date"), distinct=True))
-#                 .count()
-#             )
-
-#             result.append(
-#                 {
-#                     "mcc": MccSerializer(mcc).data,
-#                     "mpp": serialized_mpps,
-#                     "total_members": total_members,
-#                     "app_installed_by_member": installed_count,
-#                     "installed_percentage": round(installed_percentage, 2),
-#                     "no_of_pourers": no_of_pourers,
-#                 }
-#             )
-
-#             # Accumulate totals
-#             total_members_all += total_members
-#             installed_count_all += installed_count
-#             total_pourers_all += no_of_pourers
-
-#         # Append grand total row
-#         grand_total_percentage = (
-#             (installed_count_all / total_members_all * 100) if total_members_all else 0
-#         )
-#         result.append(
-#             {
-#                 "mcc": {"name": "Grand Total"},
-#                 "mpp": None,
-#                 "total_members": total_members_all,
-#                 "app_installed_by_member": installed_count_all,
-#                 "installed_percentage": round(grand_total_percentage, 2),
-#                 "no_of_pourers": total_pourers_all,
-#                 "is_total": True,
-#             }
-#         )
-#         return Response(result, status=status.HTTP_200_OK)
-
 from collections import defaultdict, Counter
 
 
@@ -878,18 +773,17 @@ class AppInstalledData(APIView):
 
         return Response(result, status=status.HTTP_200_OK)
 
+
 from erp_app.models import Mpp
+
+
 class SahayakAppInstalledData(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         # Build installed flag lookup (Yes/No) for each mpp_code
         # Step 1: Get all sahayak mpp_codes (with or without device)
-        all_mpp_codes = set(
-            Mpp.objects.all().values_list(
-                "mpp_ex_code", flat=True
-            )
-        )
+        all_mpp_codes = set(Mpp.objects.all().values_list("mpp_ex_code", flat=True))
 
         installed_mpp_codes = set(
             UserDevice.objects.filter(
@@ -938,7 +832,9 @@ class SahayakAppInstalledData(APIView):
         # Map each mpp_code to its mcc_code from active/default members
         mcc_lookup = {
             row["mpp_code"]: row["mcc_code"]
-            for row in BusinessHierarchySnapshot.objects.all().values("mpp_code", "mcc_code")
+            for row in BusinessHierarchySnapshot.objects.all().values(
+                "mpp_code", "mcc_code"
+            )
         }
 
         result = []
