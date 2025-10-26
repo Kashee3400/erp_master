@@ -11,11 +11,10 @@ from rest_framework.decorators import api_view, permission_classes, action
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils import timezone
-from .model import Notification, NotificationPreferences, AppNotification
+from .model import Notification, NotificationPreferences
 from .serializers import (
     NotificationSerializer,
     NotificationPreferencesSerializer,
-    AppNotificationSerializer,
 )
 from .notification_service import NotificationServices
 from util.response import (
@@ -26,123 +25,6 @@ from util.response import (
     transaction,
     IntegrityError,
 )
-
-
-class AppNotificationViewSet(ExceptionHandlerMixin, viewsets.ModelViewSet):
-    serializer_class = AppNotificationSerializer
-    permission_classes = [permissions.IsAuthenticated, IsNotificationOwner]
-    pagination_class = StandardResultsSetPagination
-    filter_backends = [filters.OrderingFilter]
-    ordering = ["-created_at"]
-
-    def get_queryset(self):
-        return AppNotification.objects.filter(recipient=self.request.user)
-
-    @action(detail=False, methods=["post"], url_path="mark-read")
-    def mark_bulk_as_read(self, request):
-        ids = request.data.get("ids", [])
-        if not isinstance(ids, list):
-            return custom_response(
-                status_text="error",
-                message="Expected a list of IDs under `ids` key.",
-                status_code=status.HTTP_400_BAD_REQUEST,
-            )
-
-        updated_count = AppNotification.objects.filter(
-            recipient=request.user, id__in=ids, is_read=False
-        ).update(is_read=True, read_at=timezone.now())
-        unread_count = AppNotification.objects.filter(
-            recipient=request.user, is_read=False
-        ).count()
-
-        return custom_response(
-            status_text="success",
-            message=f"{updated_count} notifications marked as read.",
-            data={"updated_count": updated_count, "unread_count": unread_count},
-        )
-
-    @action(detail=False, methods=["post"], url_path="mark-all-read")
-    def mark_all_as_read(self, request):
-        updated_count = AppNotification.objects.filter(
-            recipient=request.user, is_read=False
-        ).update(is_read=True, read_at=timezone.now())
-        unread_count = AppNotification.objects.filter(
-            recipient=request.user, is_read=False
-        ).count()
-
-        return custom_response(
-            status_text="success",
-            message=f"All notifications ({updated_count}) marked as read.",
-            data={"updated_count": updated_count, "unread_count": unread_count},
-        )
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(
-                page, many=True, context={"request": request}
-            )
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(
-            queryset, many=True, context={"request": request}
-        )
-        return custom_response(
-            status_text="success",
-            data=serializer.data,
-            status_code=status.HTTP_200_OK,
-            message="Success",
-        )
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, context={"request": request})
-        return custom_response(
-            status_text="success",
-            message="Notification retrieved successfully",
-            data=serializer.data,
-        )
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            data=request.data, context={"request": request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save(recipient=request.user)
-
-        return custom_response(
-            status_text="success",
-            message="Notification created successfully.",
-            data=serializer.data,
-            status_code=status.HTTP_201_CREATED,
-        )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial, context={"request": request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return custom_response(
-            status_text="success",
-            message="Notification updated successfully.",
-            data=serializer.data,
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return custom_response(
-            status_text="success",
-            message="Notification deleted successfully.",
-            data=None,
-            status_code=status.HTTP_204_NO_CONTENT,
-        )
-
 
 class UnreadNotificationCountView(APIView):
     permission_classes = [permissions.IsAuthenticated]

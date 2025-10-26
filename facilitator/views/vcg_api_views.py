@@ -6,9 +6,7 @@ from rest_framework import status
 from ..serializers.vcg_serializers import *
 from rest_framework.permissions import (
     AllowAny,
-    IsAuthenticated,
-    IsAdminUser,
-    IsAuthenticatedOrReadOnly,
+    IsAuthenticated
 )
 from error_formatter import format_exception, simplify_errors
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -18,9 +16,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ..authentication import ApiKeyAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter, api_settings
-from rest_framework import status, viewsets, exceptions
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from util.response import StandardResultsSetPagination,custom_response
 

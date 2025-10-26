@@ -156,6 +156,76 @@ class Command(BaseCommand):
                     NotificationChannel.EMAIL,
                 ],
             },
+            {
+                "name": "feedback_status_change_hi",
+                "locale": "hi",
+                "title_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
+                "body_template": (
+                    "नमस्ते {{ recipient.first_name }},\n\n"
+                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति बदल गई है:\n\n"
+                    "- पुरानी स्थिति: {{ old_status|capfirst }}\n"
+                    "- नई स्थिति: {{ new_status|capfirst }}\n"
+                    "{% if feedback.assigned_to %}- जिम्मेदार: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
+                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
+                    "\nआप ऐप में जाकर विस्तृत जानकारी देख सकते हैं।\n\n"
+                    "- {{ site_name }} टीम"
+                ),
+                "email_subject_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
+                "email_body_template": (
+                    "प्रिय {{ recipient.first_name }},\n\n"
+                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति अपडेट की गई है।\n\n"
+                    "विवरण:\n"
+                    "- पुरानी स्थिति: {{ old_status|capfirst }}\n"
+                    "- नई स्थिति: {{ new_status|capfirst }}\n"
+                    "{% if feedback.assigned_to %}- जिम्मेदार व्यक्ति: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
+                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
+                    "\nकृपया पूर्ण विवरण और आगे की जानकारी के लिए ऐप देखें।\n\n"
+                    "सादर,\n"
+                    "{{ site_name }} टीम"
+                ),
+                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "category": "feedback",
+                "enabled_channels": [
+                    NotificationChannel.IN_APP,
+                    NotificationChannel.PUSH,
+                    NotificationChannel.EMAIL,
+                ],
+            },
+            {
+                "name": "feedback_status_change_en",
+                "locale": "en",
+                "title_template": "Feedback Status Updated – {{ feedback.feedback_id }}",
+                "body_template": (
+                    "Hello {{ recipient.first_name }},\n\n"
+                    "Your feedback (ID: {{ feedback.feedback_id }}) status has been updated.\n\n"
+                    "- Previous Status: {{ old_status|capfirst }}\n"
+                    "- New Status: {{ new_status|capfirst }}\n"
+                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
+                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
+                    "\nYou can view complete details in your app.\n\n"
+                    "- The {{ site_name }} Team"
+                ),
+                "email_subject_template": "Feedback Status Updated – {{ feedback.feedback_id }}",
+                "email_body_template": (
+                    "Dear {{ recipient.first_name }},\n\n"
+                    "Your feedback (ID: {{ feedback.feedback_id }}) status has changed.\n\n"
+                    "Details:\n"
+                    "- Previous Status: {{ old_status|capfirst }}\n"
+                    "- New Status: {{ new_status|capfirst }}\n"
+                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
+                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
+                    "\nPlease check the app for full details and updates.\n\n"
+                    "Regards,\n"
+                    "The {{ site_name }} Team"
+                ),
+                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "category": "feedback",
+                "enabled_channels": [
+                    NotificationChannel.IN_APP,
+                    NotificationChannel.PUSH,
+                    NotificationChannel.EMAIL,
+                ],
+            },
             # Sahayak Incentive - English
             {
                 "name": "sahayak_incentive_update_en",
@@ -279,7 +349,7 @@ class Command(BaseCommand):
                     NotificationChannel.EMAIL,
                 ],
             },
-            # News Published - Hindi
+            # News Published - Hindi``
             {
                 "name": "news_published_hi",
                 "locale": "hi",

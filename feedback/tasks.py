@@ -14,7 +14,7 @@ def send_feedback_email(self, subject, message, recipient_list):
             message=message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=recipient_list,
-            fail_silently=False,  # Let errors raise for retry
+            fail_silently=False,
         )
         logger.info(f"Sent feedback email to {recipient_list}")
     except Exception as e:

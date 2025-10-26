@@ -1,16 +1,17 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from erp_app.models import MppCollection
-from notifications.model import Notification, NotificationStatus, NotificationTemplate
+from notifications.model import (
+    Notification,
+    NotificationStatus,
+    NotificationTemplate,
+    NotificationTrackMppCollection,
+)
 from django.contrib.auth import get_user_model
 from django.db import transaction
 import logging
 from django.contrib.contenttypes.models import ContentType
 from erp_app.models import MemberHierarchyView
-
-import redis
-
-r = redis.Redis(host="localhost", port=6379, db=0)
 
 User = get_user_model()
 
@@ -36,7 +37,6 @@ def make_json_safe(data):
 class Command(BaseCommand):
     help = "Pull new MppCollection records, create notifications, and retry failed/pending ones."
 
-    REDIS_KEY_PREFIX = "collection_notification"
 
     def handle(self, *args, **options):
         now = timezone.now()
@@ -54,9 +54,17 @@ class Command(BaseCommand):
             )
             return
 
-        # 2. Fetch today's collections with shift info
+        # 2. Get already tracked collection codes to prevent duplicates
+        tracked_codes = set(
+            NotificationTrackMppCollection.objects.filter(is_sent=True).values_list(
+                "collection_code", flat=True
+            )
+        )
+
+        # 3. Fetch today's collections with shift info, excluding already tracked ones
         collections = (
             MppCollection.objects.filter(collection_date__date=today)
+            .exclude(mpp_collection_code__in=tracked_codes)
             .select_related("shift_code")
             .order_by("collection_date")
             .values(
@@ -74,29 +82,31 @@ class Command(BaseCommand):
 
         if not collections.exists():
             self.stdout.write(
-                self.style.WARNING("⚠️ No MppCollection records found for today.")
+                self.style.WARNING("⚠️ No new MppCollection records found for today.")
             )
+            return
 
         member_codes = [c["member_code"] for c in collections]
 
-        # 3. Map members to mobile numbers
+        # 4. Map members to mobile numbers
         members_map = {
             m.member_code: m.mobile_no
             for m in MemberHierarchyView.objects.filter(member_code__in=member_codes)
         }
 
-        # 4. Map users by mobile number
+        # 5. Map users by mobile number
         user_map = {
             u.username: u.id
             for u in User.objects.filter(username__in=members_map.values())
         }
 
-        # 5. ContentType for linking notification to collection
+        # 6. ContentType for linking notification to collection
         collection_ct = ContentType.objects.get_for_model(MppCollection)
 
         notifications_to_create = []
+        tracking_records_to_create = []
 
-        # 6. Process new collections
+        # 7. Process new collections
         for record in collections:
             collection_code = record["mpp_collection_code"]
             shift = record.get("shift_code__shift_short_name", "")
@@ -148,34 +158,50 @@ class Command(BaseCommand):
                 )
             )
 
-        # 7. Retry failed/pending notifications
+            # Create tracking record for this collection
+            tracking_records_to_create.append(
+                NotificationTrackMppCollection(
+                    collection_code=collection_code, is_sent=True
+                )
+            )
+
+        # 8. Retry failed/pending notifications (only for untracked collections)
         retry_notifications = Notification.objects.filter(
             template=template,
-            recipient_id = user_id,
-            created_at=today,
+            created_at__date=today,
             status__in=[NotificationStatus.PENDING, NotificationStatus.FAILED],
-        )
+        ).exclude(context_data__mpp_collection__collection_code__in=tracked_codes)
 
-        # Combine new and retry
-        notifications_to_create += list(retry_notifications)
-
-        if not notifications_to_create:
+        if not notifications_to_create and not retry_notifications.exists():
             self.stdout.write(
                 self.style.SUCCESS("✅ No new or retry notifications to process.")
             )
             return
 
         with transaction.atomic():
-            # Bulk create only the new notifications (retry already exists)
+            # Bulk create new notifications
             created_notifications = Notification.objects.bulk_create(
-                [n for n in notifications_to_create if not n.id], batch_size=500
+                notifications_to_create, batch_size=500
             )
+
+            # Bulk create tracking records
+            NotificationTrackMppCollection.objects.bulk_create(
+                tracking_records_to_create, batch_size=500, ignore_conflicts=True
+            )
+
+        # Combine new and retry for processing
+        all_notification_ids = [obj.pk for obj in created_notifications] + list(
+            retry_notifications.values_list("id", flat=True)
+        )
+
         from notifications.tasks import process_collections_batch
 
-        # process_collections_batch.delay([obj.pk for obj in created_notifications])
+        process_collections_batch.delay(all_notification_ids)
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"✅ Created {len(created_notifications)} new notifications and retried {retry_notifications.count()} notifications."
+                f"✅ Created {len(created_notifications)} new notifications, "
+                f"retried {retry_notifications.count()} notifications, "
+                f"and tracked {len(tracking_records_to_create)} collections."
             )
         )

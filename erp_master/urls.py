@@ -13,8 +13,6 @@ admin.site.site_title = "ERP Admin"
 admin.site.index_title = "Site administration"
 admin.site.site_header = "ERP Administration"
 
-from member.views import app_ads_txt
-
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -50,7 +48,6 @@ urlpatterns = [
                   path("erp-fcm/api/", include("notifications.urls")),
                   path("i18n/", include("django.conf.urls.i18n")),
                   path('excel/api/', include('veterinary.excel_urls')),
-                  path("app-ads.txt", app_ads_txt, name="app_ads_txt"),
 
                   # API Documentation
                   path("openapi/schema/", SpectacularAPIView.as_view(), name="schema"),

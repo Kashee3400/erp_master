@@ -1,62 +1,20 @@
-# notifications/tasks.py
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
-from notifications.fcm import _send_device_specific_notification
-from typing import Dict, Any
 from django.utils import timezone
 import subprocess
 import platform
-from .choices import NotificationStatus, NotificationChannel
+from .choices import NotificationStatus
 from django.contrib.auth import get_user_model
-from django.db import transaction
 import logging
+from django.core.management import call_command
 
-logger = logging.getLogger(__name__)
 CHUNK_SIZE = 500
 
 User = get_user_model()
 
-from .fcm import _send_device_specific_notification
-
 logger = logging.getLogger(__name__)
-
-
-@shared_task(bind=True, max_retries=3, default_retry_delay=30)
-def send_feedback_email(self, subject, message, recipient_list):
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=recipient_list,
-            fail_silently=False,  # Let errors raise for retry
-        )
-        logger.info(f"Sent feedback email to {recipient_list}")
-    except Exception as e:
-        logger.error(f"Failed to send email: {e}, retrying...")
-        raise self.retry(exc=e)
-
-
-@shared_task(bind=True, max_retries=3, default_retry_delay=10)
-def send_fcm_notification_task(self, token, title, body, data=None):
-
-    payload = {
-        "to": token,
-        "notification": {"title": title, "body": body},
-        "data": data or {},
-    }
-
-    try:
-        sent, info = _send_device_specific_notification(
-            device_token=token, notification=payload
-        )
-        if not sent:
-            raise Exception(f"FCM failed: {info}")
-        return {"status": "sent", "info": info}
-    except Exception as e:
-        self.retry(exc=e)
 
 
 @shared_task
@@ -74,6 +32,21 @@ def scan_file_virus(file_path):
     except Exception as e:
         return str(e)
 
+@shared_task(bind=True, max_retries=3)
+def process_mpp_collection_notifications(self):
+    """
+    Celery task to process MPP collection notifications.
+    Runs the management command to create and send notifications.
+    """
+    try:
+        logger.info("Starting MPP collection notification processing...")
+        call_command('process_collection_notifications')
+        logger.info("MPP collection notification processing completed successfully.")
+        return "Success"
+    except Exception as exc:
+        logger.error(f"Error processing MPP collection notifications: {exc}")
+        # Retry after 5 minutes if failed
+        raise self.retry(exc=exc, countdown=300)
 
 @shared_task
 def schedule_notification_delivery_task(notification_id: int):
@@ -137,7 +110,7 @@ def deliver_notification(self, notification_id: str):
     """Celery task for delivering notifications"""
     logger.info(f"Recieved task with notification id ${notification_id}")
     try:
-        from .model import Notification, NotificationStatus
+        from .model import Notification
         from .delivery import NotificationDeliveryService
         notification = Notification.objects.get(uuid=notification_id)
         delivery_service = NotificationDeliveryService()
@@ -215,94 +188,6 @@ def deliver_chunk(self, notification_ids: list[int]):
     except Exception as exc:
         logger.exception(f"🔥 Error delivering chunk: {exc}")
         raise self.retry(exc=exc, countdown=60 * (2**self.request.retries))
-
-
-@shared_task(bind=True, max_retries=5)
-def create_notification_from_collection(
-    self, collection_code, member_code, template_id
-):
-    """
-    Create a notification for a specific collection
-    Implements deduplication at task level
-    """
-    try:
-        from .model import Notification, NotificationTemplate
-        from erp_app.models import MppCollection
-        from django.template import Template, Context
-
-        # Fetch collection and template
-        collection = MppCollection.objects.using("mssql").get(
-            mpp_collection_code=collection_code
-        )
-        template = NotificationTemplate.objects.get(id=template_id)
-        user = User.objects.get(username=member_code)
-
-        # Double-check deduplication
-        existing = Notification.objects.filter(
-            template=template,
-            recipient=user,
-            context_data__collection_code=collection_code,
-        ).first()
-
-        if existing:
-            logger.info(f"Notification already exists for {collection_code}")
-            return True
-
-        # Prepare rendering context
-        context = Context(
-            {
-                "recipient": user,
-                "collection": collection,
-                "site_name": "Kashee E-Dairy",
-            }
-        )
-
-        # Render the templates
-        title = Template(template.title_template).render(context)
-        body = Template(template.body_template).render(context)
-
-        # Create notification
-        notification = Notification.objects.create(
-            template=template,
-            recipient=user,
-            title=title.strip(),
-            body=body.strip(),
-            context_data={
-                "collection_code": collection.mpp_collection_code,
-                "member_code": collection.member_code,
-                "shift": str(collection.shift_code_id),
-                "amount": str(collection.amount or 0),
-                "qty": str(collection.qty or 0),
-                "fat": str(collection.fat or 0),
-                "snf": str(collection.snf or 0),
-            },
-            channels=["in_app", "push"],
-            status="PENDING",
-        )
-
-        # Mark as processed in MSSQL
-        with transaction.atomic(using="mssql"):
-            collection.flg_sentbox_entry = "Y"
-            collection.save(using="mssql", update_fields=["flg_sentbox_entry"])
-
-        # Queue notification for delivery
-        queue_notification_async.delay(notification.id)
-
-        logger.info(f"✅ Notification created for collection {collection_code}")
-        return True
-
-    except (
-        MppCollection.DoesNotExist,
-        NotificationTemplate.DoesNotExist,
-        User.DoesNotExist,
-    ) as e:
-        logger.error(f"Object not found while creating notification: {e}")
-        return False
-
-    except Exception as exc:
-        logger.error(f"Error creating notification for {collection_code}: {exc}")
-        raise self.retry(exc=exc, countdown=60 * (2**self.request.retries))
-
 
 @shared_task(bind=True, max_retries=5)
 def queue_notification_async(self, notification_id):

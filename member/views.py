@@ -4,21 +4,31 @@ from rest_framework_simplejwt.token_blacklist.models import (
     BlacklistedToken,
     OutstandingToken,
 )
+from erp_app.models import Mpp
+from util.response import custom_response
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from facilitator.models.user_profile_model import UserProfile
 from erp_app.models import BusinessHierarchySnapshot
+from .throttle import OTPThrottle
+from collections import defaultdict, Counter
+
+from decouple import config
 
 logger = logging.getLogger(__name__)
+
+
+class MyHomePage(LoginRequiredMixin, View):
+    template_name = "member/pages/dashboards/default.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
-
-
-from .throttle import OTPThrottle
 
 
 class GenerateOTPView(APIView):
@@ -225,82 +235,6 @@ class GenerateSahayakOTPView(APIView):
         )
 
 
-# class VerifySahayakOTPView(generics.GenericAPIView):
-#     serializer_class = VerifyOTPSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         phone_number = serializer.validated_data["phone_number"]
-#         otp_value = serializer.validated_data["otp"]
-#         device_id = request.data.get("device_id")
-#         module = request.data.get("module", "sahayak")
-
-#         otp = OTP.objects.filter(phone_number=phone_number, otp=otp_value).first()
-#         if not otp:
-#             return Response(
-#                 {
-#                     "status": status.HTTP_400_BAD_REQUEST,
-#                     "message": "Invalid OTP. Try again.",
-#                 },
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         if not otp.is_valid():
-#             otp.delete()
-#             return Response(
-#                 {"status": status.HTTP_400_BAD_REQUEST, "message": "OTP expired"},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-#             # Ensure no duplicate device exists before associating
-#         user, _ = User.objects.get_or_create(username=phone_number)
-
-#         # Step 1: Try fetching existing device object
-#         existing_device_obj = UserDevice.objects.filter(user=user).first()
-
-#         # Step 2: Retain mpp_code before deletion
-#         existing_mpp_code = (
-#             existing_device_obj.mpp_code if existing_device_obj else None
-#         )
-
-#         # Step 3: Handle missing mpp_code
-#         if existing_mpp_code is None:
-#             return Response(
-#                 {
-#                     "status": status.HTTP_400_BAD_REQUEST,
-#                     "message": "MPP code not assigned. Contact support.",
-#                 },
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         # Step 4: Clean up any device conflicts
-#         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
-
-#         # Step 5: Create new device with retained mpp_code
-#         device = UserDevice.objects.create(
-#             user=user, device=device_id, module=module, mpp_code=existing_mpp_code
-#         )
-
-#         # Step 6: Generate tokens and send response
-#         refresh = RefreshToken.for_user(user)
-
-#         # After successful authentication
-#         update_last_login(None, user)
-
-#         response = {
-#             "status": status.HTTP_200_OK,
-#             "phone_number": user.username,
-#             "message": "Authentication successful",
-#             "access_token": str(refresh.access_token),
-#             "refresh_token": str(refresh),
-#             "device_id": device.device,
-#             "mpp_code": device.mpp_code,
-#         }
-#         return Response(response, status=status.HTTP_200_OK)
-
-
 class VerifySahayakOTPView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     authentication_classes = [JWTAuthentication]
@@ -393,20 +327,21 @@ class VerifySahayakOTPView(generics.GenericAPIView):
 
 
 def send_sms_api(mobile, otp):
-    url = "https://alerts.cbis.in/SMSApi/send"
+    url = config("SMS_API_URL")
     params = {
-        "userid": "kashee",
+        "userid": config("SMS_USERID"),
         "output": "json",
-        "password": "Kash@12",
+        "password": config("SMS_PASSWORD"),
         "sendMethod": "quick",
         "mobile": mobile,
         "msg": f"आपका काशी ई-डेयरी लॉगिन ओटीपी कोड {otp} है। किसी के साथ साझा न करें- काशी डेरी",
-        "senderid": "KMPCLV",
+        "senderid": config("SMS_SENDERID"),
         "msgType": "unicode",
-        "dltEntityId": "1001453540000074525",
-        "dltTemplateId": "1007171661975556092",
+        "dltEntityId": config("SMS_DLT_ENTITY_ID"),
+        "dltTemplateId": config("SMS_DLT_TEMPLATE_ID"),
         "duplicatecheck": "true",
     }
+
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -481,84 +416,6 @@ class LogoutView(APIView):
         )
 
 
-class UserAPiView(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(
-            {"status": 200, "message": "Success", "data": serializer.data},
-            status=status.HTTP_200_OK,
-        )
-
-    def retrieve(self, request, *args, **kwargs):
-        user = self.request.user
-        serializer = self.get_serializer(user)
-        return Response(
-            {"status": 200, "message": "Success", "data": serializer.data},
-            status=status.HTTP_200_OK,
-        )
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(
-            {"status": 201, "message": "Created successfully", "data": serializer.data},
-            status=status.HTTP_201_CREATED,
-        )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(
-            {"status": 200, "message": "Updated successfully", "data": serializer.data},
-            status=status.HTTP_200_OK,
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(
-            {"status": 204, "message": "Deleted successfully", "data": {}},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
-    @decorators.action(detail=False, methods=["get"])
-    def user_details(self, request):
-        user = request.user
-        serializer = self.get_serializer(user)
-        return Response(
-            {"status": 200, "message": "Success", "data": serializer.data},
-            status=status.HTTP_200_OK,
-        )
-
-
-def app_ads_txt(request):
-    # Specify the path to the app-ads.txt file
-    file_path = os.path.join(os.path.dirname(__file__), "static\\app-ads.txt")
-
-    # Read the content of the file
-    with open(file_path, "r") as file:
-        content = file.read()
-
-    # Return the content as a plain text response
-    return HttpResponse(content, content_type="text/plain")
-
-
-def custom_response(status, data=None, message=None, status_code=200):
-    response_data = {"status": status, "message": message or "Success", "data": data}
-    return JsonResponse(
-        response_data, status=status_code, json_dumps_params={"ensure_ascii": False}
-    )
-
-
 class ProductRateListView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
     permission_classes = [AllowAny]
@@ -588,16 +445,6 @@ class ProductRateListView(generics.ListAPIView):
                 message=str(e),
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-
-class MyHomePage(LoginRequiredMixin, View):
-    template_name = "member/pages/dashboards/default.html"
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
-
-from collections import defaultdict, Counter
 
 
 class AppInstalledData(APIView):
@@ -774,9 +621,6 @@ class AppInstalledData(APIView):
         return Response(result, status=status.HTTP_200_OK)
 
 
-from erp_app.models import Mpp
-
-
 class SahayakAppInstalledData(APIView):
     permission_classes = [AllowAny]
 
@@ -856,106 +700,6 @@ class SahayakAppInstalledData(APIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
-
-
-class CdaAggregationDaywiseMilktypeViewSet(viewsets.ModelViewSet):
-    queryset = CdaAggregation.objects.all()
-    serializer_class = CdaAggregationDaywiseMilktypeSerializer
-    pagination_class = StandardResultsSetPagination
-    permission_classes = [IsAuthenticated]
-
-    def get_financial_year_dates(self, input_date):
-        year = input_date.year
-        if input_date.month < 4:
-            start_year = year - 1
-            end_year = year
-        else:
-            start_year = year
-            end_year = year + 1
-        start_date = date(start_year, 4, 1)
-        end_date = date(end_year, 3, 31)
-        return start_date, end_date
-
-    def format_aggregates(self, aggregates):
-        formatted_aggregates = {}
-        for key, value in aggregates.items():
-            if value is not None:
-                formatted_aggregates[key] = round(value, 2)
-            else:
-                formatted_aggregates[key] = None
-        return formatted_aggregates
-
-    def list(self, request, *args, **kwargs):
-        device = self.request.user.device
-        collection_date_param = request.query_params.get("created_at", None)
-        if collection_date_param and collection_date_param.lower() != "null":
-            collection_date = parse_date(collection_date_param)
-        else:
-            collection_date = now().date()
-        mpp = Mpp.objects.filter(mpp_ex_code=device.mpp_code).last()
-        if not mpp:
-            return Response(
-                {
-                    "status": "error",
-                    "message": f"No MPP found for the provided mppcode: {device.mpp_code}",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        start_date, end_date = self.get_financial_year_dates(collection_date)
-        current_date_data = CdaAggregation.objects.filter(
-            collection_date__date=collection_date, mpp_code=mpp.mpp_code
-        )
-
-        fy_data = CdaAggregation.objects.filter(
-            collection_date__gte=start_date,
-            collection_date__lte=end_date,
-            mpp_code=mpp.mpp_code,
-        ).aggregate(
-            total_composite_qty=Sum("composite_qty"),
-            total_dispatch_qty=Sum("dispatch_qty"),
-            total_actual_qty=Sum("actual_qty"),
-            avg_composite_fat=Avg("composite_fat"),
-            avg_dispatch_fat=Avg("dispatch_fat"),
-            avg_actual_fat=Avg("actual_fat"),
-            avg_composite_snf=Avg("composite_snf"),
-            avg_dispatch_snf=Avg("dispatch_snf"),
-            avg_actual_snf=Avg("actual_snf"),
-        )
-
-        # Format the aggregated data
-        formatted_fy_data = self.format_aggregates(fy_data)
-
-        page_morning = self.paginate_queryset(current_date_data.filter(shift="Morning"))
-        page_evening = self.paginate_queryset(current_date_data.filter(shift="Evening"))
-        if page_morning is not None:
-            serializer_morning = self.get_serializer(page_morning, many=True)
-            serializer_evening = self.get_serializer(page_evening, many=True)
-            return self.get_paginated_response(
-                {
-                    "status": "success",
-                    "current_date_data": serializer_morning.data,
-                    "current_date_data_evening": serializer_evening.data,
-                    "fy_data": formatted_fy_data,
-                    "message": "Success",
-                }
-            )
-
-        serializer_morning = self.get_serializer(
-            current_date_data.filter(shift="Morning"), many=True
-        )
-        serializer_evening = self.get_serializer(
-            current_date_data.filter(shift="Evening"), many=True
-        )
-        return Response(
-            {
-                "status": "success",
-                "current_date_data": serializer_morning.data,
-                "current_date_data_evening": serializer_evening.data,
-                "fy_data": formatted_fy_data,
-                "message": "Success",
-            },
-            status=status.HTTP_200_OK,
-        )
 
 
 class SahayakIncentivesAllInOneView(LoginRequiredMixin, View, ImportExportModelAdmin):

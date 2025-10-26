@@ -33,6 +33,7 @@ THIRD_PARTY_APPS = [
     "django_tables2",
     "bootstrap5",
     "django_filters",
+    "django_celery_beat",
     "crispy_forms",
     "crispy_bootstrap5",
     "django_ckeditor_5",
@@ -442,6 +443,9 @@ CELERY_TASK_SERIALIZER = "json"
 
 CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
 
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_RESULT_EXPIRES = 3600
+
 CELERY_TASK_QUEUES = {
     "erp_master_queue": {
         "exchange": "erp_exchange",
@@ -470,10 +474,10 @@ SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")
 
 
 EXCEL_IMPORT_SETTINGS = {
-    "MAX_FILE_SIZE": 50 * 1024 * 1024,  # 50MB
+    "MAX_FILE_SIZE": 50 * 1024 * 1024,
     "ALLOWED_EXTENSIONS": [".xlsx", ".xls"],
     "MAX_PREVIEW_ROWS": 100,
-    "TEMP_FILE_TIMEOUT": 3600,  # 1 hour in seconds
+    "TEMP_FILE_TIMEOUT": 3600,
     "DEFAULT_DATE_FORMAT": "%Y-%m-%d",
     "DEFAULT_DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
 }

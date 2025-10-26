@@ -7,7 +7,6 @@ from ..models.facilitator_model import AssignedMppToFacilitator
 from ..serializers.serializers import *
 from erp_app.models import (
     MppCollection,
-    RmrdMilkCollection,
     MppDispatchTxn,
     MemberMasterHistory,
     V_PouredMemberSummary,
@@ -21,14 +20,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from ..authentication import ApiKeyAuthentication
-from django.contrib.auth.models import update_last_login
-from django.contrib.auth.password_validation import validate_password
-import random
 from django.core.cache import cache
-from django.db.models import Sum, OuterRef, Subquery, FloatField
+from django.db.models import Sum, FloatField
 from django.utils.dateparse import parse_date
 from facilitator.db.erp_db_queries import (
-    get_poured_members_from_view,
     get_poured_mpp_data,
 )
 
@@ -1209,88 +1204,6 @@ class GetDailyMppCollections(APIView):
         if user.is_authenticated:
             return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
         return []
-
-
-# class GetTotalQtyForToday(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-
-#     def get_mpps(self, user):
-#         if user.is_authenticated:
-#             return user.mpps.only("mpp_code").values_list("mpp_code", flat=True)
-#         return []
-
-#     def get(self, request):
-#         user = request.user
-#         collection_date = request.GET.get("collection_date", str(timezone.now().date()))
-
-#         # Create a unique cache key based on user and date
-#         cache_key = f"total_qty_{user.id}_{collection_date}"
-#         cached_data = cache.get(cache_key)
-#         if cached_data is not None:
-#             return Response(
-#                 {
-#                     "message": "success (cached)",
-#                     "status": "success",
-#                     **cached_data,
-#                 },
-#                 status=status.HTTP_200_OK,
-#             )
-
-#         # Get relevant MPP codes
-#         mpp_codes = list(self.get_mpps(user))
-#         if not mpp_codes:
-#             return Response(
-#                 {"message": "No MPPs assigned", "status": "error", "total_qty": 0.0},
-#                 status=status.HTTP_404_NOT_FOUND,
-#             )
-
-#         base_filter = {
-#             "references__mpp_code__in": mpp_codes,
-#             "references__collection_date__date": collection_date,
-#         }
-
-#         # Total quantity across all shifts
-#         total_qty = (
-#             MppCollection.objects.filter(**base_filter).aggregate(total_qty=Sum("qty"))[
-#                 "total_qty"
-#             ]
-#             or 0
-#         )
-
-#         # Quantity for Morning shift (M)
-#         qty_m = (
-#             MppCollection.objects.filter(
-#                 **base_filter, shift_code__shift_short_name="M"
-#             ).aggregate(qty=Sum("qty"))["qty"]
-#             or 0
-#         )
-
-#         # Quantity for Evening shift (E)
-#         qty_e = (
-#             MppCollection.objects.filter(
-#                 **base_filter, shift_code__shift_short_name="E"
-#             ).aggregate(qty=Sum("qty"))["qty"]
-#             or 0
-#         )
-
-#         response_data = {
-#             "total_qty": float(total_qty),
-#             "qty_m": float(qty_m),
-#             "qty_e": float(qty_e),
-#         }
-
-#         # Cache the result
-#         cache.set(cache_key, response_data, timeout=CACHE_TIMEOUT)
-
-#         return Response(
-#             {
-#                 "message": "success",
-#                 "status": "success",
-#                 **response_data,
-#             },
-#             status=status.HTTP_200_OK,
-#         )
 
 from django.db.models import Sum, Case, When, FloatField, Value
 

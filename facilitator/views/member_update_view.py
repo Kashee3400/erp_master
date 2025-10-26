@@ -17,7 +17,6 @@ from django.utils import timezone
 from ..choices import (
     RoleType,
     RequestStatus,
-    ChangeType,
     DocumentTypeChoice,
     RequestTypeChoices,
 )

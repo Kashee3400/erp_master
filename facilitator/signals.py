@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models.user_profile_model import UserProfile
 from .models.facilitator_model import AssignedMppToFacilitator
-from notifications.model import AppNotification, NotificationMedium, NotificationType
+from notifications.model import NotificationMedium, NotificationType
 from import_export.signals import post_import
 from .utils.import_flag import set_importing, is_importing
 from facilitator.models.file_models import UploadedFile, FileActionLog
@@ -33,26 +33,26 @@ def clear_import_flag(sender, **kwargs):
     set_importing(False)
 
 
-@receiver(post_save, sender=AssignedMppToFacilitator)
-def mpp_post_save(sender, instance, created, **kwargs):
-    if is_importing():
-        return  # Skip during import
+# @receiver(post_save, sender=AssignedMppToFacilitator)
+# def mpp_post_save(sender, instance, created, **kwargs):
+#     if is_importing():
+#         return  # Skip during import
 
-    title = "New MPP Created" if created else "MPP Updated"
-    AppNotification.objects.create(
-        recipient=instance.sahayak,
-        title=title,
-        body=f"{'Assigned' if created else 'Updated'} MPP: {instance.mpp_name} ({instance.mpp_ex_code})",
-        message=f"You have been {'assigned' if created else 'updated with'} a MPP.\n"
-        f"MPP: {instance.mpp_name} ({instance.mpp_ex_code})",
-        model="mpp",
-        object_id=instance.pk,
-        route="mpps-list",
-        custom_key="mppNotification",
-        is_subroute=True,
-        notification_type=NotificationType.INFO,
-        sent_via=NotificationMedium.SYSTEM,
-    )
+#     title = "New MPP Created" if created else "MPP Updated"
+#     AppNotification.objects.create(
+#         recipient=instance.sahayak,
+#         title=title,
+#         body=f"{'Assigned' if created else 'Updated'} MPP: {instance.mpp_name} ({instance.mpp_ex_code})",
+#         message=f"You have been {'assigned' if created else 'updated with'} a MPP.\n"
+#         f"MPP: {instance.mpp_name} ({instance.mpp_ex_code})",
+#         model="mpp",
+#         object_id=instance.pk,
+#         route="mpps-list",
+#         custom_key="mppNotification",
+#         is_subroute=True,
+#         notification_type=NotificationType.INFO,
+#         sent_via=NotificationMedium.SYSTEM,
+#     )
 
 
 @receiver(post_save, sender=UploadedFile)

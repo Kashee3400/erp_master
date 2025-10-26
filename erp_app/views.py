@@ -233,14 +233,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         }
         return Response(response)
 
-
-class CustomPageNumberPagination(PageNumberPagination):
-    page_size = 20  # Default page size
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-
-class NewMppCollectionAggregationListView(generics.ListAPIView):
+class MppCollectionListView(generics.ListAPIView):
     """
     Provides the latest MPP collection aggregation list with totals and pagination.
     """

@@ -8,22 +8,11 @@ from django.utils import timezone
 import logging
 
 from .model import (
-    AppNotification,
     Notification,
     NotificationStatus,
     NotificationGroup,
 )
-from .tasks import deliver_notification, schedule_notification_delivery_task
-
-
-from .notification_service import NotificationService
-
-
-@receiver(post_save, sender=AppNotification)
-def notification_post_save(sender, instance, created, **kwargs):
-    if created:
-        logger.info(f"[Notification] New notification created: {instance.pk}")
-        NotificationService.notify_instance_created(instance)
+from .tasks import deliver_notification
 
 
 @receiver(pre_save, sender=Notification)

@@ -1,4 +1,3 @@
-# notifications/management/commands/cleanup_notifications.py
 from django.core.management.base import BaseCommand
 from ...notification_service import (
     NotificationService,

@@ -136,6 +136,7 @@ class NotificationDeliveryService:
 
                 if result.get("status") == "success":
                     success_count += 1
+                    notification.mark_as_delivered(channel=channel)
 
             except Exception as e:
                 logger.error(f"Delivery failed for channel {channel}: {e}")

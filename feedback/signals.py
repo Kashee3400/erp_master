@@ -2,9 +2,22 @@ import logging
 from django.dispatch import receiver
 from .models import Feedback, FeedbackComment
 from django.db.models.signals import pre_save, post_save
+from django.contrib.auth import get_user_model
+import logging
+from django.contrib.contenttypes.models import ContentType
+
+User = get_user_model()
+
+
+from notifications.model import (
+    Notification,
+    NotificationTemplate,
+    NotificationMedium,
+    NotificationType,
+    NotificationStatus,
+)
 
 logger = logging.getLogger(__name__)
-from notifications.model import AppNotification, NotificationMedium, NotificationType
 
 
 @receiver(pre_save, sender=Feedback)
@@ -28,6 +41,7 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
+    template = NotificationTemplate.objects.filter(name="feedback_update_hi").last()
     feedback = instance.feedback
     comment_user = instance.user
 
@@ -42,47 +56,73 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
 
     # Validate recipient
     if not recipient or recipient == comment_user:
-        return  # Skip if recipient is None or same as sender
+        return
+    collection_ct = ContentType.objects.get_for_model(Feedback)
 
-    AppNotification.objects.create(
+    render_context = {
+        "recipient": recipient,
+        "feedback": feedback,
+        "site_name": "Kashee E-Dairy",
+    }
+
+    # Render content using the template model
+    rendered = template.render_content(render_context)
+
+    Notification.objects.create(
         sender=comment_user,
+        template=template,
         recipient=recipient,
-        title="New Feedback Message",
-        body=instance.comment,
-        message=instance.comment,
-        model="feedback",
-        object_id=feedback.pk,
-        route="feedback-details",
-        custom_key="feedbackNotification",
+        delivery_status={"status": NotificationStatus.PENDING},
+        channels=["push"],
+        app_route=f"/feedback/{feedback.pk}",
+        custom_key=f"feedback_{feedback.pk}",
         is_subroute=True,
-        allowed_email=True,
-        notification_type=NotificationType.INFO,
-        sent_via=NotificationMedium.SYSTEM,
+        title=rendered.get("title", ""),
+        body=rendered.get("body", ""),
+        email_subject=rendered.get("email_subject", ""),
+        email_body=rendered.get("email_body"),
+        content_type=collection_ct,
+        object_id=feedback.pk,
+        context_data={},
+        status=NotificationStatus.PENDING,
     )
 
 
 @receiver(post_save, sender=Feedback)
 def feedback_post_save(sender, instance, created, **kwargs):
+    collection_ct = ContentType.objects.get_for_model(Feedback)
+
     # -------------------------
     # 1. New Feedback Created
     # -------------------------
     if created:
+        template = NotificationTemplate.objects.filter(name="feedback_update_hi").last()
         logger.info(f"[Feedback] New feedback created: {instance.feedback_id}")
 
-        AppNotification.objects.create(
-            sender=instance.sender,
+        render_context = {
+            "recipient": instance.sender,
+            "feedback": instance,
+            "site_name": "Kashee E-Dairy",
+        }
+
+        rendered = template.render_content(render_context)
+
+        Notification.objects.create(
             recipient=instance.sender,
-            title="New Feedback Submitted",
-            body=f"Thank you for your feedback (ID: {instance.feedback_id})",
-            message=f"Feedback by {instance.sender.get_full_name() or instance.sender.username} has been created with status: {instance.status}.",
-            model="feedback",
-            object_id=instance.pk,
-            route="feedback-details",
-            custom_key="feedbackNotification",
+            template=template,
+            delivery_status={"status": NotificationStatus.PENDING},
+            channels=["push"],
+            app_route=f"/feedback/{instance.pk}",
+            custom_key=f"feedback_{instance.pk}",
             is_subroute=True,
-            allowed_email=True,
-            notification_type=NotificationType.INFO,
-            sent_via=NotificationMedium.SYSTEM,
+            title=rendered.get("title", ""),
+            body=rendered.get("body", ""),
+            email_subject=rendered.get("email_subject", ""),
+            email_body=rendered.get("email_body"),
+            content_type=collection_ct,
+            object_id=instance.pk,
+            context_data=render_context,
+            status=NotificationStatus.PENDING,
         )
         return
 
@@ -92,25 +132,36 @@ def feedback_post_save(sender, instance, created, **kwargs):
     if getattr(instance, "_assigned_to_changed", False) and instance.assigned_to:
         logger.info(f"[Feedback] Reassigned to: {instance.assigned_to}")
 
-        AppNotification.objects.create(
-            sender=instance.sender,
+        template = NotificationTemplate.objects.filter(name="feedback_update_hi").last()
+        render_context = {
+            "recipient": instance.assigned_to,
+            "feedback": instance,
+            "assigner": instance.sender,
+            "site_name": "Kashee E-Dairy",
+        }
+
+        rendered = template.render_content(render_context)
+
+        Notification.objects.create(
             recipient=instance.assigned_to,
-            title="New Feedback Assigned",
-            body=f"{instance.sender.get_full_name()} Assigned you a feedback({instance.feedback_id}), Priority: {instance.priority}",
-            message=(
-                f"You've been assigned a new feedback.\n"
-                f"By: {instance.sender.get_full_name()}.\n"
-                if instance.sender
-                else "" f"Priority: {instance.priority}, Status: {instance.status}."
-            ),
-            model="feedback",
-            object_id=instance.pk,
-            route="feedback-details",
-            custom_key="feedbackNotification",
+            sender=instance.sender,
+            template=template,
+            delivery_status={"status": NotificationStatus.PENDING},
+            channels=["push"],
+            app_route=f"/feedback/{instance.pk}",
+            custom_key=f"feedback_assigned_{instance.pk}",
             is_subroute=True,
-            notification_type=NotificationType.INFO,
-            sent_via=NotificationMedium.SYSTEM,
-            allowed_email=True,
+            title=rendered.get("title", f"New Feedback Assigned"),
+            body=rendered.get(
+                "body",
+                f"{instance.sender.get_full_name()} assigned you feedback ({instance.feedback_id}), Priority: {instance.priority}",
+            ),
+            email_subject=rendered.get("email_subject", ""),
+            email_body=rendered.get("email_body", ""),
+            content_type=collection_ct,
+            object_id=instance.pk,
+            context_data=render_context,
+            status=NotificationStatus.PENDING,
         )
 
     # -------------------------
@@ -125,20 +176,34 @@ def feedback_post_save(sender, instance, created, **kwargs):
             f"[Feedback] Feedback {instance.feedback_id} status changed: {old_status} → {new_status}"
         )
 
-        AppNotification.objects.create(
-            sender=instance.assigned_to or None,
+        template = NotificationTemplate.objects.filter(name="feedback_status_change_hi").last()
+        render_context = {
+            "recipient": instance.sender,
+            "feedback": instance,
+            "old_status": old_status,
+            "new_status": new_status,
+            "site_name": "Kashee E-Dairy",
+        }
+
+        rendered = template.render_content(render_context)
+
+        Notification.objects.create(
             recipient=instance.sender,
-            title=f"Feedback {status_label}",
-            body=f"Your feedback ID {instance.feedback_id} is now '{status_label}'.",
-            message=(
-                f"Your feedback has been '{status_label}' "
-            ),
-            model="feedback",
-            object_id=instance.pk,
-            route="feedback-details",
-            custom_key="feedbackNotification",
+            sender=instance.assigned_to or None,
+            template=template,
+            delivery_status={"status": NotificationStatus.PENDING},
+            channels=["push"],
+            app_route=f"/feedback/{instance.pk}",
+            custom_key=f"feedback_status_{instance.pk}",
             is_subroute=True,
-            notification_type=NotificationType.INFO,
-            sent_via=NotificationMedium.SYSTEM,
-            allowed_email=True,
+            title=rendered.get("title", f"Feedback {status_label}"),
+            body=rendered.get(
+                "body", f"Your feedback ID {instance.feedback_id} is now '{status_label}'."
+            ),
+            email_subject=rendered.get("email_subject", ""),
+            email_body=rendered.get("email_body", ""),
+            content_type=collection_ct,
+            object_id=instance.pk,
+            context_data=render_context,
+            status=NotificationStatus.PENDING,
         )
