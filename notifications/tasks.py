@@ -1,7 +1,4 @@
 from celery import shared_task
-from django.core.mail import send_mail
-from django.conf import settings
-import logging
 from django.utils import timezone
 import subprocess
 import platform
@@ -32,6 +29,7 @@ def scan_file_virus(file_path):
     except Exception as e:
         return str(e)
 
+
 @shared_task(bind=True, max_retries=3)
 def process_mpp_collection_notifications(self):
     """
@@ -40,13 +38,14 @@ def process_mpp_collection_notifications(self):
     """
     try:
         logger.info("Starting MPP collection notification processing...")
-        call_command('process_collection_notifications')
+        call_command("process_collection_notifications")
         logger.info("MPP collection notification processing completed successfully.")
         return "Success"
     except Exception as exc:
         logger.error(f"Error processing MPP collection notifications: {exc}")
         # Retry after 5 minutes if failed
         raise self.retry(exc=exc, countdown=300)
+
 
 @shared_task
 def schedule_notification_delivery_task(notification_id: int):
@@ -112,6 +111,7 @@ def deliver_notification(self, notification_id: str):
     try:
         from .model import Notification
         from .delivery import NotificationDeliveryService
+
         notification = Notification.objects.get(uuid=notification_id)
         delivery_service = NotificationDeliveryService()
         delivery_service.deliver(notification)
@@ -143,7 +143,7 @@ def process_collections_batch(self, notification_ids: list[int]):
     Main task: splits large batch into smaller Celery subtasks.
     """
     try:
-        for start in range(0, len(notification_ids), CHUNK_SIZE): # 0 
+        for start in range(0, len(notification_ids), CHUNK_SIZE):  # 0
             chunk_ids = notification_ids[start : start + CHUNK_SIZE]
             deliver_chunk.delay(chunk_ids)
 
@@ -188,6 +188,7 @@ def deliver_chunk(self, notification_ids: list[int]):
     except Exception as exc:
         logger.exception(f"🔥 Error delivering chunk: {exc}")
         raise self.retry(exc=exc, countdown=60 * (2**self.request.retries))
+
 
 @shared_task(bind=True, max_retries=5)
 def queue_notification_async(self, notification_id):
