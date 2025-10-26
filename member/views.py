@@ -5,7 +5,6 @@ from rest_framework_simplejwt.token_blacklist.models import (
     OutstandingToken,
 )
 from erp_app.models import Mpp
-from util.response import custom_response
 from facilitator.authentication import ApiKeyAuthentication
 from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from facilitator.models.user_profile_model import UserProfile
@@ -17,6 +16,11 @@ from decouple import config
 
 logger = logging.getLogger(__name__)
 
+def custom_response(status, data=None, message=None, status_code=200):
+    response_data = {"status": status, "message": message or "Success", "data": data}
+    return JsonResponse(
+        response_data, status=status_code, json_dumps_params={"ensure_ascii": False}
+    )
 
 class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
