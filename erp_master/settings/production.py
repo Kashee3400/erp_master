@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 
 # settings.py
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 
@@ -69,9 +69,10 @@ DATABASES = {
     },
 }
 
+
 def setup_log_directory():
     """Ensure log directory exists"""
-    log_dir = getattr(settings, 'LOG_DIR', os.path.join(BASE_DIR, 'logs'))
+    log_dir = getattr(settings, "LOG_DIR", os.path.join(BASE_DIR, "logs"))
     os.makedirs(log_dir, exist_ok=True)
     return log_dir
 
@@ -79,31 +80,106 @@ def setup_log_directory():
 # Call this in your Django app's ready() method or in settings
 setup_log_directory()
 
-# Logging configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'excel_import.log'),
-        },
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
         },
     },
-    'loggers': {
-        'your_app': {  # Replace with your app name
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': True,
+    "handlers": {
+        # Handlers for each app
+        "notifications_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "notifications.log"),
+            "maxBytes": 5 * 1024 * 1024,  # 5 MB
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "member_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "member.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "facilitator_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "facilitator.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "feedback_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "feedback.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "veterinary_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "veterinary.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "mpms_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "mpms.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        # Optional console logging
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "notifications": {
+            "handlers": ["notifications_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "member": {
+            "handlers": ["member_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "facilitator": {
+            "handlers": ["facilitator_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "feedback": {
+            "handlers": ["feedback_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "veterinary": {
+            "handlers": ["veterinary_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "mpms": {
+            "handlers": ["mpms_file", "console"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
 
-STATIC_ROOT=STATIC_DIR
+STATIC_ROOT = STATIC_DIR
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5566",
