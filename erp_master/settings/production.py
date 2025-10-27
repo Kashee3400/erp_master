@@ -183,5 +183,6 @@ STATIC_ROOT = STATIC_DIR
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5566",
+    "https://kmpcl-mvu.netlify.app",
     "https://1.22.197.176:5566",
 ]
