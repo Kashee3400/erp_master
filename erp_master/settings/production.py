@@ -181,10 +181,16 @@ LOGGING = {
 
 STATIC_ROOT = STATIC_DIR
 
+from corsheaders.defaults import default_headers
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://kmpcl-mvu.netlify.app",
     "http://tech.kasheemilk.com:5566",
     "https://tech.kasheemilk.com:5566",
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-API-KEY",
 ]
