@@ -72,7 +72,7 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
         recipient=recipient,
         delivery_status={"status": NotificationStatus.PENDING},
         channels=["push"],
-        app_route=f"/feedback/{feedback.pk}",
+        app_route="feedback-details",
         custom_key=f"feedback_{feedback.pk}",
         is_subroute=True,
         title=rendered.get("title", ""),
@@ -87,6 +87,7 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
 
 
 from notifications.tasks import deliver_notification
+
 
 def create_feedback_notification(
     *,
@@ -124,7 +125,7 @@ def create_feedback_notification(
         template=template,
         delivery_status={"status": NotificationStatus.PENDING},
         channels=["push"],
-        app_route=app_route or f"/feedback/{feedback.pk}",
+        app_route=app_route or f"feedback-details",
         custom_key=custom_key,
         is_subroute=True,
         title=rendered.get("title", title_default),
@@ -153,6 +154,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             template_name="feedback_update_hi",
             feedback=instance,
             custom_key=f"feedback_{instance.pk}",
+            app_route="feedback-details",
         )
         return
 
@@ -165,6 +167,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             template_name="feedback_update_hi",
             feedback=instance,
             custom_key=f"feedback_assigned_{instance.pk}",
+            app_route="feedback-details",
             context_extra={
                 "assigner_id": instance.sender_id,
                 "priority": instance.priority,
@@ -189,6 +192,7 @@ def feedback_post_save(sender, instance, created, **kwargs):
             template_name="feedback_status_change_hi",
             feedback=instance,
             custom_key=f"feedback_status_{instance.pk}",
+            app_route="feedback-details",
             context_extra={
                 "old_status": old_status,
                 "new_status": new_status,

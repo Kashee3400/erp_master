@@ -408,7 +408,7 @@ class UpdateRequestDocumentAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         base = self.readonly_fields
-        if obj and getattr(obj.update_request, "status", None) in [
+        if obj and getattr(obj.request, "status", None) in [
             RequestStatus.UPDATED,
             RequestStatus.REJECTED,
         ]:
