@@ -292,7 +292,7 @@ class MedicineStock(BaseModel):
         null=True,
     )
     medicine = models.ForeignKey(
-        "Medicine",
+        Medicine,
         on_delete=models.CASCADE,
         related_name="stocks",
         help_text="Medicine item in stock",

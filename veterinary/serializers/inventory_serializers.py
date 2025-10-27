@@ -44,8 +44,10 @@ class MedicineBasicSerializer(serializers.ModelSerializer):
 
 class MedicineStockSerializer(serializers.ModelSerializer):
     medicine_name = serializers.CharField(source="medicine.medicine", read_only=True)
-    updated_by_name = serializers.CharField(source="updated_by.get_full_name", read_only=True)
-    
+    updated_by_name = serializers.CharField(
+        source="updated_by.get_full_name", read_only=True
+    )
+
     medicine_strength = serializers.CharField(
         source="medicine.strength", read_only=True
     )
@@ -120,9 +122,18 @@ class MedicineStockSerializer(serializers.ModelSerializer):
 
 
 class MedicineStockCreateUpdateSerializer(serializers.ModelSerializer):
+    medicine_name = serializers.CharField(source="medicine.medicine", read_only=True)
+
     class Meta:
         model = MedicineStock
-        fields = ["medicine", "total_quantity", "batch_number", "expiry_date"]
+        fields = [
+            "id",
+            "medicine_name",
+            "medicine",
+            "total_quantity",
+            "batch_number",
+            "expiry_date",
+        ]
 
     def validate(self, data):
         if data.get("expiry_date"):
@@ -181,7 +192,7 @@ class UserMedicineStockSerializer(serializers.ModelSerializer):
             "is_active",
             "locale",
         ]
-        read_only_fields = ["id","allocation_date"]
+        read_only_fields = ["id", "allocation_date"]
 
     def get_remaining_quantity(self, obj):
         return obj.remaining_quantity()

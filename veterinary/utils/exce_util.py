@@ -8,9 +8,13 @@ from datetime import datetime, date
 import re
 
 from veterinary.resources.cattle_resources import CombinedCattleResource
+from member.resources import UserDeviceResource,SahayakIncentivesResource,UserResource
 
 RESOURCE_REGISTRY = {
     "veterinary.Animal": CombinedCattleResource,
+    "auth.User":UserResource,
+    "member.UserDevice":UserDeviceResource,
+    "member.SahayakIncentives":SahayakIncentivesResource
 }
 
 logger = logging.getLogger(__name__)
