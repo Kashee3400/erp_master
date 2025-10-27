@@ -96,16 +96,10 @@ def process_excel_import(session_id, temp_file_path, selected_sheets, target_mod
         session = ExcelUploadSession.objects.get(id=session_id)
         session.status = ExcelUploadSession.Status.PROCESSING
         session.save(update_fields=["status"])
-
-        # Perform import
         results = process_import_enhanced(temp_file_path, selected_sheets, target_model)
-        print(f"Has Results: {results}")
-
-        # Check for errors in any sheet
         has_errors = any(
-            sheet_result.get('errors') for sheet_result in results.values()
+            sheet_result.get("errors") for sheet_result in results.values()
         )
-        print(f"Has Errors: {has_errors}")
         if has_errors:
             session.status = ExcelUploadSession.Status.FAILED
             session.error_message = str(results)
@@ -117,8 +111,6 @@ def process_excel_import(session_id, temp_file_path, selected_sheets, target_mod
             session.processed = True
 
         session.save()
-
-        # Cleanup temporary file
         try:
             os.remove(temp_file_path)
         except Exception as e:

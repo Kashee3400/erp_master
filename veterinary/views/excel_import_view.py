@@ -9,8 +9,10 @@ from util.response import custom_response
 from .choices_view import BaseModelViewSet
 from ..models.excel_model import ExcelUploadSession
 from django.http import JsonResponse, HttpResponse
-from ..serializers.excel_serializers import ExcelUploadSessionListSerializer, \
-    ExcelUploadSessionDetailSerializer
+from ..serializers.excel_serializers import (
+    ExcelUploadSessionListSerializer,
+    ExcelUploadSessionDetailSerializer,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,12 +31,14 @@ class ImportableModelsView(APIView):
     def get(self, request):
         models_info = []
         for model_label, resource_class in RESOURCE_REGISTRY.items():
-            models_info.append({
-                "label": model_label,  # e.g. "cattle.Cattle"
-                "name": model_label.split(".")[-1],  # e.g. "Cattle"
-                "app": model_label.split(".")[0],  # e.g. "cattle"
-                "resource": resource_class.__name__,  # e.g. "CattleResource"
-            })
+            models_info.append(
+                {
+                    "label": model_label,  # e.g. "cattle.Cattle"
+                    "name": model_label.split(".")[-1],  # e.g. "Cattle"
+                    "app": model_label.split(".")[0],  # e.g. "cattle"
+                    "resource": resource_class.__name__,  # e.g. "CattleResource"
+                }
+            )
         return JsonResponse({"models": models_info})
 
 
@@ -44,7 +48,7 @@ def _store_temp_file(uploaded_file):
     temp_filename = f"excel_{uuid.uuid4().hex}_{uploaded_file.name}"
     temp_path = os.path.join(temp_dir, temp_filename)
 
-    with open(temp_path, 'wb+') as temp_file:
+    with open(temp_path, "wb+") as temp_file:
         for chunk in uploaded_file.chunks():
             temp_file.write(chunk)
 
@@ -56,19 +60,20 @@ class ExcelExportView(APIView):
 
     def post(self, request):
         try:
-            export_config = request.data.get('config', {})
-            sheets_config = export_config.get('sheets', [])
-            filename = export_config.get('filename', 'export')
+            export_config = request.data.get("config", {})
+            sheets_config = export_config.get("sheets", [])
+            filename = export_config.get("filename", "export")
 
             # Create workbook
             from openpyxl import Workbook
+
             wb = Workbook()
             wb.remove(wb.active)  # Remove default sheet
 
             for sheet_config in sheets_config:
-                model_name = sheet_config.get('model')
-                sheet_name = sheet_config.get('name', model_name)
-                queryset = sheet_config.get('queryset')  # You'd pass this or build it
+                model_name = sheet_config.get("model")
+                sheet_name = sheet_config.get("name", model_name)
+                queryset = sheet_config.get("queryset")  # You'd pass this or build it
 
                 # Create worksheet
                 ws = wb.create_sheet(title=sheet_name)
@@ -76,20 +81,20 @@ class ExcelExportView(APIView):
                 # Add headers and data
                 # This would use your django-import-export resources
                 # Mock implementation here
-                ws.append(['Column 1', 'Column 2', 'Column 3'])
-                ws.append(['Data 1', 'Data 2', 'Data 3'])
+                ws.append(["Column 1", "Column 2", "Column 3"])
+                ws.append(["Data 1", "Data 2", "Data 3"])
 
             # Prepare response
             response = HttpResponse(
-                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-            response['Content-Disposition'] = f'attachment; filename="{filename}.xlsx"'
+            response["Content-Disposition"] = f'attachment; filename="{filename}.xlsx"'
 
             wb.save(response)
             return response
 
         except Exception as e:
-            return JsonResponse({'error': f'Export failed: {str(e)}'}, status=500)
+            return JsonResponse({"error": f"Export failed: {str(e)}"}, status=500)
 
 
 class ExcelSessionViewSet(BaseModelViewSet):
@@ -112,10 +117,14 @@ class ExcelSessionViewSet(BaseModelViewSet):
         excel_file = request.FILES.get("file")
 
         if not excel_file:
-            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         if not excel_file.name.endswith((".xlsx", ".xls")):
-            return Response({"error": "Invalid file type"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Invalid file type"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Create a new session entry
         session = ExcelUploadSession.objects.create(
@@ -169,19 +178,24 @@ class ExcelSessionViewSet(BaseModelViewSet):
             # Store file temporarily for later confirm
             temp_file_path = _store_temp_file(excel_file)
             cache.set(f"excel_file_{session.id}", temp_file_path, timeout=3600)
-            return JsonResponse({
-                'success': True,
-                'session_id': str(session.id),
-                'sheets': sheets_data,
-                'filename': excel_file.name,
-                'total_sheets': len(sheets_data),
-                'total_rows': total_all_rows
-            })
+            return JsonResponse(
+                {
+                    "success": True,
+                    "session_id": str(session.id),
+                    "sheets": sheets_data,
+                    "filename": excel_file.name,
+                    "total_sheets": len(sheets_data),
+                    "total_rows": total_all_rows,
+                }
+            )
         except Exception as e:
             session.status = ExcelUploadSession.Status.FAILED
             session.error_message = str(e)
             session.save(update_fields=["status", "error_message"])
-            return Response({"error": f"Failed to read Excel file: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": f"Failed to read Excel file: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -225,32 +239,35 @@ class ExcelImportConfirmView(APIView):
     """Async Excel import with background processing"""
 
     def post(self, request):
-        session_id = request.data.get('session_id')
-        selected_sheets = request.data.get('selected_sheets', [])
-        target_model = request.data.get('target_model')
+        session_id = request.data.get("session_id")
+        selected_sheets = request.data.get("selected_sheets", [])
+        target_model = request.data.get("target_model")
 
         # Validation
         if not session_id or not target_model:
-            return JsonResponse({'error': 'Session ID and target model required'}, status=400)
+            return JsonResponse(
+                {"error": "Session ID and target model required"}, status=400
+            )
 
         try:
             session = ExcelUploadSession.objects.get(id=session_id)
         except ExcelUploadSession.DoesNotExist:
-            return JsonResponse({'error': 'Invalid session'}, status=400)
+            return JsonResponse({"error": "Invalid session"}, status=400)
 
         if session.processed:
-            return JsonResponse({'error': 'Session already processed'}, status=400)
+            return JsonResponse({"error": "Session already processed"}, status=400)
 
         # Get temporary file
-        temp_file_path = cache.get(f'excel_file_{session_id}')
+        temp_file_path = cache.get(f"excel_file_{session_id}")
         if not temp_file_path or not os.path.exists(temp_file_path):
-            return JsonResponse({'error': 'File not found or expired'}, status=400)
+            return JsonResponse({"error": "File not found or expired"}, status=400)
 
         # Dispatch task to custom queue
-        task = process_excel_import.apply_async(
-            args=[session.id, temp_file_path, selected_sheets, target_model],
-            queue="erp_master_queue",  # your configured queue
-            routing_key="erp_task"  # matches your CELERY_TASK_QUEUES
+        task = process_excel_import.delay(
+            session.id,
+            temp_file_path,
+            selected_sheets,
+            target_model,
         )
 
         # Store task_id for tracking
@@ -258,21 +275,27 @@ class ExcelImportConfirmView(APIView):
         session.task_id = task.id
         session.save(update_fields=["status", "task_id"])
 
-        return JsonResponse({
-            "success": True,
-            "message": "Import started in background",
-            "session_id": str(session_id),
-            "task_id": task.id,
-            "status": "queued"
-        })
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "Import started in background",
+                "session_id": str(session_id),
+                "task_id": task.id,
+                "status": "queued",
+            }
+        )
 
 
 class ExcelImportStatusView(APIView):
     def get(self, request, session_id):
-        session = get_object_or_404(ExcelUploadSession, id=session_id, user=self.request.user)
-        return JsonResponse({
-            "status": session.status,
-            "processed": session.processed,
-            "results": getattr(session, "results", None),
-            "error": getattr(session, "error_message", None),
-        })
+        session = get_object_or_404(
+            ExcelUploadSession, id=session_id, user=self.request.user
+        )
+        return JsonResponse(
+            {
+                "status": session.status,
+                "processed": session.processed,
+                "results": getattr(session, "results", None),
+                "error": getattr(session, "error_message", None),
+            }
+        )
