@@ -182,7 +182,9 @@ LOGGING = {
 STATIC_ROOT = STATIC_DIR
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5566",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://kmpcl-mvu.netlify.app",
-    "https://1.22.197.176:5566",
+    "http://tech.kasheemilk.com:5566",
+    "https://tech.kasheemilk.com:5566",
 ]
