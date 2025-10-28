@@ -287,9 +287,12 @@ class MemberComplaintReportAdmin(admin.ModelAdmin):
         ("Details", {"fields": ("reason", "meeting")}),
     )
 
+from .resources.user_profile import UserProfileResource
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+class UserProfileAdmin(ImportExportModelAdmin):
     """Admin configuration for managing User Profiles efficiently."""
+
+    resource_class = UserProfileResource 
 
     # Display essentials only for fast listing
     list_display = (
