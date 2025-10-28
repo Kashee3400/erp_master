@@ -16,11 +16,13 @@ from decouple import config
 
 logger = logging.getLogger(__name__)
 
+
 def custom_response(status, data=None, message=None, status_code=200):
     response_data = {"status": status, "message": message or "Success", "data": data}
     return JsonResponse(
         response_data, status=status_code, json_dumps_params={"ensure_ascii": False}
     )
+
 
 class MyHomePage(LoginRequiredMixin, View):
     template_name = "member/pages/dashboards/default.html"
@@ -49,7 +51,6 @@ class GenerateOTPView(APIView):
                     {"status": "error", "message": "Invalid phone number format."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             members = MemberHierarchyView.objects.using("sarthak_kashee").filter(
                 mobile_no=phone_number, is_default=True, is_active=True
             )
@@ -145,6 +146,20 @@ class VerifyOTPView(generics.GenericAPIView):
                 )
 
             user, _ = User.objects.get_or_create(username=phone_number)
+            # ⚙️ Check if user is already logged into another module
+            existing_device = UserDevice.objects.filter(user=user).first()
+            if existing_device:
+                existing_module = (existing_device.module or "").strip().lower()
+                current_module = (module or "").strip().lower()
+
+                if existing_module != current_module:
+                    return Response(
+                        {
+                            "status": "error",
+                            "message": f"You are already logged into {existing_module} module. Please logout first.",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             # 🔐 Blacklist all outstanding tokens for this user
             try:
@@ -299,6 +314,20 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        existing_device = UserDevice.objects.filter(user=user).first()
+
+        if existing_device:
+            existing_module = (existing_device.module or "").strip().lower()
+            current_module = (module or "").strip().lower()
+
+            if existing_module != current_module:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": f"You are already logged into {existing_module} module. Please logout first.",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         # --- 5️⃣ Clean up conflicting devices (same user or same device_id)
         UserDevice.objects.filter(Q(user=user) | Q(device=device_id)).delete()
