@@ -404,6 +404,7 @@ class LogoutView(APIView):
 
     def post(self, request):
         serializer = LogoutSerializer(data=request.data)
+        user = self.request.user
 
         if not serializer.is_valid():
             logger.warning(
@@ -419,6 +420,7 @@ class LogoutView(APIView):
 
         try:
             serializer.save()
+            UserDevice.objects.filter(user=user).delete()
         except serializers.ValidationError as e:
             logger.warning(
                 "Logout blacklist failed for user %s: %s", request.user, str(e)
