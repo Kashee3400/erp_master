@@ -183,13 +183,11 @@ STATIC_ROOT = STATIC_DIR
 
 from corsheaders.defaults import default_headers
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://kmpcl-mvu.netlify.app",
-    "http://tech.kasheemilk.com:5566",
-    "https://tech.kasheemilk.com:5566",
-]
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="")
+if CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS.split(",")]
+else:
+    CORS_ALLOWED_ORIGINS = []
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-API-KEY",
