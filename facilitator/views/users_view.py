@@ -1073,67 +1073,77 @@ def create_update_user_profile(request):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
+from django.utils.translation import gettext_lazy as _
 
-"""
-1. CREATE NEW USER AND PROFILE (POST):
-POST /api/user-profile/
-{
-    "user": {
-        "username": "john_doe",
-        "email": "john@example.com",
-        "first_name": "John",
-        "last_name": "Doe"
-    },
-    "profile": {
-        "salutation": "Mr.",
-        "department": "engineering",
-        "phone_number": "9876543210",
-        "address": "123 Main Street, City",
-        "designation": "Senior Engineer",
-        "mpp_code": "MPP001"
-    }
-}
 
-2. UPDATE EXISTING USER AND PROFILE (PUT/PATCH):
-PUT /api/user-profile/
-{
-    "user_id": 1,
-    "user": {
-        "first_name": "Jonathan",
-        "last_name": "Doe"
-    },
-    "profile": {
-        "designation": "Lead Engineer",
-        "phone_number": "9876543211"
-    }
-}
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def clear_device(request):
+    """
+    Clear device information for the authenticated user.
+    Clears: device, device_type, fcm_token fields
+    """
+    try:
+        user_device = request.user.device
+        user_device.device = None
+        user_device.device_type = "android"
+        user_device.fcm_token = None
+        user_device.save()
 
-3. RESPONSE EXAMPLE (SUCCESS):
-{
-    "status": "success",
-    "message": "User and profile created successfully.",
-    "data": {
-        "user_id": 1,
-        "username": "john_doe",
-        "email": "john@example.com",
-        "profile": {
-            "id": 1,
-            "salutation": "Mr.",
-            "department": "engineering",
-            "phone_number": "9876543210",
-            ...
-        }
-    },
-    "errors": null
-}
+        return custom_response(
+            status_text="success",
+            message=_("Device information cleared successfully"),
+            data={},
+            status_code=status.HTTP_200_OK,
+        )
 
-4. RESPONSE EXAMPLE (ERROR):
-{
-    "status": "error",
-    "message": "User validation failed.",
-    "data": null,
-    "errors": {
-        "email": ["This email is already in use."]
-    }
-}
-"""
+    except UserDevice.DoesNotExist:
+        return custom_response(
+            status_text="error",
+            message=_("User device not found"),
+            data={},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        return custom_response(
+            status_text="error",
+            message=str(e),
+            data={},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def clear_module(request):
+    """
+    Clear module and MPP code for the authenticated user.
+    Clears: module, mpp_code fields
+    """
+    try:
+        user_device = request.user.device
+        user_device.module = None
+        user_device.mpp_code = None
+        user_device.save()
+
+        return custom_response(
+            status_text="success",
+            message=_("Module information cleared successfully"),
+            data={},
+            status_code=status.HTTP_200_OK,
+        )
+
+    except UserDevice.DoesNotExist:
+        return custom_response(
+            status_text="error",
+            message=_("User device not found"),
+            data={},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        return custom_response(
+            status_text="error",
+            message=str(e),
+            data={},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

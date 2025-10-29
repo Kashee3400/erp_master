@@ -7,6 +7,8 @@ from .views.users_view import (
     SendOTPView,
     VerifyOTPView,
     create_update_user_profile,
+    clear_device,
+    clear_module,
 )
 from django.urls import path
 
@@ -20,8 +22,10 @@ urlpatterns = [
     path("send-email-otp/", SendOTPView.as_view(), name="send_email_otp"),
     path("verify-email-otp/", VerifyOTPView.as_view(), name="verify_email_otp"),
     path(
-        "api/user-profile-update/",
+        "user-profile-update/",
         create_update_user_profile,
         name="create_update_user_profile",
     ),
+    path("device/clear/", clear_device, name="clear-device"),
+    path("module/clear/", clear_module, name="clear-module"),
 ] + router.urls
