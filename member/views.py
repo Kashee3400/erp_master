@@ -11,6 +11,17 @@ from facilitator.models.user_profile_model import UserProfile
 from erp_app.models import BusinessHierarchySnapshot
 from .throttle import OTPThrottle
 from collections import defaultdict, Counter
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.views import View
+from .models import SahayakIncentives
+from .forms import SahayakIncentivesForm
+from .filters import SahayakIncentivesFilter
+from .resources import SahayakIncentivesResource
+
 
 from decouple import config
 
@@ -156,7 +167,7 @@ class VerifyOTPView(generics.GenericAPIView):
                     return Response(
                         {
                             "status": "error",
-                            "message": f"You are already logged into {existing_module} module. Please logout first.",
+                            "message": f"You are already logged into {existing_module} module. Contact Admin.",
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
@@ -324,7 +335,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
                 return Response(
                     {
                         "status": "error",
-                        "message": f"You are already logged into {existing_module} module. Please logout first.",
+                        "message": f"You are already logged into {existing_module} module. Contact Admin.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
