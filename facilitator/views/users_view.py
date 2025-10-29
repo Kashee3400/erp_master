@@ -14,7 +14,12 @@ from ..serializers.users_serializers import (
 from rest_framework.pagination import PageNumberPagination
 from util.response import StandardResultsSetPagination, custom_response
 
-from ..serializers.profile_serializer import UserProfile, UserProfileSerializer
+from ..serializers.profile_serializer import (
+    UserProfile,
+    UserProfileSerializer,
+    UserUpdateProfileSerializer,
+    UserUpdateSerializer,
+)
 from error_formatter import *
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -53,7 +58,7 @@ class UserViewSet(viewsets.ModelViewSet):
         ids = request.data.get("ids", [])
         user = self.request.user
         if not (
-                (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
+            (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
         ):
             return custom_response(
                 status_text="error",
@@ -178,7 +183,7 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_destroy(user)
         return custom_response("success", message="User deleted", data=None)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def stats(self, request):
         """
         Get comprehensive user statistics
@@ -190,22 +195,32 @@ class UserViewSet(viewsets.ModelViewSet):
         superusers = self.get_queryset().filter(is_superuser=True).count()
 
         # Users with groups
-        users_with_groups = self.get_queryset().filter(groups__isnull=False).distinct().count()
+        users_with_groups = (
+            self.get_queryset().filter(groups__isnull=False).distinct().count()
+        )
         users_without_groups = total_users - users_with_groups
 
-        return custom_response(status_text="success", data={
-            'total_users': total_users,
-            'active_users': active_users,
-            'inactive_users': inactive_users,
-            'staff_users': staff_users,
-            'superusers': superusers,
-            'users_with_groups': users_with_groups,
-            'users_without_groups': users_without_groups,
-            'activity_rate': round((active_users / total_users * 100), 2) if total_users > 0 else 0
-        }, message="Stats fetched", status_code=status.HTTP_200_OK
-                               )
+        return custom_response(
+            status_text="success",
+            data={
+                "total_users": total_users,
+                "active_users": active_users,
+                "inactive_users": inactive_users,
+                "staff_users": staff_users,
+                "superusers": superusers,
+                "users_with_groups": users_with_groups,
+                "users_without_groups": users_without_groups,
+                "activity_rate": (
+                    round((active_users / total_users * 100), 2)
+                    if total_users > 0
+                    else 0
+                ),
+            },
+            message="Stats fetched",
+            status_code=status.HTTP_200_OK,
+        )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def registration_stats(self, request):
         """
         Get user registration statistics by time periods
@@ -214,38 +229,38 @@ class UserViewSet(viewsets.ModelViewSet):
         today = now.date()
 
         # Registration counts
-        today_registrations = self.get_queryset().filter(
-            date_joined__date=today
-        ).count()
+        today_registrations = (
+            self.get_queryset().filter(date_joined__date=today).count()
+        )
 
         week_ago = now - timedelta(days=7)
-        week_registrations = self.get_queryset().filter(
-            date_joined__gte=week_ago
-        ).count()
+        week_registrations = (
+            self.get_queryset().filter(date_joined__gte=week_ago).count()
+        )
 
         month_ago = now - timedelta(days=30)
-        month_registrations = self.get_queryset().filter(
-            date_joined__gte=month_ago
-        ).count()
+        month_registrations = (
+            self.get_queryset().filter(date_joined__gte=month_ago).count()
+        )
 
         year_ago = now - timedelta(days=365)
-        year_registrations = self.get_queryset().filter(
-            date_joined__gte=year_ago
-        ).count()
+        year_registrations = (
+            self.get_queryset().filter(date_joined__gte=year_ago).count()
+        )
 
         return custom_response(
             status_text="success",
             status_code=status.HTTP_200_OK,
             message="User registration stats fetched",
             data={
-                'today': today_registrations,
-                'last_7_days': week_registrations,
-                'last_30_days': month_registrations,
-                'last_365_days': year_registrations
-            }
+                "today": today_registrations,
+                "last_7_days": week_registrations,
+                "last_30_days": month_registrations,
+                "last_365_days": year_registrations,
+            },
         )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def login_stats(self, request):
         """
         Get user login activity statistics
@@ -257,63 +272,61 @@ class UserViewSet(viewsets.ModelViewSet):
         week_ago = now - timedelta(days=7)
         month_ago = now - timedelta(days=30)
 
-        logged_in_today = self.get_queryset().filter(
-            last_login__gte=day_ago
-        ).count()
+        logged_in_today = self.get_queryset().filter(last_login__gte=day_ago).count()
 
-        logged_in_week = self.get_queryset().filter(
-            last_login__gte=week_ago
-        ).count()
+        logged_in_week = self.get_queryset().filter(last_login__gte=week_ago).count()
 
-        logged_in_month = self.get_queryset().filter(
-            last_login__gte=month_ago
-        ).count()
+        logged_in_month = self.get_queryset().filter(last_login__gte=month_ago).count()
 
-        never_logged_in = self.get_queryset().filter(
-            last_login__isnull=True
-        ).count()
+        never_logged_in = self.get_queryset().filter(last_login__isnull=True).count()
 
         return custom_response(
             status_text="success",
             status_code=status.HTTP_200_OK,
             message="User login activity stats fetched",
             data={
-                'logged_in_last_24h': logged_in_today,
-                'logged_in_last_7_days': logged_in_week,
-                'logged_in_last_30_days': logged_in_month,
-                'never_logged_in': never_logged_in
-            }
+                "logged_in_last_24h": logged_in_today,
+                "logged_in_last_7_days": logged_in_week,
+                "logged_in_last_30_days": logged_in_month,
+                "never_logged_in": never_logged_in,
+            },
         )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def group_stats(self, request):
         """
         Get statistics about user groups
         """
         # Group distribution
-        group_stats = self.get_queryset().values('groups__name').annotate(
-            user_count=Count('id')
-        ).filter(groups__name__isnull=False).order_by('-user_count')
+        group_stats = (
+            self.get_queryset()
+            .values("groups__name")
+            .annotate(user_count=Count("id"))
+            .filter(groups__name__isnull=False)
+            .order_by("-user_count")
+        )
 
         # Users per group count
-        users_by_group_count = self.get_queryset().annotate(
-            group_count=Count('groups')
-        ).values('group_count').annotate(
-            user_count=Count('id')
-        ).order_by('group_count')
+        users_by_group_count = (
+            self.get_queryset()
+            .annotate(group_count=Count("groups"))
+            .values("group_count")
+            .annotate(user_count=Count("id"))
+            .order_by("group_count")
+        )
 
         group_data = {
-            'groups_distribution': list(group_stats),
-            'users_by_group_count': list(users_by_group_count)
+            "groups_distribution": list(group_stats),
+            "users_by_group_count": list(users_by_group_count),
         }
 
         return custom_response(
             status_text="success",
             data=group_data,
-            message="Group statistics retrieved successfully"
+            message="Group statistics retrieved successfully",
         )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def monthly_registration_trend(self, request):
         """
         Get monthly registration trend for the last 12 months
@@ -322,47 +335,51 @@ class UserViewSet(viewsets.ModelViewSet):
         now = timezone.now()
         year_ago = now - timedelta(days=365)
 
-        monthly_stats = self.get_queryset().filter(
-            date_joined__gte=year_ago
-        ).extra(
-            select={'month': 'EXTRACT(month FROM date_joined)', 'year': 'EXTRACT(year FROM date_joined)'}
-        ).values('month', 'year').annotate(
-            count=Count('id')
-        ).order_by('year', 'month')
+        monthly_stats = (
+            self.get_queryset()
+            .filter(date_joined__gte=year_ago)
+            .extra(
+                select={
+                    "month": "EXTRACT(month FROM date_joined)",
+                    "year": "EXTRACT(year FROM date_joined)",
+                }
+            )
+            .values("month", "year")
+            .annotate(count=Count("id"))
+            .order_by("year", "month")
+        )
 
         return custom_response(
             status_text="success",
             data=list(monthly_stats),
-            message="Registration trend retrieved successfully"
+            message="Registration trend retrieved successfully",
         )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def user_type_breakdown(self, request):
         """
         Get breakdown of different user types
         """
         breakdown = {
-            'regular_users': self.get_queryset().filter(
-                is_staff=False, is_superuser=False
-            ).count(),
-            'staff_only': self.get_queryset().filter(
-                is_staff=True, is_superuser=False
-            ).count(),
-            'superusers': self.get_queryset().filter(
-                is_superuser=True
-            ).count(),
-            'active_regular': self.get_queryset().filter(
-                is_active=True, is_staff=False, is_superuser=False
-            ).count(),
-            'inactive_regular': self.get_queryset().filter(
-                is_active=False, is_staff=False, is_superuser=False
-            ).count()
+            "regular_users": self.get_queryset()
+            .filter(is_staff=False, is_superuser=False)
+            .count(),
+            "staff_only": self.get_queryset()
+            .filter(is_staff=True, is_superuser=False)
+            .count(),
+            "superusers": self.get_queryset().filter(is_superuser=True).count(),
+            "active_regular": self.get_queryset()
+            .filter(is_active=True, is_staff=False, is_superuser=False)
+            .count(),
+            "inactive_regular": self.get_queryset()
+            .filter(is_active=False, is_staff=False, is_superuser=False)
+            .count(),
         }
         return custom_response(
             status_text="success",
             data=breakdown,
             message="Breakdown retrieved successfully",
-            status_code=status.HTTP_200_OK
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -431,7 +448,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         ids = request.data.get("ids", [])
         user = self.request.user
         if not (
-                (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
+            (user.is_superuser or user.is_staff) and user.has_perm("auth.delete_user")
         ):
             return custom_response(
                 status_text="error",
@@ -588,6 +605,7 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import SearchFilter, OrderingFilter
+
     pagination_class = StandardResultsSetPagination
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -754,7 +772,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_text="error",
                 status_code=status.HTTP_400_BAD_REQUEST,
                 message="Failed to delete the object",
-                errors=simplify_errors(exc.detail)
+                errors=simplify_errors(exc.detail),
             )
 
         except Exception as exc:
@@ -762,7 +780,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status_text="error",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message="Something error occurred",
-                errors=format_exception(str(exc))
+                errors=format_exception(str(exc)),
             )
 
 
@@ -802,7 +820,7 @@ class SendOTPView(APIView):
                     status_text="error",
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     message=f"Failed to send email",
-                    errors=str(e)
+                    errors=str(e),
                 )
 
             return custom_response(
@@ -878,5 +896,244 @@ class VerifyOTPView(APIView):
             status_text="error",
             status_code=status.HTTP_400_BAD_REQUEST,
             message="Invalid request data",
-            errors=serializer.errors
+            errors=serializer.errors,
         )
+
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.db import transaction
+
+
+@api_view(["POST", "PUT", "PATCH"])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def create_update_user_profile(request):
+    """
+    Create or update User and UserProfile in a single API call.
+
+    POST: Create new user and profile
+    PUT/PATCH: Update existing user and profile
+
+    Expected payload:
+    {
+        "user": {
+            "username": "john_doe",
+            "email": "john@example.com",
+            "first_name": "John",
+            "last_name": "Doe"
+        },
+        "profile": {
+            "salutation": "Mr.",
+            "department": "engineering",
+            "phone_number": "1234567890",
+            "address": "123 Main St",
+            "designation": "Senior Engineer",
+            "reports_to": 1,
+            "mpp_code": "MPP001"
+        }
+    }
+    """
+    try:
+        user_data = request.data.get("user", {})
+        profile_data = request.data.get("profile", {})
+        user_id = request.data.get("user_id")
+        is_update = user_id is not None
+
+        if is_update:
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return custom_response(
+                    status_text="error",
+                    message="User not found.",
+                    errors={"user_id": ["User with this ID does not exist."]},
+                    status_code=status.HTTP_404_NOT_FOUND,
+                )
+
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                return custom_response(
+                    status_text="error",
+                    message="User profile not found.",
+                    errors={"profile": ["Profile does not exist for this user."]},
+                    status_code=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Serialize and validate user data
+            user_serializer = UserUpdateSerializer(user, data=user_data, partial=True)
+            if not user_serializer.is_valid():
+                return custom_response(
+                    status_text="error",
+                    message="User validation failed.",
+                    errors=user_serializer.errors,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Serialize and validate profile data
+            profile_serializer = UserUpdateProfileSerializer(
+                profile, data=profile_data, partial=True
+            )
+            if not profile_serializer.is_valid():
+                return custom_response(
+                    status_text="error",
+                    message="Profile validation failed.",
+                    errors=profile_serializer.errors,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Save updated data
+            user_serializer.save()
+            profile_serializer.save()
+
+            return custom_response(
+                status_text="success",
+                data={
+                    "user_id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "profile": UserUpdateProfileSerializer(profile).data,
+                },
+                message="User and profile updated successfully.",
+                status_code=status.HTTP_200_OK,
+            )
+
+        else:
+            # Create new user and profile
+            if not user_data.get("username"):
+                return custom_response(
+                    status_text="error",
+                    message="Username is required for new user creation.",
+                    errors={"user": {"username": ["This field is required."]}},
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if not user_data.get("email"):
+                return custom_response(
+                    status_text="error",
+                    message="Email is required for new user creation.",
+                    errors={"user": {"email": ["This field is required."]}},
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Serialize and validate user data
+            user_serializer = UserSerializer(data=user_data)
+            if not user_serializer.is_valid():
+                return custom_response(
+                    status_text="error",
+                    message="User validation failed.",
+                    errors=user_serializer.errors,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Create user
+            user = user_serializer.save()
+
+            # Create profile with user foreign key
+            profile_data["user"] = user.id
+            profile_serializer = UserUpdateProfileSerializer(data=profile_data)
+
+            if not profile_serializer.is_valid():
+                # Delete user if profile creation fails
+                user.delete()
+                return custom_response(
+                    status_text="error",
+                    message="Profile validation failed.",
+                    errors=profile_serializer.errors,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            profile = profile_serializer.save(user=user)
+
+            return custom_response(
+                status_text="success",
+                data={
+                    "user_id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "profile": UserUpdateProfileSerializer(profile).data,
+                },
+                message="User and profile created successfully.",
+                status_code=status.HTTP_201_CREATED,
+            )
+
+    except ValidationError as e:
+        return custom_response(
+            status_text="error",
+            message="Validation error occurred.",
+            errors={"detail": str(e)},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    except Exception as e:
+        return custom_response(
+            status_text="error",
+            message="An unexpected error occurred.",
+            errors={"detail": str(e)},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+"""
+1. CREATE NEW USER AND PROFILE (POST):
+POST /api/user-profile/
+{
+    "user": {
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe"
+    },
+    "profile": {
+        "salutation": "Mr.",
+        "department": "engineering",
+        "phone_number": "9876543210",
+        "address": "123 Main Street, City",
+        "designation": "Senior Engineer",
+        "mpp_code": "MPP001"
+    }
+}
+
+2. UPDATE EXISTING USER AND PROFILE (PUT/PATCH):
+PUT /api/user-profile/
+{
+    "user_id": 1,
+    "user": {
+        "first_name": "Jonathan",
+        "last_name": "Doe"
+    },
+    "profile": {
+        "designation": "Lead Engineer",
+        "phone_number": "9876543211"
+    }
+}
+
+3. RESPONSE EXAMPLE (SUCCESS):
+{
+    "status": "success",
+    "message": "User and profile created successfully.",
+    "data": {
+        "user_id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "profile": {
+            "id": 1,
+            "salutation": "Mr.",
+            "department": "engineering",
+            "phone_number": "9876543210",
+            ...
+        }
+    },
+    "errors": null
+}
+
+4. RESPONSE EXAMPLE (ERROR):
+{
+    "status": "error",
+    "message": "User validation failed.",
+    "data": null,
+    "errors": {
+        "email": ["This email is already in use."]
+    }
+}
+"""

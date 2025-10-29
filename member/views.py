@@ -337,7 +337,7 @@ class VerifySahayakOTPView(generics.GenericAPIView):
             user=user,
             device=device_id,
             module=module,
-            mpp_code=profile.mpp_code,  # ← retained from profile
+            mpp_code=profile.mpp_code,
         )
 
         # --- 7️⃣ Generate JWT tokens
@@ -420,7 +420,7 @@ class LogoutView(APIView):
 
         try:
             serializer.save()
-            UserDevice.objects.filter(user=user).delete()
+            # UserDevice.objects.filter(user=user).delete()
         except serializers.ValidationError as e:
             logger.warning(
                 "Logout blacklist failed for user %s: %s", request.user, str(e)

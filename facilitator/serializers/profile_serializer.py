@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from ..models.user_profile_model import UserProfile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -62,3 +65,75 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 data[field] = default
 
         return data
+
+
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "first_name", "last_name"]
+        extra_kwargs = {
+            "username": {"required": False},
+            "email": {"required": False},
+            "first_name": {"required": False},
+            "last_name": {"required": False},
+        }
+
+    def validate_email(self, value):
+        """Validate that email is unique, excluding current user in update case."""
+        user_id = self.instance.id if self.instance else None
+        if User.objects.filter(email=value).exclude(id=user_id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def validate_username(self, value):
+        """Validate that username is unique, excluding current user in update case."""
+        user_id = self.instance.id if self.instance else None
+        if User.objects.filter(username=value).exclude(id=user_id).exists():
+            raise serializers.ValidationError("This username is already in use.")
+        return value
+
+
+class UserUpdateProfileSerializer(serializers.ModelSerializer):
+    user = UserUpdateSerializer(required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            "id",
+            "user",
+            "reports_to",
+            "salutation",
+            "department",
+            "avatar",
+            "phone_number",
+            "address",
+            "designation",
+            "is_verified",
+            "is_email_verified",
+            "mpp_code",
+        ]
+        extra_kwargs = {
+            "reports_to": {"required": False, "allow_null": True},
+            "department": {"required": False},
+            "phone_number": {"required": False},
+            "address": {"required": False},
+            "designation": {"required": False},
+            "mpp_code": {"required": False},
+        }
+
+    def validate_phone_number(self, value):
+        """Validate phone number format."""
+        if value and len(value) < 10:
+            raise serializers.ValidationError(
+                "Phone number must be at least 10 digits."
+            )
+        return value
+
+    def validate_reports_to(self, value):
+        """Ensure user doesn't report to themselves."""
+        if value and hasattr(self, "instance") and self.instance:
+            if value.user_id == self.instance.user_id:
+                raise serializers.ValidationError("A user cannot report to themselves.")
+        return value
