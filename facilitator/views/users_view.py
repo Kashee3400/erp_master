@@ -3,6 +3,15 @@ from django.contrib.auth.models import Group, Permission
 from math import ceil
 from rest_framework.decorators import action
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.cache import cache
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+
+import random
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.db import transaction
+
 from ..serializers.users_serializers import (
     UserSerializer,
     GroupSerializer,
@@ -22,11 +31,6 @@ from ..serializers.profile_serializer import (
 )
 from error_formatter import *
 from rest_framework.parsers import MultiPartParser, FormParser
-
-
-class CustomPageNumberPagination(PageNumberPagination):
-    page_size_query_param = "page_size"
-    max_page_size = 100
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -387,7 +391,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [JWTAuthentication]
-    pagination_class = CustomPageNumberPagination
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     lookup_field = "pk"
@@ -567,14 +571,14 @@ class GroupViewSet(viewsets.ModelViewSet):
         self.perform_destroy(group)
         return custom_response("success", message="Group deleted")
 
+from veterinary.views.choices_view import BaseModelViewSet
 
-class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
+class PermissionViewSet(BaseModelViewSet):
     from rest_framework.filters import SearchFilter
-
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     authentication_classes = [JWTAuthentication]
-    pagination_class = CustomPageNumberPagination
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated, IsAdminUser]
     lookup_field = "pk"
 
@@ -586,21 +590,6 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
         "content_type__app_label",
         "content_type__model",
     ]
-
-    def retrieve(self, request, *args, **kwargs):
-        permission = self.get_object()
-        serializer = self.get_serializer(permission)
-        return custom_response("success", serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return custom_response(
-            status_text="success",
-            message="Permissions fetched",
-            data=serializer.data,
-            status_code=status.HTTP_200_OK,
-        )
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -784,12 +773,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             )
 
 
-from django.core.cache import cache
-from rest_framework.views import APIView
-from django.core.mail import send_mail
-
-import random
-
 
 class SendOTPView(APIView):
     def post(self, request):
@@ -900,9 +883,6 @@ class VerifyOTPView(APIView):
         )
 
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.db import transaction
 
 
 @api_view(["POST", "PUT", "PATCH"])
@@ -1072,6 +1052,7 @@ def create_update_user_profile(request):
             errors={"detail": str(e)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
 
 from django.utils.translation import gettext_lazy as _
 
