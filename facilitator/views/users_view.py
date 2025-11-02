@@ -571,10 +571,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         self.perform_destroy(group)
         return custom_response("success", message="Group deleted")
 
+
 from veterinary.views.choices_view import BaseModelViewSet
+
 
 class PermissionViewSet(BaseModelViewSet):
     from rest_framework.filters import SearchFilter
+
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     authentication_classes = [JWTAuthentication]
@@ -590,6 +593,53 @@ class PermissionViewSet(BaseModelViewSet):
         "content_type__app_label",
         "content_type__model",
     ]
+
+    @action(detail=False, methods=["get"], url_path="filter-by-apps")
+    def filter_by_apps(self, request):
+        """
+        Filter permissions by one or more app names.
+        Example: /api/permissions/filter-by-apps/?apps=veterinary,member
+        """
+        apps_param = request.query_params.get("apps")
+        queryset = self.get_queryset()
+
+        if apps_param:
+            app_list = [a.strip() for a in apps_param.split(",") if a.strip()]
+            queryset = queryset.filter(content_type__app_label__in=app_list)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            message="Permission filtered by app.",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["get"], url_path="local-apps")
+    def local_apps(self, request):
+        """
+        Return only LOCAL_APPS defined in Django settings.
+        Example: /api/permissions/local-apps/
+        """
+        local_apps = getattr(settings, "LOCAL_APPS", [])
+        cleaned_apps = []
+
+        # Clean up names (handle 'app.apps.Config' style)
+        for app in local_apps:
+            # Extract app label from config path if needed
+            cleaned_apps.append(app.split(".")[0])
+
+        return custom_response(
+            status_text="success",
+            message="Permission filtered by app.",
+            data={"apps": sorted(set(cleaned_apps))},
+            status_code=status.HTTP_200_OK,
+        )
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -773,7 +823,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             )
 
 
-
 class SendOTPView(APIView):
     def post(self, request):
         serializer = SendOTPSerializer(data=request.data)
@@ -881,8 +930,6 @@ class VerifyOTPView(APIView):
             message="Invalid request data",
             errors=serializer.errors,
         )
-
-
 
 
 @api_view(["POST", "PUT", "PATCH"])
