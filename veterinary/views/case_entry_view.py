@@ -26,6 +26,7 @@ from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from ..choices import StatusChoices
 
+
 class NonMemberViewSet(BaseModelViewSet):
     """ViewSet for managing non-members"""
 
@@ -78,6 +79,7 @@ class NonMemberCattleViewSet(BaseModelViewSet):
 
 class CaseEntryViewSet(BaseModelViewSet):
     """Enhanced ViewSet for managing case entries (both member and non-member)"""
+
     queryset = CaseEntry.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -98,6 +100,7 @@ class CaseEntryViewSet(BaseModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        user = self.request.user
         request = self.request
         case_type = request.GET.get("type")
         mobile = request.GET.get("mobile")
@@ -110,9 +113,18 @@ class CaseEntryViewSet(BaseModelViewSet):
         if mobile:
             queryset = queryset.by_owner_mobile(mobile)
 
-        return queryset.select_related(
+        queryset = queryset.select_related(
             "cattle__owner", "non_member_cattle__non_member", "created_by"
         ).order_by("-created_at")
+
+        # Superuser sees everything
+        if user.is_superuser:
+            return queryset
+
+        # Get manageable user IDs using hierarchy checker
+        manageable_user_ids = self.get_manageable_users(user)
+
+        return queryset.filter(user__id__in=manageable_user_ids)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -175,7 +187,7 @@ class CaseEntryViewSet(BaseModelViewSet):
             data=data,
             message=_("Dashboard Loaded..."),
             status_code=status.HTTP_200_OK,
-            errors={}
+            errors={},
         )
 
 

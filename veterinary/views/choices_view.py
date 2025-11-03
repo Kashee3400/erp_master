@@ -80,6 +80,9 @@ class ChoicesAPIView(APIView):
         )
 
 
+from ..permissions import UserHierarchyChecker
+
+
 class BaseModelViewSet(viewsets.ModelViewSet):
     """
     A reusable base viewset for handling common CRUD operations with:
@@ -95,6 +98,10 @@ class BaseModelViewSet(viewsets.ModelViewSet):
     ordering_fields = None
     ordering = None
     lookup_field = "pk"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.hierarchy_checker = UserHierarchyChecker()
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -176,6 +183,31 @@ class BaseModelViewSet(viewsets.ModelViewSet):
             data=None,
             status_code=status.HTTP_200_OK,
         )
+
+    def get_manageable_users(self, user):
+        """Get list of user IDs that this user can manage (including themselves)."""
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+
+        manageable_ids = [user.id]
+
+        try:
+            if user.is_superuser:
+                return list(User.objects.values_list("id", flat=True))
+
+            # Check hierarchy for all other users
+            all_users = User.objects.select_related("profile").exclude(id=user.id)
+
+            for potential_subordinate in all_users:
+                if self.hierarchy_checker.is_supervisor_of(user, potential_subordinate):
+                    manageable_ids.append(potential_subordinate.id)
+
+        except Exception:
+            # Fallback to just the user themselves
+            pass
+
+        return manageable_ids
 
 
 class SpeciesViewSet(BaseModelViewSet):
