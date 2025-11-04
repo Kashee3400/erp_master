@@ -1,7 +1,7 @@
 from util.response import StandardResultsSetPagination, custom_response
 from .serializers import *
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db import models
 from rest_framework.views import APIView
@@ -10,7 +10,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import TruncDate, Cast
-from rest_framework.pagination import PageNumberPagination
 from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import ValidationError
 
@@ -77,12 +76,11 @@ class MemberByPhoneNumberView(generics.RetrieveAPIView):
 class MemberProfileView(generics.RetrieveAPIView):
     serializer_class = MemberProfileSerializer
     authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         user = self.request.user
-        phone_number = user.username if user.is_authenticated else "8896629134"
+        phone_number = user.username
         return MemberHierarchyView.objects.filter(
             mobile_no=phone_number, is_default=True
         ).last()
@@ -232,6 +230,7 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
             "data": detailed_data,
         }
         return Response(response)
+
 
 class MppCollectionListView(generics.ListAPIView):
     """

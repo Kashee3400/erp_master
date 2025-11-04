@@ -291,7 +291,9 @@ class MemberMasterCopyViewSet(BaseModelViewSet):
         member = self.queryset.filter(
             member_code=member_code, is_active=True, is_default=True
         ).first()
+
         serializer = self.get_serializer(member)
+        
         return custom_response(
             status_text="success",
             message="Member details retrieved successfully.",

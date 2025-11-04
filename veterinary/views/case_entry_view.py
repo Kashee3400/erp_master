@@ -105,10 +105,12 @@ class CaseEntryViewSet(BaseModelViewSet):
         case_type = request.GET.get("type")
         mobile = request.GET.get("mobile")
 
-        if case_type == "member":
-            queryset = queryset.member_cases()
-        elif case_type == "non_member":
-            queryset = queryset.non_member_cases()
+        if case_type:
+            case_type = case_type.strip().lower()
+            if case_type == "member":
+                queryset = queryset.member_cases()
+            elif case_type == "non_member":
+                queryset = queryset.non_member_cases()
 
         if mobile:
             queryset = queryset.by_owner_mobile(mobile)
@@ -116,7 +118,6 @@ class CaseEntryViewSet(BaseModelViewSet):
         queryset = queryset.select_related(
             "cattle__owner", "non_member_cattle__non_member", "created_by"
         ).order_by("-created_at")
-
         # Superuser sees everything
         if user.is_superuser:
             return queryset
@@ -124,7 +125,7 @@ class CaseEntryViewSet(BaseModelViewSet):
         # Get manageable user IDs using hierarchy checker
         manageable_user_ids = self.get_manageable_users(user)
 
-        return queryset.filter(user__id__in=manageable_user_ids)
+        return queryset.filter(created_by__id__in=manageable_user_ids)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -139,7 +140,7 @@ class CaseEntryViewSet(BaseModelViewSet):
         This endpoint replaces multiple client-side filtered requests.
         """
         qs = self.get_queryset()
-        qs = qs.filter(created_by=self.request.user)
+        # qs = qs.filter(created_by=self.request.user)
         total_cases = qs.count()
         today = timezone.localdate()
         today_cases = qs.filter(created_at__date=today).count()
