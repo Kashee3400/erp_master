@@ -3,6 +3,11 @@ from erp_app.models import MemberHierarchyView
 from veterinary.models.models import MembersMasterCopy
 from django.contrib.auth import get_user_model
 from ...utils.sync_model_util import sync_model
+from notifications.choices import (
+    NotificationChannel,
+    NotificationPriority,
+)
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -17,7 +22,9 @@ class Command(BaseCommand):
         self.stdout.write("Indexing users by username (mobile_no)...")
         user_lookup = {
             user.username: user
-            for user in User.objects.filter(username__isnull=False).only("id", "username")
+            for user in User.objects.filter(username__isnull=False).only(
+                "id", "username"
+            )
         }
 
         def key_fn(member):
@@ -56,12 +63,33 @@ class Command(BaseCommand):
             )
 
         update_fields = [
-            'company_code', 'plant_code', 'mcc_code', 'bmc_code', 'mpp_code',
-            'member_tr_code', 'member_name', 'member_middle_name', 'member_surname',
-            'gender', 'mobile_no', 'member_type', 'caste_category', 'birth_date',
-            'age', 'is_active', 'wef_date', 'is_default', 'created_at',
-            'folio_no', 'application_date', 'application_no', 'created_by',
-            'member_master_relation', 'ex_member_code', 'device_id', 'user'
+            "company_code",
+            "plant_code",
+            "mcc_code",
+            "bmc_code",
+            "mpp_code",
+            "member_tr_code",
+            "member_name",
+            "member_middle_name",
+            "member_surname",
+            "gender",
+            "mobile_no",
+            "member_type",
+            "caste_category",
+            "birth_date",
+            "age",
+            "is_active",
+            "wef_date",
+            "is_default",
+            "created_at",
+            "folio_no",
+            "application_date",
+            "application_no",
+            "created_by",
+            "member_master_relation",
+            "ex_member_code",
+            "device_id",
+            "user",
         ]
 
         created, updated = sync_model(
@@ -74,6 +102,44 @@ class Command(BaseCommand):
             key_field="member_code",
         )
 
-        self.stdout.write(self.style.SUCCESS(
-            f"✅ Sync completed successfully: Created={created}, Updated={updated}"
-        ))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"✅ Sync completed successfully: Created={created}, Updated={updated}"
+            )
+        )
+        # --- Notification Section ---
+        self.stdout.write("Creating notifications for superusers...")
+
+        superusers = User.objects.filter(is_superuser=True, is_active=True)
+        from notifications.notification_service import NotificationServices
+        from notifications.tasks import deliver_notification
+
+        for user in superusers:
+            context_data = {
+                "created": created,
+                "updated": updated,
+                "timestamp": timezone.now(),
+            }
+            render_context = {
+                "recipient": user,
+                "collection": context_data,
+                "site_name": "Kashee E-Dairy",
+            }
+
+            notification = NotificationServices(
+                base_url="http://tech.kasheemilk.com:5566"
+            ).create_notification(
+                template_name="member_sync_completed",
+                channels=[
+                    NotificationChannel.PUSH,
+                    NotificationChannel.EMAIL,
+                ],
+                context=render_context,
+                priority=NotificationPriority.HIGH,
+                recipient=user.pk,
+            )
+            deliver_notification.delay(notification.uuid)
+
+        self.stdout.write(
+            self.style.SUCCESS("📩 Notifications created for all superusers.")
+        )

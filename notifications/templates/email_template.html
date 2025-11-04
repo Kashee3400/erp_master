@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ notification.email_subject }}</title>
+    <style>
+        /* Reset styles */
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7fa;
+        }
+
+        /* Main container */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* Content area */
+        .content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        .message-body {
+            font-size: 15px;
+            color: #555555;
+            margin-bottom: 30px;
+            white-space: pre-line;
+        }
+
+        /* Stats card */
+        .stats-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .stats-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: table;
+            width: 100%;
+        }
+
+        .stat-item {
+            display: table-cell;
+            text-align: center;
+            padding: 15px 10px;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 13px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Button */
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Info box */
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #555555;
+        }
+
+        .info-box strong {
+            color: #333333;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #777777;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e9ecef, transparent);
+            margin: 30px 0;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .header,
+            .content,
+            .footer {
+                padding: 25px 20px !important;
+            }
+
+            .header h1 {
+                font-size: 24px !important;
+            }
+
+            .stat-item {
+                display: block !important;
+                margin-bottom: 20px;
+            }
+
+            .stat-item:last-child {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0">
+                    <!-- Header -->
+                    <tr>
+                        <td class="header">
+                            <h1>{{ notification.title|default:"Notification" }}</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td class="content">
+                            <div class="greeting">
+                                Hello {{ notification.recipient.first_name|default:"there" }},
+                            </div>
+
+                            <div class="message-body">
+                                {{ notification.email_body|default:notification.body }}
+                            </div>
+
+                            {% if notification.context.collection %}
+                            <!-- Stats Card -->
+                            <div class="stats-card">
+                                <div class="stats-title">Synchronization Summary</div>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-value">{{ notification.context.collection.created|default:0
+                                            }}</span>
+                                        <span class="stat-label">Created</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">{{ notification.context.collection.updated|default:0
+                                            }}</span>
+                                        <span class="stat-label">Updated</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if notification.context.collection.timestamp %}
+                            <!-- Info Box -->
+                            <div class="info-box">
+                                <p><strong>Timestamp:</strong> {{ notification.context.collection.timestamp|date:"d M Y,
+                                    H:i" }}</p>
+                                <p><strong>Source:</strong> MemberHierarchyView (MSSQL)</p>
+                                <p><strong>Destination:</strong> MembersMasterCopy (PostgreSQL)</p>
+                            </div>
+                            {% endif %}
+
+                            {% if notification.route %}
+                            <!-- Button -->
+                            <div class="button-container">
+                                <a href="{{ site_url }}{{ notification.route }}" class="button">
+                                    View Details
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            <div class="divider"></div>
+
+                            <p style="font-size: 14px; color: #777777; margin-top: 30px;">
+                                If you have any questions or need assistance, please don't hesitate to contact our
+                                support team.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td class="footer">
+                            <p style="font-weight: 600; color: #333333; margin-bottom: 10px;">
+                                {{ notification.context.site_name|default:"System" }}
+                            </p>
+                            <p>
+                                This is an automated notification. Please do not reply to this email.
+                            </p>
+                            <p style="margin-top: 15px;">
+                                &copy; {% now "Y" %} {{ notification.context.site_name|default:"Your Company" }}. All
+                                rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

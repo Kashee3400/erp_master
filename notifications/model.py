@@ -278,7 +278,6 @@ class Notification(models.Model):
         help_text=_("Indicates if the route is a sub-path or detail view."),
     )
 
-
     # Configuration
     channels = models.JSONField(
         default=list,
@@ -497,7 +496,6 @@ class Notification(models.Model):
                 "notification": {
                     "title": self.title,
                     "body": self.body,
-                    # "image": "http://erp.kasheemilk.com:50012///FileServer/Import/Image/1C18B53A17344A5899C6A40B45ACAE2D.png",
                 },
                 "data": {
                     "notification_id": str(self.uuid),
@@ -506,15 +504,10 @@ class Notification(models.Model):
                     "category": self.template.category,
                     "type": self.notification_type,
                     "object_id": str(self.object_id),
-                    "content_type": (
-                        self.content_type.model_class().__module__
-                        + "."
-                        + self.content_type.model_class().__name__
-                    ),
                     "priority": str(self.priority),
                     "route": self.app_route or "",
                     "deep_link": deep_link or "",
-                    "timestamp": self.created_at.isoformat(),
+                    "timestamp": self.created_at.isoformat() if self.created_at else "",
                     "expires_at": (
                         self.expires_at.isoformat() if self.expires_at else ""
                     ),

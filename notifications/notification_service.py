@@ -11,11 +11,17 @@ from .model import (
     NotificationStatus,
     NotificationGroup,
 )
+from django.contrib.auth import get_user_model
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
+
+import datetime
+import decimal
+from django.utils.functional import Promise
+from django.utils.encoding import force_str
 
 
 class NotificationServices:
@@ -29,6 +35,44 @@ class NotificationServices:
             settings, "SITE_URL", "http://tech.kasheemilk.com:5566/"
         )
 
+    def _serialize_context(self, context: dict) -> dict:
+        """
+        Safely convert model instances and lazy strings in context to JSON-serializable types.
+        """
+
+        def safe_value(value):
+            # Lazy gettext/lazy strings
+            if isinstance(value, Promise):
+                return force_str(value)
+
+            # Model instance
+            if hasattr(value, "_meta"):
+                return {
+                    "id": value.pk,
+                    "model": value._meta.label_lower,
+                    "str": str(value),
+                }
+
+            # Datetime/date/time
+            if isinstance(value, (datetime.datetime, datetime.date, datetime.time)):
+                return value.isoformat()
+
+            # Decimal
+            if isinstance(value, decimal.Decimal):
+                return float(value)
+
+            # List / Tuple
+            if isinstance(value, (list, tuple)):
+                return [safe_value(v) for v in value]
+
+            # Dict
+            if isinstance(value, dict):
+                return {k: safe_value(v) for k, v in value.items()}
+
+            return value
+
+        return {k: safe_value(v) for k, v in (context or {}).items()}
+
     def create_notification(
         self,
         template_name: str,
@@ -40,7 +84,6 @@ class NotificationServices:
         priority: str = "normal",
         scheduled_at: Optional[timezone.datetime] = None,
         expires_at: Optional[timezone.datetime] = None,
-        group: Optional[NotificationGroup] = None,
     ) -> Notification:
         """
         Create a new notification instance
@@ -57,7 +100,7 @@ class NotificationServices:
             expires_at: When the notification expires
             group: Notification group for related notifications
         """
-
+        UserModel = get_user_model()
         # Get template
         try:
             template = NotificationTemplate.objects.get(
@@ -70,11 +113,11 @@ class NotificationServices:
         # Resolve recipient
         if isinstance(recipient, str):
             if "@" in recipient:
-                recipient = User.objects.get(email=recipient)
+                recipient = UserModel.objects.get(email=recipient)
             else:
-                recipient = User.objects.get(pk=recipient)
+                recipient = UserModel.objects.get(pk=recipient)
         elif isinstance(recipient, int):
-            recipient = User.objects.get(pk=recipient)
+            recipient = UserModel.objects.get(pk=recipient)
 
         # Prepare context
         context = context or {}
@@ -107,7 +150,7 @@ class NotificationServices:
         # Determine channels based on user preferences and template defaults
         if not channels:
             channels = self._get_preferred_channels(recipient, template)
-
+        safe_context = self._serialize_context(context)
         # Create notification
         notification = Notification.objects.create(
             template=template,
@@ -122,10 +165,10 @@ class NotificationServices:
             channels=channels,
             priority=priority or template.default_priority,
             notification_type=template.notification_type,
-            context_data=context,
+            context_data=safe_context,
             scheduled_at=scheduled_at or timezone.now(),
             expires_at=expires_at,
-            group=group,
+            # group=group,
         )
 
         # Set content type and object id for related object
@@ -240,7 +283,7 @@ class NotificationServices:
         if prefs.allow_sms and NotificationChannel.SMS in template.enabled_channels:
             channels.append(NotificationChannel.SMS)
 
-        return channels or [NotificationChannel.IN_APP] 
+        return channels or [NotificationChannel.IN_APP]
 
     def create_bulk_notifications(
         self,
@@ -286,19 +329,6 @@ class NotificationServices:
             f"Created {len(notifications)} bulk notifications using template '{template_name}'"
         )
         return notifications
-
-    def mark_all_read(self, user: "User", category: Optional[str] = None) -> int:
-        """Mark all notifications as read for a user"""
-
-        queryset = Notification.objects.filter(recipient=user, is_read=False)
-
-        if category:
-            queryset = queryset.filter(template__category=category)
-
-        count = queryset.update(is_read=True, read_at=timezone.now())
-
-        logger.info(f"Marked {count} notifications as read for user {user.email}")
-        return count
 
     def cleanup_expired(self) -> int:
         """Remove expired notifications"""

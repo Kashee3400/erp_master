@@ -166,7 +166,7 @@ class NotificationDeliveryService:
 
             sent, info = _send_fcm_message(
                 notification.to_fcm_payload(
-                    base_url="http://10.10.10.43:8000", device_token=fcm_token
+                    base_url="http://tech.kasheemilk.com:5566", device_token=fcm_token
                 )
             )
 

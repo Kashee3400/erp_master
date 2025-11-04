@@ -47,6 +47,23 @@ def process_mpp_collection_notifications(self):
         raise self.retry(exc=exc, countdown=300)
 
 
+@shared_task(bind=True, max_retries=3)
+def test_notification(self, user: str = None, template: str = None):
+    try:
+        logger.info(f"🚀 Sending test notification (user={user}, template={template})")
+        cmd_args = {}
+        if user:
+            cmd_args["user"] = user
+        if template:
+            cmd_args["template"] = template
+
+        call_command("send_test_notification", **cmd_args)
+        logger.info("✅ Test notification completed successfully.")
+    except Exception as exc:
+        logger.exception(f"❌ Error sending test notification: {exc}")
+        raise self.retry(exc=exc, countdown=300)
+
+
 @shared_task
 def schedule_notification_delivery_task(notification_id: int):
     """

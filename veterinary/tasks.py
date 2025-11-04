@@ -7,6 +7,7 @@ from django.conf import settings
 from .models.excel_model import ExcelUploadSession
 from .utils.exce_util import process_import_enhanced
 from .utils.inventory_utils import get_inventory_alerts
+from django.core.management import call_command
 
 import os, logging
 
@@ -125,3 +126,20 @@ def process_excel_import(session_id, temp_file_path, selected_sheets, target_mod
             session.error_message = str(e)
             session.save()
         raise
+
+
+@shared_task(bind=True, max_retries=3)
+def process_member_sync_notifications(self):
+    """
+    Celery task to process MPP collection notifications.
+    Runs the management command to create and send notifications.
+    """
+    try:
+        logger.info("Starting MPP collection notification processing...")
+        call_command("sync_member_master")
+        logger.info("MPP collection notification processing completed successfully.")
+        return "Success"
+    except Exception as exc:
+        logger.error(f"Error processing MPP collection notifications: {exc}")
+        # Retry after 5 minutes if failed
+        raise self.retry(exc=exc, countdown=300)

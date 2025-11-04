@@ -528,6 +528,40 @@ class Command(BaseCommand):
                     NotificationChannel.SMS,
                 ],
             },
+            {
+                "name": "member_sync_completed",
+                "locale": "en",
+                "title_template": "Member Data Synchronization Completed Successfully",
+                "body_template": (
+                    "Hello {{ recipient.first_name }},\n\n"
+                    "The member data synchronization task has been completed successfully.\n\n"
+                    "- Source: MemberHierarchyView (MSSQL)\n"
+                    "- Destination: MembersMasterCopy (PostgreSQL)\n"
+                    "- Records Created: {{ collection.created }}\n"
+                    "- Records Updated: {{ collection.updated }}\n\n"
+                    "You can review the updated data in the Admin Panel.\n\n"
+                    "- {{ site_name }} System"
+                ),
+                "email_subject_template": "Member Synchronization Completed – {{ site_name }}",
+                "email_body_template": (
+                    "Dear {{ recipient.first_name }},\n\n"
+                    "The member data synchronization process has been completed.\n\n"
+                    "Summary:\n"
+                    "- Records Created: {{ collection.created }}\n"
+                    "- Records Updated: {{ collection.updated }}\n"
+                    "- Time: {{ collection.timestamp|date:'d M Y, H:i' }}\n\n"
+                    "For detailed information, please check the Admin Dashboard.\n\n"
+                    "Regards,\n"
+                    "{{ site_name }} System"
+                ),
+                "route_template": "/admin/veterinary/membersmastercopy/",
+                "category": "data_sync",
+                "enabled_channels": [
+                    NotificationChannel.IN_APP,
+                    NotificationChannel.PUSH,
+                    NotificationChannel.EMAIL,
+                ],
+            },
         ]
 
         app_filter = options.get("app")
