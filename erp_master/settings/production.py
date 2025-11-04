@@ -84,9 +84,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-        },
+        "verbose": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
         # Handlers for each app
@@ -185,10 +183,26 @@ from corsheaders.defaults import default_headers
 
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="")
 if CORS_ALLOWED_ORIGINS:
-    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS.split(",")]
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip() for origin in CORS_ALLOWED_ORIGINS.split(",")
+    ]
 else:
     CORS_ALLOWED_ORIGINS = []
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-API-KEY",
 ]
+
+import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "daily_admin_test_notification": {
+        "task": "notifications.tasks.test_notification",
+        "schedule": crontab(hour=10, minute=0),
+        "kwargs": {"user": "9565901765", "template": "member_sync_completed"},
+    },
+    "syc_member_data": {
+        "task": "veterinary.tasks.process_member_sync_notifications",
+        "schedule": crontab(hour=1, minute=0),  # runs daily at 1:00 (1 AM)
+    },
+}
