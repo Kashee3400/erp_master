@@ -9,7 +9,6 @@ from .model import (
     NotificationPreferences,
     NotificationChannel,
     NotificationStatus,
-    NotificationGroup,
 )
 from django.contrib.auth import get_user_model
 
@@ -145,7 +144,6 @@ class NotificationServices:
 
         # Generate deep links
         deep_link_url = template.generate_deep_link(context, self.base_url)
-        app_route = template.generate_deep_link(context)  # Without base URL
 
         # Determine channels based on user preferences and template defaults
         if not channels:
@@ -161,7 +159,6 @@ class NotificationServices:
             email_subject=rendered_content.get("email_subject", ""),
             email_body=rendered_content.get("email_body", ""),
             deep_link_url=deep_link_url,
-            app_route=app_route,
             channels=channels,
             priority=priority or template.default_priority,
             notification_type=template.notification_type,
@@ -170,7 +167,9 @@ class NotificationServices:
             expires_at=expires_at,
             # group=group,
         )
-
+        app_route = f"{template.route_template}?from_notification=true&notification_id={notification.id}"
+        notification.app_route = app_route
+        notification.save()
         # Set content type and object id for related object
         if related_object:
             notification.content_type = ContentType.objects.get_for_model(

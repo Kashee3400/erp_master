@@ -163,7 +163,8 @@ class VerifyOTPView(generics.GenericAPIView):
                 existing_module = (existing_device.module or "").strip().lower()
                 current_module = (module or "").strip().lower()
 
-                if existing_module != current_module:
+                # Compare only if existing_module has a valid value
+                if existing_module and existing_module != current_module:
                     return Response(
                         {
                             "status": "error",

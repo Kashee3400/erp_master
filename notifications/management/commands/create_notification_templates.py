@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     "Warm regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "/collections/{{ collection.mpp_collection_code }}/details/",
+                "route_template": "/",
                 "category": "mpp_collection",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -76,7 +76,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/collections/{{ collection.mpp_collection_code }}/details/",
+                "route_template": "/",
                 "category": "mpp_collection",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -112,7 +112,7 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "route_template": "feedback",
                 "category": "feedback",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -148,7 +148,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "route_template": "feedback",
                 "category": "feedback",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -183,7 +183,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "route_template": "/feedback/{{ feedback.feedback_id }}/",
                 "category": "feedback",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -218,7 +218,7 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "The {{ site_name }} Team"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
+                "route_template": "/feedback/{{ feedback.feedback_id }}/",
                 "category": "feedback",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -262,7 +262,7 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "/incentives/{{ incentive.year }}/{{ incentive.month }}/",
+                "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -306,7 +306,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/incentives/{{ incentive.year }}/{{ incentive.month }}/",
+                "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,

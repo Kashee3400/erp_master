@@ -192,17 +192,3 @@ else:
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-API-KEY",
 ]
-
-# import crontab
-
-# CELERY_BEAT_SCHEDULE = {
-#     "daily_admin_test_notification": {
-#         "task": "notifications.tasks.test_notification",
-#         "schedule": crontab(hour=10, minute=0),
-#         "kwargs": {"user": "9565901765", "template": "member_sync_completed"},
-#     },
-#     "syc_member_data": {
-#         "task": "veterinary.tasks.process_member_sync_notifications",
-#         "schedule": crontab(hour=1, minute=0),
-#     },
-# }

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class SahayakIncentivesResource(resources.ModelResource):
     # Explicitly map file column → model field
     user = fields.Field(
@@ -25,20 +26,28 @@ class SahayakIncentivesResource(resources.ModelResource):
     tds = fields.Field(column_name="TDS Rate", attribute="tds")
     tds_amt = fields.Field(column_name="TDS Amount", attribute="tds_amt")
     cda_recovery = fields.Field(column_name="CDA Recovery", attribute="cda_recovery")
+    transporter_recovery = fields.Field(
+        column_name="Transporter Recovery", attribute="transporter_recovery"
+    )
+    recovery_deposited = fields.Field(
+        column_name="Recovery Deposited", attribute="recovery_deposited"
+    )
     asset_recovery = fields.Field(
         column_name="Asset Recovery", attribute="asset_recovery"
     )
     milk_incentive = fields.Field(
-        column_name="Milk Incentive After TDS", attribute="milk_incentive"
+        column_name=" Incentive Earned", attribute="milk_incentive"
     )
     milk_incentive_payable = fields.Field(
-        column_name="Milk Incentive Payable", attribute="milk_incentive_payable"
+        column_name="Incentive Payable", attribute="milk_incentive_payable"
     )
     cf_incentive = fields.Field(column_name="CF Incentive", attribute="cf_incentive")
     mm_incentive = fields.Field(column_name="MM Incentive", attribute="mm_incentive")
     payable = fields.Field(column_name="Paid", attribute="payable")
     closing = fields.Field(column_name="Closing", attribute="closing")
-    additional_data = fields.Field(column_name="Additional Data", attribute="additional_data")
+    additional_data = fields.Field(
+        column_name="Additional Data", attribute="additional_data"
+    )
 
     def import_row(self, row, instance_loader, **kwargs):
         # Check for missing 'user' value
@@ -56,10 +65,13 @@ class SahayakIncentivesResource(resources.ModelResource):
 
     class Meta:
         model = SahayakIncentives
-        import_id_fields = ("user", "month","year")
+        import_id_fields = ("user", "month", "year")
         exclude = ("id",)
 
+
 from django.contrib.auth.hashers import make_password
+
+
 class UserResource(resources.ModelResource):
     # Explicit column mappings
     username = fields.Field(column_name="Username", attribute="username")
@@ -78,6 +90,7 @@ class UserResource(resources.ModelResource):
         if raw_password and not raw_password.startswith("pbkdf2_"):
             row["Password"] = make_password(raw_password)
 
+
 class UserDeviceResource(resources.ModelResource):
     user = fields.Field(
         column_name="user", attribute="user", widget=ForeignKeyWidget(User, "username")
@@ -85,6 +98,6 @@ class UserDeviceResource(resources.ModelResource):
 
     class Meta:
         model = UserDevice
-        fields = ("user", "mpp_code", "module","device")
+        fields = ("user", "mpp_code", "module", "device")
         exclude = ("id",)
         import_id_fields = ("user",)

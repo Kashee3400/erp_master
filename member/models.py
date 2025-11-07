@@ -11,7 +11,7 @@ from decimal import Decimal
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.utils import timezone
-from .choices import TransactionType,RewardSource,WithdrawalStatus
+from .choices import TransactionType, RewardSource, WithdrawalStatus
 
 User = get_user_model()
 
@@ -116,6 +116,12 @@ class SahayakIncentives(models.Model):
         default=0.0, verbose_name=_("Mineral Mixture Incentive")
     )
     cda_recovery = models.FloatField(default=0.0, verbose_name=_("C.D.A Recovery"))
+    recovery_deposited = models.FloatField(
+        default=0.0, verbose_name=_("Recovery Deposited")
+    )
+    transporter_recovery = models.FloatField(
+        default=0.0, verbose_name=_("Transporter Recovery")
+    )
     asset_recovery = models.FloatField(default=0.0, verbose_name=_("Asset Recovery"))
     milk_incentive_payable = models.FloatField(
         default=0.0, verbose_name=_("Milk Incentive Payable")
@@ -390,7 +396,6 @@ class News(models.Model):
         ordering = ["-published_date"]
         verbose_name = "News"
         verbose_name_plural = "News"
-
 
 
 class RewardedAdTransaction(models.Model):
