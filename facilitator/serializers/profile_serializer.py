@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models.user_profile_model import UserProfile
+from ..models.user_profile_model import UserProfile,UserLocation
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -137,3 +137,29 @@ class UserUpdateProfileSerializer(serializers.ModelSerializer):
             if value.user_id == self.instance.user_id:
                 raise serializers.ValidationError("A user cannot report to themselves.")
         return value
+
+
+class UserLocationSerializer(serializers.ModelSerializer):
+    """Serializer for returning user location details."""
+
+    user = serializers.StringRelatedField(read_only=True)
+    assigned_by = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = UserLocation
+        fields = [
+            "id",
+            "user",
+            "mcc_code",
+            "mcc_ex_code",
+            "mcc_name",
+            "mpp_code",
+            "mpp_ex_code",
+            "mpp_name",
+            "is_primary",
+            "active",
+            "assigned_by",
+            "assigned_at",
+            "remarks",
+        ]
+        read_only_fields = ("assigned_at",)

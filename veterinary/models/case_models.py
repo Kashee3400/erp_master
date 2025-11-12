@@ -5,7 +5,13 @@ from ..choices.choices import *
 from django.db import models
 from django.conf import settings
 import random
-from .common_models import BaseModel, User, CattleCaseType, PaymentMethod, TreatmentCostConfiguration
+from .common_models import (
+    BaseModel,
+    User,
+    CattleCaseType,
+    PaymentMethod,
+    TreatmentCostConfiguration,
+)
 from .models import Cattle, CattleStatusType, NonMemberCattle
 from django.utils import timezone
 from .stock_models import Symptoms, Disease, Medicine
@@ -54,6 +60,7 @@ class DiagnosisRoute(models.Model):
             models.Index(fields=["route"], name="idx_diagnosisroute_route"),
             models.Index(fields=["sync"], name="idx_diagnosisroute_sync"),
         ]
+
 
 class CaseEntry(BaseModel):
     # Existing cattle field (for members)
@@ -119,25 +126,20 @@ class CaseEntry(BaseModel):
     )
 
     disease_name = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_("Disease name in Hindi or English")
+        max_length=255, blank=True, help_text=_("Disease name in Hindi or English")
     )
 
     visit_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text=_("Scheduled visit date and time")
+        null=True, blank=True, help_text=_("Scheduled visit date and time")
     )
 
     is_tagged_animal = models.BooleanField(
         default=True,
-        help_text=_("Whether the animal is tagged or non-tagged for cost calculation")
+        help_text=_("Whether the animal is tagged or non-tagged for cost calculation"),
     )
 
     is_emergency = models.BooleanField(
-        default=False,
-        help_text=_("Whether this is an emergency treatment")
+        default=False, help_text=_("Whether this is an emergency treatment")
     )
 
     calculated_cost = models.DecimalField(
@@ -145,7 +147,7 @@ class CaseEntry(BaseModel):
         decimal_places=2,
         null=True,
         blank=True,
-        help_text=_("Calculated treatment cost")
+        help_text=_("Calculated treatment cost"),
     )
 
     sync = models.BooleanField(
@@ -171,10 +173,14 @@ class CaseEntry(BaseModel):
         from django.core.exceptions import ValidationError
 
         if not self.cattle and not self.non_member_cattle:
-            raise ValidationError(_("Either member cattle or non-member cattle must be specified."))
+            raise ValidationError(
+                _("Either member cattle or non-member cattle must be specified.")
+            )
 
         if self.cattle and self.non_member_cattle:
-            raise ValidationError(_("Cannot specify both member cattle and non-member cattle."))
+            raise ValidationError(
+                _("Cannot specify both member cattle and non-member cattle.")
+            )
 
     @property
     def is_member_case(self):
@@ -191,7 +197,9 @@ class CaseEntry(BaseModel):
         """Get owner name regardless of member type"""
         if self.cattle and getattr(self.cattle, "owner", None):
             return self.cattle.owner.member_name
-        elif self.non_member_cattle and getattr(self.non_member_cattle, "non_member", None):
+        elif self.non_member_cattle and getattr(
+            self.non_member_cattle, "non_member", None
+        ):
             return self.non_member_cattle.non_member.name
         return "N/A"
 
@@ -199,7 +207,9 @@ class CaseEntry(BaseModel):
     def owner_mobile(self):
         """Get owner mobile regardless of member type"""
         if self.cattle:
-            return self.cattle.owner.mobile_no if hasattr(self.cattle, 'owner') else "N/A"
+            return (
+                self.cattle.owner.mobile_no if hasattr(self.cattle, "owner") else "N/A"
+            )
         elif self.non_member_cattle:
             return self.non_member_cattle.non_member.mobile_no
         return "N/A"
@@ -207,8 +217,12 @@ class CaseEntry(BaseModel):
     @property
     def animal_tag(self):
         """Get animal tag regardless of member type"""
-        if self.cattle and hasattr(self.cattle, 'tag_detail') and self.cattle.tag_detail:
-            return getattr(self.cattle.tag_detail, 'tag_number', 'N/A')
+        if (
+            self.cattle
+            and hasattr(self.cattle, "tag_detail")
+            and self.cattle.tag_detail
+        ):
+            return getattr(self.cattle.tag_detail, "tag_number", "N/A")
         elif self.non_member_cattle:
             return self.non_member_cattle.tag_number
         return "N/A"
@@ -227,10 +241,26 @@ class CaseEntry(BaseModel):
         is_member = self.is_member_case
 
         # Map to configuration choices
-        membership_type = MembershipTypeChoices.MEMBER if is_member else MembershipTypeChoices.NON_MEMBER
-        time_slot = TimeSlotChoices.BEFORE_10AM if visit_time < time(10, 0) else TimeSlotChoices.AFTER_10AM
-        animal_tag_type = AnimalTagChoices.TAGGED if self.is_tagged_animal else AnimalTagChoices.NON_TAGGED
-        treatment_type = TreatmentTypeChoices.EMERGENCY if self.is_emergency else TreatmentTypeChoices.NORMAL
+        membership_type = (
+            MembershipTypeChoices.MEMBER
+            if is_member
+            else MembershipTypeChoices.NON_MEMBER
+        )
+        time_slot = (
+            TimeSlotChoices.BEFORE_10AM
+            if visit_time < time(10, 0)
+            else TimeSlotChoices.AFTER_10AM
+        )
+        animal_tag_type = (
+            AnimalTagChoices.TAGGED
+            if self.is_tagged_animal
+            else AnimalTagChoices.NON_TAGGED
+        )
+        treatment_type = (
+            TreatmentTypeChoices.EMERGENCY
+            if self.is_emergency
+            else TreatmentTypeChoices.NORMAL
+        )
 
         # Get cost from configuration table
         cost_amount = TreatmentCostConfiguration.get_cost(
@@ -238,50 +268,10 @@ class CaseEntry(BaseModel):
             time_slot=time_slot,
             animal_tag_type=animal_tag_type,
             treatment_type=treatment_type,
-            visit_date=self.visit_date.date()
+            visit_date=self.visit_date.date(),
         )
 
         return float(cost_amount)
-
-    @classmethod
-    def assign_to(cls, case_no, to_user, remarks=None):
-        """
-        Assign a case to a user and log the transfer.
-        (Your existing method - unchanged)
-        """
-        from django.core.exceptions import ObjectDoesNotExist
-
-        if not case_no or not to_user:
-            raise ValueError(_("Both 'case_no' and 'to_user' are required."))
-
-        try:
-            case = cls.objects.select_for_update().get(case_no=case_no)
-        except ObjectDoesNotExist:
-            raise ValueError(
-                _("Case with number '{case_no}' does not exist.").format(
-                    case_no=case_no
-                )
-            )
-
-        with transaction.atomic():
-            previous_user = case.created_by
-
-            if previous_user == to_user:
-                raise ValueError(_("The case is already assigned to this user."))
-
-            # Update assignment
-            case.created_by = to_user
-            case.save(update_fields=["created_by", "updated_at"])
-
-            # Create transfer log (assuming you have CaseReceiverLog model)
-            CaseReceiverLog.objects.create(
-                case_entry=case,
-                from_user=previous_user,
-                to_user=to_user,
-                remarks=remarks or _("Assigned via system action."),
-            )
-
-        return case
 
     def __str__(self):
         created_by = self.created_by.get_full_name() if self.created_by else _("N/A")
@@ -300,12 +290,12 @@ class CaseEntry(BaseModel):
 
             # Handle member cattle
             if self.cattle and hasattr(self.cattle, "owner") and self.cattle.owner:
-                if hasattr(self.cattle.owner, 'member_code'):
+                if hasattr(self.cattle.owner, "member_code"):
                     farmer_code = self.cattle.owner.member_code[-6:]
 
-                if hasattr(self.cattle, 'tag_detail') and self.cattle.tag_detail:
-                    tag_number = getattr(self.cattle.tag_detail, 'tag_number', 'NA')
-                elif hasattr(self.cattle, 'tag_number'):
+                if hasattr(self.cattle, "tag_detail") and self.cattle.tag_detail:
+                    tag_number = getattr(self.cattle.tag_detail, "tag_number", "NA")
+                elif hasattr(self.cattle, "tag_number"):
                     tag_number = self.cattle.tag_number
 
             # Handle non-member cattle
@@ -319,6 +309,7 @@ class CaseEntry(BaseModel):
                 rand_suffix = random.randint(100, 999)
                 self.case_no = f"{farmer_code}-{tag_number}-{timestamp}-{rand_suffix}"
 
+
         super().save(*args, **kwargs)
 
         # Update visit count for non-members
@@ -327,7 +318,7 @@ class CaseEntry(BaseModel):
             non_member.visit_count = CaseEntry.objects.filter(
                 non_member_cattle__non_member=non_member
             ).count()
-            non_member.save(update_fields=['visit_count'])
+            non_member.save(update_fields=["visit_count"])
 
 
 class CaseReceiverLog(BaseModel):
@@ -751,12 +742,12 @@ class TravelRecord(models.Model):
     def save(self, *args, **kwargs):
         # Automatically calculate distance before saving
         if all(
-                [
-                    self.from_latitude,
-                    self.from_longitude,
-                    self.to_latitude,
-                    self.to_longitude,
-                ]
+            [
+                self.from_latitude,
+                self.from_longitude,
+                self.to_latitude,
+                self.to_longitude,
+            ]
         ):
             self.distance_travelled = self.calculate_distance()
         super().save(*args, **kwargs)
@@ -808,7 +799,9 @@ class TravelRecordImage(models.Model):
     image = models.ImageField(
         upload_to="travel_records/%Y/%m/%d/",
         verbose_name=_("Image"),
-        help_text=_("Upload image related to the travel, such as vehicle dashboard, odometer, or scene."),
+        help_text=_(
+            "Upload image related to the travel, such as vehicle dashboard, odometer, or scene."
+        ),
     )
 
     uploaded_at = models.DateTimeField(

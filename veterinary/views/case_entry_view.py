@@ -77,8 +77,21 @@ class NonMemberCattleViewSet(BaseModelViewSet):
     filterset_fields = ("is_deleted", "locale", "sync", "non_member_id")
 
 
+from django.db.models import Count
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import TruncMonth
+from rest_framework import status, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# Assuming you already import CaseEntry, CaseEntrySerializer, CaseEntryListSerializer, etc.
+# and custom_response from your utils
+
+
 class CaseEntryViewSet(BaseModelViewSet):
-    """Enhanced ViewSet for managing case entries (both member and non-member)"""
+    """Enhanced ViewSet for managing case entries (both member and non-member)."""
 
     queryset = CaseEntry.objects.all()
     authentication_classes = [JWTAuthentication]
@@ -118,13 +131,13 @@ class CaseEntryViewSet(BaseModelViewSet):
         queryset = queryset.select_related(
             "cattle__owner", "non_member_cattle__non_member", "created_by"
         ).order_by("-created_at")
+
         # Superuser sees everything
         if user.is_superuser:
             return queryset
 
         # Get manageable user IDs using hierarchy checker
         manageable_user_ids = self.get_manageable_users(user)
-
         return queryset.filter(created_by__id__in=manageable_user_ids)
 
     def perform_create(self, serializer):
@@ -135,12 +148,8 @@ class CaseEntryViewSet(BaseModelViewSet):
     # ----------------------------
     @action(detail=False, methods=["get"], url_path="dashboard")
     def dashboard(self, request):
-        """
-        Provides aggregated statistics for case entries.
-        This endpoint replaces multiple client-side filtered requests.
-        """
+        """Provides aggregated statistics for case entries."""
         qs = self.get_queryset()
-        # qs = qs.filter(created_by=self.request.user)
         total_cases = qs.count()
         today = timezone.localdate()
         today_cases = qs.filter(created_at__date=today).count()
@@ -188,7 +197,52 @@ class CaseEntryViewSet(BaseModelViewSet):
             data=data,
             message=_("Dashboard Loaded..."),
             status_code=status.HTTP_200_OK,
-            errors={},
+        )
+
+    # ------------------------------------------
+    # 🏭 MCC / MPP Based Filter API
+    # ------------------------------------------
+    @action(detail=False, methods=["get"], url_path="by-mcc-mpp")
+    def get_by_mcc_mpp(self, request):
+        """
+        Filter cases based on MCC and/or MPP code.
+        Accepts:
+            - mcc_code (str)
+            - mpp_code (str)
+            - strict (bool, optional) → require both codes to match
+        Example:
+            /api/cases/by-mcc-mpp/?mcc_code=MCC001&mpp_code=10001266
+        """
+        mcc_code = request.query_params.get("mcc_code")
+        mpp_code = request.query_params.get("mpp_code")
+        strict = request.query_params.get("strict", "false").lower() == "true"
+
+        if not mcc_code and not mpp_code:
+            return custom_response(
+                status_text="error",
+                message=_("Please provide at least one of mcc_code or mpp_code."),
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        queryset = self.get_queryset().by_mcc_mpp(
+            mcc_code=mcc_code,
+            mpp_code=mpp_code,
+            strict=strict,
+        )
+
+        # ✅ Apply pagination properly
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = CaseEntryListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # If pagination is disabled or page not found
+        serializer = CaseEntryListSerializer(queryset, many=True)
+        return custom_response(
+            status_text="success",
+            data=serializer.data,
+            message=_("Cases filtered by MCC/MPP successfully."),
+            status_code=status.HTTP_200_OK,
         )
 
 

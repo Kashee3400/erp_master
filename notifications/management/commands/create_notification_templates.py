@@ -562,6 +562,51 @@ class Command(BaseCommand):
                     NotificationChannel.EMAIL,
                 ],
             },
+            {
+                "name": "case_entry_update_en",
+                "locale": "en",
+                "title_template": "Case Update: {{ case.case_no }}",
+                "body_template": (
+                    "Hello {{ recipient.first_name }},\n\n"
+                    "Your case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\n"
+                    "📋 Case Details:\n"
+                    "- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n"
+                    "- Disease: {{ case.disease_name|default:'N/A' }}\n"
+                    "- Visit Date: {{ case.visit_date|default:'N/A' }}\n"
+                    "- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n"
+                    "- Remarks: {{ case.remark|default:'N/A' }}\n\n"
+                    "{% if case.status == 'COMPLETED' %}"
+                    "✅ Your case has been successfully resolved.\n"
+                    "{% elif case.status == 'CANCELLED' %}"
+                    "⚠️ Your case has been cancelled. Please contact support if this was unexpected.\n"
+                    "{% else %}"
+                    "🕒 Our team is working on your case. We'll update you once it's resolved.\n"
+                    "{% endif %}\n\n"
+                    "Regards,\n"
+                    "{{ site_name }} Team"
+                ),
+                "email_subject_template": "Case Update – {{ case.case_no }} ({{ case.status }})",
+                "email_body_template": (
+                    "Hello {{ recipient.first_name }},\n\n"
+                    "Your case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\n"
+                    "Case Summary:\n"
+                    "- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n"
+                    "- Disease: {{ case.disease_name|default:'N/A' }}\n"
+                    "- Visit Date: {{ case.visit_date|default:'N/A' }}\n"
+                    "- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n"
+                    "- Remarks: {{ case.remark|default:'N/A' }}\n\n"
+                    "You can check the app for more details and full case history.\n\n"
+                    "Regards,\n"
+                    "{{ site_name }} Team"
+                ),
+                "route_template": "/cases/{{ case.case_no }}/",
+                "category": "case_entry",
+                "enabled_channels": [
+                    NotificationChannel.IN_APP,
+                    NotificationChannel.PUSH,
+                    NotificationChannel.EMAIL,
+                ],
+            },
         ]
 
         app_filter = options.get("app")

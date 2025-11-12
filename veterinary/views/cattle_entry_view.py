@@ -38,8 +38,6 @@ class CattleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["list"]:
             return CattleListSerializer
-        # elif self.action in ["create", "update", "partial_update"]:
-        #     return CattleDetailSerializer
         return CattleDetailSerializer
 
     def get_queryset(self):
@@ -72,7 +70,6 @@ class CattleViewSet(viewsets.ModelViewSet):
         if reportee_ids.exists():
             return base_qs.filter(updated_by__in=[user.id, *reportee_ids])
         return base_qs.filter(updated_by=user)
-
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

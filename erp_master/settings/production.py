@@ -92,7 +92,7 @@ LOGGING = {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "notifications.log"),
-            "maxBytes": 5 * 1024 * 1024,  # 5 MB
+            "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },

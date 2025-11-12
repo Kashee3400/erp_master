@@ -13,5 +13,4 @@ else:
 
 celery_app = Celery("erp_master")
 celery_app.config_from_object("django.conf:settings", namespace="CELERY")
-celery_app.conf.task_default_queue = 'erp_master_queue'
 celery_app.autodiscover_tasks()

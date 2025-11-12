@@ -15,19 +15,15 @@ from .models.member_update_model import (
     UpdateRequestDocument,
     UpdateRequestHistory,
     RequestStatus,
-    ChangeType,
 )
 
-from .models.user_profile_model import UserProfile
+from .models.user_profile_model import UserProfile,UserLocation
 from import_export.admin import ImportExportModelAdmin, ExportActionModelAdmin
 from .resources import FacilitatorResource, VCGroupResource, UpdateRequestResource
-from .forms import base_form
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.utils.timezone import now
-from django.http import HttpResponse
 from .choices import *
-import csv
 from django.shortcuts import render, redirect
 from django.contrib import admin
 from django.contrib import messages
@@ -287,12 +283,15 @@ class MemberComplaintReportAdmin(admin.ModelAdmin):
         ("Details", {"fields": ("reason", "meeting")}),
     )
 
+
 from .resources.user_profile import UserProfileResource
+
+
 @admin.register(UserProfile)
 class UserProfileAdmin(ImportExportModelAdmin):
     """Admin configuration for managing User Profiles efficiently."""
 
-    resource_class = UserProfileResource 
+    resource_class = UserProfileResource
 
     # Display essentials only for fast listing
     list_display = (
@@ -337,28 +336,37 @@ class UserProfileAdmin(ImportExportModelAdmin):
 
     # Group related fields logically for clarity
     fieldsets = (
-        (_("User Information"), {
-            "fields": (
-                "user",
-                "salutation",
-                "designation",
-                "department",
-                "reports_to",
-            ),
-        }),
-        (_("Contact & Identity"), {
-            "fields": (
-                "phone_number",
-                "address",
-                "avatar",
-                "is_verified",
-                "is_email_verified",
-                "mpp_code",
-            ),
-        }),
-        (_("Timestamps"), {
-            "fields": ("created_at", "updated_at"),
-        }),
+        (
+            _("User Information"),
+            {
+                "fields": (
+                    "user",
+                    "salutation",
+                    "designation",
+                    "department",
+                    "reports_to",
+                ),
+            },
+        ),
+        (
+            _("Contact & Identity"),
+            {
+                "fields": (
+                    "phone_number",
+                    "address",
+                    "avatar",
+                    "is_verified",
+                    "is_email_verified",
+                    "mpp_code",
+                ),
+            },
+        ),
+        (
+            _("Timestamps"),
+            {
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
     )
 
     # Pagination to avoid heavy list rendering
@@ -366,7 +374,6 @@ class UserProfileAdmin(ImportExportModelAdmin):
 
     # Filter optimization
     preserve_filters = True
-
 
 
 @admin.register(UpdateRequestData)
@@ -459,6 +466,7 @@ class UpdateRequestHistoryAdmin(admin.ModelAdmin):
 
 from import_export.formats.base_formats import XLSX
 
+
 @admin.register(UpdateRequest)
 class UpdateRequestAdmin(ExportActionModelAdmin):
     resource_class = UpdateRequestResource
@@ -546,7 +554,6 @@ class UpdateRequestAdmin(ExportActionModelAdmin):
             ),
         ]
         return custom_urls + urls
-    
 
     def approve_selected_requests(self, request, queryset):
         from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
@@ -673,3 +680,128 @@ class UpdateRequestAdmin(ExportActionModelAdmin):
         return "-"
 
     history_link.short_description = "History"
+
+
+
+@admin.register(UserLocation)
+class UserLocationAdmin(admin.ModelAdmin):
+    """
+    Production-grade admin configuration for UserLocation model.
+    Provides rich filtering, searching, and inline management.
+    """
+
+    # -----------------------------
+    # List View Configuration
+    # -----------------------------
+    list_display = (
+        "id",
+        "user_display",
+        "mcc_display",
+        "mpp_display",
+        "is_primary",
+        "active",
+        "assigned_by_display",
+        "assigned_at",
+    )
+    list_display_links = ("id", "user_display")
+
+    list_filter = (
+        "is_primary",
+        "active",
+        ("assigned_at", admin.DateFieldListFilter),
+    )
+
+    search_fields = (
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+        "mcc_code",
+        "mcc_name",
+        "mpp_code",
+        "mpp_name",
+    )
+
+    ordering = ("-assigned_at",)
+    date_hierarchy = "assigned_at"
+
+    # -----------------------------
+    # Fieldsets (Form Layout)
+    # -----------------------------
+    fieldsets = (
+        (
+            _("User & Location"),
+            {
+                "fields": (
+                    "user",
+                    ("mcc_code", "mcc_name", "mcc_ex_code"),
+                    ("mpp_code", "mpp_name", "mpp_ex_code"),
+                    "is_primary",
+                    "active",
+                ),
+            },
+        ),
+        (
+            _("Assignment Info"),
+            {
+                "fields": (
+                    "assigned_by",
+                    "assigned_at",
+                    "remarks",
+                ),
+            },
+        ),
+    )
+
+    # -----------------------------
+    # Read-only and Auto Handling
+    # -----------------------------
+    readonly_fields = ("assigned_at",)
+
+    # Prefetch user and assigned_by to avoid N+1 queries
+    list_select_related = ("user", "assigned_by")
+
+    # -----------------------------
+    # Custom Display Methods
+    # -----------------------------
+    @admin.display(description=_("User"), ordering="user__username")
+    def user_display(self, obj):
+        name = f"{obj.user.get_full_name() or obj.user.username}"
+        return f"{name} ({obj.user.username})"
+
+    @admin.display(description=_("MCC"))
+    def mcc_display(self, obj):
+        if obj.mcc_code:
+            return f"{obj.mcc_name or '—'} [{obj.mcc_code}]"
+        return "—"
+
+    @admin.display(description=_("MPP"))
+    def mpp_display(self, obj):
+        if obj.mpp_code:
+            return f"{obj.mpp_name or '—'} [{obj.mpp_code}]"
+        return "—"
+
+    @admin.display(description=_("Assigned By"), ordering="assigned_by__username")
+    def assigned_by_display(self, obj):
+        if obj.assigned_by:
+            return f"{obj.assigned_by.get_full_name() or obj.assigned_by.username}"
+        return "System"
+
+    # -----------------------------
+    # Save Hook for Audit Trail
+    # -----------------------------
+    def save_model(self, request, obj, form, change):
+        if not obj.assigned_by:
+            obj.assigned_by = request.user
+        super().save_model(request, obj, form, change)
+
+    # -----------------------------
+    # Performance Tweaks
+    # -----------------------------
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("user", "assigned_by")
+
+    # Optional: custom titles
+    def get_model_perms(self, request):
+        """Show in admin only if user has view permission."""
+        return super().get_model_perms(request)

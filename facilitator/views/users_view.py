@@ -20,7 +20,6 @@ from ..serializers.users_serializers import (
     SendOTPSerializer,
 )
 
-from rest_framework.pagination import PageNumberPagination
 from util.response import StandardResultsSetPagination, custom_response
 
 from ..serializers.profile_serializer import (
@@ -28,6 +27,8 @@ from ..serializers.profile_serializer import (
     UserProfileSerializer,
     UserUpdateProfileSerializer,
     UserUpdateSerializer,
+    UserLocation,
+    UserLocationSerializer,
 )
 from error_formatter import *
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -1175,3 +1176,74 @@ def clear_module(request):
             data={},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+import django_filters
+
+
+class UserLocationFilter(django_filters.FilterSet):
+    """Filter for UserLocation list API."""
+
+    user_id = django_filters.NumberFilter(field_name="user__id", lookup_expr="exact")
+    username = django_filters.CharFilter(
+        field_name="user__username", lookup_expr="icontains"
+    )
+    mcc_code = django_filters.CharFilter(lookup_expr="iexact")
+    mcc_name = django_filters.CharFilter(lookup_expr="icontains")
+    mpp_code = django_filters.CharFilter(lookup_expr="iexact")
+    mpp_name = django_filters.CharFilter(lookup_expr="icontains")
+    is_primary = django_filters.BooleanFilter()
+    active = django_filters.BooleanFilter()
+
+    class Meta:
+        model = UserLocation
+        fields = [
+            "user_id",
+            "username",
+            "mcc_code",
+            "mcc_name",
+            "mpp_code",
+            "mpp_name",
+            "is_primary",
+            "active",
+        ]
+
+
+class UserLocationListView(generics.ListAPIView):
+    from rest_framework.filters import SearchFilter, OrderingFilter
+
+    """
+    API endpoint to list user-location mappings with filtering options.
+
+    🔹 Supports filters: user_id, username, mcc_code, mpp_code, is_primary, active
+    🔹 Returns a unified custom response schema
+    🔹 Non-superusers see only their own assignments
+    """
+
+    serializer_class = UserLocationSerializer
+    queryset = UserLocation.objects.select_related("user", "assigned_by")
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+    filterset_class = UserLocationFilter
+    search_fields = ["mcc_name", "mpp_name", "user__username"]
+    ordering_fields = ["assigned_at", "mcc_code", "mpp_code"]
+    ordering = ["-assigned_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser:
+            qs = qs.filter(user=user)
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page or queryset, many=True)
+        return self.get_paginated_response(serializer.data)

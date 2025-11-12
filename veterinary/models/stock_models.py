@@ -10,7 +10,6 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 
 
-
 class Location(BaseModel):
     name = models.CharField(
         max_length=255,

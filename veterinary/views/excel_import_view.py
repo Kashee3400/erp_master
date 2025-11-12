@@ -281,7 +281,7 @@ class ExcelImportConfirmView(APIView):
                 "message": "Import started in background",
                 "session_id": str(session_id),
                 "task_id": task.id,
-                "status": "queued",
+                "status": session.status,
             }
         )
 

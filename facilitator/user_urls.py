@@ -9,6 +9,7 @@ from .views.users_view import (
     create_update_user_profile,
     clear_device,
     clear_module,
+    UserLocationListView,
 )
 from django.urls import path
 
@@ -28,4 +29,5 @@ urlpatterns = [
     ),
     path("device/clear/", clear_device, name="clear-device"),
     path("module/clear/", clear_module, name="clear-module"),
+    path("my-locations/", UserLocationListView.as_view(), name="my-locations"),
 ] + router.urls

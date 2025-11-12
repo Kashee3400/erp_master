@@ -31,7 +31,7 @@ class NotificationServices:
 
     def __init__(self, base_url: str = None):
         self.base_url = base_url or getattr(
-            settings, "SITE_URL", "http://tech.kasheemilk.com:5566/"
+            settings, "SITE_URL", "https://tech.kasheemilk.com:8443/"
         )
 
     def _serialize_context(self, context: dict) -> dict:
@@ -83,6 +83,7 @@ class NotificationServices:
         priority: str = "normal",
         scheduled_at: Optional[timezone.datetime] = None,
         expires_at: Optional[timezone.datetime] = None,
+        
     ) -> Notification:
         """
         Create a new notification instance
