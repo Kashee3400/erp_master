@@ -438,30 +438,36 @@ CKEDITOR_5_CONFIGS = {
 }
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
 
+from kombu import Queue, Exchange
+
 CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 CELERY_RESULT_EXTENDED = True
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
-
-CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
-
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_RESULT_EXPIRES = 3600
 
-CELERY_TASK_QUEUES = {
-    "erp_master_queue": {
-        "exchange": "erp_exchange",
-        "routing_key": "erp_task",
-    }
-}
+CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
+CELERY_TASK_DEFAULT_EXCHANGE = "erp_exchange"
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = "direct"
+CELERY_TASK_DEFAULT_ROUTING_KEY = "erp_task"
+
+CELERY_TASK_QUEUES = (
+    Queue(
+        "erp_master_queue",
+        Exchange("erp_exchange", type="direct"),
+        routing_key="erp_task",
+    ),
+)
 
 CELERY_TASK_ROUTES = {
     "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
     "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
     "veterinary.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
 }
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # Email Configuration
 
