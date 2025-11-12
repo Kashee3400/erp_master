@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://localhost:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
@@ -87,56 +87,61 @@ LOGGING = {
         "verbose": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
-        # Handlers for each app
+        # Notifications
         "notifications_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "notifications.log"),
-            "maxBytes": 5 * 1024 * 1024,
+            "maxBytes": 5 * 1024 * 1024,  # 5 MB
             "backupCount": 5,
             "formatter": "verbose",
         },
+        # Member
         "member_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "member.log"),
             "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },
+        # Facilitator
         "facilitator_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "facilitator.log"),
             "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },
+        # Feedback
         "feedback_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "feedback.log"),
             "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },
+        # Veterinary
         "veterinary_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "veterinary.log"),
             "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },
+        # MPMS
         "mpms_file": {
             "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "mpms.log"),
             "maxBytes": 5 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",
         },
-        # Optional console logging
+        # Console output
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
@@ -176,6 +181,7 @@ LOGGING = {
         },
     },
 }
+
 
 STATIC_ROOT = STATIC_DIR
 

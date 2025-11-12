@@ -3,6 +3,10 @@ import os
 from decouple import config
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
+import os
+from concurrent_log_handler import (
+    ConcurrentRotatingFileHandler,
+)
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
@@ -443,7 +447,7 @@ CELERY_TASK_SERIALIZER = "json"
 
 CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
 
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_RESULT_EXPIRES = 3600
 
 CELERY_TASK_QUEUES = {
