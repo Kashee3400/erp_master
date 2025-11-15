@@ -383,8 +383,8 @@ class MppCollectionAggregationAdmin(admin.ModelAdmin):
         "amount",
         "from_date",
         "to_date",
-        'no_of_pouring_days',
-        "no_of_pouring_shift"
+        "no_of_pouring_days",
+        "no_of_pouring_shift",
     )
 
     # Filters on the right side
@@ -422,4 +422,58 @@ class MppCollectionAggregationAdmin(admin.ModelAdmin):
     ordering = ("-from_date",)
 
     # For large tables avoid loading dropdown foreign keys
+    list_per_page = 50
+
+
+from .models import MemberShareInfo
+
+@admin.register(MemberShareInfo)
+class MemberShareInfoAdmin(admin.ModelAdmin):
+    list_display = (
+        "member_share_info_code",
+        "company_code",
+        "plant_code",
+        "mcc_code",
+        "bmc_code",
+        "mpp_code",
+        "member_code",
+        "transaction_date",
+        "payment_mode",
+        "amount_deposited",
+        "share_allocated",
+        "share_refund",
+        "share_apply",
+        "share_amount_payable",
+        "share_surrender",
+        "share_deduction_amount",
+    )
+
+    search_fields = (
+        "member_share_info_code",
+        "member_code",
+        "mpp_code",
+        "folio_no",
+        "payment_ref_no",
+    )
+
+    list_filter = (
+        "company_code",
+        "plant_code",
+        "mcc_code",
+        "bmc_code",
+        "mpp_code",
+        "payment_mode",
+        "transaction_date",
+        "in_rta",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "created_by",
+        "updated_at",
+        "updated_by",
+    )
+
+    ordering = ("-transaction_date",)
+
     list_per_page = 50

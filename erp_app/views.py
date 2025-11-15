@@ -340,9 +340,7 @@ class MppCollectionListView(FastTotalsMixin, generics.ListAPIView):
     # AGGREGATION LIST (same as before)
     # ---------------------------
     def get_queryset(self):
-        mobile_no = (
-            self.request.user.username
-        )
+        mobile_no = self.request.user.username
 
         member = MemberMaster.objects.filter(
             mobile_no=mobile_no, is_active=True
@@ -407,253 +405,6 @@ class MppCollectionListView(FastTotalsMixin, generics.ListAPIView):
         paginator.extra_data = {"totals": totals}
 
         return paginator.get_paginated_response(serializer.data)
-
-# TODO: Remove after succefull implementation of new apis
-# class MppCollectionListView(generics.ListAPIView):
-#     serializer_class = MppCollectionAggregationSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     pagination_class = StandardResultsSetPagination
-
-#     # ---------------------------------------
-#     # AGGREGATED LIST (same as before)
-#     # ---------------------------------------
-#     def get_queryset(self):
-#         mobile_no = "7518705924"
-
-#         member = MemberMaster.objects.filter(
-#             mobile_no=mobile_no, is_active=True
-#         ).first()
-
-#         if not member:
-#             return MppCollectionAggregation.objects.none()
-
-#         qs = MppCollectionAggregation.objects.filter(
-#             member_code=member.member_code
-#         ).order_by("-created_at")
-
-#         year = self.request.GET.get("year")
-#         if year:
-#             try:
-#                 year = int(year)
-#                 start_date = f"{year}-04-01"
-#                 end_date = f"{year + 1}-03-31"
-
-#                 qs = qs.filter(
-#                     from_date__lte=end_date,
-#                     to_date__gte=start_date,
-#                 )
-#             except:
-#                 return MppCollectionAggregation.objects.none()
-
-#         return qs
-
-#     # ---------------------------------------
-#     # SUPER FAST TOTALS (raw SQL)
-#     # ---------------------------------------
-#     def calculate_fast_totals(
-#         self, member_code, start_date=None, end_date=None, using="sarthak_kashee"
-#     ):
-#         """
-#         Calculate ERP-correct totals directly from MppCollection table using raw SQL.
-#         Optimized for MSSQL with proper indexes.
-
-#         Returns:
-#             dict: total_qty, total_amount, weighted_fat, weighted_snf, total_days, total_shift
-#         """
-#         from django.db import connections
-#         from decimal import Decimal
-
-#         params = [member_code]
-#         date_filter = ""
-
-#         if start_date and end_date:
-#             date_filter = "AND collection_date BETWEEN %s AND %s"
-#             params.extend([start_date, end_date])
-
-#         sql = f"""
-#             SELECT
-#                 SUM(qty) AS total_qty,
-#                 SUM(amount) AS total_amount,
-#                 SUM(qty * fat) AS qty_fat_sum,
-#                 SUM(qty * snf) AS qty_snf_sum,
-#                 COUNT(DISTINCT CAST(collection_date AS DATE)) AS total_days,
-#                 COUNT(DISTINCT CONCAT(
-#                     CAST(collection_date AS DATE), '_', CAST(shift_code AS VARCHAR(10))
-#                 )) AS total_shift
-#             FROM mpp_collection
-#             WHERE member_code = %s
-#             {date_filter};
-#         """
-
-#         # Use specified database connection
-#         with connections[using].cursor() as cursor:
-#             cursor.execute(sql, params)
-#             row = cursor.fetchone()
-
-#         total_qty = Decimal(row[0] or 0)
-#         total_amount = Decimal(row[1] or 0)
-#         qty_fat_sum = Decimal(row[2] or 0)
-#         qty_snf_sum = Decimal(row[3] or 0)
-#         total_days = row[4] or 0
-#         total_shift = row[5] or 0
-
-#         # Avoid division by zero
-#         epsilon = Decimal("0.00001")
-
-#         weighted_fat = (
-#             float(round(qty_fat_sum / (total_qty + epsilon), 3)) if total_qty else 0
-#         )
-#         weighted_snf = (
-#             float(round(qty_snf_sum / (total_qty + epsilon), 3)) if total_qty else 0
-#         )
-
-#         return {
-#             "total_qty": float(total_qty),
-#             "total_amount": float(total_amount),
-#             "weighted_fat": weighted_fat,
-#             "weighted_snf": weighted_snf,
-#             "total_days": total_days,
-#             "total_shift": total_shift,
-#         }
-
-#     # ---------------------------------------
-#     # MAIN LIST — return paginated list + totals
-#     # ---------------------------------------
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.get_queryset()
-#         paginator = self.pagination_class()
-#         paginated_queryset = paginator.paginate_queryset(queryset, request)
-
-#         # fetch member
-#         mobile_no = "7518705924"
-#         member = MemberMaster.objects.filter(
-#             mobile_no=mobile_no, is_active=True
-#         ).first()
-
-#         # FY filter
-#         year = request.GET.get("year")
-#         if year:
-#             year = int(year)
-#             start_date = f"{year}-04-01"
-#             end_date = f"{year + 1}-03-31"
-#         else:
-#             start_date = None
-#             end_date = None
-
-#         # SUPER FAST TOTALS
-#         totals = self.calculate_fast_totals(member.member_code, start_date, end_date)
-
-#         # normal paginated serializer
-#         serializer = self.get_serializer(paginated_queryset, many=True)
-
-#         # attach totals
-#         paginator.extra_data = {"totals": totals}
-
-#         return paginator.get_paginated_response(serializer.data)
-
-
-# class MppCollectionDetailView(generics.GenericAPIView):
-#     """
-#     API endpoint for fetching other dashboard data.
-#     """
-
-#     serializer_class = MppCollectionSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request, *args, **kwargs):
-#         today = timezone.now().date()
-
-#         # Fetch date parameter and validate format
-#         date_str = request.query_params.get("date", None)
-#         provided_date = self.validate_date(date_str, today)
-#         if isinstance(provided_date, Response):
-#             return provided_date
-
-#         username = self.request.user.username
-#         cache_key_member = f"member_{username}"
-#         member = cache.get(cache_key_member)
-#         if member is None:
-#             member = (
-#                 MemberMaster.objects.filter(mobile_no=username, is_active=True)
-#                 .values("member_code")
-#                 .last()
-#             )
-#             cache.set(cache_key_member, member, timeout=3600)
-
-#         if not member:
-#             return Response(
-#                 {
-#                     "status": 400,
-#                     "message": "No member found on this mobile number",
-#                     "data": {},
-#                 },
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         member_code = member["member_code"]
-#         start_date, end_date = self.get_fiscal_year_range(provided_date)
-
-#         # Cache key for collections on provided date
-#         cache_key_date = f"mpp_collection_{member_code}_{provided_date}"
-#         date_queryset = cache.get(cache_key_date)
-#         if date_queryset is None:
-#             date_queryset = list(
-#                 MppCollection.objects.filter(
-#                     collection_date__date=provided_date, member_code=member_code
-#                 )
-#             )
-#             cache.set(cache_key_date, date_queryset, timeout=3600)
-#         cache_key_fy = f"mpp_collection_fy_{member_code}_{start_date}_{end_date}"
-#         fiscal_data = cache.get(cache_key_fy)
-#         if fiscal_data is None:
-#             aggregated_data = MppCollection.objects.filter(
-#                 collection_date__range=(start_date, end_date), member_code=member_code
-#             ).annotate(date_only=TruncDate("collection_date"))
-
-#             fiscal_data = aggregated_data.aggregate(
-#                 total_days=Count("date_only", distinct=True),
-#                 total_qty=Sum("qty", default=0),
-#                 total_payment=Sum("amount", default=0),
-#             )
-#             cache.set(cache_key_fy, fiscal_data, timeout=3600)
-
-#         date_serializer = self.get_serializer(date_queryset, many=True)
-
-#         response_data = {
-#             "status": status.HTTP_200_OK,
-#             "message": "success",
-#             "data": {
-#                 "dashboard_data": date_serializer.data,
-#                 "dashboard_fy_data": fiscal_data,
-#             },
-#         }
-
-#         return Response(response_data, status=status.HTTP_200_OK)
-
-#     def get_fiscal_year_range(self, provided_date):
-#         current_year = provided_date.year
-#         start_year = current_year - 1 if provided_date.month < 4 else current_year
-#         start_date = timezone.make_aware(timezone.datetime(start_year, 4, 1))
-#         end_date = timezone.make_aware(
-#             timezone.datetime(start_year + 1, 3, 31, 23, 59, 59)
-#         )
-#         return start_date, end_date
-
-#     def validate_date(self, date_str, default_date):
-#         if not date_str:
-#             return default_date
-#         try:
-#             return timezone.datetime.strptime(date_str, "%Y-%m-%d").date()
-#         except ValueError:
-#             return Response(
-#                 {
-#                     "status": 400,
-#                     "message": "Date must be in YYYY-MM-DD format",
-#                     "data": {},
-#                 },
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
 
 
 class MemberShareFinalInfoView(APIView):
@@ -762,7 +513,18 @@ class Last5DaysCollectionView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        member_code = request.query_params.get("member_code")
+        mobile_no = self.request.user.username
+
+        member = MemberMaster.objects.filter(
+            mobile_no=mobile_no, is_active=True
+        ).first()
+
+        if not member:
+            return Response(
+                {"status": 400, "message": "no member found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        member_code = member.member_code
         if not member_code:
             return Response(
                 {"status": 400, "message": "member_code is required"},
