@@ -113,4 +113,19 @@ urlpatterns = [
         SahayakAppInstalledData.as_view(),
         name="sahayak-app-installed-data",
     ),
+    path(
+        "api/sahayak-app-installed-data/",
+        SahayakAppInstalledData.as_view(),
+        name="sahayak-app-installed-data",
+    ),
+    path(
+        "api/last-5-day-collection/",
+        Last5DaysCollectionView.as_view(),
+        name="last-5-day-collection",
+    ),
+    path(
+        "api/total-collection/",
+        TodayCollectionView.as_view(),
+        name="total-collection",
+    ),
 ]
