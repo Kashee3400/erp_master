@@ -540,7 +540,13 @@ class Last5DaysCollectionView(generics.GenericAPIView):
             totals = self.get_day_collection(member_code, day)
             results.append({"date": str(day), **totals})
 
-        return Response({"status": 200, "message": "success", "data": results})
+        return custom_response(
+            status_text="success",
+            data=results,
+            message="Last 5 Days Collection Fetched...",
+            status_code=status.HTTP_200_OK,
+            errors={},
+        )
 
     @staticmethod
     def get_day_collection(member_code, collection_date, using="sarthak_kashee"):
@@ -570,16 +576,8 @@ class Last5DaysCollectionView(generics.GenericAPIView):
         morning_qty = float(row[1] or 0)
         evening_qty = float(row[2] or 0)
 
-        data = {
+        return {
             "total_qty": round(total_qty, 2),
             "morning_shift_qty": round(morning_qty, 2),
             "evening_shift_qty": round(evening_qty, 2),
         }
-
-        return custom_response(
-            status_text="success",
-            data=data,
-            message="Last 5 Days Collection Fetched...",
-            status_code=status.HTTP_200_OK,
-            errors={},
-        )
