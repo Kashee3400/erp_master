@@ -6,108 +6,125 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from datetime import datetime
 
-app_name = 'erp_app'
+app_name = "erp_app"
 app_models = apps.get_app_config(app_name).get_models()
 
 
 class MppAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = (
-        'mpp_code',
-        'mpp_short_name',
-        'mpp_ex_code',        
-        'mpp_name',
-        'mpp_type',
-        'created_at',
-        'updated_at',
+        "mpp_code",
+        "mpp_short_name",
+        "mpp_ex_code",
+        "mpp_name",
+        "mpp_type",
+        "created_at",
+        "updated_at",
     )
 
     # Define the fields that can be searched
     search_fields = (
-        'mpp_code',
-        'mpp_ex_code',
-        'mpp_name',
+        "mpp_code",
+        "mpp_ex_code",
+        "mpp_name",
     )
 
     # Enable editing of specific fields
     fields = (
-        'mpp_code',
-        'mpp_ex_code',
-        'mpp_short_name',
-        'mpp_name',
-        'mpp_type',
+        "mpp_code",
+        "mpp_ex_code",
+        "mpp_short_name",
+        "mpp_name",
+        "mpp_type",
     )
 
     # Define readonly fields
-    readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
+    readonly_fields = ("created_at", "updated_at", "created_by", "updated_by")
+
 
 # Register the Mpp model with the custom admin class
 admin.site.register(Mpp, MppAdmin)
 
+
 class MccAdmin(admin.ModelAdmin):
     # Define the fields to be displayed in the list view
     list_display = (
-        'mcc_code',
-        'mcc_name',
-        'description',
-        'is_active',
-        'created_at',
-        'updated_at',
+        "mcc_code",
+        "mcc_name",
+        "description",
+        "is_active",
+        "created_at",
+        "updated_at",
     )
 
     # Define the fields that can be searched
     search_fields = (
-        'mcc_code',
-        'mcc_name',
-        'description',
+        "mcc_code",
+        "mcc_name",
+        "description",
     )
 
     # Define the fields that can be filtered
-    list_filter = (
-        'is_active',
-    )
+    list_filter = ("is_active",)
 
     # Enable editing of specific fields
     fields = (
-        'mcc_code',
-        'mcc_ex_code',
-        'mcc_name',
-        'description',
-        'is_active',
+        "mcc_code",
+        "mcc_ex_code",
+        "mcc_name",
+        "description",
+        "is_active",
     )
 
     # You can also define the readonly fields if needed
-    readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
+    readonly_fields = ("created_at", "updated_at", "created_by", "updated_by")
+
 
 # Register the Mcc model with the custom admin class
 admin.site.register(Mcc, MccAdmin)
 
+
 @admin.register(MemberMaster)
 class MemberMasterAdmin(admin.ModelAdmin):
     list_display = [
-        'member_code',
-        'member_name',
-        'member_ex_code',
-        'member_middle_name',
-        'member_surname', 
-        'member_relation',
-        'mobile_no',
-        'is_active',
-        'folio_no',
-        'application_no',
-        'application_date',
-        'created_at',
-        ]
-    search_fields = ['member_code', 'member_name', 'mobile_no']
-    list_filter = ['is_active', 'member_type','created_at']
+        "member_code",
+        "member_name",
+        "member_ex_code",
+        "member_middle_name",
+        "member_surname",
+        "member_relation",
+        "mobile_no",
+        "is_active",
+        "folio_no",
+        "application_no",
+        "application_date",
+        "created_at",
+    ]
+    search_fields = ["member_code", "member_name", "mobile_no"]
+    list_filter = ["is_active", "member_type", "created_at"]
+
 
 from rangefilter.filters import DateRangeFilter
+
+
 @admin.register(MppCollection)
 class MppCollectionAdmin(admin.ModelAdmin):
-    list_display = ["member_code","get_mpp_code","collection_date","shift_code","qty",
-                    "fat","snf","rate","amount",
-                    ]
-    search_fields = ['member_code']
-    list_filter = ['shift_code','references__mpp_code',('collection_date', DateRangeFilter)]
+    list_display = [
+        "member_code",
+        "get_mpp_code",
+        "collection_date",
+        "shift_code",
+        "qty",
+        "fat",
+        "snf",
+        "rate",
+        "amount",
+    ]
+    search_fields = ["member_code"]
+    list_filter = [
+        "shift_code",
+        "references__mpp_code",
+        ("collection_date", DateRangeFilter),
+    ]
 
     def get_mpp_code(self, obj):
         """Returns the related mpp_code value."""
@@ -129,21 +146,21 @@ class MppCollectionAdmin(admin.ModelAdmin):
 # @admin.register(RmrdMilkCollection)
 # class RmrdMilkCollectionAdmin(admin.ModelAdmin):
 #     list_display = [field.name for field in RmrdMilkCollection._meta.fields]
-    
+
 #     search_fields = [
 #         'rmrd_milk_collection_code',
 #         'rmrd_milk_collection_references_code',
 #         'vehicle_no',
 #         'module_code',
 #     ]
-    
+
 #     list_filter = [
 #         'collection_date',
 #         'shift_code',
 #         'milk_type_code',
 #         'module_code',
 #     ]
-    
+
 #     def get_queryset(self, request):
 #         """Prevents initial data from loading until a filter is applied."""
 #         qs = super().get_queryset(request)
@@ -154,7 +171,7 @@ class MppCollectionAdmin(admin.ModelAdmin):
 # @admin.register(RmrdMilkCollectionDetail)
 # class RmrdMilkCollectionDetailAdmin(admin.ModelAdmin):
 #     list_display = [field.name for field in RmrdMilkCollectionDetail._meta.fields]
-    
+
 #     search_fields = [
 #         'own_module_code',
 #         'own_module_name',
@@ -162,14 +179,14 @@ class MppCollectionAdmin(admin.ModelAdmin):
 #         'module_name',
 #         'vehicle_no'
 #     ]
-    
+
 #     list_filter = [
 #         'collection_date',
 #         'shift_code',
 #         'milk_type_code',
 #         'milk_quality_type_code',
 #     ]
-    
+
 #     def get_queryset(self, request):
 #         """Prevents initial data from loading until a filter is applied."""
 #         qs = super().get_queryset(request)
@@ -177,13 +194,19 @@ class MppCollectionAdmin(admin.ModelAdmin):
 #             return qs.none()
 #         return qs
 
-    
+
 @admin.register(Shift)
 class ShiftAdmin(admin.ModelAdmin):
-    list_display = ('shift_code', 'shift_name', 'shift_short_name', 'shift_at', 'is_active')
-    search_fields = ('shift_name', 'shift_short_name', 'shift_code')
-    list_filter = ('is_active', 'originating_type')
-    ordering = ('shift_code',)
+    list_display = (
+        "shift_code",
+        "shift_name",
+        "shift_short_name",
+        "shift_at",
+        "is_active",
+    )
+    search_fields = ("shift_name", "shift_short_name", "shift_code")
+    list_filter = ("is_active", "originating_type")
+    ordering = ("shift_code",)
 
 
 # @admin.register(LocalSaleTxn)
@@ -198,8 +221,8 @@ class ShiftAdmin(admin.ModelAdmin):
 #     def local_sale_code_display(self, obj):
 #         return obj.local_sale_code.local_sale_txn_code if obj.local_sale_code else "-"
 #     local_sale_code_display.short_description = "Local Sale Code"
-    
-    
+
+
 # @admin.register(LocalSale)
 # class LocalSaleAdmin(admin.ModelAdmin):
 #     # Dynamically get all fields from the model
@@ -212,44 +235,55 @@ class ShiftAdmin(admin.ModelAdmin):
 #     def local_sale_code_display(self, obj):
 #         return obj.local_sale_code
 #     local_sale_code_display.short_description = "Local Sale Code"
-    
+
 #     def module_name_display(self, obj):
 #         return obj.module_name
 #     module_name_display.short_description = "Module Name"
-    
+
 #     def status_display(self, obj):
 #         return obj.status
 #     status_display.short_description = "Sale Status"
 
+
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['product_code', 'product_name', 'sku', 'pack_type', 'is_purchase', 'is_saleable', 'created_at']
-    search_fields = ['product_name', 'sku', 'brand_code__brand_name']
-    list_filter = ['is_saleable', 'is_purchase']
-    ordering = ['product_name']
+    list_display = [
+        "product_code",
+        "product_name",
+        "sku",
+        "pack_type",
+        "is_purchase",
+        "is_saleable",
+        "created_at",
+    ]
+    search_fields = ["product_name", "sku", "brand_code__brand_name"]
+    list_filter = ["is_saleable", "is_purchase"]
+    ordering = ["product_name"]
+
 
 admin.site.register(Product, ProductAdmin)
 
 
-class MemberHierarchyViewAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+class MemberHierarchyViewAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = [field.name for field in MemberHierarchyView._meta.fields]
-    search_fields = ('member_code','mobile_no')
-    list_filter = ('is_active', 'created_at','mpp_code')
+    search_fields = ("member_code", "mobile_no")
+    list_filter = ("is_active", "created_at", "mpp_code")
+
 
 admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)
 
 # class UnitAdmin(admin.ModelAdmin):
 #     # List display: specify the fields to be displayed in the list view
 #     list_display = ('unit_code', 'unit', 'unit_short_name', 'created_at', 'updated_at', 'is_decimal_allow')
-    
+
 #     # Search functionality: enable search by fields
 #     search_fields = ('unit', 'unit_short_name', 'created_by', 'updated_by')
-    
+
 #     # Filtering options: enable filters in the sidebar
 #     list_filter = ('is_decimal_allow', 'originating_org_code', 'originating_type')
-    
+
 #     # Allow ordering the records based on certain fields
 #     ordering = ('unit_code',)
-    
+
 #     # Enable date-based filtering if needed
 #     date_hierarchy = 'created_at'
 
@@ -269,28 +303,37 @@ admin.site.register(MemberHierarchyView, MemberHierarchyViewAdmin)
 #     search_fields = ['billing_member_master_code__billing_member_master_code']
 #     list_filter = ['transaction_date', 'status', 'payment_mode']
 
+
 @admin.register(MppDispatchTxn)
 class MppDispatchTxnAdmin(admin.ModelAdmin):
     list_per_page = 10
-    list_display = ["mpp_dispatch_txn_code","dispatch_qty","fat","snf","rate","amount","created_at"]
-    search_fields = ('mpp_dispatch_code__mpp_code',)
-    list_filter = ('created_at',)
+    list_display = [
+        "mpp_dispatch_txn_code",
+        "dispatch_qty",
+        "fat",
+        "snf",
+        "rate",
+        "amount",
+        "created_at",
+    ]
+    search_fields = ("mpp_dispatch_code__mpp_code",)
+    list_filter = ("created_at",)
 
 
 # @admin.register(MppHistory)
 # class MppHistoryAdmin(admin.ModelAdmin):
 #     list_display = (
-#         'id', 'history_created_by', 'history_created_at', 
+#         'id', 'history_created_by', 'history_created_at',
 #         'operation_type', 'mpp_code', 'mpp_name', 'created_at', 'updated_at'
 #     )  # Fields to show in the table
 
 #     search_fields = (
-#         'history_created_by', 'operation_type', 
+#         'history_created_by', 'operation_type',
 #         'mpp_code', 'mpp_ex_code', 'mpp_name', 'mpp_short_name'
 #     )  # Fields searchable from the search box
 
 #     list_filter = (
-#         'operation_type', 'flg_sentbox_entry', 
+#         'operation_type', 'flg_sentbox_entry',
 #         'originating_type', 'created_by', 'updated_by'
 #     )  # Right sidebar filters
 
@@ -306,8 +349,8 @@ class MppDispatchTxnAdmin(admin.ModelAdmin):
 # @admin.register(V_PouredMemberSummary)
 # class V_PouredMemberSummaryAdmin(admin.ModelAdmin):
 #     list_display = (
-#         "member",   
-#         "mpp", 
+#         "member",
+#         "mpp",
 #         "collection_date",
 #         "total_qty",
 #         "avg_fat",
@@ -316,3 +359,67 @@ class MppDispatchTxnAdmin(admin.ModelAdmin):
 #     list_filter = ("collection_date", "mpp")
 #     search_fields = ("member__member_name", "mpp__mpp_name")
 #     date_hierarchy = 'collection_date'
+
+
+from django.contrib import admin
+from .models import MppCollectionAggregation
+
+
+@admin.register(MppCollectionAggregation)
+class MppCollectionAggregationAdmin(admin.ModelAdmin):
+
+    # Columns shown in list view
+    list_display = (
+        "company_code",
+        "plant_code",
+        "mcc_code",
+        "bmc_code",
+        "mpp_code",
+        "member_code",
+        "milk_type_name",
+        "qty",
+        "fat",
+        "snf",
+        "amount",
+        "from_date",
+        "to_date",
+        'no_of_pouring_days',
+        "no_of_pouring_shift"
+    )
+
+    # Filters on the right side
+    list_filter = (
+        "company_code",
+        "plant_code",
+        "mcc_code",
+        "bmc_code",
+        "mpp_code",
+        "milk_type_code",
+        "milk_quality_type_code",
+        "from_date",
+        "to_date",
+        "from_shift",
+        "to_shift",
+    )
+
+    # Search fields
+    search_fields = (
+        "company_code",
+        "company_name",
+        "plant_code",
+        "plant_name",
+        "mcc_code",
+        "mcc_name",
+        "bmc_code",
+        "bmc_name",
+        "mpp_code",
+        "mpp_name",
+        "member_code",
+        "member_name",
+    )
+
+    # Default ordering
+    ordering = ("-from_date",)
+
+    # For large tables avoid loading dropdown foreign keys
+    list_per_page = 50

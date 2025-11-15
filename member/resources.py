@@ -62,6 +62,20 @@ class SahayakIncentivesResource(resources.ModelResource):
             )
 
         return super().import_row(row, instance_loader, **kwargs)
+    
+    def before_import(self, dataset, *args, **kwargs):
+        """
+        Clean up dataset headers before import.
+        Strips spaces and normalizes case for reliable matching.
+        """
+        # 1️⃣ Normalize dataset headers (strip + lowercase)
+        if dataset.headers:
+            dataset.headers = [h.strip().lower() if h else h for h in dataset.headers]
+
+        # 2️⃣ Normalize our field column names too (no deprecated get_fields)
+        for field in self.fields.values():
+            if field.column_name:
+                field.column_name = field.column_name.strip().lower()
 
     class Meta:
         model = SahayakIncentives

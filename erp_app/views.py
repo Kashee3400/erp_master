@@ -1,9 +1,8 @@
-from util.response import StandardResultsSetPagination, custom_response
+from util.response import StandardResultsSetPagination
 from .serializers import *
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db import models
 from rest_framework.views import APIView
 from django.db.models import Q, Sum, Avg, Count
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -11,7 +10,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import TruncDate, Cast
 from django.utils.dateparse import parse_datetime
-from rest_framework.exceptions import ValidationError
 
 
 class MemberByPhoneNumberView(generics.RetrieveAPIView):
@@ -231,10 +229,10 @@ class BillingMemberDetailView(generics.RetrieveAPIView):
         }
         return Response(response)
 
-
 class MppCollectionListView(generics.ListAPIView):
     """
-    Provides the latest MPP collection aggregation list with totals and pagination.
+    Returns paginated aggregation list,
+    but totals are calculated from RAW MppCollection (correct ERP logic).
     """
 
     serializer_class = MppCollectionAggregationSerializer
@@ -242,8 +240,12 @@ class MppCollectionListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
 
+    # ----------------------------------------------------
+    # FETCH AGGREGATION LIST
+    # ----------------------------------------------------
     def get_queryset(self):
-        mobile_no = self.request.user.username
+        mobile_no = "7518705924"
+
         member = MemberMaster.objects.filter(
             mobile_no=mobile_no, is_active=True
         ).first()
@@ -255,6 +257,7 @@ class MppCollectionListView(generics.ListAPIView):
             member_code=member.member_code
         ).order_by("-created_at")
 
+        # FINANCIAL YEAR FILTER
         year = self.request.GET.get("year")
         if year:
             try:
@@ -263,72 +266,111 @@ class MppCollectionListView(generics.ListAPIView):
                 end_date = f"{year + 1}-03-31"
 
                 queryset = queryset.filter(
-                    Q(from_date__range=(start_date, end_date))
-                    | Q(to_date__range=(start_date, end_date))
-                    | Q(from_date__lte=start_date, to_date__gte=end_date)
+                    from_date__lte=end_date,
+                    to_date__gte=start_date,
                 )
             except ValueError:
                 return MppCollectionAggregation.objects.none()
 
         return queryset
 
+    # ----------------------------------------------------
+    # RAW MPPCollection → ERP TOTALS
+    # ----------------------------------------------------
+    def calculate_raw_totals(self, member_code, start_date=None, end_date=None):
+        """
+        Calculates totals from RAW MppCollection:
+        - unique days
+        - unique shift days
+        - weighted fat & snf
+        - total qty & amount
+        """
+
+        from django.db.models import F, Sum
+        from decimal import Decimal
+
+        raw_qs = MppCollection.objects.filter(member_code=member_code)
+
+        # Apply FY filter
+        if start_date and end_date:
+            raw_qs = raw_qs.filter(
+                collection_date__date__gte=start_date,
+                collection_date__date__lte=end_date,
+            )
+
+        # ---------------------------------------
+        # UNIQUE DAYS & UNIQUE SHIFT-DAYS
+        # ---------------------------------------
+        unique_days = raw_qs.values("collection_date__date").distinct().count()
+        unique_shift_days = (
+            raw_qs.values("collection_date__date", "shift_code").distinct().count()
+        )
+
+        # ---------------------------------------
+        # TOTAL QTY & AMOUNT
+        # ---------------------------------------
+        totals = raw_qs.aggregate(
+            total_qty=Sum("qty"),
+            total_amount=Sum("amount"),
+            qty_fat_sum=Sum(F("qty") * F("fat")),
+            qty_snf_sum=Sum(F("qty") * F("snf")),
+        )
+
+        total_qty = totals["total_qty"] or Decimal("0")
+        total_amount = totals["total_amount"] or Decimal("0")
+        qty_fat_sum = totals["qty_fat_sum"] or Decimal("0")
+        qty_snf_sum = totals["qty_snf_sum"] or Decimal("0")
+
+        epsilon = Decimal("0.00001")
+
+        weighted_fat = qty_fat_sum / (total_qty + epsilon)
+        weighted_snf = qty_snf_sum / (total_qty + epsilon)
+
+        return {
+            "total_qty": float(total_qty),
+            "total_amount": float(total_amount),
+            "weighted_fat": float(round(weighted_fat, 3)),
+            "weighted_snf": float(round(weighted_snf, 3)),
+            "total_days": unique_days,
+            "total_shift": unique_shift_days,
+        }
+
+    # ----------------------------------------------------
+    # MAIN LIST
+    # ----------------------------------------------------
     def list(self, request, *args, **kwargs):
-        try:
-            queryset = self.get_queryset()
+        queryset = self.get_queryset()
 
-            # Setup pagination
-            paginator = self.pagination_class()
-            paginated_queryset = paginator.paginate_queryset(queryset, request)
+        # Paginate the aggregation (as before)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(queryset, request)
 
-            # Compute duplicates efficiently
-            duplicate_periods = (
-                queryset.values("from_date", "to_date")
-                .annotate(count=Count("id"))
-                .filter(count__gt=1)
-            )
-            duplicate_count = sum(item["count"] - 1 for item in duplicate_periods)
+        # FETCH MEMBER
+        mobile_no = "7518705924"
+        member = MemberMaster.objects.filter(
+            mobile_no=mobile_no, is_active=True
+        ).first()
 
-            total_days_expr = Sum("no_of_pouring_days") or 0
-            effective_days = (
-                queryset.aggregate(days=total_days_expr)["days"] or 0
-            ) - duplicate_count
+        # FINANCIAL YEAR DETAILS
+        year = request.GET.get("year")
+        if year:
+            year = int(year)
+            start_date = f"{year}-04-01"
+            end_date = f"{year + 1}-03-31"
+        else:
+            start_date = None
+            end_date = None
 
-            totals = queryset.aggregate(
-                total_qty=Sum("qty"),
-                avg_fat=Cast(
-                    Avg("fat"),
-                    output_field=models.DecimalField(decimal_places=3, max_digits=18),
-                ),
-                avg_snf=Cast(
-                    Avg("snf"),
-                    output_field=models.DecimalField(decimal_places=3, max_digits=18),
-                ),
-                total_amount=Sum("amount"),
-            )
-            totals.update(
-                {"total_days": effective_days, "total_shift": effective_days * 2}
-            )
+        # GET RAW TOTALS (ERP-CORRECT)
+        raw_totals = self.calculate_raw_totals(
+            member.member_code, start_date=start_date, end_date=end_date
+        )
 
-            # Serialize and respond
-            serializer = self.get_serializer(paginated_queryset, many=True)
-            paginator.extra_data = {"totals": totals}
-            return paginator.get_paginated_response(serializer.data)
+        # Attach totals
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        paginator.extra_data = {"totals": raw_totals}
 
-        except ValidationError as e:
-            return custom_response(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                status_text="error",
-                message="Validation Failed",
-                errors=e.detail,
-            )
-
-        except Exception as e:
-            return custom_response(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                status_text="error",
-                message="An unexpected error occurred.",
-                errors=str(e),
-            )
+        return paginator.get_paginated_response(serializer.data)
 
 
 from django.core.cache import cache
