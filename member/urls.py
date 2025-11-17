@@ -83,6 +83,11 @@ urlpatterns = [
         MppCollectionDetailView.as_view(),
         name="mpp-collection-detail",
     ),
+    # path(
+    #     "api/new-mpp-collection-detail/",
+    #     NewMppCollectionDetailView.as_view(),
+    #     name="new-mpp-collection-detail",
+    # ),
     path(
         "api/member-share-final-info/",
         MemberShareFinalInfoView.as_view(),
