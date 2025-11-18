@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening Kashee App...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #667eea;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">🥛</div>
+
+        {% if platform == 'android' %}
+        <h1>Opening Kashee App...</h1>
+        <p>Redirecting you to the app. If it doesn't open automatically, please click below.</p>
+        <div class="spinner"></div>
+        <a href="{{ play_store_url }}" class="btn" id="store-btn" style="display:none;">Open Play Store</a>
+        {% if fallback_url %}
+        <a href="{{ fallback_url }}" class="btn btn-secondary">View on Web</a>
+        {% endif %}
+
+        {% elif platform == 'ios' %}
+        <h1>Opening Kashee App...</h1>
+        <p>Redirecting you to the app. If it doesn't open automatically, please click below.</p>
+        <div class="spinner"></div>
+        <a href="{{ app_store_url }}" class="btn" id="store-btn" style="display:none;">Open App Store</a>
+        {% if fallback_url %}
+        <a href="{{ fallback_url }}" class="btn btn-secondary">View on Web</a>
+        {% endif %}
+
+        {% else %}
+        <h1>Scan to Open in App</h1>
+        <p>This link is designed to open in the Kashee mobile app. Scan the QR code below with your phone.</p>
+        <div id="qrcode"></div>
+        {% if fallback_url %}
+        <a href="{{ fallback_url }}" class="btn">Continue on Web</a>
+        {% else %}
+        <div class="info">
+            <strong>Download the Kashee App:</strong><br>
+            Available on Google Play Store and Apple App Store
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        {% if platform == 'android' %}
+        // Android Intent handling
+        window.location.href = '{{ intent_url }}';
+
+        // Fallback to Play Store after 2.5 seconds
+        setTimeout(function () {
+            document.querySelector('.spinner').style.display = 'none';
+            document.getElementById('store-btn').style.display = 'inline-block';
+        }, 2500);
+
+        {% elif platform == 'ios' %}
+        // iOS Universal Link / Custom Scheme
+        window.location.href = '{{ target }}';
+
+        // Fallback to App Store after 2.5 seconds
+        setTimeout(function () {
+            document.querySelector('.spinner').style.display = 'none';
+            document.getElementById('store-btn').style.display = 'inline-block';
+        }, 2500);
+
+        {% else %}
+        document.querySelector('.spinner').style.display = 'none';
+        // Optional: Generate QR code (requires qrcode.js library)
+        // Then generate QR:
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: "{{ target }}",
+            width: 200,
+            height: 200
+        });
+        document.getElementById('qrcode').style.display = 'block';
+        {% endif %}
+    </script>
+</body>
+
+</html>

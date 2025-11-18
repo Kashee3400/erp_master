@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from member.models import UserDevice, OTP
 from django.contrib.auth.models import update_last_login
 from  ..models.user_profile_model import UserProfile
+from util.response import custom_response
 
 User = get_user_model()
 from member.throttle import OTPThrottle
@@ -216,4 +217,51 @@ class LogoutView(APIView):
                     "error": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UpdateDeviceModuleAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        module = request.data.get("module")
+
+        if not module:
+            return custom_response(
+                status_text="error",
+                message="Module is required",
+                errors={"module": ["This field is required"]},
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            device, created = UserDevice.objects.get_or_create(user=request.user)
+
+            device.module = module
+            device.save()
+
+            data = {
+                "user_id": request.user.id,
+                "module": device.module,
+                "device": device.device,
+                "device_type": device.device_type,
+                "fcm_token": device.fcm_token,
+                "mpp_code": device.mpp_code,
+                "is_active": device.is_active,
+                "last_updated": device.last_updated,
+            }
+
+            return custom_response(
+                status_text="success",
+                message="Module updated successfully",
+                data=data,
+                status_code=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            return custom_response(
+                status_text="error",
+                message="Something went wrong",
+                errors={"detail": str(e)},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

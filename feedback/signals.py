@@ -75,6 +75,7 @@ def feedback_comment_post_save(sender, instance, created, **kwargs):
         app_route="feedback-details",
         custom_key=f"feedback_{feedback.pk}",
         is_subroute=True,
+        deep_link_url=template.generate_deep_link(context=render_context),
         title=rendered.get("title", ""),
         body=rendered.get("body", ""),
         email_subject=rendered.get("email_subject", ""),
@@ -110,14 +111,19 @@ def create_feedback_notification(
     # safe JSON context
     context_data = {
         "recipient_id": recipient.id if recipient else None,
-        "feedback_id": feedback.id,
+        "feedback_id": feedback.feedback_id,
         "feedback_status": feedback.status,
         "site_name": "Kashee E-Dairy",
     }
     if context_extra:
         context_data.update(context_extra)
-
-    rendered = template.render_content(context_data)
+    
+    render_context = {
+        "recipient": recipient,
+        "feedback": feedback,
+        "site_name": "Kashee E-Dairy",
+    }
+    rendered = template.render_content(render_context)
 
     notification = Notification.objects.create(
         recipient=recipient,
@@ -128,6 +134,7 @@ def create_feedback_notification(
         app_route=app_route or f"feedback-details",
         custom_key=custom_key,
         is_subroute=True,
+        deep_link_url=template.generate_deep_link(context=render_context),
         title=rendered.get("title", title_default),
         body=rendered.get("body", body_default),
         email_subject=rendered.get("email_subject", ""),

@@ -448,23 +448,35 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_EXPIRES = 3600
 
-CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
-CELERY_TASK_DEFAULT_EXCHANGE = "erp_exchange"
+# --------------------------------------------------
+# ❗ Route everything to hr_worker's queue: "celery"
+# --------------------------------------------------
+
+CELERY_TASK_DEFAULT_QUEUE = "celery"
+CELERY_TASK_DEFAULT_EXCHANGE = "celery"
 CELERY_TASK_DEFAULT_EXCHANGE_TYPE = "direct"
-CELERY_TASK_DEFAULT_ROUTING_KEY = "erp_task"
+CELERY_TASK_DEFAULT_ROUTING_KEY = "celery"
+
+from kombu import Queue, Exchange
 
 CELERY_TASK_QUEUES = (
     Queue(
-        "erp_master_queue",
-        Exchange("erp_exchange", type="direct"),
-        routing_key="erp_task",
+        "celery",
+        Exchange("celery", type="direct"),
+        routing_key="celery",
     ),
 )
 
+# --------------------------------------------------
+# ❗ ERP task modules also route to hr_worker queue
+# --------------------------------------------------
+
 CELERY_TASK_ROUTES = {
-    "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
-    "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
-    "veterinary.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+    "feedback.tasks.*": {"queue": "celery", "routing_key": "celery"},
+    "notifications.tasks.*": {"queue": "celery", "routing_key": "celery"},
+    "veterinary.tasks.*": {"queue": "celery", "routing_key": "celery"},
+    # Add erp tasks here
+    "erp.tasks.*": {"queue": "celery", "routing_key": "celery"},
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
@@ -477,7 +489,7 @@ EMAIL_PORT = config("EMAIL_PORT", cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 HRMS_DEFAULT_FROM_EMAIL = "HRMS <hrms@kasheemilk.com>"
 
 SUPPORT_TEAM_EMAIL = config("SUPPORT_TEAM_EMAIL")

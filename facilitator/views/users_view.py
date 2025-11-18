@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.cache import cache
 from rest_framework.views import APIView
 from django.core.mail import send_mail
+from decouple import config
 
 import random
 from rest_framework.decorators import api_view, permission_classes
@@ -832,12 +833,11 @@ class SendOTPView(APIView):
             otp = f"{random.randint(100000, 999999)}"
             cache_key = f"otp:{email}"
             cache.set(cache_key, otp, timeout=300)
-
             try:
                 send_mail(
                     subject="Your Email Verification OTP",
                     message=f"Your OTP is: {otp}",
-                    from_email=settings.HRMS_DEFAULT_FROM_EMAIL,
+                    from_email=config("DEFAULT_FROM_EMAIL"),
                     recipient_list=[email],
                     fail_silently=False,
                 )

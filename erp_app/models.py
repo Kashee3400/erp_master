@@ -10832,7 +10832,7 @@ class MemberHierarchyView(models.Model):
 
 class FacilitatorDashboardSummary(models.Model):
     mpp_code = models.CharField(max_length=50, blank=True, null=True)
-    collection_date = models.CharField(blank=True, null=True)
+    collection_date = models.CharField(max_length=50,blank=True, null=True)
     shift_code = models.CharField(max_length=10, blank=True, null=True)
     actual_qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     actual_fat = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)

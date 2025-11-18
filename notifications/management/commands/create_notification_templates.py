@@ -1,6 +1,7 @@
 # notifications/management/commands/create_notification_templates.py
 from django.core.management.base import BaseCommand
 from ...model import NotificationTemplate, NotificationChannel
+from django.contrib.sites.models import Site
 
 
 class Command(BaseCommand):
@@ -13,6 +14,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        
         templates = [
             # English Templates
             {
@@ -41,8 +45,9 @@ class Command(BaseCommand):
                     "Warm regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "/",
+                "route_template": "/home",
                 "category": "mpp_collection",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -76,7 +81,8 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/",
+                "route_template": "/home",
+                "url_name":domain,
                 "category": "mpp_collection",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -112,8 +118,9 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "feedback",
                 "category": "feedback",
+                "url_name":domain,
+                "route_template": "/feedback/{{ feedback.feedback_id }}/",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -148,7 +155,8 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "feedback",
+                "route_template": "/feedback/{{ feedback.feedback_id }}/",
+                "url_name":domain,
                 "category": "feedback",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -185,6 +193,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/feedback/{{ feedback.feedback_id }}/",
                 "category": "feedback",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -220,6 +229,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/feedback/{{ feedback.feedback_id }}/",
                 "category": "feedback",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -264,6 +274,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -308,6 +319,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -343,6 +355,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/news/{{ news.slug }}/",
                 "category": "news",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -378,6 +391,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/news/{{ news.slug }}/",
                 "category": "news",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -391,7 +405,7 @@ class Command(BaseCommand):
                 "title_template": "Order Confirmed #{{ object.order_number }}",
                 "body_template": "Your order has been confirmed and is being processed.",
                 "route_template": "/orders/{{ object_id }}/",
-                "url_name": "orders:detail",
+                "url_name":domain,
                 "category": "orders",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -406,7 +420,7 @@ class Command(BaseCommand):
                 "title_template": "ऑर्डर की पुष्टि #{{ object.order_number }}",
                 "body_template": "आपका ऑर्डर की पुष्टि हो गई है और प्रक्रिया में है।",
                 "route_template": "/orders/{{ object_id }}/",
-                "url_name": "orders:detail",
+                "url_name":domain,
                 "category": "orders",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
@@ -422,6 +436,7 @@ class Command(BaseCommand):
                 "body_template": "Your order has been shipped! Track: {{ tracking_code }}",
                 "route_template": "/orders/{{ object_id }}/track/",
                 "category": "orders",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -437,6 +452,7 @@ class Command(BaseCommand):
                 "body_template": "आपका ऑर्डर भेज दिया गया है! ट्रैक करें: {{ tracking_code }}",
                 "route_template": "/orders/{{ object_id }}/track/",
                 "category": "orders",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -452,6 +468,7 @@ class Command(BaseCommand):
                 "body_template": "We have received your payment of ${{ amount }}",
                 "route_template": "/payments/{{ object_id }}/",
                 "category": "payments",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -465,6 +482,7 @@ class Command(BaseCommand):
                 "body_template": "हमें आपका ${{ amount }} का भुगतान प्राप्त हुआ है",
                 "route_template": "/payments/{{ object_id }}/",
                 "category": "payments",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -478,6 +496,7 @@ class Command(BaseCommand):
                 "body_template": "System maintenance is scheduled for {{ maintenance_date }}",
                 "route_template": "/system/maintenance/",
                 "category": "system",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -492,6 +511,7 @@ class Command(BaseCommand):
                 "body_template": "{{ maintenance_date }} के लिए सिस्टम रखरखाव निर्धारित है",
                 "route_template": "/system/maintenance/",
                 "category": "system",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -506,6 +526,7 @@ class Command(BaseCommand):
                 "body_template": "Unusual activity detected on your account",
                 "route_template": "/security/alerts/",
                 "category": "security",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -521,6 +542,7 @@ class Command(BaseCommand):
                 "body_template": "आपके खाते पर असामान्य गतिविधि का पता चला है",
                 "route_template": "/security/alerts/",
                 "category": "security",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.EMAIL,
@@ -556,6 +578,7 @@ class Command(BaseCommand):
                 ),
                 "route_template": "/admin/veterinary/membersmastercopy/",
                 "category": "data_sync",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -599,8 +622,9 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "{{ site_name }} Team"
                 ),
-                "route_template": "/cases/{{ case.case_no }}/",
+                "route_template": "/visits/{{ case.case_no }}/",
                 "category": "case_entry",
+                "url_name":domain,
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -649,244 +673,3 @@ class Command(BaseCommand):
                 f"\nCreated {created_count} new templates, {updated_count} already existed"
             )
         )
-
-
-# class Command(BaseCommand):
-#     help = "Create default notification templates"
-
-#     def add_arguments(self, parser):
-#         parser.add_argument("--app", type=str, help="Create templates for specific app")
-
-#     def handle(self, *args, **options):
-#         templates = [
-#             {
-#                 "name": "mpp_collection_created",
-#                 "title_template": "New Milk Collection Recorded: {{ site_name }}",
-#                 "body_template": (
-#                     "Dear {{ recipient.first_name }},\n\n"
-#                     "A new milk collection entry has been successfully recorded for Member Code {{ collection.member_code }} "
-#                     "on {{ collection.collection_date|date:'d M Y, H:i' }} during {{ collection.shift_code }} shift.\n"
-#                     "Quantity: {{ collection.qty }} L | Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\n"
-#                     "Thank you for maintaining quality and consistency.\n"
-#                     "- {{ site_name }} Dairy Management System"
-#                 ),
-#                 "email_subject_template": "Milk Collection Confirmation – {{ collection.collection_date|date:'d M Y' }}",
-#                 "email_body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "Your milk collection details have been successfully recorded in {{ site_name }}.\n\n"
-#                     "**Collection Details:**\n"
-#                     "- Member Code: {{ collection.member_code }}\n"
-#                     "- Date: {{ collection.collection_date|date:'d M Y, H:i' }}\n"
-#                     "- Shift: {{ collection.shift_code }}\n"
-#                     "- Quantity: {{ collection.qty }} L\n"
-#                     "- Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\n"
-#                     "For any discrepancies, please contact your collection center.\n\n"
-#                     "Warm regards,\n"
-#                     "{{ site_name }} Team"
-#                 ),
-#                 "route_template": "/collections/{{ collection.mpp_collection_code }}/details/",
-#                 "category": "mpp_collection",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.EMAIL,
-#                 ],
-#             },
-#             {
-#                 "name": "feedback_update",
-#                 "title_template": "Your Feedback Update: {{ site_name }}",
-#                 "body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "There has been an update on your feedback (ID: {{ feedback.feedback_id }}):\n\n"
-#                     "- Status: {{ feedback.status|capfirst }}\n"
-#                     "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-#                     "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-#                     "\nMessage:\n{{ feedback.message|truncatechars:200 }}\n\n"
-#                     "You can view full details in your profile.\n"
-#                     "- {{ site_name }} Team"
-#                 ),
-#                 "email_subject_template": "Feedback Update – {{ feedback.feedback_id }}",
-#                 "email_body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "Your feedback (ID: {{ feedback.feedback_id }}) has been updated.\n\n"
-#                     "Details:\n"
-#                     "- Status: {{ feedback.status|capfirst }}\n"
-#                     "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-#                     "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-#                     "\nFeedback Message:\n{{ feedback.message }}\n\n"
-#                     "Please check the app for full details and updates.\n\n"
-#                     "Regards,\n"
-#                     "{{ site_name }} Team"
-#                 ),
-#                 "route_template": "/feedback/{{ feedback.feedback_id }}/details/",
-#                 "category": "feedback",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.EMAIL,
-#                 ],
-#             },
-#             {
-#                 "name": "sahayak_incentive_update",
-#                 "title_template": "Your Incentive Details: {{ site_name }}",
-#                 "body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "Your incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n"
-#                     "- Milk Quantity: {{ incentive.milk_qty }} L\n"
-#                     "- Milk Incentive: ₹{{ incentive.milk_incentive }}\n"
-#                     "- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n"
-#                     "- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n"
-#                     "- Other Incentives: ₹{{ incentive.other_incentive }}\n"
-#                     "- TDS Deduction: ₹{{ incentive.tds_amt }}\n"
-#                     "- Payable Amount: ₹{{ incentive.payable }}\n"
-#                     "- Closing Balance: ₹{{ incentive.closing }}\n\n"
-#                     "Please check the app for full details and history.\n\n"
-#                     "Regards,\n"
-#                     "{{ site_name }} Team"
-#                 ),
-#                 "email_subject_template": "Incentive Update – {{ incentive.month }}/{{ incentive.year }}",
-#                 "email_body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "Your incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n"
-#                     "- Milk Quantity: {{ incentive.milk_qty }} L\n"
-#                     "- Milk Incentive: ₹{{ incentive.milk_incentive }}\n"
-#                     "- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n"
-#                     "- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n"
-#                     "- Other Incentives: ₹{{ incentive.other_incentive }}\n"
-#                     "- TDS Deduction: ₹{{ incentive.tds_amt }}\n"
-#                     "- Payable Amount: ₹{{ incentive.payable }}\n"
-#                     "- Closing Balance: ₹{{ incentive.closing }}\n\n"
-#                     "Check the app for full details.\n\n"
-#                     "Regards,\n"
-#                     "{{ site_name }} Team"
-#                 ),
-#                 "route_template": "/incentives/{{ incentive.year }}/{{ incentive.month }}/",
-#                 "category": "incentive",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.EMAIL,
-#                 ],
-#             },
-#             {
-#                 "name": "news_published",
-#                 "title_template": "New Article Published: {{ news.title }}",
-#                 "body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "A new news article has been published in {{ site_name }}:\n\n"
-#                     "- Title: {{ news.title }}\n"
-#                     "- Summary: {{ news.summary|truncatechars:150 }}\n"
-#                     "- Author: {{ news.author }}\n"
-#                     "- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-#                     "Click to read the full article and stay updated.\n\n"
-#                     "- {{ site_name }} Team"
-#                 ),
-#                 "email_subject_template": "New News Article – {{ news.title }}",
-#                 "email_body_template": (
-#                     "Hello {{ recipient.first_name }},\n\n"
-#                     "A new news article has been published:\n\n"
-#                     "- Title: {{ news.title }}\n"
-#                     "- Summary: {{ news.summary }}\n"
-#                     "- Author: {{ news.author }}\n"
-#                     "- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-#                     "You can view the full article in the app.\n\n"
-#                     "Regards,\n"
-#                     "{{ site_name }} Team"
-#                 ),
-#                 "route_template": "/news/{{ news.slug }}/",
-#                 "category": "news",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.EMAIL,
-#                 ],
-#             },
-
-#             {
-#                 "name": "order_created",
-#                 "title_template": "Order Confirmed #{{ object.order_number }}",
-#                 "body_template": "Your order has been confirmed and is being processed.",
-#                 "route_template": "/orders/{{ object_id }}/",
-#                 "url_name": "orders:detail",
-#                 "category": "orders",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.EMAIL,
-#                     NotificationChannel.PUSH,
-#                 ],
-#             },
-#             {
-#                 "name": "order_shipped",
-#                 "title_template": "Order Shipped #{{ object.order_number }}",
-#                 "body_template": "Your order has been shipped! Track: {{ tracking_code }}",
-#                 "route_template": "/orders/{{ object_id }}/track/",
-#                 "category": "orders",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.EMAIL,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.SMS,
-#                 ],
-#             },
-#             {
-#                 "name": "payment_received",
-#                 "title_template": "Payment Received",
-#                 "body_template": "We have received your payment of ${{ amount }}",
-#                 "route_template": "/payments/{{ object_id }}/",
-#                 "category": "payments",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.EMAIL,
-#                 ],
-#             },
-#             # System templates
-#             {
-#                 "name": "system_maintenance",
-#                 "title_template": "System Maintenance Scheduled",
-#                 "body_template": "System maintenance is scheduled for {{ maintenance_date }}",
-#                 "route_template": "/system/maintenance/",
-#                 "category": "system",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.EMAIL,
-#                     NotificationChannel.PUSH,
-#                 ],
-#             },
-#             {
-#                 "name": "security_alert",
-#                 "title_template": "Security Alert",
-#                 "body_template": "Unusual activity detected on your account",
-#                 "route_template": "/security/alerts/",
-#                 "category": "security",
-#                 "enabled_channels": [
-#                     NotificationChannel.IN_APP,
-#                     NotificationChannel.EMAIL,
-#                     NotificationChannel.PUSH,
-#                     NotificationChannel.SMS,
-#                 ],
-#             },
-#         ]
-
-#         app_filter = options.get("app")
-#         if app_filter:
-#             templates = [t for t in templates if t["category"] == app_filter]
-
-#         created_count = 0
-#         for template_data in templates:
-#             template, created = NotificationTemplate.objects.get_or_create(
-#                 name=template_data["name"], defaults=template_data
-#             )
-
-#             if created:
-#                 created_count += 1
-#                 self.stdout.write(
-#                     self.style.SUCCESS(f"Created template: {template.name}")
-#                 )
-#             else:
-#                 self.stdout.write(
-#                     self.style.WARNING(f"Template already exists: {template.name}")
-#                 )
-
-#         self.stdout.write(
-#             self.style.SUCCESS(f"\nCreated {created_count} new templates")
-#         )

@@ -11,6 +11,7 @@ from .views.users_view import (
     clear_module,
     UserLocationListView,
 )
+from .views.auth import UpdateDeviceModuleAPIView
 from django.urls import path
 
 
@@ -29,5 +30,6 @@ urlpatterns = [
     ),
     path("device/clear/", clear_device, name="clear-device"),
     path("module/clear/", clear_module, name="clear-module"),
+    path("device/update-module/", UpdateDeviceModuleAPIView.as_view(), name="update-device-module"),
     path("my-locations/", UserLocationListView.as_view(), name="my-locations"),
 ] + router.urls

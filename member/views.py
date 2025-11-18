@@ -1103,9 +1103,6 @@ class SahayakIncentivesViewSet(viewsets.ModelViewSet):
             )
 
 
-from django.utils.translation import gettext as _
-
-
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         months = [

@@ -21,11 +21,10 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             self.stdout.write(self.style.ERROR(f'User {options["user"]} not found'))
             return
-
         notification = Notification.objects.filter(
             recipient=user, template__name=options["template"]
         ).first()
-
+        
         if not notification:
             self.stdout.write(self.style.ERROR("No matching notification found."))
             return

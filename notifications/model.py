@@ -3,15 +3,15 @@ from typing import Dict, Any
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.db.models import JSONField
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import pytz
 from datetime import time, datetime
 from .choices import *
+from util.deeplink_utils import Optional,build_scheme_link,build_smart_link 
+import json
 
 User = get_user_model()
 
@@ -132,46 +132,67 @@ class NotificationTemplate(models.Model):
 
         return rendered
 
-    def generate_deep_link(self, context: Dict[str, Any], base_url: str = "") -> str:
-        """Generate deep link URL from template and context"""
+    def generate_deep_link(
+        self, context: Dict[str, Any], fallback_url: Optional[str] = None
+    ) -> str:
+        """
+        Generate a production-ready smart link:
+        1. Resolve Django route
+        2. Convert to kashee:// deep link
+        3. Wrap into a smart link (https://tech.kasheemilk.com/open?target=...)
+
+        Args:
+            context: Template context containing ID/slug/etc.
+            fallback_url: Optional fallback for smart link
+
+        Returns:
+            Full smart link URL
+        """
         if not self.route_template and not self.url_name:
             return ""
 
+        # -------------------------------
+        # STEP 1: Resolve route
+        # -------------------------------
         try:
-            # Try URL reverse lookup first
             if self.url_name:
-                # Extract URL kwargs from context
+                # Extract only known kwarg keys
                 url_kwargs = {
                     k: v
                     for k, v in context.items()
-                    if k in ["pk", "id", "slug", "uuid", "object_id"]
+                    if k in ["pk", "id", "slug", "uuid", "object_id","feedback_id"]
                 }
                 route = reverse(self.url_name, kwargs=url_kwargs)
             else:
-                # Use route template
+                # Render route template
                 from django.template import Template, Context
 
-                route_tmpl = Template(self.route_template)
-                route = route_tmpl.render(Context(context))
+                route = Template(self.route_template).render(Context(context))
 
-            # Combine with base URL if provided
-            if base_url:
-                return f"{base_url.rstrip('/')}{route}"
-            return route
-
-        except (NoReverseMatch, Exception) as e:
+        except Exception:
             # Fallback to template rendering
             if self.route_template:
                 from django.template import Template, Context
 
-                route_tmpl = Template(self.route_template)
-                route = route_tmpl.render(Context(context))
-                return f"{base_url.rstrip('/')}{route}" if base_url else route
-            return ""
+                route = Template(self.route_template).render(Context(context))
+            else:
+                return ""
 
+        # -------------------------------
+        # STEP 2: Convert to kashee:// scheme
+        # -------------------------------
+        # Remove leading slash => "/product/123" → "product/123"
+        clean_route = route.lstrip("/")
 
-import json
+        # kashee://product/123
+        deep_link = build_scheme_link(clean_route)
 
+        # -------------------------------
+        # STEP 3: Wrap inside smart-link
+        # -------------------------------
+        smart_url = build_smart_link(deep_link, fallback_url=fallback_url)
+
+        return smart_url
 
 class Notification(models.Model):
     """Individual notification instances with deep linking support."""
@@ -483,7 +504,7 @@ class Notification(models.Model):
                 if self.app_route
                 else base_url
             )
-
+        
         # ✅ Convert context values to strings to satisfy FCM data payload rules
         safe_context = {
             k: str(v) if not isinstance(v, str) else v
@@ -516,7 +537,7 @@ class Notification(models.Model):
                 "android": {
                     "notification": {
                         "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                        # "channel_id": f"notifications_{self.template.category}",
+                        "channel_id": "kashee_channel",
                     },
                 },
                 "apns": {
@@ -971,7 +992,9 @@ class NotificationAnalytics(models.Model):
         NotificationTemplate, on_delete=models.CASCADE, related_name="analytics"
     )
     channel = models.CharField(
-        choices=NotificationChannel.choices, default=NotificationChannel.PUSH
+        max_length=200,
+        choices=NotificationChannel.choices,
+        default=NotificationChannel.PUSH,
     )
     date = models.DateField(db_index=True)
 
