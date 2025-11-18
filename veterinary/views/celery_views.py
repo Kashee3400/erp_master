@@ -44,7 +44,7 @@ class CeleryTaskMonitorMixin:
             'expires': task_data.get('expires', None),
             'retries': task_data.get('retries', 0),
             'worker': task_data.get('worker', ''),
-            'queue': task_data.get('queue', 'erp_master_queue'),
+            'queue': task_data.get('queue', 'celery'),
         }
 
 
@@ -376,11 +376,11 @@ class QueueLengthAPIView(APIView):
     def get(self, request):
         try:
             with Connection(current_app.conf.broker_url) as conn:
-                exchange = Exchange("erp_exchange", type="direct")
+                exchange = Exchange("celery", type="direct")
                 queue = Queue(
-                    name="erp_master_queue",
+                    name="celery",
                     exchange=exchange,
-                    routing_key="erp_task",
+                    routing_key="celery",
                     durable=True,
                 )
 
@@ -391,7 +391,7 @@ class QueueLengthAPIView(APIView):
                     return Response({
                         "status": "success",
                         "data": {
-                            "queue_name": "erp_master_queue",
+                            "queue_name": "celery",
                             "length": length,
                         }
                     })
@@ -400,7 +400,7 @@ class QueueLengthAPIView(APIView):
                     return Response({
                         "status": "warning",
                         "data": {
-                            "queue_name": "erp_master_queue",
+                            "queue_name": "celery",
                             "length": "unavailable",
                             "message": str(queue_error),
                         }
@@ -493,9 +493,9 @@ class CeleryDashboardAPIView(APIView):
                 'workers': worker_summary,
                 'task_types': sorted(list(all_task_types)),
                 'queue_info': {
-                    'name': 'erp_master_queue',
+                    'name': 'celery',
                     'exchange': 'erp_exchange',
-                    'routing_key': 'erp_task',
+                    'routing_key': 'celery',
                 },
                 'broker_info': {
                     'transport': current_app.conf.broker_url.split('://')[
@@ -525,9 +525,9 @@ class CeleryDashboardAPIView(APIView):
                 'workers': [],
                 'task_types': [],
                 'queue_info': {
-                    'name': 'erp_master_queue',
+                    'name': 'celery',
                     'exchange': 'erp_exchange',
-                    'routing_key': 'erp_task',
+                    'routing_key': 'celery',
                 },
                 'broker_info': {
                     'transport': 'unknown',
