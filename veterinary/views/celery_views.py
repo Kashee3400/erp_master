@@ -494,7 +494,7 @@ class CeleryDashboardAPIView(APIView):
                 'task_types': sorted(list(all_task_types)),
                 'queue_info': {
                     'name': 'celery',
-                    'exchange': 'erp_exchange',
+                    'exchange': 'celery',
                     'routing_key': 'celery',
                 },
                 'broker_info': {
@@ -526,7 +526,7 @@ class CeleryDashboardAPIView(APIView):
                 'task_types': [],
                 'queue_info': {
                     'name': 'celery',
-                    'exchange': 'erp_exchange',
+                    'exchange': 'celery',
                     'routing_key': 'celery',
                 },
                 'broker_info': {
