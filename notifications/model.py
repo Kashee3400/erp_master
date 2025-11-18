@@ -160,7 +160,7 @@ class NotificationTemplate(models.Model):
                 url_kwargs = {
                     k: v
                     for k, v in context.items()
-                    if k in ["pk", "id", "slug", "uuid", "object_id","feedback_id"]
+                    if k in ["pk", "id", "slug", "uuid", "object_id"]
                 }
                 route = reverse(self.url_name, kwargs=url_kwargs)
             else:

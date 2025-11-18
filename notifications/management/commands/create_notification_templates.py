@@ -120,7 +120,7 @@ class Command(BaseCommand):
                 ),
                 "category": "feedback",
                 "url_name":domain,
-                "route_template": "/feedback/{{ feedback.feedback_id }}/",
+                "route_template": "/feedback/{{ feedback.pk }}/",
                 "enabled_channels": [
                     NotificationChannel.IN_APP,
                     NotificationChannel.PUSH,
@@ -155,7 +155,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/",
+                "route_template": "/feedback/{{ feedback.pk }}/",
                 "url_name":domain,
                 "category": "feedback",
                 "enabled_channels": [
@@ -191,7 +191,7 @@ class Command(BaseCommand):
                     "सादर,\n"
                     "{{ site_name }} टीम"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/",
+                "route_template": "/feedback/{{ feedback.pk }}/",
                 "category": "feedback",
                 "url_name":domain,
                 "enabled_channels": [
@@ -227,7 +227,7 @@ class Command(BaseCommand):
                     "Regards,\n"
                     "The {{ site_name }} Team"
                 ),
-                "route_template": "/feedback/{{ feedback.feedback_id }}/",
+                "route_template": "/feedback/{{ feedback.pk }}/",
                 "category": "feedback",
                 "url_name":domain,
                 "enabled_channels": [

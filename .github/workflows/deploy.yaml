@@ -1,0 +1,105 @@
+name: Django Windows Deploy (IIS) - Fast Atomic Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload repo to Windows server (temp folder)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "."
+          target: "E:/production/erp/erp_master_new"
+
+      - name: Deploy on Windows (atomic swap + install deps + migrate + collectstatic)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            powershell -NoProfile -ExecutionPolicy Bypass -Command "
+
+            $deployRoot = 'E:\production\erp'
+            $oldPath = Join-Path $deployRoot 'erp_master'
+            $newPath = Join-Path $deployRoot 'erp_master_new'
+            $backupPath = Join-Path $deployRoot 'erp_master_old'
+            $venvPath = Join-Path $deployRoot 'venv'
+            $py = Join-Path $venvPath 'Scripts\python.exe'
+            $pip = Join-Path $venvPath 'Scripts\pip.exe'
+
+            Write-Host 'Starting atomic deployment...'
+
+            # Ensure new folder exists (uploaded via scp)
+            if (-not (Test-Path $newPath)) {
+              Write-Error 'Upload failed: erp_master_new does not exist!'
+              exit 1
+            }
+
+            # Backup old version (optional)
+            if (Test-Path $backupPath) {
+              Remove-Item $backupPath -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            if (Test-Path $oldPath) {
+              Rename-Item -Path $oldPath -NewName 'erp_master_old'
+            }
+
+            # Move new version into place atomically
+            Rename-Item -Path $newPath -NewName 'erp_master'
+
+            # Activate venv (Windows style)
+            if (-not (Test-Path $py)) {
+              Write-Error 'Python not found in venv: ' + $py
+              exit 1
+            }
+
+            Write-Host 'Upgrading pip...'
+            & $py -m pip install --upgrade pip
+
+            # Install/update requirements (faster on existing venv)
+            $req = Join-Path $deployRoot 'erp_master\requirements.txt'
+            if (Test-Path $req) {
+              Write-Host 'Installing dependencies...'
+              & $pip install -r $req
+            } else {
+              Write-Warning 'requirements.txt not found!'
+            }
+
+            # Django commands
+            $manage = Join-Path $deployRoot 'erp_master\manage.py'
+            if (-not (Test-Path $manage)) {
+              Write-Error 'manage.py not found!'
+              exit 1
+            }
+
+            Write-Host 'Running migrations...'
+            & $py $manage migrate --noinput
+
+            Write-Host 'Running collectstatic...'
+            & $py $manage collectstatic --noinput
+
+            Write-Host 'Running optional commands...'
+            try {
+              & $py $manage populate_ticket_categories
+            } catch {
+              Write-Host 'Skipping optional populate_ticket_categories'
+            }
+            Write-Host 'Deployment success — IIS will pick up changes automatically.'
+            "
