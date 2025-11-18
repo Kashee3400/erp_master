@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from ...model import Notification
-from notifications.tasks import deliver_notification,ping
+from notifications.tasks import deliver_notification
 
 User = get_user_model()
 
