@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from ...model import Notification
-from notifications.tasks import deliver_notification
+from notifications.tasks import deliver_notification,ping
 
 User = get_user_model()
 
@@ -16,6 +16,8 @@ class Command(BaseCommand):
         parser.add_argument("--context", type=str, help="JSON context data")
 
     def handle(self, *args, **options):
+        # res = ping.delay()
+        # print(res.id)
         try:
             user = User.objects.get(username=options["user"])
         except User.DoesNotExist:

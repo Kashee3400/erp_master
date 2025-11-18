@@ -448,35 +448,23 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_EXPIRES = 3600
 
-# --------------------------------------------------
-# ❗ Route everything to hr_worker's queue: "celery"
-# --------------------------------------------------
-
-CELERY_TASK_DEFAULT_QUEUE = "celery"
-CELERY_TASK_DEFAULT_EXCHANGE = "celery"
+CELERY_TASK_DEFAULT_QUEUE = "erp_master_queue"
+CELERY_TASK_DEFAULT_EXCHANGE = "erp_exchange"
 CELERY_TASK_DEFAULT_EXCHANGE_TYPE = "direct"
-CELERY_TASK_DEFAULT_ROUTING_KEY = "celery"
-
-from kombu import Queue, Exchange
+CELERY_TASK_DEFAULT_ROUTING_KEY = "erp_task"
 
 CELERY_TASK_QUEUES = (
     Queue(
-        "celery",
-        Exchange("celery", type="direct"),
-        routing_key="celery",
+        "erp_master_queue",
+        Exchange("erp_exchange", type="direct"),
+        routing_key="erp_task",
     ),
 )
 
-# --------------------------------------------------
-# ❗ ERP task modules also route to hr_worker queue
-# --------------------------------------------------
-
 CELERY_TASK_ROUTES = {
-    "feedback.tasks.*": {"queue": "celery", "routing_key": "celery"},
-    "notifications.tasks.*": {"queue": "celery", "routing_key": "celery"},
-    "veterinary.tasks.*": {"queue": "celery", "routing_key": "celery"},
-    # Add erp tasks here
-    "erp.tasks.*": {"queue": "celery", "routing_key": "celery"},
+    "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+    "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+    "veterinary.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
