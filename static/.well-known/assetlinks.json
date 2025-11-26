@@ -46,5 +46,62 @@
                 "65:D7:B5:50:8B:D2:A1:3D:A8:7B:55:E6:0C:0C:BD:FB:58:31:44:01:7C:05:5F:2B:7E:30:B5:AB:69:51:36:37"
             ]
         }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "web",
+            "site": "https://tech.kasheemilk.com"
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.kasheemilk.kashee",
+            "sha256_cert_fingerprints": [
+                "D2:D2:58:03:1C:6D:51:DB:60:64:1D:9A:FD:39:F4:20:32:04:64:FD:06:1C:7F:0F:31:AE:C1:A8:3C:75:8C:3D"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.kasheemilk.kasheepes",
+            "sha256_cert_fingerprints": [
+                "D2:D2:58:03:1C:6D:51:DB:60:64:1D:9A:FD:39:F4:20:32:04:64:FD:06:1C:7F:0F:31:AE:C1:A8:3C:75:8C:3D"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.kasheemilk.kashee_sahayak",
+            "sha256_cert_fingerprints": [
+                "65:D7:B5:50:8B:D2:A1:3D:A8:7B:55:E6:0C:0C:BD:FB:58:31:44:01:7C:05:5F:2B:7E:30:B5:AB:69:51:36:37"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.kasheemilk.facilitator2",
+            "sha256_cert_fingerprints": [
+                "65:D7:B5:50:8B:D2:A1:3D:A8:7B:55:E6:0C:0C:BD:FB:58:31:44:01:7C:05:5F:2B:7E:30:B5:AB:69:51:36:37"
+            ]
+        }
     }
 ]

@@ -3,8 +3,8 @@ Production-ready view for handling deep link redirects.
 """
 
 import logging
-from django.shortcuts import redirect, render
-from django.http import HttpResponse, JsonResponse,HttpResponseRedirect
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +16,7 @@ from types import SimpleNamespace
 
 logger = logging.getLogger(__name__)
 from notifications.deeplink_service import DeepLinkRegistry
+
 
 @method_decorator(never_cache, name="dispatch")
 @method_decorator(csrf_exempt, name="dispatch")
@@ -32,13 +33,11 @@ class DeepLinkRedirectView(View):
     def get(self, request, token=None):
 
         # Detect module from URL path
-        module = detect_module_from_path(request.path)
-
+        module = detect_module_from_path(request.path.replace("app-links/", ""))
         # Get app configuration
         app_cfg = DeepLinkRegistry.get(module)
         if not app_cfg:
             return self._error_response("Unknown app module", status=400)
-
         # If your DB deep link is required — keep using token logic
         token = token or request.GET.get("token")
 
@@ -112,6 +111,7 @@ class DeepLinkRedirectView(View):
         return HttpResponse(html)
 
     def _redirect_web(self, deep_link, app_cfg, request):
+        print(deep_link)
         return HttpResponseRedirect(app_cfg.default_fallback)
 
     def _handle_invalid_link(self, request, token):

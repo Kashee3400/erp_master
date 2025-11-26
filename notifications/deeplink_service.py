@@ -66,7 +66,7 @@ DeepLinkRegistry.register(
         scheme="kashee-member",
         android_package="com.kasheemilk.kashee",
         ios_bundle_id="com.kasheemilk.kashee.ios",
-        default_fallback="https://tech.kasheemilk.com/open/member",
+        default_fallback="https://tech.kasheemilk.com/",
     ),
 )
 
@@ -76,7 +76,7 @@ DeepLinkRegistry.register(
         scheme="kashee-sahayak",
         android_package="com.kasheemilk.kashee_sahayak",
         ios_bundle_id="com.kasheemilk.kashee_sahayak.ios",
-        default_fallback="https://tech.kasheemilk.com/open/member",
+        default_fallback="https://tech.kasheemilk.com/",
     ),
 )
 
@@ -86,7 +86,7 @@ DeepLinkRegistry.register(
         scheme="kashee-pes",
         android_package="com.kasheemilk.pes",
         ios_bundle_id="com.kasheemilk.pes.ios",
-        default_fallback="https://tech.kasheemilk.com/open/member",
+        default_fallback="https://tech.kasheemilk.com/",
     ),
 )
 
