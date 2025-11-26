@@ -3,10 +3,8 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models.user_profile_model import UserProfile
-from .models.facilitator_model import AssignedMppToFacilitator
-from notifications.model import NotificationMedium, NotificationType
 from import_export.signals import post_import
-from .utils.import_flag import set_importing, is_importing
+from .utils.import_flag import set_importing
 from facilitator.models.file_models import UploadedFile, FileActionLog
 from .models.member_update_model import (
     UpdateRequestHistory,

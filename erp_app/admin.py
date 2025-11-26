@@ -427,6 +427,7 @@ class MppCollectionAggregationAdmin(admin.ModelAdmin):
 
 from .models import MemberShareInfo
 
+
 @admin.register(MemberShareInfo)
 class MemberShareInfoAdmin(admin.ModelAdmin):
     list_display = (
@@ -477,3 +478,99 @@ class MemberShareInfoAdmin(admin.ModelAdmin):
     ordering = ("-transaction_date",)
 
     list_per_page = 50
+
+
+from django.contrib import admin
+from .models import BusinessHierarchySnapshot
+
+
+@admin.register(BusinessHierarchySnapshot)
+class BusinessHierarchySnapshotAdmin(admin.ModelAdmin):
+
+    # -----------------------------
+    # List View
+    # -----------------------------
+    list_display = (
+        "mpp_code",
+        "mpp_name",
+        "route_code",
+        "route_name",
+        "mcc_code",
+        "mcc_name",
+        "plant_code",
+        "company_code",
+        "mpp_type",
+        "is_default",
+    )
+
+    # -----------------------------
+    # Filters (very important)
+    # -----------------------------
+    list_filter = (
+        "company_code",
+        "plant_code",
+        "mcc_code",
+        "route_code",
+        "mpp_type",
+        "is_default",
+    )
+
+    # -----------------------------
+    # Search
+    # -----------------------------
+    search_fields = (
+        "mpp_code",
+        "mpp_name",
+        "route_code",
+        "route_name",
+        "mcc_code",
+        "mcc_name",
+        "company_code",
+        "plant_code",
+        "bmc_code",
+        "bmc_name",
+    )
+
+    # -----------------------------
+    # Read-Only (recommended for unmanaged tables)
+    # -----------------------------
+    readonly_fields = [f.name for f in BusinessHierarchySnapshot._meta.get_fields()]
+
+    # -----------------------------
+    # Field Grouping (Optional but professional)
+    # -----------------------------
+    fieldsets = (
+        ("Company", {"fields": ("company_code", "company_name", "company_type")}),
+        ("Plant", {"fields": ("plant_code", "plant_tr_code", "plant_name")}),
+        (
+            "MCC (Milk Chilling Center)",
+            {"fields": ("mcc_code", "mcc_tr_code", "mcc_name")},
+        ),
+        ("BMC (Bulk Milk Cooler)", {"fields": ("bmc_code", "bmc_tr_code", "bmc_name")}),
+        (
+            "MPP (Milk Pouring Point)",
+            {
+                "fields": (
+                    "mpp_code",
+                    "mpp_ex_code",
+                    "mpp_tr_code",
+                    "mpp_name",
+                    "mpp_type",
+                )
+            },
+        ),
+        (
+            "Route Information",
+            {"fields": ("route_code", "route_ex_code", "route_name")},
+        ),
+        (
+            "Metadata",
+            {"fields": ("wef_date", "is_default", "created_at", "dpu_station_code")},
+        ),
+    )
+
+    # -----------------------------
+    # Pagination & Ordering
+    # -----------------------------
+    list_per_page = 50
+    ordering = ("company_code", "mcc_code", "route_code", "mpp_code")

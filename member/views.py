@@ -1306,109 +1306,6 @@ class MemberHierarchyViewSet(viewsets.ReadOnlyModelViewSet):
         paginated_response.data["last_15_days"] = last_15_days_serializer.data
         return Response(paginated_response.data)
 
-
-class SahayakFeedbackViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for handling SahayakFeedback operations with custom responses and pagination.
-    """
-
-    queryset = SahayakFeedback.objects.all()
-    serializer_class = SahayakFeedbackSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPagination
-
-    def get_queryset(self):
-        """
-        Restrict to feedbacks created by the authenticated user.
-        """
-        if not self.request.user.is_superuser:
-            return self.queryset.filter(sender=self.request.user)
-        return self.queryset
-
-    def perform_create(self, serializer):
-        """
-        Automatically set the authenticated user as the sender during feedback creation.
-        """
-        serializer.save(sender=self.request.user)
-
-    def list(self, request, *args, **kwargs):
-        """
-        Override the list response to include a custom format.
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(
-            page if page is not None else queryset, many=True
-        )
-
-        response_data = {
-            "status": "success",
-            "status_code": status.HTTP_200_OK,
-            "message": "Feedbacks retrieved successfully.",
-            "results": serializer.data,
-        }
-
-        return (
-            self.get_paginated_response(serializer.data)
-            if page is not None
-            else Response(response_data)
-        )
-
-    def create(self, request, *args, **kwargs):
-        """
-        Override the create response to include a custom format.
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_201_CREATED,
-                "message": "Feedback created successfully.",
-                "results": serializer.data,
-            },
-            status=status.HTTP_201_CREATED,
-        )
-
-    def update(self, request, *args, **kwargs):
-        """
-        Override the update response to include a custom format.
-        """
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_200_OK,
-                "message": "Feedback updated successfully.",
-                "results": serializer.data,
-            }
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        """
-        Override the delete response to include a custom format.
-        """
-        instance = self.get_object()
-        self.perform_destroy(instance)
-
-        return Response(
-            {
-                "status": "success",
-                "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "Feedback deleted successfully.",
-                "results": None,
-            },
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
-
 class NewsViewSet(viewsets.ModelViewSet):
     from rest_framework.filters import OrderingFilter
 
@@ -1419,8 +1316,8 @@ class NewsViewSet(viewsets.ModelViewSet):
     ordering_fields = ["published_date", "updated_date"]
     pagination_class = CustomPagination
     authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
 
     def get_queryset(self):
         """

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from reversion import is_active
 
-from .models import OTP, ProductRate, SahayakIncentives, SahayakFeedback
+from .models import OTP, ProductRate, SahayakIncentives
 from erp_app.models import (
     CdaAggregation,
     Shift,
@@ -251,28 +251,6 @@ class SahayakIncentivesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SahayakIncentives
         fields = "__all__"
-
-
-class SahayakFeedbackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SahayakFeedback
-        fields = "__all__"
-        read_only_fields = [
-            "feedback_id",
-            "remark",
-            "created_at",
-            "resolved_at",
-            "sender",
-        ]
-
-    def create(self, validated_data):
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            validated_data["sender"] = request.user
-            validated_data["mpp_code"] = request.user.device.mpp_code
-
-        return super().create(validated_data)
-
 
 class NewsSerializer(serializers.ModelSerializer):
     relative_published_date = serializers.SerializerMethodField()

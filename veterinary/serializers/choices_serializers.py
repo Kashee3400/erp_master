@@ -9,6 +9,7 @@ from ..models.common_models import (
     TimeSlot,
     Vehicle,
     VehicleKiloMeterLog,
+    PaymentMethod,
 )
 from erp_app.models import Mcc, Mpp
 from ..models.models import MembersMasterCopy
@@ -249,7 +250,9 @@ class VehicleKilometerLogSerializer(serializers.ModelSerializer):
 
     # 👇 extra fields for human-readable names
     user_name = serializers.CharField(source="user.get_full_name", read_only=True)
-    updated_by_name = serializers.CharField(source="updated_by.get_full_name", read_only=True)
+    updated_by_name = serializers.CharField(
+        source="updated_by.get_full_name", read_only=True
+    )
 
     class Meta:
         model = VehicleKiloMeterLog
@@ -283,4 +286,47 @@ class VehicleKilometerLogSerializer(serializers.ModelSerializer):
             "updated_by",
             "user_full_name",
             "updated_by_full_name",
+        ]
+
+
+class PaymentMethodLiteSerializer(serializers.ModelSerializer):
+    method_display = serializers.CharField(source="get_method_display", read_only=True)
+
+    class Meta:
+        model = PaymentMethod
+        fields = [
+            "id",
+            "method",
+            "method_display",
+            "subtitle",
+        ]
+        read_only_fields = fields
+
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    method_display = serializers.CharField(source="get_method_display", read_only=True)
+
+    class Meta:
+        model = PaymentMethod
+        fields = [
+            "id",
+            "method",
+            "method_display",
+            "subtitle",
+            "is_active",
+            "is_deleted",
+            "locale",
+            "sync",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "method_display",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "is_deleted",
+            "sync",
         ]

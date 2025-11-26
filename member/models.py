@@ -9,9 +9,13 @@ from django.core.files.base import ContentFile
 import base64
 from decimal import Decimal
 from django.db import models, transaction
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator
 from django.utils import timezone
 from .choices import TransactionType, RewardSource, WithdrawalStatus
+from django.utils.text import slugify
+from django.core.exceptions import ValidationError
+from django.urls import reverse
+from .manager.news import NewsQuerySet
 
 User = get_user_model()
 
@@ -221,181 +225,344 @@ class ProductRate(models.Model):
         verbose_name_plural = _("Product Rates")
 
 
-class SahayakFeedback(models.Model):
-    feedback_id = models.CharField(
-        max_length=50, unique=True, blank=True, editable=False
-    )
-    sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="sent_feedbacks",
-    )
-    mpp_code = models.CharField(
-        max_length=9, blank=True, null=True, verbose_name=_("MPP Code")
-    )
-    status = models.CharField(
-        max_length=100,
-        choices=settings.FEEDBACK_STATUS,
-        verbose_name=_("Feedback Status"),
-        default=settings.OPEN,
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
-    resolved_at = models.DateTimeField(
-        verbose_name=_("Resolved At"), null=True, blank=True
-    )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
-    remark = models.TextField(blank=True, verbose_name=_("Remark"))
-    message = models.TextField(verbose_name=_("Message"))
-
-    # New file field for uploaded files
-    files = models.FileField(
-        upload_to="feedback_files/", blank=True, null=True, verbose_name=_("Files")
-    )
-
-    def save_base64_files(self, base64_file_list):
-        """
-        Save Base64-encoded files to the `files` field.
-        :param base64_file_list: List of base64-encoded strings
-        """
-        for idx, base64_file in enumerate(base64_file_list):
-            file_data = base64.b64decode(base64_file.get("file", ""))
-            filename = f"{self.feedback_id}_file_{idx}.jpg"
-            self.files.save(filename, ContentFile(file_data), save=False)
-
-    def close_feedback(self, user, reason="Feedback resolved"):
-        self.resolved_at = timezone.now()
-        self.save()
-        FeedbackLog.objects.create(
-            feedback=self,
-            user=user,
-            status=settings.CLOSED,
-            reason=reason,
-        )
-
-    def reopen_feedback(self, user, reason="Feedback reopened"):
-        FeedbackLog.objects.create(
-            feedback=self,
-            user=user,
-            status=settings.RE_OPENED,
-            reason=reason,
-        )
-
-    def save(self, *args, **kwargs):
-        if not self.feedback_id:
-            self.feedback_id = "FEED" + str(uuid.uuid4().hex)[:6]
-        super().save(*args, **kwargs)
-
-    class Meta:
-        app_label = "member"
-        db_table = "sahayak_feedback"
-        verbose_name = _("Sahayak Feedback")
-        verbose_name_plural = _("Sahayak Feedbacks")
-
-
-class FeedbackLog(models.Model):
-    feedback = models.ForeignKey(
-        SahayakFeedback, on_delete=models.CASCADE, related_name="logs"
-    )
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="feedback_logs"
-    )
-    status = models.CharField(
-        max_length=20,
-    )
-    reason = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        app_label = "member"
-        db_table = "feedback_logs"
-        verbose_name = _("Feedback Log")
-        verbose_name_plural = _("Feedback Logs")
-
-    def __str__(self):
-        return f"{self.status} - {self.feedback.feedback_id} by {self.user.username}"
-
-
 class News(models.Model):
+    """
+    News model for managing articles across different modules.
+    Optimized for production with proper indexing, validation, and query optimization.
+    """
+
+    MODULE_CHOICES = [
+        ("member", _("Member")),
+        ("facilitator", _("Facilitator")),
+        ("sahayak", _("Sahayak")),
+        ("admin", _("Admin")),
+        ("all", _("All Modules")),
+    ]
+
+    # Core fields
     title = models.CharField(
         max_length=255,
-        verbose_name="Title",
-        help_text="Enter the title of the news article.",
+        verbose_name=_("Title"),
+        help_text=_("Enter the title of the news article (max 255 characters)."),
+        validators=[
+            MinLengthValidator(5, _("Title must be at least 5 characters long."))
+        ],
+        db_index=True,  # Index for faster search
     )
+
     slug = models.SlugField(
         unique=True,
         max_length=255,
-        verbose_name="Slug",
-        help_text="Unique identifier for the news article (auto-generated from the title).",
+        verbose_name=_("Slug"),
+        help_text=_(
+            "Unique identifier for the news article (auto-generated from title)."
+        ),
+        db_index=True,
     )
+
     summary = models.TextField(
-        verbose_name="Summary",
-        help_text="Enter a brief summary or introduction to the news article.",
+        max_length=500,
+        verbose_name=_("Summary"),
+        help_text=_("Brief summary (max 500 characters) - shown in listings."),
+        validators=[
+            MinLengthValidator(10, _("Summary must be at least 10 characters."))
+        ],
     )
+
     content = CKEditor5Field(
-        verbose_name="Content",
-        help_text="Enter the full content of the news article using a rich text editor.",
+        verbose_name=_("Content"),
+        help_text=_("Full article content with rich text formatting."),
+        config_name="extends",
     )
+
+    # Author information - Consider making this a ForeignKey to User model in future
     author = models.CharField(
         max_length=100,
-        verbose_name="Author",
-        help_text="Name of the author of the article.",
+        verbose_name=_("Author"),
+        help_text=_("Name of the article author."),
+        db_index=True,  # Index for author filtering
     )
+
+    # Timestamps
     published_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Published Date",
-        help_text="The date and time when the article was published.",
+        verbose_name=_("Published Date"),
+        help_text=_("Date and time when article was first published."),
+        db_index=True,  # Important for ordering and filtering
     )
+
     updated_date = models.DateTimeField(
         auto_now=True,
-        verbose_name="Updated Date",
-        help_text="The date and time when the article was last updated.",
+        verbose_name=_("Updated Date"),
+        help_text=_("Date and time of last update."),
     )
+
+    # Media
     image = models.ImageField(
-        upload_to="news/images/",
+        upload_to="news/images/%Y/%m/",  # Organize by year/month
         blank=True,
         null=True,
-        verbose_name="Image",
-        help_text="Upload an optional image for the news article.",
+        verbose_name=_("Featured Image"),
+        help_text=_("Optional featured image (recommended: 1200x630px)."),
     )
+
+    # Categorization
     tags = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name="Tags",
-        help_text="Comma-separated tags for categorizing the article.",
-    )
-    is_published = models.BooleanField(
-        default=False,
-        verbose_name="Is Published",
-        help_text="Check this box to publish the article.",
-    )
-    is_read = models.BooleanField(
-        default=False,
-        verbose_name="Is Read",
-        help_text="Check this box to mark the article as read.",
+        verbose_name=_("Tags"),
+        help_text=_(
+            "Comma-separated tags for categorization (e.g., policy, update, event)."
+        ),
     )
 
     module = models.CharField(
-        max_length=255,
+        max_length=50,
+        choices=MODULE_CHOICES,
         default="member",
-        verbose_name="Module",
-        help_text="Module Specific News. For ex:- member, facilitator, sahayak",
+        verbose_name=_("Target Module"),
+        help_text=_("Which module this news is for."),
+        db_index=True,  # Critical for filtering
     )
 
-    @classmethod
-    def not_read_count(cls):
-        """
-        Return the count of news articles that are marked as 'not read'.
-        """
-        return cls.objects.filter(is_read=False).count()
+    # Status flags
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name=_("Published"),
+        help_text=_("Check to make this article visible to users."),
+        db_index=True,  # Important for filtering published content
+    )
+
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured"),
+        help_text=_("Mark as featured to show prominently."),
+        db_index=True,
+    )
+
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name=_("Mark as Read"),
+        help_text=_("Internal flag to track read status."),
+        db_index=True,  # For quick unread counts
+    )
+
+    # Analytics
+    view_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("View Count"),
+        help_text=_("Number of times this article has been viewed."),
+    )
+
+    # Custom manager
+    objects = NewsQuerySet.as_manager()
+
+    class Meta:
+        app_label = "member"
+        db_table = "news"
+        ordering = ["-published_date"]
+        verbose_name = _("News Article")
+        verbose_name_plural = _("News Articles")
+
+        # Database constraints for data integrity
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(view_count__gte=0),
+                name="%(app_label)s_%(class)s_positive_view_count",
+                violation_error_message=_("View count cannot be negative."),
+            ),
+        ]
+
+        # Composite indexes for common queries
+        indexes = [
+            models.Index(
+                fields=["-published_date", "is_published"],
+                name="news_pub_date_status_idx",
+            ),
+            models.Index(
+                fields=["module", "is_published", "-published_date"],
+                name="news_module_pub_idx",
+            ),
+            models.Index(
+                fields=["is_published", "is_featured", "-published_date"],
+                name="news_featured_idx",
+            ),
+            models.Index(
+                fields=["author", "-published_date"],
+                name="news_author_date_idx",
+            ),
+        ]
+
+        # Permissions
+        permissions = [
+            ("can_feature_news", _("Can mark news as featured")),
+            ("can_publish_news", _("Can publish news articles")),
+        ]
 
     def __str__(self):
         return self.title
 
-    class Meta:
-        app_label = "member"
-        ordering = ["-published_date"]
-        verbose_name = "News"
-        verbose_name_plural = "News"
+    def save(self, *args, **kwargs):
+        """Override save to auto-generate slug if not provided"""
+        if not self.slug:
+            self.slug = self.generate_unique_slug()
+
+        # Call full_clean to validate constraints
+        if kwargs.pop("validate", True):
+            self.full_clean()
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Model-level validation"""
+        super().clean()
+
+        # Validate that published articles have required fields
+        if self.is_published:
+            if not self.summary.strip():
+                raise ValidationError(
+                    {"summary": _("Summary is required for published articles.")}
+                )
+            if not self.content:
+                raise ValidationError(
+                    {"content": _("Content is required for published articles.")}
+                )
+
+    def generate_unique_slug(self):
+        """Generate a unique slug from the title"""
+        base_slug = slugify(self.title)
+        slug = base_slug
+        counter = 1
+
+        # Ensure slug uniqueness
+        while News.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+
+        return slug
+
+    def get_absolute_url(self):
+        """Return the canonical URL for this news article"""
+        return reverse("news:detail", kwargs={"slug": self.slug})
+
+    def increment_view_count(self):
+        """Atomically increment view count to avoid race conditions"""
+        News.objects.filter(pk=self.pk).update(view_count=models.F("view_count") + 1)
+        # Refresh from database
+        self.refresh_from_db(fields=["view_count"])
+
+    def get_tags_list(self):
+        """Return tags as a list"""
+        if self.tags:
+            return [tag.strip() for tag in self.tags.split(",") if tag.strip()]
+        return []
+
+    @property
+    def reading_time(self):
+        """Estimate reading time in minutes (assumes 200 words per minute)"""
+        from django.utils.html import strip_tags
+
+        word_count = len(strip_tags(self.content).split())
+        return max(1, round(word_count / 200))
+
+    @classmethod
+    def get_unread_count(cls, module=None):
+        """
+        Return count of unread news articles.
+        Optimized version using aggregation instead of count().
+        """
+        queryset = cls.objects.filter(is_read=False, is_published=True)
+        if module:
+            queryset = queryset.filter(module__in=[module, "all"])
+        return queryset.count()
+
+    @classmethod
+    def mark_as_read_bulk(cls, article_ids):
+        """Bulk update articles as read (more efficient than updating individually)"""
+        return cls.objects.filter(id__in=article_ids).update(is_read=True)
+
+
+# class News(models.Model):
+#     title = models.CharField(
+#         max_length=255,
+#         verbose_name="Title",
+#         help_text="Enter the title of the news article.",
+#     )
+#     slug = models.SlugField(
+#         unique=True,
+#         max_length=255,
+#         verbose_name="Slug",
+#         help_text="Unique identifier for the news article (auto-generated from the title).",
+#     )
+#     summary = models.TextField(
+#         verbose_name="Summary",
+#         help_text="Enter a brief summary or introduction to the news article.",
+#     )
+#     content = CKEditor5Field(
+#         verbose_name="Content",
+#         help_text="Enter the full content of the news article using a rich text editor.",
+#     )
+#     author = models.CharField(
+#         max_length=100,
+#         verbose_name="Author",
+#         help_text="Name of the author of the article.",
+#     )
+#     published_date = models.DateTimeField(
+#         auto_now_add=True,
+#         verbose_name="Published Date",
+#         help_text="The date and time when the article was published.",
+#     )
+#     updated_date = models.DateTimeField(
+#         auto_now=True,
+#         verbose_name="Updated Date",
+#         help_text="The date and time when the article was last updated.",
+#     )
+#     image = models.ImageField(
+#         upload_to="news/images/",
+#         blank=True,
+#         null=True,
+#         verbose_name="Image",
+#         help_text="Upload an optional image for the news article.",
+#     )
+#     tags = models.CharField(
+#         max_length=255,
+#         blank=True,
+#         verbose_name="Tags",
+#         help_text="Comma-separated tags for categorizing the article.",
+#     )
+#     is_published = models.BooleanField(
+#         default=False,
+#         verbose_name="Is Published",
+#         help_text="Check this box to publish the article.",
+#     )
+#     is_read = models.BooleanField(
+#         default=False,
+#         verbose_name="Is Read",
+#         help_text="Check this box to mark the article as read.",
+#     )
+
+#     module = models.CharField(
+#         max_length=255,
+#         default="member",
+#         verbose_name="Module",
+#         help_text="Module Specific News. For ex:- member, facilitator, sahayak",
+#     )
+
+#     @classmethod
+#     def not_read_count(cls):
+#         """
+#         Return the count of news articles that are marked as 'not read'.
+#         """
+#         return cls.objects.filter(is_read=False).count()
+
+#     def __str__(self):
+#         return self.title
+
+#     class Meta:
+#         app_label = "member"
+#         ordering = ["-published_date"]
+#         verbose_name = "News"
+#         verbose_name_plural = "News"
 
 
 class RewardedAdTransaction(models.Model):

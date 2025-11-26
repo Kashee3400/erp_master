@@ -12,7 +12,6 @@ from .views import (
     MonthListAPIView,
     ProductViewSet,
     MemberHierarchyViewSet,
-    SahayakFeedbackViewSet,
     NewsViewSet,
     NewsNotReadCountAPIView,
     BillingMemberMasterViewSet,
@@ -44,7 +43,6 @@ router.register(
 router.register(r"local-sale", LocalSaleViewSet)
 router.register(r"products", ProductViewSet, basename="products")
 router.register(r"members", MemberHierarchyViewSet, basename="member")
-router.register(r"feedback", SahayakFeedbackViewSet, basename="feedback")
 router.register(r"news", NewsViewSet, basename="news")
 router.register(r"billing-member-master", BillingMemberMasterViewSet)
 router.register(r"shifts", ShiftViewSet, basename="shifts")

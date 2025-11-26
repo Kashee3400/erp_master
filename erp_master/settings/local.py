@@ -3,12 +3,12 @@ from django.conf import settings
 
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 
@@ -64,17 +64,19 @@ STATICFILES_DIRS = [STATIC_DIR]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_HEADERS = ["*"]
 
-REST_FRAMEWORK.update({
-    "DEFAULT_THROTTLE_CLASSES": [],
-    "DEFAULT_THROTTLE_RATES": {},
-})
+REST_FRAMEWORK.update(
+    {
+        "DEFAULT_THROTTLE_CLASSES": [],
+        "DEFAULT_THROTTLE_RATES": {},
+    }
+)
 
 
 def setup_log_directory():
     """Ensure log directory exists"""
-    log_dir = getattr(settings, 'LOG_DIR', os.path.join(BASE_DIR, 'logs'))
+    log_dir = getattr(settings, "LOG_DIR", os.path.join(BASE_DIR, "logs"))
     os.makedirs(log_dir, exist_ok=True)
     return log_dir
 
@@ -84,24 +86,46 @@ setup_log_directory()
 
 # Logging configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'excel_import.log'),
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "excel_import.log"),
         },
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
         },
     },
-    'loggers': {
-        'your_app': {  # Replace with your app name
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "your_app": {  # Replace with your app name
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
+
+PHONEPE_ENV = config("PHONEPE_ENV", "sandbox")
+PHONEPE_MERCHANT_ID = config("PHONEPE_MERCHANT_ID")
+PHONEPE_SALT_KEY = config("PHONEPE_SALT_KEY")
+PHONEPE_SALT_INDEX = config("PHONEPE_SALT_INDEX", "1")
+
+PHONEPE_BASE_URL = (
+    config("PHONEPE_BASE_URL_PROD")
+    if PHONEPE_ENV == "production"
+    else config("PHONEPE_BASE_URL_SANDBOX")
+)
+
+PHONEPE_REDIRECT_URL = config("PHONEPE_REDIRECT_URL")
+PHONEPE_CALLBACK_URL = config("PHONEPE_CALLBACK_URL")
+
+DEEPLINK_SMART_HOST = "https://tech.kasheemilk.com:8443/open?token="
+DEEPLINK_DEFAULT_EXPIRY_DAYS = 30  # 0 for no expiry
+DEEPLINK_CACHE_TIMEOUT = 3600  # 1 hour
+
+# Rate limiting (optional)
+DEEPLINK_RATE_LIMIT_ENABLED = True
+DEEPLINK_MAX_LINKS_PER_USER_PER_DAY = 100

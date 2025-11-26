@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class NotificationMedium(models.TextChoices):
     SYSTEM = "system", _("System")
     FCM = "fcm", _("Firebase Push")
@@ -46,3 +47,12 @@ class NotificationType(models.TextChoices):
     SUCCESS = "success", _("Success")
     WARNING = "warning", _("Warning")
     ERROR = "error", _("Error")
+
+
+class DeepLinkModule(models.TextChoices):
+    """Target app modules for deep links"""
+
+    MEMBER = "member", _("Member App")
+    SAHAYAK = "sahayak", _("Sahayak App")
+    PES = "pes", _("PES App")
+    AUTO = "auto", _("Auto-detect Module")

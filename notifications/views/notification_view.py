@@ -1,22 +1,16 @@
-from .permissions import IsNotificationOwner
 from django.db import models
-from rest_framework import viewsets, permissions, status, filters, generics
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, PermissionDenied
+from rest_framework import permissions, status, generics
 from django.core.exceptions import ObjectDoesNotExist
-from error_formatter import simplify_errors, format_exception
 from rest_framework.views import APIView
 from django.utils.translation import gettext_lazy as _
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
-from django.utils import timezone
-from .model import Notification, NotificationPreferences
-from .serializers import (
+from ..model import Notification, NotificationPreferences
+from ..serializers import (
     NotificationSerializer,
     NotificationPreferencesSerializer,
 )
-from .notification_service import NotificationServices
+from ..notification_service import NotificationServices
 from util.response import (
     custom_response,
     StandardResultsSetPagination,
@@ -25,6 +19,7 @@ from util.response import (
     transaction,
     IntegrityError,
 )
+
 
 class UnreadNotificationCountView(APIView):
     permission_classes = [permissions.IsAuthenticated]

@@ -16,11 +16,13 @@ from .views import (
     MemberMasterCopyViewSet,
     MCCViewSet,
     BusinessHierarchyViewSet,
-    VehicleViewSet, VehicleKilometerViewSet,
+    VehicleViewSet,
+    VehicleKilometerViewSet,
     InventoryDashboardViewSet,
     FarmerMeetingViewSet,
     FarmerObservationViewSet,
-    ObservationTypeViewSet, MedicineStockViewSet,
+    ObservationTypeViewSet,
+    MedicineStockViewSet,
     NonMemberViewSet,
     AdvancedCaseSearchView,
     CaseEntryViewSet,
@@ -35,7 +37,9 @@ from .views import (
     calculate_cost,
     DiseaseViewset,
     SymptomViewset,
-    TreatmentCostViewset
+    TreatmentCostViewset,
+    CasePaymentViewSet,
+    PaymentMethodViewset,
 )
 
 
@@ -55,6 +59,7 @@ router.register(
 )
 
 router.register(r"species", SpeciesViewSet, basename="species")
+router.register(r"payment-methods", PaymentMethodViewset, basename="paymentmethods")
 
 router.register(r"ai-charges", AIChargesViewSet, basename="aicharges")
 
@@ -80,29 +85,37 @@ router.register(r"medicine-stocks", MedicineStockViewSet, basename="medicinestoc
 router.register(
     r"user-medicine-stocks", UserMedicineStockViewSet, basename="usermedicinestock"
 )
-router.register(r"inventory-dashboard", InventoryDashboardViewSet, basename="inventory-dashboard")
+router.register(
+    r"inventory-dashboard", InventoryDashboardViewSet, basename="inventory-dashboard"
+)
 
-router.register(r'medicine-transactions', UserMedicineTransactionViewSet, basename='medicine-transactions')
+router.register(
+    r"medicine-transactions",
+    UserMedicineTransactionViewSet,
+    basename="medicine-transactions",
+)
 
-router.register(r'non-members', NonMemberViewSet, basename='non-member')
-router.register(r'non-member-cattle', NonMemberCattleViewSet, basename='non-member-cattle')
-router.register(r'case-entries', CaseEntryViewSet, basename='case-entry')
-router.register(r'diseases', DiseaseViewset, basename='diseases')
-router.register(r'symptoms', SymptomViewset, basename='symptoms')
-router.register(r'costs', TreatmentCostViewset, basename='costs')
+router.register(r"non-members", NonMemberViewSet, basename="non-member")
+router.register(
+    r"non-member-cattle", NonMemberCattleViewSet, basename="non-member-cattle"
+)
+router.register(r"case-entries", CaseEntryViewSet, basename="case-entry")
+router.register(r"diseases", DiseaseViewset, basename="diseases")
+router.register(r"symptoms", SymptomViewset, basename="symptoms")
+router.register(r"costs", TreatmentCostViewset, basename="costs")
+router.register(r"case-payments", CasePaymentViewSet, basename="case-payments")
 
 urlpatterns = [
     path("", include(router.urls)),
     path("master-choices/", ChoicesAPIView.as_view(), name="master-choices"),
     path("reportees/", TopLevelReporteesView.as_view(), name="reportees"),
-    path('quick-visit/', quick_visit_registration, name='quick_visit_registration'),
-    path('search-owner/', search_owner, name='search_owner'),
-    path('calculate-cost/', calculate_cost, name='calculate_cost'),
-    path('dashboard-stats/', dashboard_stats, name='dashboard_stats'),
-    path('recent-cases/', recent_cases, name='recent_cases'),
-    path('bulk-sync/', bulk_sync, name='bulk_sync'),
-    path('advanced-search/', AdvancedCaseSearchView.as_view(), name='advanced_search'),
-
+    path("quick-visit/", quick_visit_registration, name="quick_visit_registration"),
+    path("search-owner/", search_owner, name="search_owner"),
+    path("calculate-cost/", calculate_cost, name="calculate_cost"),
+    path("dashboard-stats/", dashboard_stats, name="dashboard_stats"),
+    path("recent-cases/", recent_cases, name="recent_cases"),
+    path("bulk-sync/", bulk_sync, name="bulk_sync"),
+    path("advanced-search/", AdvancedCaseSearchView.as_view(), name="advanced_search"),
 ]
 
 # If you're using a separate app, include these in your main urls.py:

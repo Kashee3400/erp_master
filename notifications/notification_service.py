@@ -10,17 +10,19 @@ from .model import (
     NotificationChannel,
     NotificationStatus,
 )
+from notifications.deeplink_service import DeepLinkService
+
+import datetime
+import decimal
+from django.utils.functional import Promise
+from django.utils.encoding import force_str
+
 from django.contrib.auth import get_user_model
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
-
-import datetime
-import decimal
-from django.utils.functional import Promise
-from django.utils.encoding import force_str
 
 
 class NotificationServices:
@@ -29,10 +31,14 @@ class NotificationServices:
     Main service for creating and managing notifications
     """
 
-    def __init__(self, base_url: str = None):
+    def __init__(
+        self, base_url: str = None, deeplink_service: Optional[DeepLinkService] = None
+    ):
         self.base_url = base_url or getattr(
             settings, "SITE_URL", "https://tech.kasheemilk.com:8443/"
         )
+        # allow injection for easier testing; fallback to instantiation
+        self.deeplink_service = deeplink_service or DeepLinkService()
 
     def _serialize_context(self, context: dict) -> dict:
         """
@@ -83,7 +89,6 @@ class NotificationServices:
         priority: str = "normal",
         scheduled_at: Optional[timezone.datetime] = None,
         expires_at: Optional[timezone.datetime] = None,
-        
     ) -> Notification:
         """
         Create a new notification instance
@@ -98,7 +103,6 @@ class NotificationServices:
             priority: Notification priority
             scheduled_at: When to send the notification
             expires_at: When the notification expires
-            group: Notification group for related notifications
         """
         UserModel = get_user_model()
         # Get template
@@ -133,44 +137,55 @@ class NotificationServices:
 
         # Add recipient and sender to context
         context.update(
-            {
-                "recipient": recipient,
-                "sender": sender,
-                "base_url": self.base_url,
-            }
+            {"recipient": recipient, "sender": sender, "base_url": self.base_url}
         )
 
         # Render content
         rendered_content = template.render_content(context)
+        config = template.get_deeplink_config(context)
 
-        # Generate deep links
-        deep_link_url = template.generate_deep_link(context, self.base_url)
-
-        # Determine channels based on user preferences and template defaults
         if not channels:
             channels = self._get_preferred_channels(recipient, template)
+
         safe_context = self._serialize_context(context)
+        # choose module from config or device (use whatever logic you already have)
+
+        dl = self.deeplink_service.create_deep_link_record(
+            user_id=recipient.pk,
+            clean_route=config.get("deeplink_type"),
+            url_name=config.get("url_name"),
+            route_template=config.get("route_template"),
+            context=safe_context,
+            fallback_url=config.get("fallback_template"),
+            expires_in_days=config.get("expires_after", 7),
+            max_uses=config.get("max_uses", 0),
+            meta={
+                **config.get("meta", {}),
+                "template_name": getattr(template, "name", None),
+            },
+        )
+
+        smart_link = self.deeplink_service.smart_url_for_deeplink(dl)
+
         # Create notification
         notification = Notification.objects.create(
             template=template,
             recipient=recipient,
             sender=sender,
-            title=rendered_content["title"],
-            body=rendered_content["body"],
+            title=rendered_content.get("title", ""),
+            body=rendered_content.get("body", ""),
             email_subject=rendered_content.get("email_subject", ""),
             email_body=rendered_content.get("email_body", ""),
-            deep_link_url=deep_link_url,
+            deep_link_url=smart_link,
+            app_route=dl.deep_link,
             channels=channels,
             priority=priority or template.default_priority,
             notification_type=template.notification_type,
             context_data=safe_context,
             scheduled_at=scheduled_at or timezone.now(),
             expires_at=expires_at,
-            # group=group,
         )
-        app_route = f"{template.route_template}?from_notification=true&notification_id={notification.id}"
-        notification.app_route = app_route
-        notification.save()
+
         # Set content type and object id for related object
         if related_object:
             notification.content_type = ContentType.objects.get_for_model(
@@ -186,6 +201,53 @@ class NotificationServices:
             self.queue_notification(notification)
 
         return notification
+
+    def create_bulk_notifications(
+        self,
+        template_name: str,
+        recipients: List[Union["User", int, str]],
+        context_factory: Optional[callable] = None,
+        related_object: Any = None,
+        **kwargs,
+    ) -> List[Notification]:
+        """
+        Create multiple notifications efficiently
+
+        Args:
+            template_name: Name of the notification template
+            recipients: List of users, IDs, or emails
+            context_factory: Function that takes (recipient, index) and returns context dict
+            **kwargs: Additional arguments passed to create_notification
+        """
+
+        notifications = []
+
+        for i, recipient in enumerate(recipients):
+            context = {}
+            if context_factory:
+                context = context_factory(recipient, i)
+            elif "context" in kwargs:
+                context = kwargs["context"].copy()
+
+            try:
+                notification = self.create_notification(
+                    template_name=template_name,
+                    recipient=recipient,
+                    context=context,
+                    related_object=related_object,
+                    **{k: v for k, v in kwargs.items() if k != "context"},
+                )
+                notifications.append(notification)
+            except Exception as e:
+                logger.error(
+                    f"Failed to create notification for recipient {recipient}: {e}"
+                )
+                continue
+
+        logger.info(
+            f"Created {len(notifications)} bulk notifications using template '{template_name}'"
+        )
+        return notifications
 
     def _create_bulk_via_task(
         self,
@@ -284,51 +346,6 @@ class NotificationServices:
             channels.append(NotificationChannel.SMS)
 
         return channels or [NotificationChannel.IN_APP]
-
-    def create_bulk_notifications(
-        self,
-        template_name: str,
-        recipients: List[Union["User", int, str]],
-        context_factory: Optional[callable] = None,
-        **kwargs,
-    ) -> List[Notification]:
-        """
-        Create multiple notifications efficiently
-
-        Args:
-            template_name: Name of the notification template
-            recipients: List of users, IDs, or emails
-            context_factory: Function that takes (recipient, index) and returns context dict
-            **kwargs: Additional arguments passed to create_notification
-        """
-
-        notifications = []
-
-        for i, recipient in enumerate(recipients):
-            context = {}
-            if context_factory:
-                context = context_factory(recipient, i)
-            elif "context" in kwargs:
-                context = kwargs["context"].copy()
-
-            try:
-                notification = self.create_notification(
-                    template_name=template_name,
-                    recipient=recipient,
-                    context=context,
-                    **{k: v for k, v in kwargs.items() if k != "context"},
-                )
-                notifications.append(notification)
-            except Exception as e:
-                logger.error(
-                    f"Failed to create notification for recipient {recipient}: {e}"
-                )
-                continue
-
-        logger.info(
-            f"Created {len(notifications)} bulk notifications using template '{template_name}'"
-        )
-        return notifications
 
     def cleanup_expired(self) -> int:
         """Remove expired notifications"""

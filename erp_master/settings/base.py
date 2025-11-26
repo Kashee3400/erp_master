@@ -25,6 +25,7 @@ LOCAL_APPS = [
     "veterinary",
     "feedback",
     "notifications",
+    "gateway",
     "django_cleanup.apps.CleanupConfig",
     "taggit",
 ]
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "member.middleware.CurrentRequestMiddleware",
+    'notifications.middleware.deeplink_rate_limit.DeepLinkRateLimitMiddleware',
 ]
 
 DATABASE_ROUTERS = [
@@ -119,7 +121,7 @@ LOGIN_URL = "/admin/login/"
 
 LOGIN_REDIRECT_URL = "/admin/"
 
-LOG_DIR = os.path.join(BASE_DIR, "logs")  # Adjust this path if necessary
+LOG_DIR = os.path.join(BASE_DIR, "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 # Password validation
@@ -152,17 +154,6 @@ USE_TZ = True
 LANGUAGES = [
     ("en", _("English")),
     ("hi", _("Hindi")),
-    # ("as", _("Assamese")),  # <-- custom
-    # ("bn", _("Bengali")),
-    # ("gu", _("Gujarati")),
-    # ("kn", _("Kannada")),
-    # ("kok", _("Konkani")),
-    # ("ml", _("Malayalam")),
-    # ("mr", _("Marathi")),
-    # ("or", _("Odia")),
-    # ("pa", _("Punjabi")),
-    # ("ta", _("Tamil")),
-    # ("te", _("Telugu")),
     ("ur", _("Urdu")),
 ]
 
@@ -465,6 +456,31 @@ CELERY_TASK_ROUTES = {
     "feedback.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
     "notifications.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
     "veterinary.tasks.*": {"queue": "erp_master_queue", "routing_key": "erp_task"},
+}
+
+DEEPLINK_SMART_HOST = config("DEEPLINK_SMART_HOST")
+DEEPLINK_DEFAULT_EXPIRY_DAYS = config("DEEPLINK_DEFAULT_EXPIRY_DAYS")
+DEEPLINK_CACHE_TIMEOUT = config("DEEPLINK_CACHE_TIMEOUT")
+
+# Rate limiting (optional)
+DEEPLINK_RATE_LIMIT_ENABLED =config("DEEPLINK_RATE_LIMIT_ENABLED")
+DEEPLINK_MAX_LINKS_PER_USER_PER_DAY = config("DEEPLINK_MAX_LINKS_PER_USER_PER_DAY")
+
+
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-expired-links-hourly': {
+        'task': 'deeplink.cleanup_expired',
+        'schedule': 3600.0,
+    },
+    'delete-old-links-daily': {
+        'task': 'deeplink.delete_old_links',
+        'schedule': 86400.0,
+        'kwargs': {'days_old': 90}
+    },
+    'generate-analytics-daily': {
+        'task': 'deeplink.generate_analytics_report',
+        'schedule': 86400.0,
+    },
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

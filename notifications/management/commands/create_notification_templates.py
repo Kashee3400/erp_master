@@ -14,622 +14,1012 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        current_site = Site.objects.get_current()
-        domain = current_site.domain
-        
+
         templates = [
-            # English Templates
             {
                 "name": "mpp_collection_created_en",
                 "locale": "en",
-                "title_template": "New Milk Collection Recorded: {{ site_name }}",
-                "body_template": (
-                    "Dear {{ recipient.first_name }},\n\n"
-                    "A new milk collection entry has been successfully recorded for Member Code {{ collection.member_code }} "
-                    "on {{ collection.collection_date|date:'d M Y, H:i' }} during {{ collection.shift_code }} shift.\n"
-                    "Quantity: {{ collection.qty }} L | Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\n"
-                    "Thank you for maintaining quality and consistency.\n"
-                    "- {{ site_name }} Dairy Management System"
-                ),
-                "email_subject_template": "Milk Collection Confirmation – {{ collection.collection_date|date:'d M Y' }}",
-                "email_body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your milk collection details have been successfully recorded in {{ site_name }}.\n\n"
-                    "**Collection Details:**\n"
-                    "- Member Code: {{ collection.member_code }}\n"
-                    "- Date: {{ collection.collection_date|date:'d M Y, H:i' }}\n"
-                    "- Shift: {{ collection.shift_code }}\n"
-                    "- Quantity: {{ collection.qty }} L\n"
-                    "- Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\n"
-                    "For any discrepancies, please contact your collection center.\n\n"
-                    "Warm regards,\n"
-                    "{{ site_name }} Team"
-                ),
-                "route_template": "/home",
                 "category": "mpp_collection",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
+                "description": "Notification for newly recorded milk collection entry (English).",
+                "title_template": "New Milk Collection Recorded: {{ site_name }}",
+                "body_template": "Dear {{ recipient.first_name }},\n\nA new milk collection entry has been successfully recorded for Member Code {{ collection.member_code }} on {{ collection.collection_date|date:'d M Y, H:i' }} during {{ collection.shift_code }} shift.\nQuantity: {{ collection.qty }} L | Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\nThank you for maintaining quality and consistency.\n- {{ site_name }} Dairy Management System",
+                "email_subject_template": "Milk Collection Confirmation – {{ collection.collection_date|date:'d M Y' }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nYour milk collection details have been successfully recorded in {{ site_name }}.\n\n**Collection Details:**\n- Member Code: {{ collection.member_code }}\n- Date: {{ collection.collection_date|date:'d M Y, H:i' }}\n- Shift: {{ collection.shift_code }}\n- Quantity: {{ collection.qty }} L\n- Fat: {{ collection.fat }} | SNF: {{ collection.snf }}\n\nFor any discrepancies, please contact your collection center.\n\nWarm regards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "Milk collection recorded for {{ collection.member_code }} on {{ collection.collection_date|date:'d M Y' }}. Qty: {{ collection.qty }}L.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {
+                    "email": {
+                        "from_name": "Kashee Dairy",
+                        "reply_to": "support@kashee.com",
+                    },
+                    "push": {"sound": "default"},
+                },
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [
+                    {"label": "View Collection", "action": "open_collection"}
                 ],
+                "deeplink_config": {
+                    "url_name": "home",
+                    "route_template": "",
+                    "fallback_template": "https://kmpcl.netlify.app/mpp/collection/{{ collection.id }}/",
+                    "inapp_route": "/home",
+                    "deeplink_type": "mpp_collection",
+                    "expires_after": 7,
+                    "max_uses": 3,
+                    "metadata": {"source": "notification"},
+                },
+                "required_context_vars": ["recipient", "collection", "site_name"],
+                "sample_context": {
+                    "recipient": {"first_name": "Ramesh"},
+                    "collection": {
+                        "id": 101,
+                        "member_code": "MC2025",
+                        "collection_date": "2025-11-23T10:00:00Z",
+                        "shift_code": "M",
+                        "qty": 12.5,
+                        "fat": 7.5,
+                        "snf": 8.5,
+                    },
+                    "site_name": "Kashee MPC",
+                },
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "mpp_collection_created"},
+                "throttle_config": {
+                    "max_per_user_per_day": 5,
+                    "min_interval_minutes": 10,
+                },
+                "quiet_hours": {"enabled": "False"},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["transactional", "dairy", "mpp"],
             },
-            # Hindi Template
             {
                 "name": "mpp_collection_created_hi",
                 "locale": "hi",
-                "title_template": "नया दूध संग्रह दर्ज किया गया: {{ site_name }}",
-                "body_template": (
-                    "प्रिय {{ recipient.first_name }},\n\n"
-                    "सदस्य कोड {{ collection.member_code }} के लिए {{ collection.collection_date|date:'d M Y, H:i' }} को "
-                    "{{ collection.shift_code }} शिफ्ट में एक नया दूध संग्रह प्रविष्टि सफलतापूर्वक दर्ज की गई है।\n"
-                    "मात्रा: {{ collection.qty }} लीटर | वसा: {{ collection.fat }} | एसएनएफ: {{ collection.snf }}\n\n"
-                    "गुणवत्ता और निरंतरता बनाए रखने के लिए धन्यवाद।\n"
-                    "- {{ site_name }} डेयरी प्रबंधन प्रणाली"
-                ),
-                "email_subject_template": "दूध संग्रह पुष्टि – {{ collection.collection_date|date:'d M Y' }}",
-                "email_body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "आपके दूध संग्रह विवरण {{ site_name }} में सफलतापूर्वक दर्ज किए गए हैं।\n\n"
-                    "**संग्रह विवरण:**\n"
-                    "- सदस्य कोड: {{ collection.member_code }}\n"
-                    "- तिथि: {{ collection.collection_date|date:'d M Y, H:i' }}\n"
-                    "- शिफ्ट: {{ collection.shift_code }}\n"
-                    "- मात्रा: {{ collection.qty }} लीटर\n"
-                    "- वसा: {{ collection.fat }} | एसएनएफ: {{ collection.snf }}\n\n"
-                    "किसी भी विसंगति के लिए, कृपया अपने संग्रह केंद्र से संपर्क करें।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "route_template": "/home",
-                "url_name":domain,
                 "category": "mpp_collection",
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "Notification for newly recorded milk collection entry (Hindi).",
+                "title_template": "नया दूध संग्रह दर्ज किया गया: {{ site_name }}",
+                "body_template": "प्रिय {{ recipient.first_name }},\n\nसदस्य कोड {{ collection.member_code }} के लिए {{ collection.collection_date|date:'d M Y, H:i' }} को {{ collection.shift_code }} शिफ्ट में एक नया दूध संग्रह प्रविष्टि सफलतापूर्वक दर्ज की गई है।\nमात्रा: {{ collection.qty }} लीटर | वसा: {{ collection.fat }} | एसएनएफ: {{ collection.snf }}\n\nगुणवत्ता और निरंतरता बनाए रखने के लिए धन्यवाद।\n- {{ site_name }} डेयरी प्रबंधन प्रणाली",
+                "email_subject_template": "दूध संग्रह पुष्टि – {{ collection.collection_date|date:'d M Y' }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nआपके दूध संग्रह विवरण {{ site_name }} में सफलतापूर्वक दर्ज किए गए हैं।\n\n**संग्रह विवरण:**\n- सदस्य कोड: {{ collection.member_code }}\n- तिथि: {{ collection.collection_date|date:'d M Y, H:i' }}\n- शिफ्ट: {{ collection.shift_code }}\n- मात्रा: {{ collection.qty }} लीटर\n- वसा: {{ collection.fat }} | एसएनएफ: {{ collection.snf }}\n\nकिसी भी विसंगति के लिए कृपया अपने संग्रह केंद्र से संपर्क करें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "दूध संग्रह दर्ज: {{ collection.member_code }} | Qty: {{ collection.qty }}L.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {
+                    "email": {
+                        "from_name": "Kashee Dairy",
+                        "reply_to": "support@kashee.com",
+                    },
+                    "push": {"sound": "default"},
+                },
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [{"label": "संग्रह देखें", "action": "open_collection"}],
+                "deeplink_config": {
+                    "url_name": "default",
+                    "route_template": "",
+                    "fallback_template": "https://kmpcl.netlify.app/mpp/collection/{{ collection.id }}/",
+                    "inapp_route": "/home",
+                    "deeplink_type": "mpp_collection",
+                    "expires_after": 7,
+                    "max_uses": 3,
+                    "metadata": {"source": "notification"},
+                },
+                "required_context_vars": ["recipient", "collection", "site_name"],
+                "sample_context": {
+                    "recipient": {"first_name": "Ramesh"},
+                    "collection": {
+                        "id": 101,
+                        "member_code": "MC2025",
+                        "collection_date": "2025-11-23T10:00:00Z",
+                        "shift_code": "M",
+                        "qty": 12.5,
+                        "fat": 7.5,
+                        "snf": 8.5,
+                    },
+                    "site_name": "Kashee MPC",
+                },
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "mpp_collection_created"},
+                "throttle_config": {
+                    "max_per_user_per_day": 5,
+                    "min_interval_minutes": 10,
+                },
+                "quiet_hours": {"enabled": "False"},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["transactional", "dairy", "mpp"],
             },
-            # Feedback Update - English
             {
                 "name": "feedback_update_en",
                 "locale": "en",
-                "title_template": "Your Feedback Update: {{ site_name }}",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "There has been an update on your feedback (ID: {{ feedback.feedback_id }}):\n\n"
-                    "- Status: {{ feedback.status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nMessage:\n{{ feedback.message|truncatechars:200 }}\n\n"
-                    "You can view full details in your profile.\n"
-                    "- {{ site_name }} Team"
-                ),
-                "email_subject_template": "Feedback Update – {{ feedback.feedback_id }}",
-                "email_body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your feedback (ID: {{ feedback.feedback_id }}) has been updated.\n\n"
-                    "Details:\n"
-                    "- Status: {{ feedback.status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nFeedback Message:\n{{ feedback.message }}\n\n"
-                    "Please check the app for full details and updates.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
                 "category": "feedback",
-                "url_name":domain,
-                "route_template": "/feedback/{{ feedback.pk }}/",
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "Update when a member's feedback receives a new response or action.",
+                "title_template": "Update on Your Feedback – {{ site_name }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nThere is a new update on your feedback (ID: {{ feedback.feedback_id }}).\n\n- Current Status: {{ feedback.status|capfirst }}\n{% if feedback.assigned_to %}- Handled By: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- Resolved On: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nMessage:\n{{ feedback.message|truncatechars:200 }}\n\nTap to see full details.\n- {{ site_name }} Team",
+                "email_subject_template": "Your Feedback Update – {{ feedback.feedback_id }}",
+                "email_body_template": "Namaste {{ recipient.first_name }},\n\nYour feedback (ID: {{ feedback.feedback_id }}) has been updated.\n\nDetails:\n- Status: {{ feedback.status|capfirst }}\n{% if feedback.assigned_to %}- Handled By: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- Resolved On: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nMessage:\n{{ feedback.message }}\n\nPlease open the app to see full details.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "Your feedback update is available. Status: {{ feedback.status }}. Open app for details.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {
+                    "email": {
+                        "from_name": "Kashee Support",
+                        "reply_to": "support@kashee.com",
+                    },
+                    "push": {"sound": "default"},
+                },
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "feedback_detail",
+                    "url_name": "default",
+                    "route_template": "/admin/feedback/feedback/{{ feedback.id }}/change/",
+                    "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.id }}/",
+                    "inapp_route": "feedback/{{ feedback.pk }}",
+                    "expires_after": 10,
+                    "max_uses": 5,
+                    "metadata": {"source": "feedback_update"},
+                },
+                "required_context_vars": ["recipient", "feedback", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "feedback_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["feedback", "update"],
             },
-            # Feedback Update - Hindi
             {
                 "name": "feedback_update_hi",
                 "locale": "hi",
-                "title_template": "आपकी फीडबैक अपडेट: {{ site_name }}",
-                "body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) में अपडेट हुआ है:\n\n"
-                    "- स्थिति: {{ feedback.status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- सौंपा गया: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nसंदेश:\n{{ feedback.message|truncatechars:200 }}\n\n"
-                    "आप अपनी प्रोफाइल में पूर्ण विवरण देख सकते हैं।\n"
-                    "- {{ site_name }} टीम"
-                ),
+                "category": "feedback",
+                "description": "Feedback par naya update hone par bheja jane wala message.",
+                "title_template": "आपकी फीडबैक पर नया अपडेट – {{ site_name }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nआपकी फीडबैक (ID: {{ feedback.feedback_id }}) में नया अपडेट आया है।\n\n- स्थिति: {{ feedback.status|capfirst }}\n{% if feedback.assigned_to %}- जिम्मेदार व्यक्ति: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- समाधान तिथि: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nसंदेश:\n{{ feedback.message|truncatechars:200 }}\n\nपूरा विवरण देखने के लिए ऐप खोलें।\n- {{ site_name }} टीम",
                 "email_subject_template": "फीडबैक अपडेट – {{ feedback.feedback_id }}",
-                "email_body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) अपडेट की गई है।\n\n"
-                    "विवरण:\n"
-                    "- स्थिति: {{ feedback.status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- सौंपा गया: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nफीडबैक संदेश:\n{{ feedback.message }}\n\n"
-                    "कृपया पूर्ण विवरण और अपडेट के लिए ऐप देखें।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "route_template": "/feedback/{{ feedback.pk }}/",
-                "url_name":domain,
-                "category": "feedback",
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
-            },
-            {
-                "name": "feedback_status_change_hi",
-                "locale": "hi",
-                "title_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
-                "body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति बदल गई है:\n\n"
-                    "- पुरानी स्थिति: {{ old_status|capfirst }}\n"
-                    "- नई स्थिति: {{ new_status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- जिम्मेदार: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nआप ऐप में जाकर विस्तृत जानकारी देख सकते हैं।\n\n"
-                    "- {{ site_name }} टीम"
-                ),
-                "email_subject_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
-                "email_body_template": (
-                    "प्रिय {{ recipient.first_name }},\n\n"
-                    "आपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति अपडेट की गई है।\n\n"
-                    "विवरण:\n"
-                    "- पुरानी स्थिति: {{ old_status|capfirst }}\n"
-                    "- नई स्थिति: {{ new_status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- जिम्मेदार व्यक्ति: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nकृपया पूर्ण विवरण और आगे की जानकारी के लिए ऐप देखें।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "route_template": "/feedback/{{ feedback.pk }}/",
-                "category": "feedback",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nआपकी फीडबैक (ID: {{ feedback.feedback_id }}) में नया अपडेट किया गया है।\n\nविवरण:\n- स्थिति: {{ feedback.status|capfirst }}\n{% if feedback.assigned_to %}- जिम्मेदार व्यक्ति: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- समाधान तिथि: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nफीडबैक संदेश:\n{{ feedback.message }}\n\nकृपया ऐप खोलकर पूरा विवरण देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "आपकी फीडबैक में नया अपडेट आया है। स्थिति: {{ feedback.status }}। विवरण ऐप में देखें।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                
+                "deeplink_config": {
+                    "deeplink_type": "feedback_detail",
+                    "url_name": "admin:feedback_feedback_change",
+                    "route_template": "/admin/feedback/feedback/{{ feedback.id }}/change/",
+                    "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.id }}/",
+                    "inapp_route": "feedback/{{ feedback.pk }}",
+                    "route_params": {"id": "{{ feedback.pk }}"},
+                    "expires_after": 10,
+                    "max_uses": 5,
+                    "metadata": {
+                        "source": "feedback_update",
+                        "reason": "{{ feedback.status }}",
+                    },
+                },
+                "required_context_vars": ["recipient", "feedback", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "feedback_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["feedback", "update"],
             },
             {
                 "name": "feedback_status_change_en",
                 "locale": "en",
-                "title_template": "Feedback Status Updated – {{ feedback.feedback_id }}",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your feedback (ID: {{ feedback.feedback_id }}) status has been updated.\n\n"
-                    "- Previous Status: {{ old_status|capfirst }}\n"
-                    "- New Status: {{ new_status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nYou can view complete details in your app.\n\n"
-                    "- The {{ site_name }} Team"
-                ),
-                "email_subject_template": "Feedback Status Updated – {{ feedback.feedback_id }}",
-                "email_body_template": (
-                    "Dear {{ recipient.first_name }},\n\n"
-                    "Your feedback (ID: {{ feedback.feedback_id }}) status has changed.\n\n"
-                    "Details:\n"
-                    "- Previous Status: {{ old_status|capfirst }}\n"
-                    "- New Status: {{ new_status|capfirst }}\n"
-                    "{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n"
-                    "{% if feedback.resolved_at %}- Resolved At: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n"
-                    "\nPlease check the app for full details and updates.\n\n"
-                    "Regards,\n"
-                    "The {{ site_name }} Team"
-                ),
-                "route_template": "/feedback/{{ feedback.pk }}/",
                 "category": "feedback",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
+                "description": "English template for feedback status change notification.",
+                "title_template": "Feedback Status Changed – {{ feedback.feedback_id }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nYour feedback status has changed.\n\n- Previous: {{ old_status|capfirst }}\n- New: {{ new_status|capfirst }}\n{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- Resolved On: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nTap to see full details.\n- {{ site_name }} Team",
+                "email_subject_template": "Feedback Status Updated – {{ feedback.feedback_id }}",
+                "email_body_template": "Dear {{ recipient.first_name }},\n\nYour feedback status has changed.\n\n- Previous: {{ old_status|capfirst }}\n- New: {{ new_status|capfirst }}\n{% if feedback.assigned_to %}- Assigned To: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- Resolved On: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nPlease check the app for full details.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "feedback_detail",
+                    "url_name": "feedback_detail",
+                    "route_template": "admin/feedback/feedback/{{ feedback.id }}/change/",
+                    "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.id }}/",
+                    "inapp_route": "feedback/{{ feedback.pk }}",
+                },
+                "required_context_vars": [
+                    "recipient",
+                    "feedback",
+                    "old_status",
+                    "new_status",
+                    "site_name",
                 ],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "feedback_status_change"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["feedback", "status", "update"],
             },
-            # Sahayak Incentive - English
+            {
+                "name": "feedback_status_change_hi",
+                "locale": "hi",
+                "category": "feedback",
+                "description": "Hindi template for feedback status change notification.",
+                "title_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nआपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति बदल गई है:\n\n- पुरानी स्थिति: {{ old_status|capfirst }}\n- नई स्थिति: {{ new_status|capfirst }}\n{% if feedback.assigned_to %}- जिम्मेदार: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nआप ऐप में जाकर विस्तृत जानकारी देख सकते हैं।\n\n- {{ site_name }} टीम",
+                "email_subject_template": "फीडबैक स्थिति अपडेट – {{ feedback.feedback_id }}",
+                "email_body_template": "प्रिय {{ recipient.first_name }},\n\nआपकी फीडबैक (आईडी: {{ feedback.feedback_id }}) की स्थिति अपडेट की गई है।\n\nविवरण:\n- पुरानी स्थिति: {{ old_status|capfirst }}\n- नई स्थिति: {{ new_status|capfirst }}\n{% if feedback.assigned_to %}- जिम्मेदार व्यक्ति: {{ feedback.assigned_to.get_full_name }}{% endif %}\n{% if feedback.resolved_at %}- समाधान समय: {{ feedback.resolved_at|date:'d M Y, H:i' }}{% endif %}\n\nकृपया पूर्ण विवरण और आगे की जानकारी के लिए ऐप देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "feedback_detail",
+                    "url_name": "feedback_detail",
+                    "route_template": "admin/feedback/feedback/{{ feedback.id }}/change/",
+                    "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.pk }}/",
+                    "inapp_route": "feedback/{{ feedback.pk }}",
+                },
+                "required_context_vars": [
+                    "recipient",
+                    "feedback",
+                    "old_status",
+                    "new_status",
+                    "site_name",
+                ],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "feedback_status_change"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["feedback", "status", "update"],
+            },
             {
                 "name": "sahayak_incentive_update_en",
                 "locale": "en",
-                "title_template": "Your Incentive Details: {{ site_name }}",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n"
-                    "- Milk Quantity: {{ incentive.milk_qty }} L\n"
-                    "- Milk Incentive: ₹{{ incentive.milk_incentive }}\n"
-                    "- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n"
-                    "- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n"
-                    "- Other Incentives: ₹{{ incentive.other_incentive }}\n"
-                    "- TDS Deduction: ₹{{ incentive.tds_amt }}\n"
-                    "- Payable Amount: ₹{{ incentive.payable }}\n"
-                    "- Closing Balance: ₹{{ incentive.closing }}\n\n"
-                    "Please check the app for full details and history.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
-                "email_subject_template": "Incentive Update – {{ incentive.month }}/{{ incentive.year }}",
-                "email_body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n"
-                    "- Milk Quantity: {{ incentive.milk_qty }} L\n"
-                    "- Milk Incentive: ₹{{ incentive.milk_incentive }}\n"
-                    "- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n"
-                    "- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n"
-                    "- Other Incentives: ₹{{ incentive.other_incentive }}\n"
-                    "- TDS Deduction: ₹{{ incentive.tds_amt }}\n"
-                    "- Payable Amount: ₹{{ incentive.payable }}\n"
-                    "- Closing Balance: ₹{{ incentive.closing }}\n\n"
-                    "Check the app for full details.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
-                "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "English template for sahayak incentive update.",
+                "title_template": "Your Incentive Details: {{ site_name }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nYour incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n- Milk Quantity: {{ incentive.milk_qty }} L\n- Milk Incentive: ₹{{ incentive.milk_incentive }}\n- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n- Other Incentives: ₹{{ incentive.other_incentive }}\n- TDS Deduction: ₹{{ incentive.tds_amt }}\n- Payable Amount: ₹{{ incentive.payable }}\n- Closing Balance: {{ incentive.closing }}\n\nPlease check the app for full details and history.\n\nRegards,\n{{ site_name }} Team",
+                "email_subject_template": "Incentive Update – {{ incentive.month }}/{{ incentive.year }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nYour incentive for {{ incentive.month }}/{{ incentive.year }} has been calculated:\n\n- Milk Quantity: {{ incentive.milk_qty }} L\n- Milk Incentive: ₹{{ incentive.milk_incentive }}\n- Cattle Feed Incentive: ₹{{ incentive.cf_incentive }}\n- Mineral Mixture Incentive: ₹{{ incentive.mm_incentive }}\n- Other Incentives: ₹{{ incentive.other_incentive }}\n- TDS Deduction: ₹{{ incentive.tds_amt }}\n- Payable Amount: ₹{{ incentive.payable }}\n- Closing Balance: {{ incentive.closing }}\n\nCheck the app for full details.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "module": "sahayak",
+                    "deeplink_type": "incentive",
+                    "url_name": "incentive",
+                    "route_template": "/admin/member/sahayakincentives/?year={{ incentive.year }}&month={{ incentive.month }}",
+                    "fallback_template": "https://kmpcl.netlify.app/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
+                    "inapp_route": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
+                },
+                "required_context_vars": ["recipient", "incentive", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "sahayak_incentive_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["sahayak", "incentive", "update"],
             },
-            # Sahayak Incentive - Hindi
             {
                 "name": "sahayak_incentive_update_hi",
                 "locale": "hi",
-                "title_template": "आपका प्रोत्साहन विवरण: {{ site_name }}",
-                "body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "{{ incentive.month }}/{{ incentive.year }} के लिए आपका प्रोत्साहन गणना किया गया है:\n\n"
-                    "- दूध की मात्रा: {{ incentive.milk_qty }} लीटर\n"
-                    "- दूध प्रोत्साहन: ₹{{ incentive.milk_incentive }}\n"
-                    "- पशु आहार प्रोत्साहन: ₹{{ incentive.cf_incentive }}\n"
-                    "- खनिज मिश्रण प्रोत्साहन: ₹{{ incentive.mm_incentive }}\n"
-                    "- अन्य प्रोत्साहन: ₹{{ incentive.other_incentive }}\n"
-                    "- टीडीएस कटौती: ₹{{ incentive.tds_amt }}\n"
-                    "- देय राशि: ₹{{ incentive.payable }}\n"
-                    "- समापन शेष: ₹{{ incentive.closing }}\n\n"
-                    "पूर्ण विवरण और इतिहास के लिए कृपया ऐप देखें।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "email_subject_template": "प्रोत्साहन अपडेट – {{ incentive.month }}/{{ incentive.year }}",
-                "email_body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "{{ incentive.month }}/{{ incentive.year }} के लिए आपका प्रोत्साहन गणना किया गया है:\n\n"
-                    "- दूध की मात्रा: {{ incentive.milk_qty }} लीटर\n"
-                    "- दूध प्रोत्साहन: ₹{{ incentive.milk_incentive }}\n"
-                    "- पशु आहार प्रोत्साहन: ₹{{ incentive.cf_incentive }}\n"
-                    "- खनिज मिश्रण प्रोत्साहन: ₹{{ incentive.mm_incentive }}\n"
-                    "- अन्य प्रोत्साहन: ₹{{ incentive.other_incentive }}\n"
-                    "- टीडीएस कटौती: ₹{{ incentive.tds_amt }}\n"
-                    "- देय राशि: ₹{{ incentive.payable }}\n"
-                    "- समापन शेष: ₹{{ incentive.closing }}\n\n"
-                    "पूर्ण विवरण के लिए ऐप देखें।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "route_template": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                 "category": "incentive",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "Hindi template for sahayak incentive update.",
+                "title_template": "आपका प्रोत्साहन विवरण: {{ site_name }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ incentive.month }}/{{ incentive.year }} के लिए आपका प्रोत्साहन गणना किया गया है:\n\n- दूध की मात्रा: {{ incentive.milk_qty }} लीटर\n- दूध प्रोत्साहन: ₹{{ incentive.milk_incentive }}\n- पशु आहार प्रोत्साहन: ₹{{ incentive.cf_incentive }}\n- खनिज मिश्रण प्रोत्साहन: ₹{{ incentive.mm_incentive }}\n- अन्य प्रोत्साहन: ₹{{ incentive.other_incentive }}\n- टीडीएस कटौती: ₹{{ incentive.tds_amt }}\n- देय राशि: {{ incentive.payable }}\n- समापन शेष: {{ incentive.closing }}\n\nपूर्ण विवरण और इतिहास के लिए कृपया ऐप देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_subject_template": "प्रोत्साहन अपडेट – {{ incentive.month }}/{{ incentive.year }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ incentive.month }}/{{ incentive.year }} के लिए आपका प्रोत्साहन गणना किया गया है:\n\n- दूध की मात्रा: {{ incentive.milk_qty }} लीटर\n- दूध प्रोत्साहन: ₹{{ incentive.milk_incentive }}\n- पशु आहार प्रोत्साहन: ₹{{ incentive.cf_incentive }}\n- खनिज मिश्रण प्रोत्साहन: ₹{{ incentive.mm_incentive }}\n- अन्य प्रोत्साहन: ₹{{ incentive.other_incentive }}\n- टीडीएस कटौती: ₹{{ incentive.tds_amt }}\n- देय राशि: {{ incentive.payable }}\n- समापन शेष: {{ incentive.closing }}\n\nपूर्ण विवरण के लिए ऐप देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "module": "sahayak",
+                    "deeplink_type": "incentive",
+                    "url_name": "incentive",
+                    "route_template": "/admin/member/sahayakincentives/?year={{ incentive.year }}&month={{ incentive.month }}",
+                    "fallback_template": "https://kmpcl.netlify.app/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
+                    "inapp_route": "incentive/{{ incentive.pk }}",
+                },
+                "required_context_vars": ["recipient", "incentive", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "sahayak_incentive_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["sahayak", "incentive", "update"],
             },
-            # News Published - English
             {
                 "name": "news_published_en",
                 "locale": "en",
-                "title_template": "New Article Published: {{ news.title }}",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "A new news article has been published in {{ site_name }}:\n\n"
-                    "- Title: {{ news.title }}\n"
-                    "- Summary: {{ news.summary|truncatechars:150 }}\n"
-                    "- Author: {{ news.author }}\n"
-                    "- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-                    "Click to read the full article and stay updated.\n\n"
-                    "- {{ site_name }} Team"
-                ),
-                "email_subject_template": "New News Article – {{ news.title }}",
-                "email_body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "A new news article has been published:\n\n"
-                    "- Title: {{ news.title }}\n"
-                    "- Summary: {{ news.summary }}\n"
-                    "- Author: {{ news.author }}\n"
-                    "- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-                    "You can view the full article in the app.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
-                "route_template": "/news/{{ news.slug }}/",
                 "category": "news",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "English template for newly published news article notification.",
+                "title_template": "New Article Published: {{ news.title }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nA new news article has been published in {{ site_name }}:\n\n- Title: {{ news.title }}\n- Summary: {{ news.summary|truncatechars:150 }}\n- Author: {{ news.author }}\n- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\nClick to read the full article and stay updated.\n\n- {{ site_name }} Team",
+                "email_subject_template": "New News Article – {{ news.title }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nA new news article has been published:\n\n- Title: {{ news.title }}\n- Summary: {{ news.summary }}\n- Author: {{ news.author }}\n- Published On: {{ news.published_date|date:'d M Y, H:i' }}\n\nYou can view the full article in the app.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "news_detail",
+                    "url_name": "default",
+                    "route_template": "/news/{{ news.slug }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/news/{{ news.slug }}/",
+                    "inapp_route": "news/{{ news.pk }}",
+                },
+                "required_context_vars": ["recipient", "news", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "news_published"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["news", "published", "update"],
             },
-            # News Published - Hindi``
             {
                 "name": "news_published_hi",
                 "locale": "hi",
-                "title_template": "नया लेख प्रकाशित: {{ news.title }}",
-                "body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "{{ site_name }} में एक नया समाचार लेख प्रकाशित किया गया है:\n\n"
-                    "- शीर्षक: {{ news.title }}\n"
-                    "- सारांश: {{ news.summary|truncatechars:150 }}\n"
-                    "- लेखक: {{ news.author }}\n"
-                    "- प्रकाशन तिथि: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-                    "पूरा लेख पढ़ने और अपडेट रहने के लिए क्लिक करें।\n\n"
-                    "- {{ site_name }} टीम"
-                ),
-                "email_subject_template": "नया समाचार लेख – {{ news.title }}",
-                "email_body_template": (
-                    "नमस्ते {{ recipient.first_name }},\n\n"
-                    "एक नया समाचार लेख प्रकाशित किया गया है:\n\n"
-                    "- शीर्षक: {{ news.title }}\n"
-                    "- सारांश: {{ news.summary }}\n"
-                    "- लेखक: {{ news.author }}\n"
-                    "- प्रकाशन तिथि: {{ news.published_date|date:'d M Y, H:i' }}\n\n"
-                    "आप ऐप में पूरा लेख देख सकते हैं।\n\n"
-                    "सादर,\n"
-                    "{{ site_name }} टीम"
-                ),
-                "route_template": "/news/{{ news.slug }}/",
                 "category": "news",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
-            },
-            # Order Created - English
-            {
-                "name": "order_created_en",
-                "locale": "en",
-                "title_template": "Order Confirmed #{{ object.order_number }}",
-                "body_template": "Your order has been confirmed and is being processed.",
-                "route_template": "/orders/{{ object_id }}/",
-                "url_name":domain,
-                "category": "orders",
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                ],
-            },
-            # Order Created - Hindi
-            {
-                "name": "order_created_hi",
-                "locale": "hi",
-                "title_template": "ऑर्डर की पुष्टि #{{ object.order_number }}",
-                "body_template": "आपका ऑर्डर की पुष्टि हो गई है और प्रक्रिया में है।",
-                "route_template": "/orders/{{ object_id }}/",
-                "url_name":domain,
-                "category": "orders",
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                ],
-            },
-            # Order Shipped - English
-            {
-                "name": "order_shipped_en",
-                "locale": "en",
-                "title_template": "Order Shipped #{{ object.order_number }}",
-                "body_template": "Your order has been shipped! Track: {{ tracking_code }}",
-                "route_template": "/orders/{{ object_id }}/track/",
-                "category": "orders",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.SMS,
-                ],
-            },
-            # Order Shipped - Hindi
-            {
-                "name": "order_shipped_hi",
-                "locale": "hi",
-                "title_template": "ऑर्डर भेज दिया गया #{{ object.order_number }}",
-                "body_template": "आपका ऑर्डर भेज दिया गया है! ट्रैक करें: {{ tracking_code }}",
-                "route_template": "/orders/{{ object_id }}/track/",
-                "category": "orders",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.SMS,
-                ],
-            },
-            # Payment Received - English
-            {
-                "name": "payment_received_en",
-                "locale": "en",
-                "title_template": "Payment Received",
-                "body_template": "We have received your payment of ${{ amount }}",
-                "route_template": "/payments/{{ object_id }}/",
-                "category": "payments",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                ],
-            },
-            # Payment Received - Hindi
-            {
-                "name": "payment_received_hi",
-                "locale": "hi",
-                "title_template": "भुगतान प्राप्त हुआ",
-                "body_template": "हमें आपका ${{ amount }} का भुगतान प्राप्त हुआ है",
-                "route_template": "/payments/{{ object_id }}/",
-                "category": "payments",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                ],
-            },
-            # System Maintenance - English
-            {
-                "name": "system_maintenance_en",
-                "locale": "en",
-                "title_template": "System Maintenance Scheduled",
-                "body_template": "System maintenance is scheduled for {{ maintenance_date }}",
-                "route_template": "/system/maintenance/",
-                "category": "system",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                ],
-            },
-            # System Maintenance - Hindi
-            {
-                "name": "system_maintenance_hi",
-                "locale": "hi",
-                "title_template": "सिस्टम रखरखाव निर्धारित",
-                "body_template": "{{ maintenance_date }} के लिए सिस्टम रखरखाव निर्धारित है",
-                "route_template": "/system/maintenance/",
-                "category": "system",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                ],
-            },
-            # Security Alert - English
-            {
-                "name": "security_alert_en",
-                "locale": "en",
-                "title_template": "Security Alert",
-                "body_template": "Unusual activity detected on your account",
-                "route_template": "/security/alerts/",
-                "category": "security",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.SMS,
-                ],
-            },
-            # Security Alert - Hindi
-            {
-                "name": "security_alert_hi",
-                "locale": "hi",
-                "title_template": "सुरक्षा अलर्ट",
-                "body_template": "आपके खाते पर असामान्य गतिविधि का पता चला है",
-                "route_template": "/security/alerts/",
-                "category": "security",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.SMS,
-                ],
+                "description": "Hindi template for newly published news article notification.",
+                "title_template": "नया लेख प्रकाशित: {{ news.title }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ site_name }} में एक नया समाचार लेख प्रकाशित किया गया है:\n\n- शीर्षक: {{ news.title }}\n- सारांश: {{ news.summary|truncatechars:150 }}\n- लेखक: {{ news.author }}\n- प्रकाशन तिथि: {{ news.published_date|date:'d M Y, H:i' }}\n\nपूरा लेख पढ़ने और अपडेट रहने के लिए क्लिक करें।\n\n- {{ site_name }} टीम",
+                "email_subject_template": "नया समाचार लेख – {{ news.title }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nएक नया समाचार लेख प्रकाशित किया गया है:\n\n- शीर्षक: {{ news.title }}\n- सारांश: {{ news.summary }}\n- लेखक: {{ news.author }}\n- प्रकाशन तिथि: {{ news.published_date|date:'d M Y, H:i' }}\n\nआप ऐप में पूरा लेख देख सकते हैं।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "news_detail",
+                    "url_name": "default",
+                    "route_template": "/news/{{ news.slug }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/news/{{ news.slug }}/",
+                    "inapp_route": "news/{{ news.pk }}",
+                },
+                "required_context_vars": ["recipient", "news", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "news_published"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["news", "published", "update"],
             },
             {
                 "name": "member_sync_completed",
                 "locale": "en",
-                "title_template": "Member Data Synchronization Completed Successfully",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "The member data synchronization task has been completed successfully.\n\n"
-                    "- Source: MemberHierarchyView (MSSQL)\n"
-                    "- Destination: MembersMasterCopy (PostgreSQL)\n"
-                    "- Records Created: {{ collection.created }}\n"
-                    "- Records Updated: {{ collection.updated }}\n\n"
-                    "You can review the updated data in the Admin Panel.\n\n"
-                    "- {{ site_name }} System"
-                ),
-                "email_subject_template": "Member Synchronization Completed – {{ site_name }}",
-                "email_body_template": (
-                    "Dear {{ recipient.first_name }},\n\n"
-                    "The member data synchronization process has been completed.\n\n"
-                    "Summary:\n"
-                    "- Records Created: {{ collection.created }}\n"
-                    "- Records Updated: {{ collection.updated }}\n"
-                    "- Time: {{ collection.timestamp|date:'d M Y, H:i' }}\n\n"
-                    "For detailed information, please check the Admin Dashboard.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} System"
-                ),
-                "route_template": "/admin/veterinary/membersmastercopy/",
                 "category": "data_sync",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
-                ],
+                "description": "System notification when member data synchronization task completes.",
+                "title_template": "Member Data Synchronization Completed Successfully",
+                "body_template": "Hello {{ recipient.first_name }},\n\nThe member data synchronization task has been completed successfully.\n\n- Source: MemberHierarchyView (MSSQL)\n- Destination: MembersMasterCopy (PostgreSQL)\n- Records Created: {{ collection.created }}\n- Records Updated: {{ collection.updated }}\n\nYou can review the updated data in the Admin Panel.\n\n- {{ site_name }} System",
+                "email_subject_template": "Member Synchronization Completed – {{ site_name }}",
+                "email_body_template": "Dear {{ recipient.first_name }},\n\nThe member data synchronization process has been completed.\n\nSummary:\n- Records Created: {{ collection.created }}\n- Records Updated: {{ collection.updated }}\n- Time: {{ collection.timestamp|date:'d M Y, H:i' }}\n\nFor detailed information, please check the Admin Dashboard.\n\nRegards,\n{{ site_name }} System",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "data_sync_detail",
+                    "url_name": "default",
+                    "route_template": "https://kmpcl.netlify.app/members",
+                    "fallback_template": "https://kmpcl.netlify.app/members",
+                    "inapp_route": "https://kmpcl.netlify.app/members",
+                },
+                "required_context_vars": ["recipient", "collection", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "member_sync_completed"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["data_sync", "system", "members"],
             },
             {
                 "name": "case_entry_update_en",
                 "locale": "en",
+                "category": "visits",
+                "description": "Notification for case entry updates (completed, cancelled, etc).",
                 "title_template": "Case Update: {{ case.case_no }}",
-                "body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\n"
-                    "📋 Case Details:\n"
-                    "- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n"
-                    "- Disease: {{ case.disease_name|default:'N/A' }}\n"
-                    "- Visit Date: {{ case.visit_date|default:'N/A' }}\n"
-                    "- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n"
-                    "- Remarks: {{ case.remark|default:'N/A' }}\n\n"
-                    "{% if case.status == 'COMPLETED' %}"
-                    "✅ Your case has been successfully resolved.\n"
-                    "{% elif case.status == 'CANCELLED' %}"
-                    "⚠️ Your case has been cancelled. Please contact support if this was unexpected.\n"
-                    "{% else %}"
-                    "🕒 Our team is working on your case. We'll update you once it's resolved.\n"
-                    "{% endif %}\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
+                "body_template": "Hello {{ recipient.first_name }},\n\nYour case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\n📋 Case Details:\n- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n- Disease: {{ case.disease_name|default:'N/A' }}\n- Visit Date: {{ case.visit_date|default:'N/A' }}\n- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n- Remarks: {{ case.remark|default:'N/A' }}\n\n{% if case.status == 'COMPLETED' %}✅ Your case has been successfully resolved.\n{% elif case.status == 'CANCELLED' %}⚠️ Your case has been cancelled. Please contact support if this was unexpected.\n{% else %}🕒 Our team is working on your case. We'll update you once it's resolved.\n{% endif %}\n\nRegards,\n{{ site_name }} Team",
                 "email_subject_template": "Case Update – {{ case.case_no }} ({{ case.status }})",
-                "email_body_template": (
-                    "Hello {{ recipient.first_name }},\n\n"
-                    "Your case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\n"
-                    "Case Summary:\n"
-                    "- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n"
-                    "- Disease: {{ case.disease_name|default:'N/A' }}\n"
-                    "- Visit Date: {{ case.visit_date|default:'N/A' }}\n"
-                    "- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n"
-                    "- Remarks: {{ case.remark|default:'N/A' }}\n\n"
-                    "You can check the app for more details and full case history.\n\n"
-                    "Regards,\n"
-                    "{{ site_name }} Team"
-                ),
-                "route_template": "/visits/{{ case.case_no }}/",
-                "category": "case_entry",
-                "url_name":domain,
-                "enabled_channels": [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.PUSH,
-                    NotificationChannel.EMAIL,
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nYour case (Case No: {{ case.case_no }}) has been {{ case.status|lower }}.\n\nCase Summary:\n- Animal Tag: {{ case.animal_tag|default:'N/A' }}\n- Disease: {{ case.disease_name|default:'N/A' }}\n- Visit Date: {{ case.visit_date|default:'N/A' }}\n- Emergency: {{ case.is_emergency|yesno:'Yes,No' }}\n- Remarks: {{ case.remark|default:'N/A' }}\n\nYou can check the app for more details and full case history.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "visit-detail",
+                    "url_name": "visit-detail",
+                    "route_template": "/visits/{{ case.case_no }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/visits/{{ case.case_no }}/",
+                    "inapp_route": "visits/{{ case.case_no }}",
+                },
+                "required_context_vars": ["recipient", "case", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "case_entry_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["case", "visits", "update"],
+            },
+            {
+                "name": "case_entry_update_hi",
+                "locale": "hi",
+                "category": "visits",
+                "description": "Hindi notification template for case entry status updates.",
+                "title_template": "केस अपडेट: {{ case.case_no }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nआपका केस (केस नंबर: {{ case.case_no }}) {{ case.status|lower }} कर दिया गया है।\n\n📋 केस विवरण:\n- पशु टैग: {{ case.animal_tag|default:'N/A' }}\n- बीमारी: {{ case.disease_name|default:'N/A' }}\n- विज़िट तिथि: {{ case.visit_date|default:'N/A' }}\n- आपातकाल: {{ case.is_emergency|yesno:'Yes,No' }}\n- टिप्पणी: {{ case.remark|default:'N/A' }}\n\n{% if case.status == 'COMPLETED' %}✅ आपका केस सफलतापूर्वक हल कर दिया गया है।\n{% elif case.status == 'CANCELLED' %}⚠️ आपका केस रद्द कर दिया गया है। यदि यह अप्रत्याशित था तो कृपया सपोर्ट से संपर्क करें।\n{% else %}🕒 हमारी टीम आपके केस पर काम कर रही है। समाधान होते ही हम आपको अपडेट करेंगे।\n{% endif %}\n\nसादर,\n{{ site_name }} टीम",
+                "email_subject_template": "केस अपडेट – {{ case.case_no }} ({{ case.status }})",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nआपके केस (केस नंबर: {{ case.case_no }}) की स्थिति {{ case.status|lower }} कर दी गई है।\n\nकेस सारांश:\n- पशु टैग: {{ case.animal_tag|default:'N/A' }}\n- बीमारी: {{ case.disease_name|default:'N/A' }}\n- विज़िट तिथि: {{ case.visit_date|default:'N/A' }}\n- आपातकाल: {{ case.is_emergency|yesno:'Yes,No' }}\n- टिप्पणी: {{ case.remark|default:'N/A' }}\n\nकृपया अधिक विवरण और पूरी केस हिस्ट्री देखने के लिए ऐप खोलें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "visit-detail",
+                    "url_name": "visit-detail",
+                    "route_template": "/visits/{{ case.case_no }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/visits/{{ case.case_no }}/",
+                    "inapp_route": "visits/{{ case.case_no }}",
+                },
+                "required_context_vars": ["recipient", "case", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "case_entry_update"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["case", "visits", "update"],
+            },
+            {
+                "name": "system_maintenance_alert_en",
+                "locale": "en",
+                "category": "system",
+                "description": "English template for planned or emergency system maintenance alerts.",
+                "title_template": "Scheduled System Maintenance",
+                "body_template": "Hello {{ recipient.first_name }},\n\nA system maintenance has been scheduled.\n\n- Start: {{ maintenance.start_time|date:'d M Y, H:i' }}\n- End: {{ maintenance.end_time|date:'d M Y, H:i' }}\n- Impact: {{ maintenance.impact }}\n\nDuring this window, some features may be temporarily unavailable.\n\nThank you for your patience.\n- {{ site_name }} Team",
+                "email_subject_template": "System Maintenance Scheduled – {{ site_name }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nThis is to inform you that a system maintenance operation has been scheduled.\n\nDetails:\n- Start: {{ maintenance.start_time|date:'d M Y, H:i' }}\n- End: {{ maintenance.end_time|date:'d M Y, H:i' }}\n- Expected Impact: {{ maintenance.impact }}\n\nWe appreciate your understanding.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "System maintenance scheduled {{ maintenance.start_time|date:'d M Y, H:i' }}–{{ maintenance.end_time|date:'d M Y, H:i' }}.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "system_maintenance",
+                    "url_name": "system_maintenance",
+                    "route_template": "maintenance/{{ maintenance.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/maintenance/{{ maintenance.id }}/",
+                    "inapp_route": "maintenance/{{ maintenance.pk }}",
+                },
+                "required_context_vars": ["recipient", "maintenance", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "system_maintenance_scheduled"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["system", "maintenance", "alert"],
+            },
+            {
+                "name": "system_maintenance_alert_hi",
+                "locale": "hi",
+                "category": "system",
+                "description": "Hindi template for planned or emergency system maintenance alerts.",
+                "title_template": "निर्धारित सिस्टम रखरखाव",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nएक सिस्टम रखरखाव निर्धारित किया गया है।\n\n- प्रारंभ: {{ maintenance.start_time|date:'d M Y, H:i' }}\n- समाप्ति: {{ maintenance.end_time|date:'d M Y, H:i' }}\n- प्रभाव: {{ maintenance.impact }}\n\nइस दौरान कुछ फीचर्स अस्थायी रूप से उपलब्ध नहीं हो सकते हैं।\n\nआपके धैर्य के लिए धन्यवाद।\n- {{ site_name }} टीम",
+                "email_subject_template": "सिस्टम रखरखाव निर्धारित – {{ site_name }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nयह सूचित किया जाता है कि एक सिस्टम रखरखाव प्रक्रिया निर्धारित की गई है।\n\nविवरण:\n- प्रारंभ: {{ maintenance.start_time|date:'d M Y, H:i' }}\n- समाप्ति: {{ maintenance.end_time|date:'d M Y, H:i' }}\n- अपेक्षित प्रभाव: {{ maintenance.impact }}\n\nआपके सहयोग के लिए धन्यवाद।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "सिस्टम रखरखाव {{ maintenance.start_time|date:'d M Y, H:i' }}–{{ maintenance.end_time|date:'d M Y, H:i' }}.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "system_maintenance",
+                    "url_name": "default",
+                    "route_template": "maintenance/{{ maintenance.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/maintenance/{{ maintenance.id }}/",
+                    "inapp_route": "maintenance/{{ maintenance.pk }}",
+                },
+                "required_context_vars": ["recipient", "maintenance", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "system_maintenance_scheduled"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["system", "maintenance", "alert"],
+            },
+            {
+                "name": "security_alert_en",
+                "locale": "en",
+                "category": "security",
+                "description": "English template for account security alerts.",
+                "title_template": "Security Alert: Suspicious Account Activity",
+                "body_template": "Hello {{ recipient.first_name }},\n\nWe detected unusual activity on your account.\n\n- Activity: {{ security.activity }}\n- Location: {{ security.location|default:'Unknown' }}\n- Time: {{ security.timestamp|date:'d M Y, H:i' }}\n\nIf this wasn't you, please secure your account immediately.\n\n- {{ site_name }} Security Team",
+                "email_subject_template": "Security Alert – Unusual Activity Detected",
+                "email_body_template": "Dear {{ recipient.first_name }},\n\nWe have detected suspicious activity on your account.\n\nDetails:\n- Activity: {{ security.activity }}\n- Location: {{ security.location|default:'Unknown' }}\n- Time: {{ security.timestamp|date:'d M Y, H:i' }}\n\nIf this activity seems unfamiliar, please reset your password and review your account.\n\nStay safe,\n{{ site_name }} Security Team",
+                "email_is_html": "True",
+                "sms_template": "Security alert: unusual activity detected. Check your account.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [
+                    {"label": "Secure Account", "action": "secure_account"}
                 ],
+                "deeplink_config": {
+                    "deeplink_type": "security_alert",
+                    "url_name": "default",
+                    "route_template": "security/alerts/{{ security.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/security/alerts/{{ security.id }}/",
+                    "inapp_route": "security/{{ security.pk }}",
+                },
+                "required_context_vars": ["recipient", "security", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "security_alert_triggered"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["security", "alert", "high_priority"],
+            },
+            {
+                "name": "security_alert_hi",
+                "locale": "hi",
+                "category": "security",
+                "description": "Hindi template for account security alerts.",
+                "title_template": "सुरक्षा चेतावनी: संदिग्ध गतिविधि",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nहमने आपके खाते में असामान्य गतिविधि का पता लगाया है।\n\n- गतिविधि: {{ security.activity }}\n- स्थान: {{ security.location|default:'Unknown' }}\n- समय: {{ security.timestamp|date:'d M Y, H:i' }}\n\nयदि यह गतिविधि आपने नहीं की है, तो कृपया तुरंत अपना खाता सुरक्षित करें।\n\n- {{ site_name }} सुरक्षा टीम",
+                "email_subject_template": "सुरक्षा चेतावनी – संदिग्ध गतिविधि पाई गई",
+                "email_body_template": "प्रिय {{ recipient.first_name }},\n\nहमने आपके खाते में संदिग्ध गतिविधि पाई है।\n\nविवरण:\n- गतिविधि: {{ security.activity }}\n- स्थान: {{ security.location|default:'Unknown' }}\n- समय: {{ security.timestamp|date:'d M Y, H:i' }}\n\nयदि यह गतिविधि आपको पहचान में नहीं आती है, तो कृपया तुरंत अपना पासवर्ड रीसेट करें और अपना खाता जांचें।\n\nसुरक्षित रहें,\n{{ site_name }} सुरक्षा टीम",
+                "email_is_html": "True",
+                "sms_template": "सुरक्षा चेतावनी: असामान्य गतिविधि पाई गई। तुरंत खाता जांचें।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [
+                    {"label": "खाता सुरक्षित करें", "action": "secure_account"}
+                ],
+                "deeplink_config": {
+                    "deeplink_type": "security_alert",
+                    "url_name": "default",
+                    "route_template": "security/alerts/{{ security.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/security/alerts/{{ security.id }}/",
+                    "inapp_route": "security/{{ security.pk }}",
+                },
+                "required_context_vars": ["recipient", "security", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "security_alert_triggered"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["security", "alert", "high_priority"],
+            },
+            {
+                "name": "app_update_available_en",
+                "locale": "en",
+                "category": "system",
+                "description": "English template for notifying users about a new app update.",
+                "title_template": "New App Update Available",
+                "body_template": "Hello {{ recipient.first_name }},\n\nA new version of the {{ site_name }} app is available.\n\n- Version: {{ update.version }}\n- Release Notes: {{ update.notes|truncatechars:120 }}\n\nPlease update your app for better performance and new features.\n\n- {{ site_name }} Team",
+                "email_subject_template": "App Update Available – Version {{ update.version }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nA new update for the {{ site_name }} app has been released.\n\nVersion: {{ update.version }}\n\nRelease Notes:\n{{ update.notes }}\n\nWe recommend updating to enjoy the best experience.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "New {{ site_name }} app update available (v{{ update.version }}).",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [{"label": "Update Now", "action": "open_app_store"}],
+                "deeplink_config": {
+                    "deeplink_type": "app_update",
+                    "url_name": "default",
+                    "route_template": "app/update/{{ update.version }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/app/update/{{ update.version }}/",
+                    "inapp_route": "appupdate/{{ update.version }}",
+                },
+                "required_context_vars": ["recipient", "update", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "app_update_available"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["system", "update", "app"],
+            },
+            {
+                "name": "app_update_available_hi",
+                "locale": "hi",
+                "category": "system",
+                "description": "Hindi template for notifying users about a new app update.",
+                "title_template": "नया ऐप अपडेट उपलब्ध है",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ site_name }} ऐप का नया संस्करण उपलब्ध है।\n\n- संस्करण: {{ update.version }}\n- रिलीज़ नोट: {{ update.notes|truncatechars:120 }}\n\nबेहतर प्रदर्शन और नए फीचर्स के लिए ऐप को अपडेट करें।\n\n- {{ site_name }} टीम",
+                "email_subject_template": "ऐप अपडेट उपलब्ध – संस्करण {{ update.version }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ site_name }} ऐप का नया अपडेट जारी किया गया है।\n\nसंस्करण: {{ update.version }}\n\nरिलीज़ नोट:\n{{ update.notes }}\n\nसर्वश्रेष्ठ अनुभव के लिए ऐप को अपडेट करने की सलाह दी जाती है।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "{{ site_name }} ऐप अपडेट (v{{ update.version }}) उपलब्ध है।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [
+                    {"label": "अभी अपडेट करें", "action": "open_app_store"}
+                ],
+                "deeplink_config": {
+                    "deeplink_type": "app_update",
+                    "url_name": "default",
+                    "route_template": "app/update/{{ update.version }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/app/update/{{ update.version }}/",
+                    "inapp_route": "appupdate/{{ update.version }}",
+                },
+                "required_context_vars": ["recipient", "update", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "app_update_available"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["system", "update", "app"],
+            },
+            {
+                "name": "emergency_broadcast_en",
+                "locale": "en",
+                "category": "emergency",
+                "description": "English alert for high priority emergency broadcasts.",
+                "title_template": "⚠ Emergency Alert – {{ alert.title }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nAn emergency alert has been issued.\n\n- Title: {{ alert.title }}\n- Message: {{ alert.message }}\n- Time: {{ alert.timestamp|date:'d M Y, H:i' }}\n\nPlease follow the instructions immediately.\n- {{ site_name }} Emergency Services",
+                "email_subject_template": "Emergency Alert – {{ alert.title }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nThis is an urgent emergency alert:\n\n- Title: {{ alert.title }}\n- Message: {{ alert.message }}\n- Time: {{ alert.timestamp|date:'d M Y, H:i' }}\n\nPlease take necessary precautions immediately.\n\nRegards,\n{{ site_name }} Emergency Team",
+                "email_is_html": "True",
+                "sms_template": "EMERGENCY: {{ alert.title }}. Follow instructions immediately.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [{"label": "View Alert", "action": "open_alert"}],
+                "deeplink_config": {
+                    "deeplink_type": "emergency_alert",
+                    "url_name": "default",
+                    "route_template": "emergency/{{ alert.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/emergency/{{ alert.id }}/",
+                    "inapp_route": "emergency/{{ alert.id }}",
+                },
+                "required_context_vars": ["recipient", "alert", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "emergency_broadcast"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["emergency", "alert", "broadcast"],
+            },
+            {
+                "name": "emergency_broadcast_hi",
+                "locale": "hi",
+                "category": "emergency",
+                "description": "Hindi alert for high priority emergency broadcast notifications.",
+                "title_template": "⚠ आपातकालीन सूचना – {{ alert.title }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nएक आपातकालीन सूचना जारी की गई है।\n\n- शीर्षक: {{ alert.title }}\n- संदेश: {{ alert.message }}\n- समय: {{ alert.timestamp|date:'d M Y, H:i' }}\n\nकृपया तुरंत निर्देशों का पालन करें।\n- {{ site_name }} आपातकालीन सेवा",
+                "email_subject_template": "आपातकालीन चेतावनी – {{ alert.title }}",
+                "email_body_template": "प्रिय {{ recipient.first_name }},\n\nयह एक आपातकालीन सूचना है:\n\n- शीर्षक: {{ alert.title }}\n- संदेश: {{ alert.message }}\n- समय: {{ alert.timestamp|date:'d M Y, H:i' }}\n\nकृपया तुरंत आवश्यक सावधानियाँ बरतें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "आपातकालीन चेतावनी: {{ alert.title }}. तुरंत निर्देशों का पालन करें।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "high",
+                "notification_type": "warning",
+                "action_buttons": [{"label": "सूचना देखें", "action": "open_alert"}],
+                "deeplink_config": {
+                    "deeplink_type": "emergency_alert",
+                    "url_name": "default",
+                    "route_template": "emergency/{{ alert.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/emergency/{{ alert.id }}/",
+                    "inapp_route": "emergency/{{ alert.id }}",
+                },
+                "required_context_vars": ["recipient", "alert", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "emergency_broadcast"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["emergency", "alert", "broadcast"],
+            },
+            {
+                "name": "general_announcement_en",
+                "locale": "en",
+                "category": "announcement",
+                "description": "General announcements for all users, including events and updates.",
+                "title_template": "{{ announcement.title }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\n{{ announcement.message }}\n\nDate: {{ announcement.date|date:'d M Y' }}\n\n- {{ site_name }} Team",
+                "email_subject_template": "Announcement – {{ announcement.title }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\n{{ announcement.message }}\n\nDate: {{ announcement.date|date:'d M Y' }}\n\nFor more details, please check the application.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "Announcement: {{ announcement.title }}. Check app for details.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "announcement_detail",
+                    "url_name": "default",
+                    "route_template": "announcement/{{ announcement.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/announcement/{{ announcement.id }}/",
+                    "inapp_route": "announcement/{{ announcement.pk }}",
+                },
+                "required_context_vars": ["recipient", "announcement", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "general_announcement"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["announcement", "general"],
+            },
+            {
+                "name": "general_announcement_hi",
+                "locale": "hi",
+                "category": "announcement",
+                "description": "General announcements for all users (Hindi version).",
+                "title_template": "{{ announcement.title }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ announcement.message }}\n\nतारीख: {{ announcement.date|date:'d M Y' }}\n\n- {{ site_name }} टीम",
+                "email_subject_template": "घोषणा – {{ announcement.title }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\n{{ announcement.message }}\n\nतारीख: {{ announcement.date|date:'d M Y' }}\n\nविस्तृत जानकारी के लिए ऐप देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "घोषणा: {{ announcement.title }}. विस्तृत जानकारी ऐप में देखें।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "announcement_detail",
+                    "url_name": "default",
+                    "route_template": "announcement/{{ announcement.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/announcement/{{ announcement.id }}/",
+                    "inapp_route": "announcement/{{ announcement.pk }}",
+                },
+                "required_context_vars": ["recipient", "announcement", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "general_announcement"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["announcement", "general"],
+            },
+            {
+                "name": "vaccine_schedule_reminder_en",
+                "locale": "en",
+                "category": "veterinary",
+                "description": "Reminder for upcoming animal vaccination schedule.",
+                "title_template": "Vaccination Reminder – {{ vaccine.vaccine_name }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nA vaccination for your animal is scheduled soon.\n\n- Animal Tag: {{ vaccine.animal_tag }}\n- Vaccine: {{ vaccine.vaccine_name }}\n- Due Date: {{ vaccine.due_date|date:'d M Y' }}\n- Notes: {{ vaccine.notes|default:'No notes available' }}\n\nPlease ensure timely vaccination.\n- {{ site_name }} Team",
+                "email_subject_template": "Upcoming Vaccination – {{ vaccine.vaccine_name }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nThis is a reminder for your animal's upcoming vaccination:\n\n- Animal Tag: {{ vaccine.animal_tag }}\n- Vaccine: {{ vaccine.vaccine_name }}\n- Due Date: {{ vaccine.due_date|date:'d M Y' }}\n- Notes: {{ vaccine.notes|default:'No notes available' }}\n\nPlease visit the center on time.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "Vaccination due soon: {{ vaccine.vaccine_name }} for tag {{ vaccine.animal_tag }}.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "vaccine_schedule",
+                    "url_name": "default",
+                    "route_template": "vaccine/schedule/{{ vaccine.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/vaccine/schedule/{{ vaccine.id }}/",
+                    "inapp_route": "vaccine/{{ vaccine.pk }}",
+                },
+                "required_context_vars": ["recipient", "vaccine", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "vaccine_schedule_reminder"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["veterinary", "vaccine", "reminder"],
+            },
+            {
+                "name": "vaccine_schedule_reminder_hi",
+                "locale": "hi",
+                "category": "veterinary",
+                "description": "पशु टीकाकरण अनुसूची के लिए रिमाइंडर (हिंदी संस्करण).",
+                "title_template": "टीकाकरण रिमाइंडर – {{ vaccine.vaccine_name }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nआपके पशु का टीकाकरण जल्द ही निर्धारित है।\n\n- पशु टैग: {{ vaccine.animal_tag }}\n- टीका: {{ vaccine.vaccine_name }}\n- अंतिम तिथि: {{ vaccine.due_date|date:'d M Y' }}\n- नोट्स: {{ vaccine.notes|default:'कोई अतिरिक्त नोट नहीं' }}\n\nकृपया समय पर टीकाकरण सुनिश्चित करें।\n- {{ site_name }} टीम",
+                "email_subject_template": "आगामी टीकाकरण – {{ vaccine.vaccine_name }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nयह आपके पशु के आगामी टीकाकरण के लिए एक रिमाइंडर है:\n\n- पशु टैग: {{ vaccine.animal_tag }}\n- टीका: {{ vaccine.vaccine_name }}\n- अंतिम तिथि: {{ vaccine.due_date|date:'d M Y' }}\n- नोट्स: {{ vaccine.notes|default:'कोई अतिरिक्त नोट नहीं' }}\n\nकृपया समय पर केंद्र में पहुँचें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "टीकाकरण: {{ vaccine.vaccine_name }} (टैग {{ vaccine.animal_tag }}) जल्द ही देय है।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "vaccine_schedule",
+                    "url_name": "default",
+                    "route_template": "vaccine/schedule/{{ vaccine.id }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/vaccine/schedule/{{ vaccine.id }}/",
+                    "inapp_route": "vaccine/{{ vaccine.pk }}",
+                },
+                "required_context_vars": ["recipient", "vaccine", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "vaccine_schedule_reminder"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["veterinary", "vaccine", "reminder"],
+            },
+            {
+                "name": "vet_visit_scheduled_en",
+                "locale": "en",
+                "category": "veterinary",
+                "description": "English template for scheduled veterinarian visits.",
+                "title_template": "Veterinary Visit Scheduled – Case {{ visit.case_no }}",
+                "body_template": "Hello {{ recipient.first_name }},\n\nA veterinary visit has been scheduled.\n\n- Case No: {{ visit.case_no }}\n- Doctor: {{ visit.vet_name|default:'N/A' }}\n- Visit Date: {{ visit.visit_date|date:'d M Y, H:i' }}\n- Type: {{ visit.visit_type|capfirst }}\n\nYou can check the full details in the app.\n\nRegards,\n{{ site_name }} Team",
+                "email_subject_template": "Veterinary Visit Scheduled – {{ visit.case_no }}",
+                "email_body_template": "Hello {{ recipient.first_name }},\n\nYour veterinary visit has been scheduled.\n\nCase No: {{ visit.case_no }}\nDoctor: {{ visit.vet_name|default:'N/A' }}\nVisit Date: {{ visit.visit_date|date:'d M Y, H:i' }}\nType: {{ visit.visit_type|capfirst }}\n\nPlease check the mobile app for more details.\n\nRegards,\n{{ site_name }} Team",
+                "email_is_html": "True",
+                "sms_template": "Vet visit scheduled for case {{ visit.case_no }}.",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "vet_visit",
+                    "url_name": "default",
+                    "route_template": "vet/visit/{{ visit.case_no }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/vet/visit/{{ visit.case_no }}/",
+                    "inapp_route": "vetvisit/{{ visit.case_no }}",
+                },
+                "required_context_vars": ["recipient", "visit", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "vet_visit_scheduled"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["veterinary", "visit", "schedule"],
+            },
+            {
+                "name": "vet_visit_scheduled_hi",
+                "locale": "hi",
+                "category": "veterinary",
+                "description": "हिंदी टेम्पलेट - पशु चिकित्सक विज़िट अनुसूची सूचना।",
+                "title_template": "पशु चिकित्सक विज़िट अनुसूचित – केस {{ visit.case_no }}",
+                "body_template": "नमस्ते {{ recipient.first_name }},\n\nआपके लिए एक पशु चिकित्सक विज़िट अनुसूचित की गई है।\n\n- केस नंबर: {{ visit.case_no }}\n- डॉक्टर: {{ visit.vet_name|default:'N/A' }}\n- विज़िट समय: {{ visit.visit_date|date:'d M Y, H:i' }}\n- प्रकार: {{ visit.visit_type|capfirst }}\n\nपूरा विवरण ऐप में देखें।\n\nसादर,\n{{ site_name }} टीम",
+                "email_subject_template": "पशु चिकित्सक विज़िट अनुसूचित – {{ visit.case_no }}",
+                "email_body_template": "नमस्ते {{ recipient.first_name }},\n\nआपकी पशु चिकित्सक विज़िट निर्धारित की गई है।\n\nकेस नंबर: {{ visit.case_no }}\nडॉक्टर: {{ visit.vet_name|default:'N/A' }}\nसमय: {{ visit.visit_date|date:'d M Y, H:i' }}\nप्रकार: {{ visit.visit_type|capfirst }}\n\nपूरा विवरण ऐप में उपलब्ध है।\n\nसादर,\n{{ site_name }} टीम",
+                "email_is_html": "True",
+                "sms_template": "केस {{ visit.case_no }} के लिए पशु चिकित्सक विज़िट निर्धारित।",
+                "whatsapp_template": "",
+                "enabled_channels": ["in_app", "push", "email"],
+                "channel_config": {},
+                "default_priority": "normal",
+                "notification_type": "info",
+                "action_buttons": [],
+                "deeplink_config": {
+                    "deeplink_type": "visit-detail",
+                    "url_name": "visit-detail",
+                    "route_template": "visits/{{ visit.case_no }}/",
+                    "fallback_template": "https://kmpcl.netlify.app/vet/visit/{{ visit.case_no }}/",
+                    "inapp_route": "visits/{{ visit.case_no }}",
+                },
+                "required_context_vars": ["recipient", "visit", "site_name"],
+                "sample_context": {},
+                "tracking_enabled": "True",
+                "analytics_metadata": {"event": "vet_visit_scheduled"},
+                "throttle_config": {},
+                "quiet_hours": {},
+                "is_active": "True",
+                "version": 1,
+                "tags": ["veterinary", "visit", "schedule"],
             },
         ]
 

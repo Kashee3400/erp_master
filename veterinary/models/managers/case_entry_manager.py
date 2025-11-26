@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import OuterRef, Subquery, Q
+from django.db.models.functions import Coalesce
 
 
 class CaseEntryQuerySet(models.QuerySet):
@@ -68,6 +69,41 @@ class CaseEntryQuerySet(models.QuerySet):
         # Return filtered queryset
         return self.filter(q_obj)
 
+    def with_active_payment(self):
+        """
+        Annotates each CaseEntry with the ID of the active payment:
+            Priority = pending → unpaid → partial → None
+        """
+
+        from veterinary.models.case_models import CasePayment
+
+        # priority: pending
+        pending_qs = CasePayment.objects.filter(
+            case_entry=OuterRef("pk"), payment_status="pending"
+        ).order_by("created_at")
+
+        # next: unpaid
+        unpaid_qs = CasePayment.objects.filter(
+            case_entry=OuterRef("pk"), payment_status="unpaid"
+        ).order_by("created_at")
+
+        # next: partial
+        partial_qs = CasePayment.objects.filter(
+            case_entry=OuterRef("pk"), payment_status="partial"
+        ).order_by("created_at")
+
+        return self.annotate(
+            pending_payment_id=Subquery(pending_qs.values("id")[:1]),
+            unpaid_payment_id=Subquery(unpaid_qs.values("id")[:1]),
+            partial_payment_id=Subquery(partial_qs.values("id")[:1]),
+            # active priority logic (Coalesce picks first non-null)
+            active_payment_id=Coalesce(
+                "pending_payment_id",
+                "unpaid_payment_id",
+                "partial_payment_id",
+            ),
+        )
+
 
 class CaseEntryManager(models.Manager):
     """Custom manager exposing domain-level shortcuts for CaseEntry."""
@@ -91,3 +127,7 @@ class CaseEntryManager(models.Manager):
     def by_mcc_mpp(self, mcc_code=None, mpp_code=None, strict=False):
         """Return cases filtered by MCC/MPP code(s)."""
         return self.get_queryset().by_mcc_mpp(mcc_code, mpp_code, strict)
+
+    def with_active_payment(self):
+        """Include active payment annotation in queryset."""
+        return self.get_queryset().with_active_payment()

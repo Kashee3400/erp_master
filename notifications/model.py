@@ -8,191 +8,549 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import pytz
+from django.template import Template, Context, TemplateSyntaxError
+from typing import Dict, Any, Optional, List
 from datetime import time, datetime
-from .choices import *
-from util.deeplink_utils import Optional,build_scheme_link,build_smart_link 
+from .choices import (
+    NotificationChannel,
+    NotificationMedium,
+    NotificationPriority,
+    NotificationStatus,
+    NotificationType,
+    DeepLinkModule,
+)
+import uuid
+from django.core.exceptions import ValidationError
+from datetime import timedelta
 import json
 
 User = get_user_model()
 
 
 class NotificationTemplate(models.Model):
-    """Reusable notification templates"""
+    """
+    Modern, scalable notification template with multi-channel support
+    and declarative deep-link configuration.
+
+    Design Principles:
+    - Separation of concerns: Templates define WHAT to send, services define HOW
+    - Declarative configuration: Deep links configured via JSON, not code
+    - Multi-lingual support: Content templates per locale
+    - Channel flexibility: Support for push, email, SMS, WhatsApp, in-app
+    - Future-proof: Extensible JSON fields for new features
+    """
+
+    # ==========================================
+    # IDENTIFICATION & CATEGORIZATION
+    # ==========================================
 
     name = models.CharField(
         max_length=100,
         unique=True,
+        db_index=True,
         verbose_name=_("Template Name"),
-        help_text=_("Unique identifier for this template"),
+        help_text=_("Unique identifier (e.g., 'order_confirmed', 'payment_failed')"),
     )
 
-    # Multi-channel content
+    category = models.CharField(
+        max_length=50,
+        db_index=True,
+        verbose_name=_("Category"),
+        help_text=_(
+            "Grouping category (e.g., 'orders', 'payments', 'users', 'system')"
+        ),
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Internal description of this template's purpose and usage"),
+    )
+
+    # ==========================================
+    # CONTENT TEMPLATES (Multi-lingual)
+    # ==========================================
+
+    locale = models.CharField(
+        max_length=10,
+        default="en",
+        db_index=True,
+        verbose_name=_("Locale"),
+        help_text=_("Language/locale code (e.g., 'en', 'hi', 'en-US')"),
+    )
+
+    # Push Notification / In-App Content
     title_template = models.CharField(
         max_length=255,
         verbose_name=_("Title Template"),
-        help_text=_("Template for notification title (supports variables)"),
+        help_text=_(
+            "Django template for notification title. Example: 'Order #{{ order.id }} confirmed'"
+        ),
     )
 
     body_template = models.TextField(
         verbose_name=_("Body Template"),
-        help_text=_("Template for notification body (supports variables)"),
+        help_text=_(
+            "Django template for notification body. Supports {{ variables }} and {% tags %}"
+        ),
     )
 
+    # Email-specific Content
     email_subject_template = models.CharField(
-        max_length=255, blank=True, verbose_name=_("Email Subject Template")
+        max_length=255,
+        blank=True,
+        verbose_name=_("Email Subject Template"),
+        help_text=_("Template for email subject line"),
     )
 
     email_body_template = models.TextField(
-        blank=True, verbose_name=_("Email Body Template")
+        blank=True,
+        verbose_name=_("Email Body Template"),
+        help_text=_("Django template for email body (can include HTML)"),
     )
 
-    # Configuration
+    email_is_html = models.BooleanField(
+        default=True,
+        verbose_name=_("Email is HTML"),
+        help_text=_("Whether email body should be rendered as HTML"),
+    )
+
+    # SMS-specific Content
+    sms_template = models.CharField(
+        max_length=160,
+        blank=True,
+        verbose_name=_("SMS Template"),
+        help_text=_("Template for SMS (max 160 chars recommended)"),
+    )
+
+    # WhatsApp-specific Content
+    whatsapp_template = models.TextField(
+        blank=True,
+        verbose_name=_("WhatsApp Template"),
+        help_text=_("Template for WhatsApp message"),
+    )
+
+    # ==========================================
+    # CHANNEL CONFIGURATION
+    # ==========================================
+
     enabled_channels = models.JSONField(
         default=list,
         verbose_name=_("Enabled Channels"),
-        help_text=_("List of channels this template supports"),
+        help_text=_(
+            "List of channels this template supports. Example: ['push', 'email', 'sms']"
+        ),
     )
+
+    channel_config = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_("Channel-specific Configuration"),
+        help_text=_(
+            "Optional per-channel settings. Example: "
+            "{'email': {'from_name': 'Kashee Support', 'reply_to': 'support@kashee.com'}, "
+            "'push': {'sound': 'default', 'badge': 1}}"
+        ),
+    )
+
+    # ==========================================
+    # NOTIFICATION BEHAVIOR
+    # ==========================================
 
     default_priority = models.CharField(
         max_length=10,
         choices=NotificationPriority.choices,
         default=NotificationPriority.NORMAL,
+        verbose_name=_("Default Priority"),
     )
 
     notification_type = models.CharField(
-        max_length=10, choices=NotificationType.choices, default=NotificationType.INFO
+        max_length=10,
+        choices=NotificationType.choices,
+        default=NotificationType.INFO,
+        verbose_name=_("Notification Type"),
+        help_text=_("Visual type for UI rendering (color, icon, etc.)"),
     )
 
-    # Deep linking configuration
-    route_template = models.CharField(
-        max_length=255,
+    # Action buttons (for push notifications)
+    action_buttons = models.JSONField(
+        default=list,
         blank=True,
-        verbose_name=_("Route Template"),
+        verbose_name=_("Action Buttons"),
         help_text=_(
-            "URL route template for deep linking (e.g., '/orders/{object_id}/')"
+            "List of action buttons for push notifications. Example: "
+            "[{'label': 'View Order', 'action': 'open_order'}, "
+            "{'label': 'Dismiss', 'action': 'dismiss'}]"
         ),
     )
 
-    url_name = models.CharField(
-        max_length=100,
+    # ==========================================
+    # DEEP LINK CONFIGURATION (Declarative)
+    # ==========================================
+
+    deeplink_config = models.JSONField(
+        default=dict,
         blank=True,
-        verbose_name=_("URL Name"),
-        help_text=_("Django URL name for reverse lookup"),
+        verbose_name=_("Deep Link Configuration"),
+        help_text=_(
+            "Declarative deep link configuration. DeepLinkService will use this to generate links. "
+            "Example: {"
+            "  'module': 'member', "
+            "  'url_name': 'order:detail', "
+            "  'route_template': 'orders/{{ order.id }}/', "
+            "  'fallback_template': 'https://kashee.com/orders/{{ order.id }}/', "
+            "  'inapp_route': 'order/{{ order.id }}', "
+            "  'deeplink_type': 'order_detail', "
+            "  'expires_after': 7, "
+            "  'max_uses': 1, "
+            "  'metadata': {'source': 'notification'}"
+            "}"
+        ),
     )
 
-    # Metadata
-    category = models.CharField(
-        max_length=50,
+    # ==========================================
+    # TEMPLATE VARIABLES & VALIDATION
+    # ==========================================
+
+    required_context_vars = models.JSONField(
+        default=list,
         blank=True,
-        verbose_name=_("Category"),
-        help_text=_("Grouping category (e.g., 'orders', 'users', 'system')"),
+        verbose_name=_("Required Context Variables"),
+        help_text=_(
+            "List of required variables for this template. Example: ['order', 'user', 'amount']. "
+            "Used for validation and documentation."
+        ),
     )
 
-    locale = models.CharField(
-        max_length=50,
-        default="en",
-        verbose_name=_("Locale"),
-        help_text=_("Locale (e.g., 'hi', 'en')"),
+    sample_context = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_("Sample Context"),
+        help_text=_(
+            "Sample context data for testing/preview. Example: "
+            "{'order': {'id': 123, 'total': 999}, 'user': {'name': 'John'}}"
+        ),
     )
 
-    is_active = models.BooleanField(default=True)
+    # ==========================================
+    # ANALYTICS & TRACKING
+    # ==========================================
+
+    tracking_enabled = models.BooleanField(
+        default=True,
+        verbose_name=_("Enable Tracking"),
+        help_text=_(
+            "Whether to track opens, clicks, and conversions for this template"
+        ),
+    )
+
+    analytics_metadata = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_("Analytics Metadata"),
+        help_text=_(
+            "Additional metadata for analytics. Example: {'campaign': 'summer_sale', 'cohort': 'premium'}"
+        ),
+    )
+
+    # ==========================================
+    # SCHEDULING & THROTTLING
+    # ==========================================
+
+    throttle_config = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_("Throttle Configuration"),
+        help_text=_(
+            "Rate limiting config. Example: "
+            "{'max_per_user_per_day': 3, 'min_interval_minutes': 60}"
+        ),
+    )
+
+    quiet_hours = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_("Quiet Hours"),
+        help_text=_(
+            "Do not send during these hours. Example: "
+            "{'enabled': true, 'start': '22:00', 'end': '08:00', 'timezone': 'Asia/Kolkata'}"
+        ),
+    )
+
+    # ==========================================
+    # METADATA & STATUS
+    # ==========================================
+
+    is_active = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name=_("Is Active"),
+    )
+
+    version = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Version"),
+        help_text=_("Template version for A/B testing and rollbacks"),
+    )
+
+    tags = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name=_("Tags"),
+        help_text=_(
+            "Tags for filtering and organization. Example: ['transactional', 'high-priority']"
+        ),
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_templates",
+        verbose_name=_("Created By"),
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="updated_templates",
+        verbose_name=_("Updated By"),
+    )
 
     class Meta:
         db_table = "tbl_notification_templates"
         verbose_name = _("Notification Template")
         verbose_name_plural = _("Notification Templates")
-        ordering = ["category", "name"]
+        ordering = ["category", "name", "locale"]
+        indexes = [
+            models.Index(fields=["category", "name"]),
+            models.Index(fields=["locale", "is_active"]),
+            models.Index(fields=["category", "is_active"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "locale"], name="unique_template_per_locale"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.name} ({self.category})"
+        return f"{self.name} ({self.locale}) - {self.category}"
 
-    def render_content(self, context: Dict[str, Any]) -> Dict[str, str]:
-        """Render template content with context variables"""
-        from django.template import Template, Context
+    def clean(self):
+        """Validate template configuration"""
+        errors = {}
 
-        title_tmpl = Template(self.title_template)
-        body_tmpl = Template(self.body_template)
+        # Validate Django templates
+        try:
+            Template(self.title_template)
+        except TemplateSyntaxError as e:
+            errors["title_template"] = f"Invalid template syntax: {e}"
 
+        try:
+            Template(self.body_template)
+        except TemplateSyntaxError as e:
+            errors["body_template"] = f"Invalid template syntax: {e}"
+
+        # Validate enabled channels
+        if not isinstance(self.enabled_channels, list):
+            errors["enabled_channels"] = "Must be a list of channel names"
+        else:
+            valid_channels = [c.value for c in NotificationChannel]
+            invalid = [ch for ch in self.enabled_channels if ch not in valid_channels]
+            if invalid:
+                errors["enabled_channels"] = f"Invalid channels: {invalid}"
+
+        # Validate channel-specific templates
+        if "email" in self.enabled_channels:
+            if not self.email_subject_template or not self.email_body_template:
+                errors["email_subject_template"] = (
+                    "Email templates required when email channel is enabled"
+                )
+
+        if "sms" in self.enabled_channels and not self.sms_template:
+            errors["sms_template"] = "SMS template required when SMS channel is enabled"
+
+        if "whatsapp" in self.enabled_channels and not self.whatsapp_template:
+            errors["whatsapp_template"] = (
+                "WhatsApp template required when WhatsApp channel is enabled"
+            )
+
+        # Validate deeplink_config structure
+        if self.deeplink_config:
+            valid_keys = {
+                "module",
+                "url_name",
+                "route_template",
+                "fallback_template",
+                "inapp_route",
+                "deeplink_type",
+                "expires_after",
+                "max_uses",
+                "metadata",
+            }
+            invalid_keys = set(self.deeplink_config.keys()) - valid_keys
+            if invalid_keys:
+                errors["deeplink_config"] = (
+                    f"Invalid keys in deeplink_config: {invalid_keys}"
+                )
+
+            if "module" in self.deeplink_config:
+                if self.deeplink_config["module"] not in [
+                    m.value for m in DeepLinkModule
+                ]:
+                    errors["deeplink_config"] = (
+                        f"Invalid module: {self.deeplink_config['module']}"
+                    )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def render_content(
+        self, context: Dict[str, Any], channel: Optional[str] = None
+    ) -> Dict[str, str]:
+        """
+        Render template content with context variables for specified channel.
+
+        Args:
+            context: Dictionary of template variables
+            channel: Specific channel to render for (optional)
+
+        Returns:
+            Dictionary containing rendered content for requested channel(s)
+        """
         django_context = Context(context)
+        rendered = {}
 
-        rendered = {
-            "title": title_tmpl.render(django_context),
-            "body": body_tmpl.render(django_context),
-        }
+        # Always render title and body (used by push, in-app)
+        rendered["title"] = Template(self.title_template).render(django_context)
+        rendered["body"] = Template(self.body_template).render(django_context)
 
-        if self.email_subject_template:
-            email_subject_tmpl = Template(self.email_subject_template)
-            rendered["email_subject"] = email_subject_tmpl.render(django_context)
+        # Render channel-specific content
+        if not channel or channel == "email":
+            if self.email_subject_template:
+                rendered["email_subject"] = Template(
+                    self.email_subject_template
+                ).render(django_context)
+            if self.email_body_template:
+                rendered["email_body"] = Template(self.email_body_template).render(
+                    django_context
+                )
 
-        if self.email_body_template:
-            email_body_tmpl = Template(self.email_body_template)
-            rendered["email_body"] = email_body_tmpl.render(django_context)
+        if not channel or channel == "sms":
+            if self.sms_template:
+                rendered["sms"] = Template(self.sms_template).render(django_context)
+
+        if not channel or channel == "whatsapp":
+            if self.whatsapp_template:
+                rendered["whatsapp"] = Template(self.whatsapp_template).render(
+                    django_context
+                )
 
         return rendered
 
-    def generate_deep_link(
-        self, context: Dict[str, Any], fallback_url: Optional[str] = None
-    ) -> str:
+    def get_deeplink_config(self, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Generate a production-ready smart link:
-        1. Resolve Django route
-        2. Convert to kashee:// deep link
-        3. Wrap into a smart link (https://tech.kasheemilk.com/open?target=...)
+        Get declarative deep link configuration for DeepLinkService.
+
+        This method returns the raw configuration that DeepLinkService will use
+        to generate the actual deep link. It renders any template strings in the
+        config using the provided context.
 
         Args:
-            context: Template context containing ID/slug/etc.
-            fallback_url: Optional fallback for smart link
+            context: Template context for rendering route/fallback templates
 
         Returns:
-            Full smart link URL
+            Dictionary containing deep link configuration, or None if not configured
+
+        Example return value:
+            {
+                "module": "member",
+                "url_name": "order:detail",
+                "route_template": "orders/{{ order.id }}/",
+                "route_params": {"order_id": 123},
+                "fallback_template": "https://kashee.com/orders/123/",
+                "inapp_route": "order/123",  # Rendered
+                "deeplink_type": "order_detail",
+                "expires_after": 7,
+                "max_uses": 1,
+                "metadata": {"source": "notification"}
+            }
         """
-        if not self.route_template and not self.url_name:
-            return ""
+        if not self.deeplink_config:
+            return None
 
-        # -------------------------------
-        # STEP 1: Resolve route
-        # -------------------------------
-        try:
-            if self.url_name:
-                # Extract only known kwarg keys
-                url_kwargs = {
-                    k: v
-                    for k, v in context.items()
-                    if k in ["pk", "id", "slug", "uuid", "object_id"]
-                }
-                route = reverse(self.url_name, kwargs=url_kwargs)
-            else:
-                # Render route template
-                from django.template import Template, Context
+        config = self.deeplink_config.copy()
+        django_context = Context(context)
 
-                route = Template(self.route_template).render(Context(context))
+        # Render template strings in config
+        if "route_template" in config:
+            config["route_template"] = Template(config["route_template"]).render(
+                django_context
+            )
 
-        except Exception:
-            # Fallback to template rendering
-            if self.route_template:
-                from django.template import Template, Context
+        if "fallback_template" in config:
+            config["fallback_template"] = Template(config["fallback_template"]).render(
+                django_context
+            )
 
-                route = Template(self.route_template).render(Context(context))
-            else:
-                return ""
+        if "inapp_route" in config:
+            config["inapp_route"] = Template(config["inapp_route"]).render(
+                django_context
+            )
 
-        # -------------------------------
-        # STEP 2: Convert to kashee:// scheme
-        # -------------------------------
-        # Remove leading slash => "/product/123" → "product/123"
-        clean_route = route.lstrip("/")
+        # Extract route parameters from context for url_name resolution
+        config["route_params"] = {
+            k: v
+            for k, v in context.items()
+            if k in ["pk", "id", "slug", "uuid", "object_id"] or k.endswith("_id")
+        }
 
-        # kashee://product/123
-        deep_link = build_scheme_link(clean_route)
+        return config
 
-        # -------------------------------
-        # STEP 3: Wrap inside smart-link
-        # -------------------------------
-        smart_url = build_smart_link(deep_link, fallback_url=fallback_url)
+    def validate_context(self, context: Dict[str, Any]) -> List[str]:
+        """
+        Validate that all required context variables are present.
 
-        return smart_url
+        Args:
+            context: Context dictionary to validate
+
+        Returns:
+            List of missing variable names (empty if all present)
+        """
+        missing = []
+        for var in self.required_context_vars:
+            if var not in context:
+                missing.append(var)
+        return missing
+
+    def preview(self, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Generate a preview of this template with sample or provided context.
+
+        Args:
+            context: Optional context to use (defaults to sample_context)
+
+        Returns:
+            Dictionary containing rendered content and deep link config
+        """
+        preview_context = context or self.sample_context or {}
+
+        return {
+            "name": self.name,
+            "category": self.category,
+            "locale": self.locale,
+            "channels": self.enabled_channels,
+            "priority": self.default_priority,
+            "type": self.notification_type,
+            "content": self.render_content(preview_context),
+            "deeplink_config": self.get_deeplink_config(preview_context),
+            "context_used": preview_context,
+        }
+
 
 class Notification(models.Model):
     """Individual notification instances with deep linking support."""
@@ -492,6 +850,21 @@ class Notification(models.Model):
 
         self.save(update_fields=["status", "delivery_status"])
 
+    def make_json_safe(self, context_data):
+        import decimal
+        import datetime
+
+        if isinstance(context_data, dict):
+            return {k: self.make_json_safe(v) for k, v in context_data.items()}
+        elif isinstance(context_data, list):
+            return [self.make_json_safe(v) for v in context_data]
+        elif isinstance(context_data, decimal.Decimal):
+            return float(context_data)
+        elif isinstance(context_data, (datetime.date, datetime.datetime)):
+            return context_data.isoformat()
+        else:
+            return context_data
+
     def to_fcm_payload(
         self, base_url: str = "", device_token: str = ""
     ) -> Dict[str, Any]:
@@ -504,7 +877,7 @@ class Notification(models.Model):
                 if self.app_route
                 else base_url
             )
-        
+
         # ✅ Convert context values to strings to satisfy FCM data payload rules
         safe_context = {
             k: str(v) if not isinstance(v, str) else v
@@ -1026,3 +1399,157 @@ class NotificationTrackMppCollection(models.Model):
 
     class Meta:
         db_table = "tbl_notification_track"
+
+
+class DeepLink(models.Model):
+    """
+    Universal deep link mapping model with production-ready features.
+    """
+
+    class Status(models.TextChoices):
+        ACTIVE = "active", "Active"
+        EXPIRED = "expired", "Expired"
+        REVOKED = "revoked", "Revoked"
+        CONSUMED = "consumed", "Consumed"
+
+    class Module(models.TextChoices):
+        MEMBER = "member", "Member App"
+        SAHAYAK = "sahayak", "Sahayak App"
+        PES = "pes", "PES App"
+
+    # Core fields
+    token = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="deep_links",
+        db_index=True,
+    )
+
+    # Deep link details
+    deep_link = models.CharField(max_length=512, db_index=True)  # App deep link URL
+    deep_path = models.CharField(max_length=512, blank=True)  # in app path
+    module = models.CharField(
+        max_length=50, choices=Module.choices, default=Module.MEMBER, db_index=True
+    )
+
+    # Platform-specific identifiers
+    android_package = models.CharField(max_length=200)
+    ios_bundle_id = models.CharField(max_length=200, blank=True)
+
+    # Fallback and status
+    fallback_url = models.URLField(blank=True, max_length=512)  # Web URL
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.ACTIVE, db_index=True
+    )
+
+    # Expiry management
+    expires_at = models.DateTimeField(null=True, blank=True, db_index=True)
+
+    # Usage tracking
+    max_uses = models.PositiveIntegerField(default=0, help_text="0 = unlimited")
+    use_count = models.PositiveIntegerField(default=0)
+    last_accessed_at = models.DateTimeField(null=True, blank=True)
+
+    # Metadata
+    meta = models.JSONField(default=dict, blank=True)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "deep_links"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user", "status", "created_at"]),
+            models.Index(fields=["module", "status"]),
+            models.Index(fields=["expires_at", "status"]),
+        ]
+
+    def __str__(self):
+        return f"DeepLink {self.token} → {self.deep_link} [{self.status}]"
+
+    def clean(self):
+        """Validate deep link structure."""
+        if "://" not in self.deep_link:
+            raise ValidationError("Invalid deep link format. Must contain '://'")
+
+        scheme = self.deep_link.split("://")[0]
+        expected_schemes = {
+            self.Module.MEMBER: "kashee-member",
+            self.Module.SAHAYAK: "kashee-sahayak",
+            self.Module.PES: "kashee-pes",
+        }
+
+        if self.module in expected_schemes:
+            if scheme != expected_schemes[self.module]:
+                raise ValidationError(
+                    f"Scheme '{scheme}' doesn't match module '{self.module}'"
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    @property
+    def scheme(self) -> str:
+        """Extract scheme from deep link."""
+        return self.deep_link.split("://")[0] if "://" in self.deep_link else ""
+
+    @property
+    def path(self) -> str:
+        """Extract path from deep link."""
+        return self.deep_link.split("://")[1] if "://" in self.deep_link else ""
+
+    @property
+    def is_expired(self) -> bool:
+        """Check if link has expired."""
+        if not self.expires_at:
+            return False
+        return timezone.now() > self.expires_at
+
+    @property
+    def is_exhausted(self) -> bool:
+        """Check if max uses reached."""
+        if self.max_uses == 0:
+            return False
+        return self.use_count >= self.max_uses
+
+    @property
+    def is_valid(self) -> bool:
+        """Check if link is valid and usable."""
+        return (
+            self.status == self.Status.ACTIVE
+            and not self.is_expired
+            and not self.is_exhausted
+        )
+
+    def increment_use(self):
+        """Record a link access."""
+        self.use_count += 1
+        self.last_accessed_at = timezone.now()
+
+        # Auto-consume if max uses reached
+        if self.is_exhausted:
+            self.status = self.Status.CONSUMED
+
+        self.save(update_fields=["use_count", "last_accessed_at", "status"])
+
+    def revoke(self):
+        """Manually revoke the link."""
+        self.status = self.Status.REVOKED
+        self.save(update_fields=["status", "updated_at"])
+
+    def extend_expiry(self, days: int = 7):
+        """Extend expiry by specified days."""
+        if self.expires_at:
+            self.expires_at += timedelta(days=days)
+        else:
+            self.expires_at = timezone.now() + timedelta(days=days)
+        self.save(update_fields=["expires_at", "updated_at"])

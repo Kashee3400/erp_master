@@ -87,6 +87,15 @@ LOGGING = {
         "verbose": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
+        #deeplink
+        'deeplink_file': {
+            'level': 'INFO',
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "deeplink.log"),
+            'maxBytes': 1024 * 1024 * 10,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
         # Notifications
         "notifications_file": {
             "level": "INFO",
@@ -179,9 +188,13 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
+        'deeplink': {
+            'handlers': ['deeplink_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
-
 
 STATIC_ROOT = STATIC_DIR
 
@@ -198,3 +211,18 @@ else:
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-API-KEY",
 ]
+
+
+PHONEPE_ENV = os.getenv("PHONEPE_ENV", "sandbox")
+PHONEPE_MERCHANT_ID = os.getenv("PHONEPE_MERCHANT_ID")
+PHONEPE_SALT_KEY = os.getenv("PHONEPE_SALT_KEY")
+PHONEPE_SALT_INDEX = os.getenv("PHONEPE_SALT_INDEX", "1")
+
+PHONEPE_BASE_URL = (
+    os.getenv("PHONEPE_BASE_URL_PROD")
+    if PHONEPE_ENV == "production"
+    else os.getenv("PHONEPE_BASE_URL_SANDBOX")
+)
+
+PHONEPE_REDIRECT_URL = os.getenv("PHONEPE_REDIRECT_URL")
+PHONEPE_CALLBACK_URL = os.getenv("PHONEPE_CALLBACK_URL")

@@ -1,0 +1,74 @@
+<!-- # ==========================================
+# TEMPLATE ADMIN HTML (save as templates/admin/notifications/preview.html)
+# ==========================================
+
+PREVIEW_TEMPLATE_HTML = """ -->
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h1>{{ title }}</h1>
+
+    <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2>Template Information</h2>
+        <table style="width: 100%;">
+            <tr>
+                <td><strong>Name:</strong></td>
+                <td>{{ template.name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Category:</strong></td>
+                <td>{{ template.category }}</td>
+            </tr>
+            <tr>
+                <td><strong>Locale:</strong></td>
+                <td>{{ template.locale }}</td>
+            </tr>
+            <tr>
+                <td><strong>Channels:</strong></td>
+                <td>{{ preview.channels|join:", " }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2>📱 Push / In-App</h2>
+        <div style="background: #1f2937; color: white; padding: 15px; border-radius: 8px;">
+            <h3 style="margin: 0 0 10px 0; font-size: 16px;">{{ preview.content.title }}</h3>
+            <p style="margin: 0; opacity: 0.9;">{{ preview.content.body }}</p>
+        </div>
+    </div>
+
+    {% if preview.content.email_subject %}
+    <div style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2>📧 Email</h2>
+        <p><strong>Subject:</strong> {{ preview.content.email_subject }}</p>
+        <div style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 4px;">
+            {{ preview.content.email_body|safe }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if preview.deeplink_config %}
+    <div style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2>🔗 Deep Link Configuration</h2>
+        <pre
+            style="background: #f3f4f6; padding: 15px; border-radius: 4px; overflow-x: auto;">{{ preview.deeplink_config|pprint }}</pre>
+    </div>
+    {% endif %}
+
+    <div style="background: #f9fafb; padding: 15px; border-radius: 4px;">
+        <h3>Context Used</h3>
+        <pre
+            style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;">{{ preview.context_used|pprint }}</pre>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'admin:notifications_notificationtemplate_change' template.pk %}" class="button">Edit
+            Template</a>
+        
+    </div>
+</div>
+{% endblock %}
+<!-- """ -->

@@ -8,22 +8,37 @@ from .reportees_view import TopLevelReporteesView
 
 # Case entry
 from .case_entry_view import (
-    CaseEntryViewSet, AdvancedCaseSearchView, NonMemberViewSet, NonMemberCattleViewSet,
+    CaseEntryViewSet,
+    AdvancedCaseSearchView,
+    NonMemberViewSet,
+    NonMemberCattleViewSet,
     search_owner,
     recent_cases,
     bulk_sync,
     dashboard_stats,
     quick_visit_registration,
     calculate_cost,
-    TreatmentCostViewset
+    TreatmentCostViewset,
+    CasePaymentViewSet,
 )
 
 # Celery Views
 from .celery_views import (
-    CeleryDashboardAPIView, TasksAPIView, TasksByNameAPIView, TaskControlAPIView,
-    QueueControlAPIView, QueueLengthAPIView, TaskDetailAPIView, TaskHistoryAPIView, RegisteredTasksAPIView,
-    ReservedTasksAPIView, ScheduledTasksAPIView, WorkerStatsAPIView, WorkerControlAPIView,
+    CeleryDashboardAPIView,
+    TasksAPIView,
+    TasksByNameAPIView,
+    TaskControlAPIView,
+    QueueControlAPIView,
+    QueueLengthAPIView,
+    TaskDetailAPIView,
+    TaskHistoryAPIView,
+    RegisteredTasksAPIView,
+    ReservedTasksAPIView,
+    ScheduledTasksAPIView,
+    WorkerStatsAPIView,
+    WorkerControlAPIView,
 )
+
 # Choices views
 from .choices_view import (
     CattleCaseStatusViewSet,
@@ -43,7 +58,8 @@ from .choices_view import (
     FarmerMeetingViewSet,
     ObservationTypeViewSet,
     DiseaseViewset,
-    SymptomViewset
+    SymptomViewset,
+    PaymentMethodViewset,
 )
 
 # Medicine stock views
@@ -96,10 +112,12 @@ __all__ = [
     "quick_visit_registration",
     "bulk_sync",
     "recent_cases",
-    'dashboard_stats',
+    "dashboard_stats",
     "calculate_cost",
     "NonMemberCattleViewSet",
     "DiseaseViewset",
     "SymptomViewset",
-    "TreatmentCostViewset"
+    "TreatmentCostViewset",
+    "CasePaymentViewSet",
+    "PaymentMethodViewset",
 ]

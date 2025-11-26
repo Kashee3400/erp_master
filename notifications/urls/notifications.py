@@ -1,7 +1,7 @@
 # urls.py
 from django.urls import path
-from . import device_registration as views
-from .views import (
+from ..views import device_registration as views
+from ..views.notification_view import (
     UnreadNotificationCountView,
     NotificationDetailView,
     NotificationListView,

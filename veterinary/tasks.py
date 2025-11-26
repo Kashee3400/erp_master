@@ -8,6 +8,11 @@ from .models.excel_model import ExcelUploadSession
 from .utils.exce_util import process_import_enhanced
 from .utils.inventory_utils import get_inventory_alerts
 from django.core.management import call_command
+from .models.case_models import (
+    CasePayment,
+    PaymentStatusChoices,
+)
+from django.utils import timezone
 
 import os, logging
 
@@ -143,3 +148,93 @@ def process_member_sync_notifications(self):
         logger.error(f"Error processing MPP collection notifications: {exc}")
         # Retry after 5 minutes if failed
         raise self.retry(exc=exc, countdown=300)
+
+
+@shared_task
+def check_overdue_payments():
+    """
+    Check for overdue payments and send reminders
+    Run this daily using celery beat
+    """
+    try:
+        overdue_payments = CasePayment.objects.filter(
+            status=PaymentStatusChoices.PENDING, due_date__lt=timezone.now().date()
+        )
+
+        for payment in overdue_payments:
+            send_overdue_reminder.delay(payment.id)
+
+        return f"Checked {overdue_payments.count()} overdue payments"
+    except Exception as e:
+        logger.error(f"Error checking overdue payments: {e}")
+
+
+@shared_task
+def send_overdue_reminder(payment_id):
+    """Send reminder for overdue payment"""
+    try:
+        payment = CasePayment.objects.get(id=payment_id)
+
+        if payment.is_overdue():
+            case = payment.case_entry
+            user = case.created_by
+
+            context = {
+                "case_no": case.case_no,
+                "amount_due": case.payment_summary.amount_due,
+                "due_date": payment.due_date,
+                "days_overdue": (timezone.now().date() - payment.due_date).days,
+            }
+
+            from django.core.mail import send_mail
+            from django.template.loader import render_to_string
+
+            send_mail(
+                subject=f"⚠️ Payment Overdue for Case {case.case_no}",
+                message=render_to_string("payment_overdue.txt", context),
+                from_email="noreply@vetcare.com",
+                recipient_list=[user.email],
+                html_message=render_to_string("payment_overdue.html", context),
+            )
+    except Exception as e:
+        logger.error(f"Error sending overdue reminder: {e}")
+
+
+@shared_task
+def retry_failed_payments():
+    """
+    Auto-retry failed payments (only for online methods with retries < 3)
+    Run this periodically using celery beat
+    """
+    try:
+        failed_payments = CasePayment.objects.filter(
+            status=PaymentStatusChoices.FAILED,
+            retry_count__lt=3,
+            last_retry_at__isnull=True,  # Not yet retried
+        )
+
+        for payment in failed_payments[:10]:  # Process 10 at a time
+            retry_payment_task.delay(payment.id)
+
+        return f"Scheduled {failed_payments.count()} payments for retry"
+    except Exception as e:
+        logger.error(f"Error retrying failed payments: {e}")
+
+# TODO:process_payment_with_gateway(payment)
+@shared_task
+def retry_payment_task(payment_id):
+    """Retry a specific failed payment"""
+    try:
+        payment = CasePayment.objects.get(id=payment_id)
+
+        if payment.payment_status == PaymentStatusChoices.FAILED:
+            payment.payment_status = PaymentStatusChoices.PROCESSING
+            payment.retry_count += 1
+            payment.last_retry_at = timezone.now()
+            payment.save()
+
+            # Call your payment gateway integration here
+            # process_payment_with_gateway(payment)
+
+    except Exception as e:
+        logger.error(f"Error retrying payment {payment_id}: {e}")

@@ -6,6 +6,10 @@ from import_export.admin import ImportExportModelAdmin
 from .resources import SahayakIncentivesResource, UserResource, UserDeviceResource
 from .models import *
 from facilitator.models.user_profile_model import UserProfile
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from .filters import PublishedFilter,RecentNewsFilter
 
 User = get_user_model()
 
@@ -17,9 +21,6 @@ admin.site.unregister(User)
 class UserAdmin(ImportExportModelAdmin, DefaultUserAdmin):
     resource_class = UserResource
     list_display = ("username", "email", "first_name", "last_name", "is_staff")
-
-
-from django.db import transaction
 
 
 @admin.action(description="Transfer MPP Code → UserProfile")
@@ -239,31 +240,279 @@ class SahayakIncentivesAdmin(ImportExportModelAdmin):
     readonly_fields = ("milk_incentive_payable", "payable", "closing")
 
 
-@admin.register(SahayakFeedback)
-class SahayakFeedbackAdmin(ImportExportModelAdmin):
-    list_display = (
-        "feedback_id",
-        "sender",
-        "mpp_code",
-        "status",
-        "created_at",
-        "resolved_at",
-        "updated_at",
-    )
-    search_fields = (
-        "feedback_id",
-        "sender__username",
-        "sender__first_name",
-        "sender_last_name",
-    )
-
-
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ("title", "author", "module", "published_date", "is_published")
-    list_filter = ("is_published", "published_date", "module")
-    search_fields = ("title", "author", "tags")
+    """
+    Comprehensive admin configuration for News model.
+    Optimized for production with proper query optimization and UX.
+    """
+
+    # List view configuration
+    list_display = [
+        "title_with_status",
+        "author",
+        "module_badge",
+        "published_date",
+        "view_count",
+        "featured_indicator",
+        "read_status",
+        "quick_actions",
+    ]
+
+    list_filter = [
+        PublishedFilter,
+        RecentNewsFilter,
+        "module",
+        "is_featured",
+        "is_read",
+        "author",
+        "published_date",
+    ]
+
+    search_fields = [
+        "title",
+        "summary",
+        "content",
+        "author",
+        "tags",
+    ]
+
+    list_per_page = 25
+
+    # Make certain fields editable directly in list view
+    # list_editable = ["is_featured", "is_read"]
+
+    # Date hierarchy for better navigation
+    date_hierarchy = "published_date"
+
+    # Ordering
+    ordering = ["-published_date", "-updated_date"]
+
+    # Detail view configuration
+    fieldsets = (
+        (
+            _("Basic Information"),
+            {
+                "fields": ("title", "slug", "author", "module"),
+                "description": _("Core article information"),
+            },
+        ),
+        (
+            _("Content"),
+            {
+                "fields": ("summary", "content", "image"),
+                "classes": ("wide",),
+            },
+        ),
+        (
+            _("Categorization"),
+            {
+                "fields": ("tags",),
+                "description": _("Enter comma-separated tags"),
+            },
+        ),
+        (
+            _("Publication Settings"),
+            {
+                "fields": ("is_published", "is_featured"),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            _("Status & Analytics"),
+            {
+                "fields": ("is_read", "view_count", "published_date", "updated_date"),
+                "classes": ("collapse",),
+                "description": _("Read-only fields showing article statistics"),
+            },
+        ),
+    )
+
+    # Read-only fields
+    readonly_fields = [
+        "published_date",
+        "updated_date",
+        "view_count",
+        "slug",  # Auto-generated
+    ]
+
+    # Prepopulated fields
     prepopulated_fields = {"slug": ("title",)}
+
+    # Autocomplete fields (if using newer Django versions)
+    autocomplete_fields = []
+
+    # Actions
+    actions = [
+        "make_published",
+        "make_draft",
+        "mark_as_featured",
+        "unmark_featured",
+        "mark_as_read",
+        "mark_as_unread",
+        "duplicate_article",
+    ]
+
+    # Save configuration
+    save_on_top = True
+
+    # Custom methods for list display
+    @admin.display(description=_("Title"), ordering="title")
+    def title_with_status(self, obj):
+        """Display title with publication status indicator"""
+        status_icon = "✅" if obj.is_published else "📝"
+        color = "#28a745" if obj.is_published else "#ffc107"
+        return format_html(
+            '<span style="color: {};">{}</span> <strong>{}</strong>',
+            color,
+            status_icon,
+            obj.title[:50] + ("..." if len(obj.title) > 50 else ""),
+        )
+
+    @admin.display(description=_("Module"), ordering="module")
+    def module_badge(self, obj):
+        """Display module as a colored badge"""
+        colors = {
+            "member": "#007bff",
+            "facilitator": "#28a745",
+            "sahayak": "#ffc107",
+            "admin": "#dc3545",
+            "all": "#6f42c1",
+        }
+        color = colors.get(obj.module, "#6c757d")
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 8px; '
+            'border-radius: 3px; font-size: 11px; font-weight: bold;">{}</span>',
+            color,
+            obj.get_module_display(),
+        )
+
+    @admin.display(description=_("Featured"), boolean=True, ordering="is_featured")
+    def featured_indicator(self, obj):
+        """Show if article is featured"""
+        return obj.is_featured
+
+    @admin.display(description=_("Read"), boolean=True, ordering="is_read")
+    def read_status(self, obj):
+        """Show read status"""
+        return obj.is_read
+
+    @admin.display(description=_("Actions"))
+    def quick_actions(self, obj):
+        """Quick action links"""
+        view_url = obj.get_absolute_url()
+        return format_html(
+            '<a class="button" href="{}" target="_blank">👁 View</a>', view_url
+        )
+
+    # Custom admin actions
+    @admin.action(description=_("Publish selected articles"))
+    def make_published(self, request, queryset):
+        """Bulk publish articles"""
+        updated = queryset.update(is_published=True)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) successfully published."),
+        )
+
+    @admin.action(description=_("Unpublish selected articles"))
+    def make_draft(self, request, queryset):
+        """Bulk unpublish articles"""
+        updated = queryset.update(is_published=False)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) moved to draft."),
+        )
+
+    @admin.action(description=_("Mark as featured"))
+    def mark_as_featured(self, request, queryset):
+        """Mark articles as featured"""
+        updated = queryset.update(is_featured=True)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) marked as featured."),
+        )
+
+    @admin.action(description=_("Unmark as featured"))
+    def unmark_featured(self, request, queryset):
+        """Remove featured status"""
+        updated = queryset.update(is_featured=False)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) unmarked as featured."),
+        )
+
+    @admin.action(description=_("Mark as read"))
+    def mark_as_read(self, request, queryset):
+        """Mark articles as read"""
+        updated = queryset.update(is_read=True)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) marked as read."),
+        )
+
+    @admin.action(description=_("Mark as unread"))
+    def mark_as_unread(self, request, queryset):
+        """Mark articles as unread"""
+        updated = queryset.update(is_read=False)
+        self.message_user(
+            request,
+            _(f"{updated} article(s) marked as unread."),
+        )
+
+    @admin.action(description=_("Duplicate selected articles"))
+    def duplicate_article(self, request, queryset):
+        """Duplicate selected articles"""
+        count = 0
+        for article in queryset:
+            article.pk = None
+            article.title = f"Copy of {article.title}"
+            article.slug = None
+            article.is_published = False
+            article.save()
+            count += 1
+
+        self.message_user(
+            request,
+            _(f"{count} article(s) duplicated successfully."),
+        )
+
+    # Query optimization
+    def get_queryset(self, request):
+        """Optimize queryset to reduce database queries"""
+        qs = super().get_queryset(request)
+        # Add select_related/prefetch_related when you have ForeignKey relationships
+        return qs
+
+    # Custom form validation
+    def save_model(self, request, obj, form, change):
+        """Custom save logic"""
+        # Auto-set author from current user if not set
+        if not change and not obj.author:
+            obj.author = request.user.get_full_name() or request.user.username
+
+        super().save_model(request, obj, form, change)
+
+    # Change form template with additional context
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
+        """Add extra context to change form"""
+        extra_context = extra_context or {}
+
+        if object_id:
+            obj = self.get_object(request, object_id)
+            extra_context["reading_time"] = obj.reading_time
+            extra_context["tags_list"] = obj.get_tags_list()
+
+        return super().changeform_view(
+            request, object_id, form_url, extra_context=extra_context
+        )
+
+    # # Customize admin site appearance
+    # class Media:
+    #     css = {
+    #         'all': ('admin/css/news_admin.css',)  # Add custom CSS if needed
+    #     }
+    #     js = ('admin/js/news_admin.js',)  # Add custom JS if needed
 
 
 @admin.register(RewardedAdTransaction)

@@ -3,8 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .model import (
-    NotificationTemplate,
+from ..model import (
     Notification,
     NotificationPreferences,
     NotificationGroup,
@@ -12,161 +11,6 @@ from .model import (
     NotificationClickTracking,
     NotificationAnalytics,
 )
-
-
-@admin.register(NotificationTemplate)
-class NotificationTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        "name",
-        "category",
-        "notification_type",
-        "default_priority",
-        "active_status",
-        "channels_display",
-        "notification_count",
-        "updated_at",
-    )
-    list_filter = (
-        "is_active",
-        "category",
-        "notification_type",
-        "default_priority",
-        "created_at",
-    )
-    search_fields = ("name", "category", "title_template", "body_template")
-    readonly_fields = (
-        "created_at",
-        "updated_at",
-        "notification_count",
-        "usage_stats",
-    )
-
-    fieldsets = (
-        (
-            _("Basic Information"),
-            {
-                "fields": (
-                    "name",
-                    "category",
-                    "is_active",
-                    "notification_type",
-                    "default_priority",
-                )
-            },
-        ),
-        (
-            _("Content"),
-            {
-                "fields": (
-                    "title_template",
-                    "body_template",
-                    "email_subject_template",
-                    "email_body_template",
-                )
-            },
-        ),
-        (
-            _("Channels & Configuration"),
-            {
-                "fields": ("enabled_channels",),
-                "description": _("Select channels this template supports"),
-            },
-        ),
-        (
-            _("Deep Linking"),
-            {
-                "fields": ("route_template", "url_name"),
-                "classes": ("collapse",),
-            },
-        ),
-        (
-            _("Statistics"),
-            {
-                "fields": ("notification_count", "usage_stats"),
-                "classes": ("collapse",),
-            },
-        ),
-        (
-            _("Metadata"),
-            {
-                "fields": ("created_at", "updated_at"),
-                "classes": ("collapse",),
-            },
-        ),
-    )
-
-    ordering = ("category", "name")
-    date_hierarchy = "created_at"
-
-    def active_status(self, obj):
-        """Display active status as colored badge"""
-        if obj.is_active:
-            return format_html(
-                '<span style="background-color: #28a745; color: white; '
-                'padding: 3px 10px; border-radius: 3px;">Active</span>'
-            )
-        return format_html(
-            '<span style="background-color: #6c757d; color: white; '
-            'padding: 3px 10px; border-radius: 3px;">Inactive</span>'
-        )
-
-    active_status.short_description = _("Status")
-
-    def channels_display(self, obj):
-        """Display enabled channels as badges"""
-        if not obj.enabled_channels:
-            return "-"
-        badges = []
-        colors = {
-            "push": "#007bff",
-            "email": "#17a2b8",
-            "sms": "#ffc107",
-            "in_app": "#28a745",
-        }
-        for channel in obj.enabled_channels:
-            color = colors.get(channel, "#6c757d")
-            badges.append(
-                f'<span style="background-color: {color}; color: white; '
-                f'padding: 3px 8px; border-radius: 3px; margin-right: 5px;">{channel}</span>'
-            )
-        return format_html(" ".join(badges))
-
-    channels_display.short_description = _("Channels")
-
-    def notification_count(self, obj):
-        """Show number of notifications created from this template"""
-        count = obj.notifications.count()
-        return format_html(
-            '<span style="font-weight: bold; color: #007bff;">{}</span>', count
-        )
-
-    notification_count.short_description = _("Total Notifications")
-
-    def usage_stats(self, obj):
-        """Display detailed usage statistics"""
-        total = obj.notifications.count()
-        delivered = obj.notifications.filter(status="delivered").count()
-        failed = obj.notifications.filter(status="failed").count()
-        read = obj.notifications.filter(is_read=True).count()
-
-        delivery_rate = ((delivered / total) * 100) if total > 0 else 0
-        read_rate = ((read / total) * 100) if total > 0 else 0
-
-        stats = (
-            f"<strong>Total:</strong> {total}<br>"
-            f"<strong>Delivered:</strong> {delivered} ({delivery_rate:.1f}%)<br>"
-            f"<strong>Failed:</strong> {failed}<br>"
-            f"<strong>Read:</strong> {read} ({read_rate:.1f}%)"
-        )
-        return format_html(stats)
-
-    usage_stats.short_description = _("Usage Statistics")
-
-    # def has_delete_permission(self, request, obj=None):
-    #     """Prevent deletion of templates with active notifications"""
-    #     if obj and obj.notifications.filter(status__in=["pending", "queued"]).exists():
-    #         return False
-    #     return super().has_delete_permission(request, obj)
 
 
 @admin.register(Notification)
@@ -292,10 +136,10 @@ class NotificationAdmin(admin.ModelAdmin):
 
     def template_name(self, obj):
         """Display template with link to edit"""
-        url = reverse("admin:notifications_notificationtemplate_change", args=[obj.template.id])
-        return format_html(
-            '<a href="{}">{}</a>', url, obj.template.name
+        url = reverse(
+            "admin:notifications_notificationtemplate_change", args=[obj.template.id]
         )
+        return format_html('<a href="{}">{}</a>', url, obj.template.name)
 
     template_name.short_description = _("Template")
 
@@ -303,7 +147,9 @@ class NotificationAdmin(admin.ModelAdmin):
         """Display recipient email with link"""
         url = reverse("admin:auth_user_change", args=[obj.recipient.id])
         return format_html(
-            '<a href="{}">{}</a>', url, obj.recipient.email if obj.recipient.email else obj.recipient.username
+            '<a href="{}">{}</a>',
+            url,
+            obj.recipient.email if obj.recipient.email else obj.recipient.username,
         )
 
     recipient_email.short_description = _("Recipient")
@@ -387,7 +233,9 @@ class NotificationAdmin(admin.ModelAdmin):
             for channel, status in obj.delivery_status.items():
                 status_text = status.get("status", "unknown")
                 delivered_at = status.get("delivered_at", "N/A")
-                summary += f"<strong>{channel}:</strong> {status_text} ({delivered_at})<br>"
+                summary += (
+                    f"<strong>{channel}:</strong> {status_text} ({delivered_at})<br>"
+                )
         else:
             summary += "No per-channel tracking"
         return format_html(summary)
@@ -481,13 +329,11 @@ class NotificationPreferencesAdmin(admin.ModelAdmin):
         """Display template or category"""
         if obj.template:
             return format_html(
-                '<strong>Template:</strong> {}<br><small>Category: {}</small>',
+                "<strong>Template:</strong> {}<br><small>Category: {}</small>",
                 obj.template.name,
                 obj.template.category,
             )
-        return format_html(
-            '<strong>Category:</strong> {}', obj.category or "All"
-        )
+        return format_html("<strong>Category:</strong> {}", obj.category or "All")
 
     template_or_category.short_description = _("Target")
 
@@ -531,7 +377,12 @@ class NotificationPreferencesAdmin(admin.ModelAdmin):
 
 @admin.register(NotificationGroup)
 class NotificationGroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "notification_count", "created_at", "related_object_display")
+    list_display = (
+        "name",
+        "notification_count",
+        "created_at",
+        "related_object_display",
+    )
     list_filter = ("created_at",)
     search_fields = ("name", "description", "uuid")
     readonly_fields = ("uuid", "created_at", "notification_list")
@@ -793,10 +644,12 @@ class NotificationClickTrackingAdmin(admin.ModelAdmin):
     def user_agent_short(self, obj):
         """Display shortened user agent"""
         if obj.user_agent:
-            short = obj.user_agent[:50] + "..." if len(obj.user_agent) > 50 else obj.user_agent
-            return format_html(
-                '<small title="{}">{}</small>', obj.user_agent, short
+            short = (
+                obj.user_agent[:50] + "..."
+                if len(obj.user_agent) > 50
+                else obj.user_agent
             )
+            return format_html('<small title="{}">{}</small>', obj.user_agent, short)
         return "-"
 
     user_agent_short.short_description = _("User Agent")

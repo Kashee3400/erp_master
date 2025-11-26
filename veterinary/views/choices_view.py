@@ -271,8 +271,10 @@ class BusinessHierarchyViewSet(BaseModelViewSet):
         "mpp_code",
         "mpp_ex_code",
         "mpp_tr_code",
+        "route_code",
+        "route_ex_code",
     ]
-    search_fields = ["mcc_name", "mpp_code", "mpp_ex_code"]
+    search_fields = ["mcc_name", "route_name", "mpp_code", "mpp_ex_code"]
     ordering_fields = ["mpp_ex_code"]
     ordering = ["mpp_ex_code"]
 
@@ -293,7 +295,7 @@ class MemberMasterCopyViewSet(BaseModelViewSet):
         ).first()
 
         serializer = self.get_serializer(member)
-        
+
         return custom_response(
             status_text="success",
             message="Member details retrieved successfully.",
@@ -476,3 +478,15 @@ class DiseaseViewset(BaseModelViewSet):
     serializer_class = DiseaseSerializer
     queryset = Disease.objects.all()
     filterset_class = DiseaseFilter
+
+
+class PaymentMethodViewset(BaseModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = PaymentMethod.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return PaymentMethodLiteSerializer
+
+        return PaymentMethodSerializer

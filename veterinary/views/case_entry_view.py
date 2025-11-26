@@ -1,16 +1,25 @@
 # views.py
 from rest_framework import generics, status, permissions
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
 import error_formatter
-from util.response import custom_response
+from util.response import custom_response, ResponseMixin
 from .choices_view import BaseModelViewSet
 from ..models.models import NonMember, NonMemberCattle, MembersMasterCopy
-from ..models.case_models import CaseEntry, TreatmentCostConfiguration
+from ..models.case_models import (
+    CaseEntry,
+    TreatmentCostConfiguration,
+    CasePayment,
+    PaymentMethod,
+    StatusChoices,
+    PaymentStatusChoices,
+    PaymentMethodChoices,
+    TimeSlotChoices,
+)
 from ..serializers.case_entry_serializer import (
     NonMemberSerializer,
     NonMemberCattleSerializer,
@@ -20,11 +29,14 @@ from ..serializers.case_entry_serializer import (
     OwnerSearchSerializer,
     CostCalculationSerializer,
     TreatmentCostConfigurationSerializer,
+    CasePaymentSerializer,
+    CaseEntryPaymentSerializer,
+    CasePaymentSummarySerializer,
 )
-from rest_framework.decorators import action
-from django.db.models import Count
+
+from django.shortcuts import get_object_or_404
+from django.db import transaction
 from django.db.models.functions import TruncMonth
-from ..choices import StatusChoices
 
 
 class NonMemberViewSet(BaseModelViewSet):
@@ -42,8 +54,6 @@ class NonMemberViewSet(BaseModelViewSet):
 
 
 class TreatmentCostViewset(BaseModelViewSet):
-    """ViewSet for managing non-members"""
-
     queryset = TreatmentCostConfiguration.objects.all()
     serializer_class = TreatmentCostConfigurationSerializer
     authentication_classes = [JWTAuthentication]
@@ -57,6 +67,21 @@ class TreatmentCostViewset(BaseModelViewSet):
         "animal_tag_type",
         "treatment_type",
     )
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        now = timezone.localtime().time()
+
+        # Define 10 AM cutoff
+        cutoff = timezone.datetime.strptime("10:00", "%H:%M").time()
+
+        if now < cutoff:
+            # Before 10 AM
+            return qs.filter(time_slot=TimeSlotChoices.BEFORE_10AM)
+        else:
+            # After 10 AM
+            return qs.filter(time_slot=TimeSlotChoices.AFTER_10AM)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -77,20 +102,7 @@ class NonMemberCattleViewSet(BaseModelViewSet):
     filterset_fields = ("is_deleted", "locale", "sync", "non_member_id")
 
 
-from django.db.models import Count
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from django.db.models.functions import TruncMonth
-from rest_framework import status, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
-
-# Assuming you already import CaseEntry, CaseEntrySerializer, CaseEntryListSerializer, etc.
-# and custom_response from your utils
-
-
-class CaseEntryViewSet(BaseModelViewSet):
+class CaseEntryViewSet(ResponseMixin, BaseModelViewSet):
     """Enhanced ViewSet for managing case entries (both member and non-member)."""
 
     queryset = CaseEntry.objects.all()
@@ -115,6 +127,7 @@ class CaseEntryViewSet(BaseModelViewSet):
         queryset = super().get_queryset()
         user = self.request.user
         request = self.request
+
         case_type = request.GET.get("type")
         mobile = request.GET.get("mobile")
 
@@ -132,39 +145,37 @@ class CaseEntryViewSet(BaseModelViewSet):
             "cattle__owner", "non_member_cattle__non_member", "created_by"
         ).order_by("-created_at")
 
-        # Superuser sees everything
         if user.is_superuser:
             return queryset
 
-        # Get manageable user IDs using hierarchy checker
         manageable_user_ids = self.get_manageable_users(user)
         return queryset.filter(created_by__id__in=manageable_user_ids)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-    # ----------------------------
+    # -----------------------------------------------------
     # 🧭 Dashboard Statistics API
-    # ----------------------------
+    # -----------------------------------------------------
     @action(detail=False, methods=["get"], url_path="dashboard")
     def dashboard(self, request):
-        """Provides aggregated statistics for case entries."""
         qs = self.get_queryset()
-        total_cases = qs.count()
         today = timezone.localdate()
-        today_cases = qs.filter(created_at__date=today).count()
-        member_cases = qs.member_cases().count()
-        non_member_cases = qs.non_member_cases().count()
-        emergency_cases = qs.filter(is_emergency=True).count()
 
-        # Status-based counts
-        pending_cases = qs.filter(status=StatusChoices.PENDING).count()
-        completed_cases = qs.filter(status=StatusChoices.COMPLETED).count()
-        confirmed_cases = qs.filter(status=StatusChoices.CONFIRMED).count()
-        cancelled_cases = qs.filter(status=StatusChoices.CANCELLED).count()
-
-        recent_cases_qs = qs.order_by("-created_at")[:5]
-        recent_cases = CaseEntryListSerializer(recent_cases_qs, many=True).data
+        data = {
+            "total_cases": qs.count(),
+            "today_cases": qs.filter(created_at__date=today).count(),
+            "member_cases": qs.member_cases().count(),
+            "non_member_cases": qs.non_member_cases().count(),
+            "emergency_cases": qs.filter(is_emergency=True).count(),
+            "pending_cases": qs.filter(status=StatusChoices.PENDING).count(),
+            "completed_cases": qs.filter(status=StatusChoices.COMPLETED).count(),
+            "confirmed_cases": qs.filter(status=StatusChoices.CONFIRMED).count(),
+            "cancelled_cases": qs.filter(status=StatusChoices.CANCELLED).count(),
+            "recent_cases": CaseEntryListSerializer(
+                qs.order_by("-created_at")[:5], many=True
+            ).data,
+        }
 
         monthly_stats_qs = (
             qs.annotate(month=TruncMonth("created_at"))
@@ -172,56 +183,30 @@ class CaseEntryViewSet(BaseModelViewSet):
             .annotate(count=Count("case_no"))
             .order_by("month")
         )
-        cases_by_month = {
+
+        data["cases_by_month"] = {
             entry["month"].strftime("%Y-%m"): entry["count"]
             for entry in monthly_stats_qs
             if entry["month"]
         }
 
-        data = {
-            "total_cases": total_cases,
-            "member_cases": member_cases,
-            "non_member_cases": non_member_cases,
-            "emergency_cases": emergency_cases,
-            "pending_cases": pending_cases,
-            "today_cases": today_cases,
-            "cancelled_cases": cancelled_cases,
-            "completed_cases": completed_cases,
-            "confirmed_cases": confirmed_cases,
-            "recent_cases": recent_cases,
-            "cases_by_month": cases_by_month,
-        }
-
-        return custom_response(
-            status_text="success",
+        return self.success_response(
             data=data,
             message=_("Dashboard Loaded..."),
-            status_code=status.HTTP_200_OK,
         )
 
-    # ------------------------------------------
-    # 🏭 MCC / MPP Based Filter API
-    # ------------------------------------------
+    # -----------------------------------------------------
+    # 🏭 MCC / MPP Filter API
+    # -----------------------------------------------------
     @action(detail=False, methods=["get"], url_path="by-mcc-mpp")
     def get_by_mcc_mpp(self, request):
-        """
-        Filter cases based on MCC and/or MPP code.
-        Accepts:
-            - mcc_code (str)
-            - mpp_code (str)
-            - strict (bool, optional) → require both codes to match
-        Example:
-            /api/cases/by-mcc-mpp/?mcc_code=MCC001&mpp_code=10001266
-        """
         mcc_code = request.query_params.get("mcc_code")
         mpp_code = request.query_params.get("mpp_code")
         strict = request.query_params.get("strict", "false").lower() == "true"
 
         if not mcc_code and not mpp_code:
-            return custom_response(
-                status_text="error",
+            return self.error_response(
                 message=_("Please provide at least one of mcc_code or mpp_code."),
-                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         queryset = self.get_queryset().by_mcc_mpp(
@@ -230,19 +215,16 @@ class CaseEntryViewSet(BaseModelViewSet):
             strict=strict,
         )
 
-        # ✅ Apply pagination properly
+        # DRF pagination check
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = CaseEntryListSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        # If pagination is disabled or page not found
         serializer = CaseEntryListSerializer(queryset, many=True)
-        return custom_response(
-            status_text="success",
+        return self.success_response(
             data=serializer.data,
             message=_("Cases filtered by MCC/MPP successfully."),
-            status_code=status.HTTP_200_OK,
         )
 
 
@@ -260,10 +242,14 @@ def quick_visit_registration(request):
     serializer = QuickVisitRegistrationSerializer(
         data=request.data, context={"request": request}
     )
+    from ..services.case_entry_service import CaseEntryService
 
     try:
         serializer.is_valid(raise_exception=True)
         case_entry = serializer.create(serializer.validated_data)
+        # Business logic here
+        CaseEntryService.handle_case_creation(case_entry, request.user)
+
         response_serializer = CaseEntrySerializer(case_entry)
 
         return custom_response(
@@ -514,7 +500,6 @@ def bulk_sync(request):
         )
 
 
-# Optional: Custom filtering and search views
 class AdvancedCaseSearchView(generics.ListAPIView):
     """
     Advanced search view with multiple filter options
@@ -560,3 +545,183 @@ class AdvancedCaseSearchView(generics.ListAPIView):
             )
 
         return queryset.order_by("-created_at")
+
+
+class CasePaymentViewSet(ResponseMixin, BaseModelViewSet):
+    """Handle case payment operations"""
+
+    serializer_class = CasePaymentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    queryset = CasePayment.objects.all()
+    lookup_field = "pk"
+
+    def get_queryset(self):
+        return CasePayment.objects.filter(
+            case_entry__created_by=self.request.user
+        ).order_by("-collected_date")
+
+    # -------------------------------------------------------------
+    # 1️⃣ MAKE INITIAL PAYMENT
+    # -------------------------------------------------------------
+    @action(detail=False, methods=["post"], url_path="make-payment")
+    def create_payment_for_case(self, request):
+        case_no = request.data.get("case_no")
+        payment_method_id = request.data.get("payment_method_id")
+        due_date_str = request.data.get("due_date")
+
+        # Parse due date
+        due_date = None
+        if due_date_str:
+            try:
+                due_date = timezone.datetime.strptime(due_date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return self.error_response("Invalid date format, expected YYYY-MM-DD")
+
+        try:
+            case_entry = get_object_or_404(CaseEntry, case_no=case_no)
+            payment_method = get_object_or_404(PaymentMethod, id=payment_method_id)
+
+            with transaction.atomic():
+                payment = case_entry.create_initial_payment(
+                    payment_method=payment_method, due_date=due_date
+                )
+                case_entry.payment_method = payment_method
+                case_entry.save()
+
+            serializer = self.get_serializer(payment)
+            return self.success_response(
+                data=serializer.data,
+                message="Payment created successfully",
+                status_code=status.HTTP_201_CREATED,
+            )
+
+        except Exception as e:
+            return self.error_response(str(e))
+
+    # -------------------------------------------------------------
+    # 2️⃣ PROCESS ONLINE PAYMENT
+    # -------------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="process-online-payment")
+    def process_online_payment(self, request, pk=None):
+        payment = self.get_object()
+
+        if payment.case_entry.payment_method.method != PaymentMethodChoices.ONLINE:
+            return self.error_response("This payment method is not online")
+
+        transaction_id = request.data.get("transaction_id")
+        amount = request.data.get("amount", payment.amount)
+        gateway_response = request.data.get("gateway_response")
+
+        if not transaction_id:
+            return self.error_response("Transaction ID is required")
+
+        try:
+            with transaction.atomic():
+                payment.amount = amount
+
+                if gateway_response:
+                    payment.gateway_response = gateway_response
+
+                payment.mark_as_completed(transaction_id=transaction_id)
+                payment.case_entry.payment_summary.refresh_summary()
+
+            serializer = self.get_serializer(payment)
+            return self.success_response(
+                data=serializer.data,
+                message="Payment processed successfully",
+            )
+
+        except Exception as e:
+            return self.error_response(str(e))
+
+    # -------------------------------------------------------------
+    # 3️⃣ MARK MILK BILL PAID
+    # -------------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="mark-milk-bill-paid")
+    def mark_milk_bill_paid(self, request, pk=None):
+        payment = self.get_object()
+
+        if payment.case_entry.payment_method.method != PaymentMethodChoices.MILK_BILL:
+            return self.error_response("This is not a milk bill payment")
+
+        try:
+            with transaction.atomic():
+                payment.mark_as_completed()
+                payment.reference_number = request.data.get("reference_number", "")
+                payment.save()
+
+                payment.case_entry.payment_summary.refresh_summary()
+
+            serializer = self.get_serializer(payment)
+            return self.success_response(
+                data=serializer.data,
+                message="Milk bill marked as paid",
+            )
+
+        except Exception as e:
+            return self.error_response(str(e))
+
+    # -------------------------------------------------------------
+    # 4️⃣ RETRY FAILED PAYMENT
+    # -------------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="retry-payment")
+    def retry_payment(self, request, pk=None):
+        payment = self.get_object()
+
+        if payment.payment_status != PaymentStatusChoices.FAILED:
+            return self.error_response("Only failed payments can be retried")
+
+        if payment.retry_count >= 3:
+            return self.error_response("Maximum retry attempts exceeded")
+
+        try:
+            payment.payment_status = PaymentStatusChoices.PROCESSING
+            payment.retry_count += 1
+            payment.last_retry_at = timezone.now()
+            payment.save()
+
+            serializer = self.get_serializer(payment)
+            return self.success_response(
+                data=serializer.data,
+                message="Payment retry initiated",
+            )
+
+        except Exception as e:
+            return self.error_response(str(e))
+
+    # -------------------------------------------------------------
+    # 5️⃣ CASE PAYMENTS
+    # -------------------------------------------------------------
+    @action(detail=False, methods=["get"], url_path="payment-record")
+    def case_payment_record(self, request):
+        case_no = request.query_params.get("case_no")
+        if not case_no:
+            return self.error_response("case_no parameter is required")
+        try:
+            case = CaseEntry.objects.with_active_payment().get(case_no=case_no)
+            serializer = CaseEntryPaymentSerializer(case)
+            return self.success_response(data=serializer.data)
+
+        except Exception as e:
+            return self.error_response(str(e))
+
+    # -------------------------------------------------------------
+    # 5️⃣ CASE PAYMENT SUMMARY
+    # -------------------------------------------------------------
+    @action(detail=False, methods=["get"], url_path="summary")
+    def case_payment_summary(self, request):
+        case_no = request.query_params.get("case_no")
+
+        if not case_no:
+            return self.error_response("case_no parameter is required")
+
+        try:
+            case = get_object_or_404(CaseEntry, case_no=case_no)
+            summary = case.payment_summary
+
+            serializer = CasePaymentSummarySerializer(summary)
+            return self.success_response(data=serializer.data)
+
+        except Exception as e:
+            return self.error_response(str(e))

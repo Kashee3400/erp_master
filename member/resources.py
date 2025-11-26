@@ -23,8 +23,10 @@ class SahayakIncentivesResource(resources.ModelResource):
     year = fields.Field(column_name="Year", attribute="year")
     opening = fields.Field(column_name="Opening", attribute="opening")
     milk_qty = fields.Field(column_name="Milk Qty", attribute="milk_qty")
+
     tds = fields.Field(column_name="TDS Rate", attribute="tds")
     tds_amt = fields.Field(column_name="TDS Amount", attribute="tds_amt")
+
     cda_recovery = fields.Field(column_name="CDA Recovery", attribute="cda_recovery")
     transporter_recovery = fields.Field(
         column_name="Transporter Recovery", attribute="transporter_recovery"
@@ -35,34 +37,28 @@ class SahayakIncentivesResource(resources.ModelResource):
     asset_recovery = fields.Field(
         column_name="Asset Recovery", attribute="asset_recovery"
     )
+
     milk_incentive = fields.Field(
-        column_name=" Incentive Earned", attribute="milk_incentive"
+        column_name=" Incentive Earned",  # original header has leading space
+        attribute="milk_incentive",
     )
     milk_incentive_payable = fields.Field(
-        column_name="Incentive Payable", attribute="milk_incentive_payable"
+        column_name=" Incentive Payable",  # your sheet header also has leading space
+        attribute="milk_incentive_payable",
     )
+
     cf_incentive = fields.Field(column_name="CF Incentive", attribute="cf_incentive")
     mm_incentive = fields.Field(column_name="MM Incentive", attribute="mm_incentive")
+
     payable = fields.Field(column_name="Paid", attribute="payable")
     closing = fields.Field(column_name="Closing", attribute="closing")
+
     additional_data = fields.Field(
         column_name="Additional Data", attribute="additional_data"
     )
 
-    def import_row(self, row, instance_loader, **kwargs):
-        # Check for missing 'user' value
-        user_value = str(row.get("Username", "")).strip()
-        if not user_value:
-            raise ValueError(f"Missing 'Username' value for row: {row}")
+    # ------------ DATA CLEANING + VALIDATION HOOKS ------------ #
 
-        # Ensure 'user' matches an existing username in the database
-        if not User.objects.filter(username=user_value).exists():
-            raise ValueError(
-                f"Invalid 'Username' value: {user_value} - No matching User found."
-            )
-
-        return super().import_row(row, instance_loader, **kwargs)
-    
     def before_import(self, dataset, *args, **kwargs):
         """
         Clean up dataset headers before import.
@@ -72,16 +68,35 @@ class SahayakIncentivesResource(resources.ModelResource):
         if dataset.headers:
             dataset.headers = [h.strip().lower() if h else h for h in dataset.headers]
 
-        # 2️⃣ Normalize our field column names too (no deprecated get_fields)
+        # 2️⃣ Normalize our field column names too
         for field in self.fields.values():
             if field.column_name:
                 field.column_name = field.column_name.strip().lower()
+
+    def import_row(self, row, instance_loader, **kwargs):
+        """
+        Per-row validation for 'username'.
+        Note: After `before_import`, all keys are lowercase.
+        """
+        # After header normalization, "Username" → "username"
+        user_value = str(row.get("username", "")).strip()
+
+        if not user_value:
+            raise ValueError(f"Missing 'Username' value for row: {row}")
+
+        if not User.objects.filter(username=user_value).exists():
+            raise ValueError(
+                f"Invalid 'Username' value: {user_value} - No matching User found."
+            )
+
+        return super().import_row(row, instance_loader, **kwargs)
 
     class Meta:
         model = SahayakIncentives
         import_id_fields = ("user", "month", "year")
         exclude = ("id",)
-
+        skip_unchanged = True
+        report_skipped = True
 
 from django.contrib.auth.hashers import make_password
 

@@ -6,6 +6,13 @@ from .choices import NotificationStatus
 from django.contrib.auth import get_user_model
 import logging
 from django.core.management import call_command
+from datetime import timedelta
+
+from django.db.models import Count, Q
+
+from notifications.model import DeepLink
+from .deeplink_service import DeepLinkService
+
 
 CHUNK_SIZE = 500
 
@@ -243,3 +250,189 @@ def queue_notification_async(self, notification_id):
     except Exception as exc:
         logger.error(f"Error queueing notification {notification_id}: {exc}")
         raise self.retry(exc=exc, countdown=60 * (2**self.request.retries))
+
+
+@shared_task(name="deeplink.cleanup_expired")
+def cleanup_expired_links():
+    """
+    Periodic task to mark expired links.
+    Run this every hour via Celery Beat.
+    """
+    try:
+        service = DeepLinkService()
+        updated = service.cleanup_expired_links(batch_size=5000)
+
+        logger.info(f"Successfully marked {updated} expired deep links")
+        return {"status": "success", "updated": updated}
+
+    except Exception as e:
+        logger.error(f"Error in cleanup_expired_links task: {e}", exc_info=True)
+        return {"status": "error", "error": str(e)}
+
+
+@shared_task(name="deeplink.delete_old_links")
+def delete_old_links(days_old: int = 90):
+    """
+    Delete old inactive links to keep database clean.
+    Run this daily via Celery Beat.
+
+    Args:
+        days_old: Delete links older than this many days
+    """
+    try:
+        cutoff_date = timezone.now() - timedelta(days=days_old)
+
+        # Delete old expired/revoked/consumed links
+        deleted_count, _ = DeepLink.objects.filter(
+            Q(
+                status__in=[
+                    DeepLink.Status.EXPIRED,
+                    DeepLink.Status.REVOKED,
+                    DeepLink.Status.CONSUMED,
+                ]
+            ),
+            created_at__lt=cutoff_date,
+        ).delete()
+
+        logger.info(f"Deleted {deleted_count} old deep links")
+
+        return {
+            "status": "success",
+            "deleted": deleted_count,
+            "cutoff_date": cutoff_date.isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Error in delete_old_links task: {e}", exc_info=True)
+        return {"status": "error", "error": str(e)}
+
+
+@shared_task(name="deeplink.generate_analytics_report")
+def generate_analytics_report():
+    """
+    Generate daily analytics report for deep links.
+    """
+    try:
+        today = timezone.now().date()
+        yesterday = today - timedelta(days=1)
+
+        # Get stats
+        total_links = DeepLink.objects.count()
+        active_links = DeepLink.objects.filter(status=DeepLink.Status.ACTIVE).count()
+
+        # Links created yesterday
+        created_yesterday = DeepLink.objects.filter(created_at__date=yesterday).count()
+
+        # Links accessed yesterday
+        accessed_yesterday = DeepLink.objects.filter(
+            last_accessed_at__date=yesterday
+        ).count()
+
+        # Module breakdown
+        module_stats = DeepLink.objects.values("module").annotate(count=Count("id"))
+
+        # Status breakdown
+        status_stats = DeepLink.objects.values("status").annotate(count=Count("id"))
+
+        report = {
+            "date": yesterday.isoformat(),
+            "total_links": total_links,
+            "active_links": active_links,
+            "created_yesterday": created_yesterday,
+            "accessed_yesterday": accessed_yesterday,
+            "by_module": list(module_stats),
+            "by_status": list(status_stats),
+        }
+
+        logger.info(f"Generated analytics report: {report}")
+
+        # You can save this to a reporting table or send to analytics service
+
+        return report
+
+    except Exception as e:
+        logger.error(f"Error generating analytics report: {e}", exc_info=True)
+        return {"status": "error", "error": str(e)}
+
+
+@shared_task(name="deeplink.bulk_generate")
+def bulk_generate_links(links_config: list):
+    """
+    Asynchronously generate multiple deep links.
+
+    Args:
+        links_config: List of configuration dicts
+    """
+    try:
+        service = DeepLinkService()
+        results = service.generate_bulk_deep_links(links_config)
+
+        successful = sum(1 for r in results if r is not None)
+        failed = len(results) - successful
+
+        logger.info(f"Bulk generated {successful} links, {failed} failed")
+
+        return {
+            "status": "success",
+            "successful": successful,
+            "failed": failed,
+            "results": results,
+        }
+
+    except Exception as e:
+        logger.error(f"Error in bulk_generate_links: {e}", exc_info=True)
+        return {"status": "error", "error": str(e)}
+
+
+@shared_task(name="deeplink.revoke_user_links")
+def revoke_user_links(user_id: int, reason: str = "user_request"):
+    """
+    Revoke all active links for a user.
+    Useful for security/privacy purposes.
+
+    Args:
+        user_id: User ID
+        reason: Reason for revocation
+    """
+    try:
+        updated = DeepLink.objects.filter(
+            user_id=user_id, status=DeepLink.Status.ACTIVE
+        ).update(
+            status=DeepLink.Status.REVOKED,
+            meta=lambda obj: {**obj, "revoke_reason": reason},
+        )
+
+        logger.info(
+            f"Revoked {updated} active links for user {user_id}, " f"reason: {reason}"
+        )
+
+        return {
+            "status": "success",
+            "revoked": updated,
+            "user_id": user_id,
+            "reason": reason,
+        }
+
+    except Exception as e:
+        logger.error(f"Error revoking user links: {e}", exc_info=True)
+        return {"status": "error", "error": str(e)}
+
+
+# Celery Beat Schedule Configuration
+# Add this to your celery.py or settings.py
+
+CELERY_BEAT_SCHEDULE = {
+    "cleanup-expired-links-hourly": {
+        "task": "deeplink.cleanup_expired",
+        "schedule": 3600.0,  # Every hour
+    },
+    "delete-old-links-daily": {
+        "task": "deeplink.delete_old_links",
+        "schedule": 86400.0,
+        "kwargs": {"days_old": 90},
+    },
+    "generate-analytics-daily": {
+        "task": "deeplink.generate_analytics_report",
+        "schedule": 86400.0,
+    },
+}

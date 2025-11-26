@@ -9,9 +9,15 @@ from .views.users_view import (
     create_update_user_profile,
     clear_device,
     clear_module,
-    UserLocationListView,
 )
 from .views.auth import UpdateDeviceModuleAPIView
+from .views.route_assignment import (
+    BulkDeactivateView,
+    BulkLocationAssignmentView,
+    RoutePreviewView,
+    UserLocationsListView,
+    UserLocationViewSet,
+)
 from django.urls import path
 
 
@@ -20,6 +26,8 @@ router.register(r"users", UserViewSet, basename="users")
 router.register(r"groups", GroupViewSet, basename="group")
 router.register(r"permissions", PermissionViewSet, basename="permission")
 router.register(r"user-profiles", UserProfileViewSet, basename="user-profiles")
+router.register(r"user-locations", UserLocationViewSet, basename="user-location")
+
 urlpatterns = [
     path("send-email-otp/", SendOTPView.as_view(), name="send_email_otp"),
     path("verify-email-otp/", VerifyOTPView.as_view(), name="verify_email_otp"),
@@ -30,6 +38,29 @@ urlpatterns = [
     ),
     path("device/clear/", clear_device, name="clear-device"),
     path("module/clear/", clear_module, name="clear-module"),
-    path("device/update-module/", UpdateDeviceModuleAPIView.as_view(), name="update-device-module"),
-    path("my-locations/", UserLocationListView.as_view(), name="my-locations"),
+    path(
+        "device/update-module/",
+        UpdateDeviceModuleAPIView.as_view(),
+        name="update-device-module",
+    ),
+    # Bulk assignment
+    path(
+        "locations/bulk-assign/",
+        BulkLocationAssignmentView.as_view(),
+        name="bulk-location-assign",
+    ),
+    # Preview route data before assignment
+    path("locations/route-preview/", RoutePreviewView.as_view(), name="route-preview"),
+    # List user locations
+    path(
+        "locations/user/<int:user_id>/",
+        UserLocationsListView.as_view(),
+        name="user-locations-list",
+    ),
+    # Bulk deactivate
+    path(
+        "locations/bulk-deactivate/",
+        BulkDeactivateView.as_view(),
+        name="bulk-location-deactivate",
+    ),
 ] + router.urls

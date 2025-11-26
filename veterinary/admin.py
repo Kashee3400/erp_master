@@ -178,18 +178,6 @@ class CattleCaseTypeAdmin(admin.ModelAdmin):
     list_display = ["case_type"]
 
 
-@admin.register(TimeSlot)
-class TimeSlotAdmin(admin.ModelAdmin):
-    list_display = [
-        "start_time",
-        "end_time",
-        "period",
-        "normal_cost",
-        "operational_cost",
-        "sync",
-    ]
-
-
 @admin.register(CattleCaseStatus)
 class CattleCaseStatusAdmin(admin.ModelAdmin):
     list_display = ["status"]

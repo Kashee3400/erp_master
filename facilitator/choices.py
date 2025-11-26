@@ -29,6 +29,21 @@ class ChangeType(models.TextChoices):
 
 
 class DocumentTypeChoice(models.TextChoices):
-    PASSBOOK = "passbook", _("Passbook Copy"),
-    APPLICATION ="application", _("Application Letter"),
-    AFFIDAVIT = "affidavit", _("Affidavit Copy"),
+    PASSBOOK = (
+        "passbook",
+        _("Passbook Copy"),
+    )
+    APPLICATION = (
+        "application",
+        _("Application Letter"),
+    )
+    AFFIDAVIT = (
+        "affidavit",
+        _("Affidavit Copy"),
+    )
+
+
+class RouteLevelChoice(models.TextChoices):
+    LEVEL_MCC = "mcc", _("MCC Level")
+    LEVEL_ROUTE = "route", _("Route Level")
+    LEVEL_MPP = "mpp", _("MPP Level")

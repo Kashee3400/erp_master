@@ -260,8 +260,9 @@ class ResponseMixin:
     ):
         """Return standardized error response"""
         return custom_response(
-            data=errors,
+            data={},
             status_text="error",
             status_code=status_code,
             message=message,
+            errors=errors,
         )

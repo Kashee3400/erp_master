@@ -940,8 +940,6 @@ class CattleStatusLog(BaseModel):
             ),
         ]
 
-
-# Optional: Add ownership history tracking
 class CattleOwnershipHistory(BaseModel):
     """Track ownership changes for audit purposes"""
 

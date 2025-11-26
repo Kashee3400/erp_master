@@ -6,20 +6,6 @@ def serialize_choices(choices_cls: type[models.TextChoices]):
     return [{"value": choice.value, "label": choice.label} for choice in choices_cls]
 
 
-class PaymentMethodChoices(models.TextChoices):
-    """Payment methods available for transactions."""
-
-    ONLINE = "online", _("Online")
-    CASH = "cash", _("Cash")
-
-    @classmethod
-    def icon(cls, value):
-        return {
-            cls.ONLINE: "💳",
-            cls.CASH: "💵",
-        }.get(value, "")
-
-
 class MembershipTypeChoices(models.TextChoices):
     MEMBER = "member", _("Member")
     NON_MEMBER = "non_member", _("Non-Member")
@@ -203,14 +189,6 @@ class DiseaseSeverity(models.TextChoices):
     CRITICAL = "Critical", _("Critical")
 
 
-class PaymentStatusChoices(models.TextChoices):
-    """Payment processing status."""
-
-    PENDING = "pending", _("Pending")
-    COMPLETED = "completed", _("Completed")
-    FAILED = "failed", _("Failed")
-    REFUNDED = "refunded", _("Refunded")
-
 
 class TransferTypeChoices(models.TextChoices):
     INWARD = "inward", _("Inward")  # For receiving new stock
@@ -254,3 +232,24 @@ class ApprovalStatusChoices(models.TextChoices):
     REQUESTED = "REQUESTED", "Requested"
     APPROVED = "APPROVED", "Approved"
     REJECTED = "REJECTED", "Rejected"
+
+
+class PaymentMethodChoices(models.TextChoices):
+    ONLINE = "online", _("Online Payment")
+    MILK_BILL = "milk_bill", _("Milk Bill Payment")
+
+
+class PaymentStatusChoices(models.TextChoices):
+    PENDING = "pending", _("Pending")
+    PROCESSING = "processing", _("Processing")
+    COMPLETED = "completed", _("Completed")
+    FAILED = "failed", _("Failed")
+    REFUNDED = "refunded", _("Refunded")
+
+
+
+class CasePaymentStatusChoices(models.TextChoices):
+    UNPAID = "unpaid", _("Unpaid")
+    PARTIAL = "partial", _("Partially Paid")
+    PAID = "paid", _("Fully Paid")
+    OVERDUE = "overdue", _("Overdue")
