@@ -4,129 +4,115 @@ Production-ready view for handling deep link redirects.
 
 import logging
 from django.shortcuts import redirect, render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse,HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.model import DeepLink
 from ..deeplink_service import DeepLinkService
 from django.views import View
+from types import SimpleNamespace
+
 
 logger = logging.getLogger(__name__)
-
+from notifications.deeplink_service import DeepLinkRegistry
 
 @method_decorator(never_cache, name="dispatch")
 @method_decorator(csrf_exempt, name="dispatch")
 class DeepLinkRedirectView(View):
     """
-    Universal App Links / Deep Link handler.
-
     Handles:
     - Android App Links
     - iOS Universal Links
-    - Web fallback
-    - Analytics tracking
+    - Desktop fallback
+    Automatically detects:
+    - Module from URL
     """
 
     def get(self, request, token=None):
-        """
-        Handle deep link redirect based on user agent.
 
-        Query params:
-            token: UUID token for the deep link
-        """
-        # Get token from URL or query params
+        # Detect module from URL path
+        module = detect_module_from_path(request.path)
+
+        # Get app configuration
+        app_cfg = DeepLinkRegistry.get(module)
+        if not app_cfg:
+            return self._error_response("Unknown app module", status=400)
+
+        # If your DB deep link is required — keep using token logic
         token = token or request.GET.get("token")
 
-        if not token:
-            return self._error_response("Missing token parameter", status=400)
+        if token:
+            service = DeepLinkService()
+            deep_link = service.validate_and_get_link(token)
 
-        # Validate and retrieve link
-        service = DeepLinkService()
-        deep_link = service.validate_and_get_link(token)
+            if not deep_link:
+                return self._handle_invalid_link(request, token)
 
-        if not deep_link:
-            return self._handle_invalid_link(request, token)
+            try:
+                deep_link.increment_use()
+            except Exception:
+                logger.exception("Failed to increment deep link usage")
 
-        # Track the access
-        try:
-            deep_link.increment_use()
-        except Exception as e:
-            logger.error(f"Error tracking link usage: {e}")
-
-        # Detect platform
-        user_agent = request.META.get("HTTP_USER_AGENT", "").lower()
-
-        if "android" in user_agent:
-            return self._redirect_android(deep_link, request)
-        elif "iphone" in user_agent or "ipad" in user_agent:
-            return self._redirect_ios(deep_link, request)
         else:
-            return self._redirect_web(deep_link, request)
+            # If no token, build a simple deep path from the URL
+            deep_link = SimpleNamespace(
+                module=module,
+                scheme=app_cfg.scheme,
+                android_package=app_cfg.android_package,
+                ios_bundle_id=app_cfg.ios_bundle_id,
+                deep_link=f"{app_cfg.scheme}://{request.path}",
+                deep_path=request.path.lstrip("/"),
+                fallback_url=app_cfg.default_fallback,
+            )
 
-    def _redirect_android(self, deep_link: DeepLink, request):
-        """Handle Android redirect using fallback landing page."""
-        # Intent URL
+        # Platform detection
+        ua = request.META.get("HTTP_USER_AGENT", "").lower()
+
+        if "android" in ua:
+            return self._redirect_android(deep_link, app_cfg, request)
+
+        if "iphone" in ua or "ipad" in ua:
+            return self._redirect_ios(deep_link, app_cfg, request)
+
+        # Desktop → open module website
+        return self._redirect_web(deep_link, app_cfg, request)
+
+    def _redirect_android(self, deep_link, app_cfg, request):
+        play_store_url = (
+            f"https://play.google.com/store/apps/details?id={app_cfg.android_package}"
+        )
+
+        # intent with fallback inside → auto redirect to Play Store
         intent_url = (
             f"intent://{deep_link.deep_path}#Intent;"
-            f"scheme={deep_link.scheme};"
-            f"package={deep_link.android_package};"
+            f"scheme={app_cfg.scheme};"
+            f"package={app_cfg.android_package};"
+            f"S.browser_fallback_url={play_store_url};"
             "end"
         )
 
-        playstore_urls = {
-            "member": "https://play.google.com/store/apps/details?id=com.kasheemilk.kashee",
-            "sahayak": "https://play.google.com/store/apps/details?id=com.kasheemilk.kashee_sahayak",
-            "pes": "https://play.google.com/store/apps/details?id=com.kasheemilk.pes",
-        }
+        return HttpResponseRedirect(intent_url)
 
-        play_url = playstore_urls.get(deep_link.module)
+    def _redirect_ios(self, deep_link, app_cfg, request):
+        app_store_url = f"https://apps.apple.com/app/{app_cfg.ios_bundle_id}"
 
-        return render(
-            request,
-            "deeplink/open.html",
-            {
-                "platform": "android",
-                "intent_url": intent_url,
-                "play_store_url": play_url,
-                "fallback_url": deep_link.fallback_url,
-            },
-        )
+        # Instant scheme open + fallback to App Store
+        html = f"""
+        <html><head>
+        <meta name="apple-itunes-app" content="app-id={app_cfg.ios_bundle_id}">
+        <script>
+            window.location = "{deep_link.deep_link}";
+            setTimeout(function() {{
+                window.location = "{app_store_url}";
+            }}, 1000);
+        </script>
+        </head></html>
+        """
+        return HttpResponse(html)
 
-    def _redirect_ios(self, deep_link: DeepLink, request):
-        """iOS deep link fallback landing page."""
-        app_store_ids = {
-            "member": "123456789",
-            "sahayak": "234567890",
-            "pes": "345678901",
-        }
-
-        app_store_url = (
-            f"https://apps.apple.com/app/id{app_store_ids.get(deep_link.module)}"
-        )
-
-        return render(
-            request,
-            "deeplink/open.html",
-            {
-                "platform": "ios",
-                "target": deep_link.deep_link,
-                "app_store_url": app_store_url,
-                "fallback_url": deep_link.fallback_url,
-            },
-        )
-
-    def _redirect_web(self, deep_link: DeepLink, request):
-        """Desktop or unknown user agent fallback."""
-        return render(
-            request,
-            "deeplink/open.html",
-            {
-                "platform": "web",
-                "target": deep_link.deep_link,
-                "fallback_url": deep_link.fallback_url,
-            },
-        )
+    def _redirect_web(self, deep_link, app_cfg, request):
+        return HttpResponseRedirect(app_cfg.default_fallback)
 
     def _handle_invalid_link(self, request, token):
         """Handle invalid or expired links."""
@@ -222,3 +208,23 @@ class DeepLinkHealthCheckView(View):
         except Exception as e:
             logger.error(f"Health check failed: {e}")
             return JsonResponse({"status": "unhealthy", "error": str(e)}, status=500)
+
+
+def detect_module_from_path(path: str) -> str:
+    """
+    Detect module from request path.
+    /member/...   → member
+    /sahayak/...  → sahayak
+    /pes/...      → pes
+    Default = member
+    """
+    path = path.lower()
+
+    if path.startswith("/member"):
+        return "member"
+    if path.startswith("/sahayak"):
+        return "sahayak"
+    if path.startswith("/pes"):
+        return "pes"
+
+    return "member"

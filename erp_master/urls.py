@@ -20,10 +20,23 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from notifications.views.deep_link_view import DeepLinkRedirectView
 
 urlpatterns = [
+    # path("open", open_deep_link, name="deep_link_open"),
     path("gateway/", include("gateway.phonepe_urls", namespace="phonepe")),
     path("open/", include("notifications.urls.deeplink", namespace="deeplink")),
+    
+    # Module-based universal deep links
+    path("member/", DeepLinkRedirectView.as_view()),
+    path("member/<path:rest>/", DeepLinkRedirectView.as_view()),
+
+    path("sahayak/", DeepLinkRedirectView.as_view()),
+    path("sahayak/<path:rest>/", DeepLinkRedirectView.as_view()),
+
+    path("pes/", DeepLinkRedirectView.as_view()),
+    path("pes/<path:rest>/", DeepLinkRedirectView.as_view()),
+
     re_path(
         r"^\.well-known/assetlinks\.json$",
         serve,
