@@ -14,58 +14,93 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fff3e0 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: drift 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
         }
 
         .container {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px 40px;
             max-width: 500px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: #667eea;
-            border-radius: 20px;
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            color: white;
+            box-shadow: 0 4px 20px rgba(100, 181, 246, 0.2);
+            padding: 10px;
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 10px;
+            color: #1976d2;
+            font-size: 28px;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
         p {
-            color: #666;
+            color: #546e7a;
             font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            margin-bottom: 35px;
+            line-height: 1.6;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid #e1f5fe;
+            border-top: 3px solid #64b5f6;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s ease-in-out infinite;
+            margin: 25px auto;
         }
 
         @keyframes spin {
@@ -80,114 +115,180 @@
 
         .btn {
             display: inline-block;
-            background: #667eea;
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
             color: white;
-            padding: 14px 32px;
-            border-radius: 8px;
+            padding: 16px 36px;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
             margin: 10px;
+            box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
+            font-size: 15px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(100, 181, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: linear-gradient(135deg, #b0bec5 0%, #90a4ae 100%);
+            box-shadow: 0 4px 15px rgba(144, 164, 174, 0.25);
         }
 
         .btn-secondary:hover {
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+            box-shadow: 0 6px 25px rgba(144, 164, 174, 0.35);
         }
 
         .info {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
+            background: linear-gradient(135deg, #e1f5fe 0%, #f3e5f5 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 35px;
             font-size: 14px;
-            color: #666;
+            color: #546e7a;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+        }
+
+        .info strong {
+            color: #1976d2;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
         }
 
         #qrcode {
-            margin: 20px auto;
+            margin: 25px auto;
             display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #1976d2;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .logo-container {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="logo">🥛</div>
+        <div class="logo-container">
+            <img src="http://erp.kasheemilk.com:50012/FileServer/Import/Image/1C18B53A17344A5899C6A40B45ACAE2D.png"
+                alt="Kashee Logo" class="logo" onerror="this.style.display='none'; this.parentElement.innerHTML='🥛';">
+        </div>
 
         {% if platform == 'android' %}
         <h1>Opening Kashee App...</h1>
-        <p>Redirecting you to the app. If it doesn't open automatically, please click below.</p>
+        <p>Redirecting you to the app. Please wait a moment.</p>
         <div class="spinner"></div>
-        <a href="{{ play_store_url }}" class="btn" id="store-btn" style="display:none;">Open Play Store</a>
+
+        <a href="{{ play_store_url }}" id="store-btn" class="btn" style="display:none;">
+            📱 Open Play Store
+        </a>
+
         {% if fallback_url %}
-        <a href="{{ fallback_url }}" class="btn btn-secondary">View on Web</a>
+        <a href="{{ fallback_url }}" class="btn btn-secondary">🌐 View on Web</a>
         {% endif %}
 
         {% elif platform == 'ios' %}
         <h1>Opening Kashee App...</h1>
-        <p>Redirecting you to the app. If it doesn't open automatically, please click below.</p>
+        <p>Redirecting you to the app. Please wait a moment.</p>
         <div class="spinner"></div>
-        <a href="{{ app_store_url }}" class="btn" id="store-btn" style="display:none;">Open App Store</a>
+
+        <a href="{{ app_store_url }}" id="store-btn" class="btn" style="display:none;">
+            📱 Open App Store
+        </a>
+
         {% if fallback_url %}
-        <a href="{{ fallback_url }}" class="btn btn-secondary">View on Web</a>
+        <a href="{{ fallback_url }}" class="btn btn-secondary">🌐 View on Web</a>
         {% endif %}
 
         {% else %}
         <h1>Scan to Open in App</h1>
-        <p>This link is designed to open in the Kashee mobile app. Scan the QR code below with your phone.</p>
+        <p>Use your mobile device to scan the QR code below.</p>
+
         <div id="qrcode"></div>
+
         {% if fallback_url %}
         <a href="{{ fallback_url }}" class="btn">Continue on Web</a>
-        {% else %}
+        {% endif %}
+
         <div class="info">
-            <strong>Download the Kashee App:</strong><br>
-            Available on Google Play Store and Apple App Store
+            <strong>📲 Get Kashee App</strong>
+            Available on Google Play Store & Apple App Store
+            <div class="badges">
+                <span class="badge">Android</span>
+                <span class="badge">iOS</span>
+            </div>
         </div>
         {% endif %}
-        {% endif %}
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         {% if platform == 'android' %}
-        // Android Intent handling
         window.location.href = '{{ intent_url }}';
 
-        // Fallback to Play Store after 2.5 seconds
         setTimeout(function () {
             document.querySelector('.spinner').style.display = 'none';
             document.getElementById('store-btn').style.display = 'inline-block';
         }, 2500);
 
         {% elif platform == 'ios' %}
-        // iOS Universal Link / Custom Scheme
         window.location.href = '{{ target }}';
 
-        // Fallback to App Store after 2.5 seconds
         setTimeout(function () {
             document.querySelector('.spinner').style.display = 'none';
             document.getElementById('store-btn').style.display = 'inline-block';
         }, 2500);
 
         {% else %}
-        document.querySelector('.spinner').style.display = 'none';
-        // Optional: Generate QR code (requires qrcode.js library)
-        // Then generate QR:
         var qrcode = new QRCode(document.getElementById("qrcode"), {
             text: "{{ target }}",
             width: 200,
-            height: 200
+            height: 200,
+            colorDark: "#1976d2",
+            colorLight: "#ffffff",
         });
-        document.getElementById('qrcode').style.display = 'block';
+        document.getElementById("qrcode").style.display = 'inline-block';
         {% endif %}
     </script>
 </body>

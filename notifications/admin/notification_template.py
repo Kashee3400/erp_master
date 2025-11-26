@@ -89,7 +89,7 @@ class NotificationTemplateAdminForm(forms.ModelForm):
         config = self.cleaned_data.get("deeplink_config")
         if config:
             # Validate JSON structure
-            required_keys = ["module"]
+            required_keys = ["inapp_route"]
             for key in required_keys:
                 if key not in config:
                     raise ValidationError(f"Missing required key: {key}")

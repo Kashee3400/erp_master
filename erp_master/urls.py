@@ -20,12 +20,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
-from django.views.generic import TemplateView
 
 urlpatterns = [
-    # path("open", open_deep_link, name="deep_link_open"),
     path("gateway/", include("gateway.phonepe_urls", namespace="phonepe")),
-    path("deeplink/", include("notifications.urls.deeplink", namespace="deeplink")),
+    path("open/", include("notifications.urls.deeplink", namespace="deeplink")),
     re_path(
         r"^\.well-known/assetlinks\.json$",
         serve,

@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.conf import settings
 from django.db import transaction
+from decouple import config
 
 from member.models import UserDevice
 from notifications.model import DeepLink
@@ -65,7 +66,7 @@ DeepLinkRegistry.register(
         scheme="kashee-member",
         android_package="com.kasheemilk.kashee",
         ios_bundle_id="com.kasheemilk.kashee.ios",
-        default_fallback="https://kasheemilk.com:8443/",
+        default_fallback="https://tech.kasheemilk.com/open/member",
     ),
 )
 
@@ -75,7 +76,7 @@ DeepLinkRegistry.register(
         scheme="kashee-sahayak",
         android_package="com.kasheemilk.kashee_sahayak",
         ios_bundle_id="com.kasheemilk.kashee_sahayak.ios",
-        default_fallback="https://kasheemilk.com:8443/",
+        default_fallback="https://tech.kasheemilk.com/open/member",
     ),
 )
 
@@ -85,7 +86,7 @@ DeepLinkRegistry.register(
         scheme="kashee-pes",
         android_package="com.kasheemilk.pes",
         ios_bundle_id="com.kasheemilk.pes.ios",
-        default_fallback="https://kasheemilk.com:8443/",
+        default_fallback="https://tech.kasheemilk.com/open/member",
     ),
 )
 
@@ -121,13 +122,219 @@ class DeepLinkService:
     - Batch operations
     """
 
-    SMART_HOST = getattr(settings, "DEEPLINK_SMART_HOST")
+    SMART_HOST = config("DEEPLINK_SMART_HOST", "https://tech.kasheemilk.com/open/")
 
-    DEFAULT_EXPIRY_DAYS = getattr(settings, "DEEPLINK_DEFAULT_EXPIRY_DAYS", 30)
-    CACHE_TIMEOUT = getattr(settings, "DEEPLINK_CACHE_TIMEOUT", 3600)
+    DEFAULT_EXPIRY_DAYS = config("DEEPLINK_DEFAULT_EXPIRY_DAYS", 30)
+    CACHE_TIMEOUT = config("DEEPLINK_CACHE_TIMEOUT", 3600)
 
     def __init__(self):
         self.registry = DeepLinkRegistry
+
+    # ------------------------
+    # New: create DB record and return DeepLink model
+    # ------------------------
+
+    def create_notification_deep_link(
+        self,
+        *,
+        user_id: int,
+        clean_route: str,
+        context: Optional[Dict[str, Any]] = None,
+        fallback_url: Optional[str] = None,
+        meta: Optional[Dict[str, Any]] = None,
+    ) -> DeepLink:
+        """
+        Create and return a Notification DeepLink model instance. Does not return the smart URL —
+        it returns the actual DB object so callers can inspect token, fields, etc.
+        """
+        context = context or {}
+        meta = meta or {}
+        module = self.get_user_module(user_id)
+
+        # Validate module presence in registry
+        if not self.registry.exists(module):
+            raise InvalidModuleError(f"Module '{module}' not registered")
+
+        app_cfg = self.registry.get(module)
+
+        final_fallback = fallback_url or app_cfg.default_fallback
+
+        # Create DB record atomically
+        from notifications.model import DeepLink
+
+        clean_meta = make_json_safe(
+            {
+                **(meta or {}),
+                "context": context,
+            }
+        )
+        if not DeepLinkService.SMART_HOST.endswith("/"):
+            link = f"{DeepLinkService.SMART_HOST}/"
+        link = f"{DeepLinkService.SMART_HOST}"
+
+        with transaction.atomic():
+            dl = DeepLink.objects.create(
+                user_id=user_id,
+                module=module,
+                deep_link=f"{link}{clean_route.lstrip('/')}",
+                android_package=getattr(app_cfg, "android_package", ""),
+                ios_bundle_id=getattr(app_cfg, "ios_bundle_id", ""),
+                fallback_url=final_fallback or "",
+                deep_path=f"{app_cfg.scheme}://{clean_route.lstrip('/')}",
+                meta=clean_meta,
+            )
+        logger.info(
+            "Created DeepLink record %s for user %s module=%s path=%s",
+            dl.token,
+            user_id,
+            module,
+            dl.deep_path,
+        )
+        return dl
+
+    def create_deep_link_record(
+        self,
+        *,
+        user_id: int,
+        module: str,
+        clean_route: str,
+        url_name: Optional[str] = None,
+        route_template: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+        fallback_url: Optional[str] = None,
+        expires_in_days: Optional[int] = None,
+        max_uses: int = 0,
+        meta: Optional[Dict[str, Any]] = None,
+    ) -> DeepLink:
+        """
+        Create and return a DeepLink model instance. Does not return the smart URL —
+        it returns the actual DB object so callers can inspect token, fields, etc.
+        """
+        context = context or {}
+        meta = meta or {}
+        # Auto-detect module if needed
+        if module is None:
+            module = self.get_user_module(user_id)
+
+        # Validate module presence in registry
+        if not self.registry.exists(module):
+            raise InvalidModuleError(f"Module '{module}' not registered")
+
+        app_cfg = self.registry.get(module)
+
+        # Determine expiry
+        expires_at = None
+        if expires_in_days is not None:
+            expires_at = timezone.now() + timedelta(days=expires_in_days)
+        elif self.DEFAULT_EXPIRY_DAYS:
+            expires_at = timezone.now() + timedelta(days=self.DEFAULT_EXPIRY_DAYS)
+
+        final_fallback = fallback_url or app_cfg.default_fallback
+
+        # Create DB record atomically
+        from notifications.model import DeepLink
+
+        clean_meta = make_json_safe(
+            {
+                **(meta or {}),
+                "url_name": url_name,
+                "route_template": route_template,
+                "context": context,
+            }
+        )
+
+        with transaction.atomic():
+            dl = DeepLink.objects.create(
+                user_id=user_id,
+                module=module,
+                deep_link=f"{app_cfg.scheme}://{clean_route.lstrip('/')}",
+                android_package=getattr(app_cfg, "android_package", ""),
+                ios_bundle_id=getattr(app_cfg, "ios_bundle_id", ""),
+                fallback_url=final_fallback or "",
+                deep_path=clean_route.lstrip("/"),
+                expires_at=expires_at,
+                max_uses=max_uses or 0,
+                meta=clean_meta,
+            )
+        logger.info(
+            "Created DeepLink record %s for user %s module=%s path=%s",
+            dl.token,
+            user_id,
+            module,
+            dl.deep_path,
+        )
+        return dl
+
+    # ------------------------
+    # New: turn a DeepLink instance into a smart URL
+    # ------------------------
+    def smart_url_for_deeplink(self, dl) -> str:
+        """
+        Return the smart link wrapper URL for a DeepLink instance (or object with .token).
+        """
+        token = getattr(dl, "token", None)
+        if token is None:
+            raise ValueError("Provided object does not have a token attribute")
+        # Ensure SMART_HOST ends with slash (or format accordingly)
+        if not self.SMART_HOST.endswith("/"):
+            return f"{self.SMART_HOST}/?token={token}"
+        return f"{self.SMART_HOST}?token={token}"
+
+    # ------------------------
+    # Backwards-compatible public API (keeps original generate_deep_link signature)
+    # ------------------------
+    def generate_deep_link(
+        self,
+        *,
+        user_id: int,
+        url_name: Optional[str] = None,
+        route_template: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+        fallback_url: Optional[str] = None,
+        module: Optional[str] = None,
+        expires_in_days: Optional[int] = None,
+        max_uses: int = 0,
+        meta: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """
+        Old behavior preserved: returns the smart link URL (string).
+        Internally uses create_deep_link_record + smart_url_for_deeplink.
+        """
+        context = context or {}
+        try:
+            # Resolve route (existing method)
+            route = self.resolve_route(url_name, route_template, context)
+            clean_route = route.lstrip("/")
+
+            # Auto-detect module if needed
+            if module is None:
+                module = self.get_user_module(user_id)
+
+            # Create DB record
+            dl = self.create_deep_link_record(
+                user_id=user_id,
+                module=module,
+                clean_route=clean_route,
+                url_name=url_name,
+                route_template=route_template,
+                context=context,
+                fallback_url=fallback_url,
+                expires_in_days=expires_in_days,
+                max_uses=max_uses,
+                meta=meta or {},
+            )
+
+            # Return smart URL (what callers currently expect)
+            return self.smart_url_for_deeplink(dl)
+
+        except Exception as exc:
+            logger.error(
+                "Error generating deep link for user %s: %s",
+                user_id,
+                exc,
+                exc_info=True,
+            )
+            raise
 
     # ---------------------------------------------------------
     # User Module Resolution with Caching
@@ -220,156 +427,6 @@ class DeepLinkService:
                 raise RouteResolutionError(f"Error rendering template: {e}")
 
         raise RouteResolutionError("Either url_name or route_template must be provided")
-
-    # ------------------------
-    # New: create DB record and return DeepLink model
-    # ------------------------
-
-    def create_deep_link_record(
-        self,
-        *,
-        user_id: int,
-        module: str,
-        clean_route: str,
-        url_name: Optional[str] = None,
-        route_template: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        fallback_url: Optional[str] = None,
-        expires_in_days: Optional[int] = None,
-        max_uses: int = 0,
-        meta: Optional[Dict[str, Any]] = None,
-    ) -> DeepLink:
-        """
-        Create and return a DeepLink model instance. Does not return the smart URL —
-        it returns the actual DB object so callers can inspect token, fields, etc.
-        """
-        context = context or {}
-        meta = meta or {}
-        # Auto-detect module if needed
-        if module is None:
-            module = self.get_user_module(user_id)
-
-        # Validate module presence in registry
-        if not self.registry.exists(module):
-            raise InvalidModuleError(f"Module '{module}' not registered")
-
-        app_cfg = self.registry.get(module)
-
-        # Determine expiry
-        expires_at = None
-        if expires_in_days is not None:
-            expires_at = timezone.now() + timedelta(days=expires_in_days)
-        elif self.DEFAULT_EXPIRY_DAYS:
-            expires_at = timezone.now() + timedelta(days=self.DEFAULT_EXPIRY_DAYS)
-
-        final_fallback = fallback_url or app_cfg.default_fallback
-
-        # Create DB record atomically
-        from notifications.model import DeepLink
-
-        clean_meta = make_json_safe(
-            {
-                **(meta or {}),
-                "url_name": url_name,
-                "route_template": route_template,
-                "context": context,
-            }
-        )
-
-        with transaction.atomic():
-            dl = DeepLink.objects.create(
-                user_id=user_id,
-                module=module,
-                deep_link=f"{app_cfg.scheme}://{clean_route.lstrip('/')}",
-                android_package=getattr(app_cfg, "android_package", ""),
-                ios_bundle_id=getattr(app_cfg, "ios_bundle_id", ""),
-                fallback_url=final_fallback or "",
-                deep_path=clean_route.lstrip("/"),
-                expires_at=expires_at,
-                max_uses=max_uses or 0,
-                meta=clean_meta,
-            )
-        logger.info(
-            "Created DeepLink record %s for user %s module=%s path=%s",
-            dl.token,
-            user_id,
-            module,
-            dl.deep_path,
-        )
-        return dl
-
-    # ------------------------
-    # New: turn a DeepLink instance into a smart URL
-    # ------------------------
-    def smart_url_for_deeplink(self, dl) -> str:
-        """
-        Return the smart link wrapper URL for a DeepLink instance (or object with .token).
-        """
-        token = getattr(dl, "token", None)
-        if token is None:
-            raise ValueError("Provided object does not have a token attribute")
-        # Ensure SMART_HOST ends with slash (or format accordingly)
-        if not self.SMART_HOST.endswith("/"):
-            return f"{self.SMART_HOST}/{token}"
-        
-        print(self.SMART_HOST)
-        return f"{self.SMART_HOST}{token}"
-
-    # ------------------------
-    # Backwards-compatible public API (keeps original generate_deep_link signature)
-    # ------------------------
-    def generate_deep_link(
-        self,
-        *,
-        user_id: int,
-        url_name: Optional[str] = None,
-        route_template: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        fallback_url: Optional[str] = None,
-        module: Optional[str] = None,
-        expires_in_days: Optional[int] = None,
-        max_uses: int = 0,
-        meta: Optional[Dict[str, Any]] = None,
-    ) -> str:
-        """
-        Old behavior preserved: returns the smart link URL (string).
-        Internally uses create_deep_link_record + smart_url_for_deeplink.
-        """
-        context = context or {}
-        try:
-            # Resolve route (existing method)
-            route = self.resolve_route(url_name, route_template, context)
-            clean_route = route.lstrip("/")
-
-            # Auto-detect module if needed
-            if module is None:
-                module = self.get_user_module(user_id)
-
-            # Create DB record
-            dl = self.create_deep_link_record(
-                user_id=user_id,
-                module=module,
-                clean_route=clean_route,
-                url_name=url_name,
-                route_template=route_template,
-                context=context,
-                fallback_url=fallback_url,
-                expires_in_days=expires_in_days,
-                max_uses=max_uses,
-                meta=meta or {},
-            )
-
-            # Return smart URL (what callers currently expect)
-            return self.smart_url_for_deeplink(dl)
-
-        except Exception as exc:
-            logger.error(
-                "Error generating deep link for user %s: %s",
-                user_id,
-                exc,
-                exc_info=True,
-            )
-            raise
 
     # ---------------------------------------------------------
     # Manual Deep Link Creation

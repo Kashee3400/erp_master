@@ -194,11 +194,8 @@ class Command(BaseCommand):
                 "default_priority": "normal",
                 "notification_type": "info",
                 "action_buttons": [],
-                
                 "deeplink_config": {
                     "deeplink_type": "feedback_detail",
-                    "url_name": "admin:feedback_feedback_change",
-                    "route_template": "/admin/feedback/feedback/{{ feedback.id }}/change/",
                     "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.id }}/",
                     "inapp_route": "feedback/{{ feedback.pk }}",
                     "route_params": {"id": "{{ feedback.pk }}"},
@@ -238,10 +235,14 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "feedback_detail",
-                    "url_name": "feedback_detail",
-                    "route_template": "admin/feedback/feedback/{{ feedback.id }}/change/",
                     "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.id }}/",
                     "inapp_route": "feedback/{{ feedback.pk }}",
+                    "expires_after": 10,
+                    "max_uses": 5,
+                    "metadata": {
+                        "source": "feedback_update",
+                        "reason": "{{ feedback.status }}",
+                    },
                 },
                 "required_context_vars": [
                     "recipient",
@@ -278,10 +279,14 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "feedback_detail",
-                    "url_name": "feedback_detail",
-                    "route_template": "admin/feedback/feedback/{{ feedback.id }}/change/",
                     "fallback_template": "https://kmpcl.netlify.app/feedback/{{ feedback.pk }}/",
                     "inapp_route": "feedback/{{ feedback.pk }}",
+                    "expires_after": 10,
+                    "max_uses": 5,
+                    "metadata": {
+                        "source": "feedback_update",
+                        "reason": "{{ feedback.status }}",
+                    },
                 },
                 "required_context_vars": [
                     "recipient",
@@ -317,12 +322,15 @@ class Command(BaseCommand):
                 "notification_type": "info",
                 "action_buttons": [],
                 "deeplink_config": {
-                    "module": "sahayak",
                     "deeplink_type": "incentive",
-                    "url_name": "incentive",
-                    "route_template": "/admin/member/sahayakincentives/?year={{ incentive.year }}&month={{ incentive.month }}",
                     "fallback_template": "https://kmpcl.netlify.app/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                     "inapp_route": "/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
+                    "expires_after": 90,
+                    "max_uses": 10,
+                    "metadata": {
+                        "source": "feedback_update",
+                        "reason": "Incentive Updated",
+                    },
                 },
                 "required_context_vars": ["recipient", "incentive", "site_name"],
                 "sample_context": {},
@@ -352,10 +360,7 @@ class Command(BaseCommand):
                 "notification_type": "info",
                 "action_buttons": [],
                 "deeplink_config": {
-                    "module": "sahayak",
                     "deeplink_type": "incentive",
-                    "url_name": "incentive",
-                    "route_template": "/admin/member/sahayakincentives/?year={{ incentive.year }}&month={{ incentive.month }}",
                     "fallback_template": "https://kmpcl.netlify.app/incentive/?year={{ incentive.year }}&month={{ incentive.month }}",
                     "inapp_route": "incentive/{{ incentive.pk }}",
                 },
@@ -388,8 +393,6 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "news_detail",
-                    "url_name": "default",
-                    "route_template": "/news/{{ news.slug }}/",
                     "fallback_template": "https://kmpcl.netlify.app/news/{{ news.slug }}/",
                     "inapp_route": "news/{{ news.pk }}",
                 },
@@ -422,8 +425,6 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "news_detail",
-                    "url_name": "default",
-                    "route_template": "/news/{{ news.slug }}/",
                     "fallback_template": "https://kmpcl.netlify.app/news/{{ news.slug }}/",
                     "inapp_route": "news/{{ news.pk }}",
                 },
@@ -456,8 +457,6 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "data_sync_detail",
-                    "url_name": "default",
-                    "route_template": "https://kmpcl.netlify.app/members",
                     "fallback_template": "https://kmpcl.netlify.app/members",
                     "inapp_route": "https://kmpcl.netlify.app/members",
                 },
@@ -490,8 +489,6 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "visit-detail",
-                    "url_name": "visit-detail",
-                    "route_template": "/visits/{{ case.case_no }}/",
                     "fallback_template": "https://kmpcl.netlify.app/visits/{{ case.case_no }}/",
                     "inapp_route": "visits/{{ case.case_no }}",
                 },
@@ -524,8 +521,6 @@ class Command(BaseCommand):
                 "action_buttons": [],
                 "deeplink_config": {
                     "deeplink_type": "visit-detail",
-                    "url_name": "visit-detail",
-                    "route_template": "/visits/{{ case.case_no }}/",
                     "fallback_template": "https://kmpcl.netlify.app/visits/{{ case.case_no }}/",
                     "inapp_route": "visits/{{ case.case_no }}",
                 },

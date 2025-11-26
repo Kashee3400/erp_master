@@ -10,7 +10,7 @@ from .model import (
     NotificationChannel,
     NotificationStatus,
 )
-from notifications.deeplink_service import DeepLinkService
+from notifications.deeplink_service import DeepLinkService, DeepLink
 
 import datetime
 import decimal
@@ -35,7 +35,7 @@ class NotificationServices:
         self, base_url: str = None, deeplink_service: Optional[DeepLinkService] = None
     ):
         self.base_url = base_url or getattr(
-            settings, "SITE_URL", "https://tech.kasheemilk.com:8443/"
+            settings, "SITE_URL", "https://tech.kasheemilk.com/open/"
         )
         # allow injection for easier testing; fallback to instantiation
         self.deeplink_service = deeplink_service or DeepLinkService()
@@ -150,22 +150,16 @@ class NotificationServices:
         safe_context = self._serialize_context(context)
         # choose module from config or device (use whatever logic you already have)
 
-        dl = self.deeplink_service.create_deep_link_record(
+        dl = self.deeplink_service.create_notification_deep_link(
             user_id=recipient.pk,
             clean_route=config.get("deeplink_type"),
-            url_name=config.get("url_name"),
-            route_template=config.get("route_template"),
             context=safe_context,
             fallback_url=config.get("fallback_template"),
-            expires_in_days=config.get("expires_after", 7),
-            max_uses=config.get("max_uses", 0),
             meta={
                 **config.get("meta", {}),
                 "template_name": getattr(template, "name", None),
             },
         )
-
-        smart_link = self.deeplink_service.smart_url_for_deeplink(dl)
 
         # Create notification
         notification = Notification.objects.create(
@@ -176,8 +170,8 @@ class NotificationServices:
             body=rendered_content.get("body", ""),
             email_subject=rendered_content.get("email_subject", ""),
             email_body=rendered_content.get("email_body", ""),
-            deep_link_url=smart_link,
-            app_route=dl.deep_link,
+            deep_link_url=dl.deep_link,
+            app_route=dl.deep_path,
             channels=channels,
             priority=priority or template.default_priority,
             notification_type=template.notification_type,

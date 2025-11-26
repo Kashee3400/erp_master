@@ -65,45 +65,66 @@ class DeepLinkRedirectView(View):
             return self._redirect_web(deep_link, request)
 
     def _redirect_android(self, deep_link: DeepLink, request):
-        """Handle Android deep link redirect with Intent URL."""
+        """Handle Android redirect using fallback landing page."""
+        # Intent URL
         intent_url = (
-            f"intent://{deep_link.path}#Intent;"
+            f"intent://{deep_link.deep_path}#Intent;"
             f"scheme={deep_link.scheme};"
             f"package={deep_link.android_package};"
+            "end"
         )
 
-        if deep_link.fallback_url:
-            intent_url += f"S.browser_fallback_url={deep_link.fallback_url};"
-
-        intent_url += "end"
-
-        logger.info(f"Android redirect: {intent_url}")
-        print(intent_url)
-        return redirect(intent_url)
-
-    def _redirect_ios(self, deep_link: DeepLink, request):
-        """Handle iOS Universal Link redirect."""
-        # For iOS, return HTML with meta tag + JavaScript fallback
-        context = {
-            "deep_link": deep_link.deep_link,
-            "fallback_url": deep_link.fallback_url or "https://tech.kasheemilk.com:8443",
-            "app_store_id": self._get_app_store_id(deep_link.module),
+        playstore_urls = {
+            "member": "https://play.google.com/store/apps/details?id=com.kasheemilk.kashee",
+            "sahayak": "https://play.google.com/store/apps/details?id=com.kasheemilk.kashee_sahayak",
+            "pes": "https://play.google.com/store/apps/details?id=com.kasheemilk.pes",
         }
 
-        return render(request, "deeplink/ios_redirect.html", context)
+        play_url = playstore_urls.get(deep_link.module)
+
+        return render(
+            request,
+            "deeplink/open.html",
+            {
+                "platform": "android",
+                "intent_url": intent_url,
+                "play_store_url": play_url,
+                "fallback_url": deep_link.fallback_url,
+            },
+        )
+
+    def _redirect_ios(self, deep_link: DeepLink, request):
+        """iOS deep link fallback landing page."""
+        app_store_ids = {
+            "member": "123456789",
+            "sahayak": "234567890",
+            "pes": "345678901",
+        }
+
+        app_store_url = (
+            f"https://apps.apple.com/app/id{app_store_ids.get(deep_link.module)}"
+        )
+
+        return render(
+            request,
+            "deeplink/open.html",
+            {
+                "platform": "ios",
+                "target": deep_link.deep_link,
+                "app_store_url": app_store_url,
+                "fallback_url": deep_link.fallback_url,
+            },
+        )
 
     def _redirect_web(self, deep_link: DeepLink, request):
-        """Handle web fallback redirect."""
-        if deep_link.fallback_url:
-            return redirect(deep_link.fallback_url)
-
-        # Default web landing page
-        return render( 
+        """Desktop or unknown user agent fallback."""
+        return render(
             request,
-            "deeplink/web_fallback.html",
+            "deeplink/open.html",
             {
-                "deep_link": deep_link,
-                "module": deep_link.module,
+                "platform": "web",
+                "target": deep_link.deep_link,
+                "fallback_url": deep_link.fallback_url,
             },
         )
 
@@ -117,11 +138,9 @@ class DeepLinkRedirectView(View):
             dl = DeepLink.objects.get(token=token)
 
             if "android" in user_agent:
-                home_url = (
-                    f"intent://home#Intent;scheme={dl.scheme};package={dl.android_package}.android;end"
-                )
+                home_url = f"intent://home#Intent;scheme={dl.scheme};package={dl.android_package}.android;end"
             else:
-                home_url = "https://tech.kasheemilk.com:8443/"
+                home_url = "https://tech.kasheemilk.com/"
 
             context = {"home_url": home_url}
 

@@ -98,8 +98,10 @@ class DeepLinkAdmin(admin.ModelAdmin):
     def smart_link(self, obj):
         """Display clickable smart link."""
         from ..deeplink_service import DeepLinkService
+        if not DeepLinkService.SMART_HOST.endswith("/"):
+            link = f"{DeepLinkService.SMART_HOST}/?token={obj.token}"
+        link = f"{DeepLinkService.SMART_HOST}?token={obj.token}"
 
-        link = f"{DeepLinkService.SMART_HOST}{obj.token}"
         return format_html('<a href="{}" target="_blank">Open Link</a>', link)
 
     smart_link.short_description = "Test Link"
@@ -107,8 +109,10 @@ class DeepLinkAdmin(admin.ModelAdmin):
     def smart_link_display(self, obj):
         """Display full smart link in detail view."""
         from ..deeplink_service import DeepLinkService
+        if not DeepLinkService.SMART_HOST.endswith("/"):
+            link = f"{DeepLinkService.SMART_HOST}/?token={obj.token}"
+        link = f"{DeepLinkService.SMART_HOST}?token={obj.token}"
 
-        link = f"{DeepLinkService.SMART_HOST}{obj.token}"
         return format_html('<a href="{0}" target="_blank">{0}</a>', link)
 
     smart_link_display.short_description = "Smart Link URL"
@@ -125,8 +129,6 @@ class DeepLinkAdmin(admin.ModelAdmin):
 
     def extend_expiry(self, request, queryset):
         """Bulk extend expiry by 7 days."""
-        from django.utils import timezone
-        from datetime import timedelta
 
         for obj in queryset:
             obj.extend_expiry(days=7)
