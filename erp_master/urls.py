@@ -7,7 +7,6 @@ from member.views import (
     SahayakIncentivesUpdateView,
     SahayakIncentivesCreateView,
 )
-from erp_app.views import open_deep_link
 from django.conf.urls.static import static
 from django.views.static import serve
 
@@ -23,7 +22,6 @@ from drf_spectacular.views import (
 from notifications.views.deep_link_view import DeepLinkRedirectView
 
 urlpatterns = [
-    # path("open", open_deep_link, name="deep_link_open"),
     path("gateway/", include("gateway.phonepe_urls", namespace="phonepe")),
     path("open/", include("notifications.urls.deeplink", namespace="deeplink")),
     
