@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include,re_path
+from django.urls import path, include, re_path
 from django.conf import settings
 from member.views import (
     MyHomePage,
@@ -25,21 +25,11 @@ from django.views.generic import TemplateView
 urlpatterns = [
     # path("open", open_deep_link, name="deep_link_open"),
     path("gateway/", include("gateway.phonepe_urls", namespace="phonepe")),
-    path('deeplink/', include('notifications.urls.deeplink', namespace='deeplink')),
-
-    # path(
-    #     ".well-known/assetlinks.json",
-    #     TemplateView.as_view(
-    #         template_name="well-known/assetlinks.json", content_type="application/json"
-    #     ),
-    # ),
+    path("deeplink/", include("notifications.urls.deeplink", namespace="deeplink")),
     re_path(
-        r'^\.well-known/assetlinks\.json$',
+        r"^\.well-known/assetlinks\.json$",
         serve,
-        {
-            'document_root': settings.STATICFILES_DIRS[0],
-            'path': '.well-known/assetlinks.json'
-        }
+        {"document_root": settings.STATIC_ROOT, "path": ".well-known/assetlinks.json"},
     ),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("", MyHomePage.as_view(), name="home"),
