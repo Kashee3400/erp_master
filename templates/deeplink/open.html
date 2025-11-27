@@ -71,6 +71,7 @@
             justify-content: center;
             box-shadow: 0 4px 20px rgba(100, 181, 246, 0.2);
             padding: 10px;
+            font-size: 48px;
         }
 
         .logo {
@@ -125,6 +126,8 @@
             margin: 10px;
             box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
             font-size: 15px;
+            border: none;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -168,7 +171,6 @@
             padding: 20px;
             background: white;
             border-radius: 16px;
-            display: inline-block;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
@@ -188,6 +190,10 @@
             color: #1976d2;
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         @media (max-width: 480px) {
@@ -217,9 +223,9 @@
         {% if platform == 'android' %}
         <h1>Opening Kashee App...</h1>
         <p>Redirecting you to the app. Please wait a moment.</p>
-        <div class="spinner"></div>
+        <div class="spinner" id="spinner"></div>
 
-        <a href="{{ play_store_url }}" id="store-btn" class="btn" style="display:none;">
+        <a href="{{ play_store_url }}" id="store-btn" class="btn hidden">
             📱 Open Play Store
         </a>
 
@@ -230,9 +236,9 @@
         {% elif platform == 'ios' %}
         <h1>Opening Kashee App...</h1>
         <p>Redirecting you to the app. Please wait a moment.</p>
-        <div class="spinner"></div>
+        <div class="spinner" id="spinner"></div>
 
-        <a href="{{ app_store_url }}" id="store-btn" class="btn" style="display:none;">
+        <a href="{{ app_store_url }}" id="store-btn" class="btn hidden">
             📱 Open App Store
         </a>
 
@@ -265,30 +271,93 @@
 
     <script>
         {% if platform == 'android' %}
-        window.location.href = '{{ intent_url }}';
+        // Android: Use intent:// URL to open app or Play Store
+        (function () {
+            try {
+                // Attempt to open the app via intent
+                window.location.href = '{{ intent_url }}';
 
-        setTimeout(function () {
-            document.querySelector('.spinner').style.display = 'none';
-            document.getElementById('store-btn').style.display = 'inline-block';
-        }, 2500);
+                // After 2.5 seconds, show Play Store button
+                setTimeout(function () {
+                    var spinner = document.getElementById('spinner');
+                    var storeBtn = document.getElementById('store-btn');
+
+                    if (spinner) spinner.classList.add('hidden');
+                    if (storeBtn) storeBtn.classList.remove('hidden');
+
+                    // Update message
+                    document.querySelector('h1').textContent = "Don't have the app?";
+                    document.querySelector('p').textContent = "Install Kashee from the Play Store to continue.";
+                }, 2500);
+            } catch (e) {
+                console.error('Error redirecting to app:', e);
+                // Show store button immediately on error
+                document.getElementById('spinner').classList.add('hidden');
+                document.getElementById('store-btn').classList.remove('hidden');
+            }
+        })();
 
         {% elif platform == 'ios' %}
-        window.location.href = '{{ target }}';
+        // iOS: Use custom URL scheme to open app
+        (function () {
+            try {
+                // Create invisible iframe to trigger app open
+                var now = new Date().valueOf();
+                var iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = '{{ target }}';
+                document.body.appendChild(iframe);
 
-        setTimeout(function () {
-            document.querySelector('.spinner').style.display = 'none';
-            document.getElementById('store-btn').style.display = 'inline-block';
-        }, 2500);
+                // Fallback to direct window.location (more reliable on newer iOS)
+                setTimeout(function () {
+                    window.location.href = '{{ target }}';
+                }, 100);
+
+                // After 2.5 seconds, show App Store button
+                setTimeout(function () {
+                    // Check if user is still on page (app didn't open)
+                    if (new Date().valueOf() - now < 3000) {
+                        var spinner = document.getElementById('spinner');
+                        var storeBtn = document.getElementById('store-btn');
+
+                        if (spinner) spinner.classList.add('hidden');
+                        if (storeBtn) storeBtn.classList.remove('hidden');
+
+                        // Update message
+                        document.querySelector('h1').textContent = "Don't have the app?";
+                        document.querySelector('p').textContent = "Install Kashee from the App Store to continue.";
+                    }
+                }, 2500);
+            } catch (e) {
+                console.error('Error redirecting to app:', e);
+                // Show store button immediately on error
+                document.getElementById('spinner').classList.add('hidden');
+                document.getElementById('store-btn').classList.remove('hidden');
+            }
+        })();
 
         {% else %}
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: "{{ target }}",
-            width: 200,
-            height: 200,
-            colorDark: "#1976d2",
-            colorLight: "#ffffff",
-        });
-        document.getElementById("qrcode").style.display = 'inline-block';
+        // Desktop/Web: Show QR code
+        (function () {
+            try {
+                var qrcodeElement = document.getElementById("qrcode");
+                if (qrcodeElement && typeof QRCode !== 'undefined') {
+                    new QRCode(qrcodeElement, {
+                        text: "{{ target }}",
+                        width: 200,
+                        height: 200,
+                        colorDark: "#1976d2",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    qrcodeElement.style.display = 'inline-block';
+                }
+            } catch (e) {
+                console.error('Error generating QR code:', e);
+                // Hide QR code container if generation fails
+                document.getElementById("qrcode").style.display = 'none';
+            }
+        })();
         {% endif %}
     </script>
 </body>
