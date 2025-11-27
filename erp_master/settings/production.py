@@ -87,15 +87,6 @@ LOGGING = {
         "verbose": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
-        #deeplink
-        'deeplink_file': {
-            'level': 'INFO',
-            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
-            "filename": os.path.join(LOG_DIR, "deeplink.log"),
-            'maxBytes': 1024 * 1024 * 10,  # 10MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
         # Notifications
         "notifications_file": {
             "level": "INFO",
@@ -187,11 +178,6 @@ LOGGING = {
             "handlers": ["mpms_file", "console"],
             "level": "INFO",
             "propagate": False,
-        },
-        'deeplink': {
-            'handlers': ['deeplink_file', 'console'],
-            'level': 'INFO',
-            'propagate': False,
         },
     },
 }

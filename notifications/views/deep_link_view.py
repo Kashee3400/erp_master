@@ -78,11 +78,11 @@ class DeepLinkRedirectView(View):
         return self._redirect_web(deep_link, app_cfg, request)
 
     def _redirect_android(self, deep_link, app_cfg, request):
+
         play_store_url = (
             f"https://play.google.com/store/apps/details?id={app_cfg.android_package}"
         )
 
-        # intent with fallback inside → auto redirect to Play Store
         intent_url = (
             f"intent://{deep_link.deep_path}#Intent;"
             f"scheme={app_cfg.scheme};"
@@ -91,28 +91,36 @@ class DeepLinkRedirectView(View):
             "end"
         )
 
-        return HttpResponseRedirect(intent_url)
+        context = {
+            "platform": "android",
+            "intent_url": intent_url,
+            "play_store_url": play_store_url,
+            "fallback_url": deep_link.fallback_url,
+            "target": deep_link.deep_link,  # kashee://member/home etc.
+        }
+
+        return render(request, "deeplink/open.html", context)
 
     def _redirect_ios(self, deep_link, app_cfg, request):
         app_store_url = f"https://apps.apple.com/app/{app_cfg.ios_bundle_id}"
 
-        # Instant scheme open + fallback to App Store
-        html = f"""
-        <html><head>
-        <meta name="apple-itunes-app" content="app-id={app_cfg.ios_bundle_id}">
-        <script>
-            window.location = "{deep_link.deep_link}";
-            setTimeout(function() {{
-                window.location = "{app_store_url}";
-            }}, 1000);
-        </script>
-        </head></html>
-        """
-        return HttpResponse(html)
+        context = {
+            "platform": "ios",
+            "app_store_url": app_store_url,
+            "fallback_url": deep_link.fallback_url,
+            "target": deep_link.deep_link,  # kashee://something
+        }
+
+        return render(request, "deeplink/open.html", context)
 
     def _redirect_web(self, deep_link, app_cfg, request):
-        print(deep_link)
-        return HttpResponseRedirect(app_cfg.default_fallback)
+        context = {
+            "platform": "web",
+            "fallback_url": deep_link.fallback_url,
+            "target": request.build_absolute_uri(),  # QR code target
+        }
+
+        return render(request, "deeplink/open.html", context)
 
     def _handle_invalid_link(self, request, token):
         """Handle invalid or expired links."""
