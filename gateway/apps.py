@@ -7,4 +7,7 @@ class GatewayConfig(AppConfig):
     name = 'gateway'
     label = 'gateway'
     verbose_name = _('Payment Gateway')
+    
+    def ready(self):
+        import gateway.signals
 

@@ -189,7 +189,6 @@ class DiseaseSeverity(models.TextChoices):
     CRITICAL = "Critical", _("Critical")
 
 
-
 class TransferTypeChoices(models.TextChoices):
     INWARD = "inward", _("Inward")  # For receiving new stock
     OUTWARD = "outward", _("Outward")  # For sending stock to another location
@@ -240,12 +239,23 @@ class PaymentMethodChoices(models.TextChoices):
 
 
 class PaymentStatusChoices(models.TextChoices):
-    PENDING = "pending", _("Pending")
-    PROCESSING = "processing", _("Processing")
-    COMPLETED = "completed", _("Completed")
-    FAILED = "failed", _("Failed")
-    REFUNDED = "refunded", _("Refunded")
+    INITIATED = "INITIATED", "Initiated"
+    PENDING = "PENDING", "Pending"
+    COMPLETED = "COMPLETED", "Completed"
+    FAILED = "FAILED", "Failed"
+    EXPIRED = "EXPIRED", "Expired"
+    REFUNDED = "REFUNDED", "Refunded"
+    PARTIALLY_REFUNDED = "PARTIALLY_REFUNDED", "Partially Refunded"
 
+
+class PaymentTransactionTypeChoices(models.TextChoices):
+    PRODUCT_PURCHASE = "PRODUCT_PURCHASE", "Product Purchase"
+    CASE_ENTRY_FEE = "CASE_ENTRY_FEE", "Case Entry Fee"
+    SUBSCRIPTION = "SUBSCRIPTION", "Subscription"
+    SERVICE_FEE = "SERVICE_FEE", "Service Fee"
+    BOOKING = "BOOKING", "Booking"
+    CONSULTATION = "CONSULTATION", "Consultation Fee"
+    OTHER = "OTHER", "Other"
 
 
 class CasePaymentStatusChoices(models.TextChoices):

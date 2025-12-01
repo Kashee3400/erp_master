@@ -24,3 +24,8 @@ service-account-file.json
 # /veterinary/
 
 .idea
+
+
+member/model/*
+member/geo_import/*
+member/manager/member_register.py

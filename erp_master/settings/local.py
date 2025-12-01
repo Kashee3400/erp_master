@@ -122,10 +122,13 @@ PHONEPE_BASE_URL = (
 PHONEPE_REDIRECT_URL = config("PHONEPE_REDIRECT_URL")
 PHONEPE_CALLBACK_URL = config("PHONEPE_CALLBACK_URL")
 
-DEEPLINK_SMART_HOST = "https://tech.kasheemilk.com:8443/open?token="
 DEEPLINK_DEFAULT_EXPIRY_DAYS = 30  # 0 for no expiry
 DEEPLINK_CACHE_TIMEOUT = 3600  # 1 hour
 
 # Rate limiting (optional)
 DEEPLINK_RATE_LIMIT_ENABLED = True
 DEEPLINK_MAX_LINKS_PER_USER_PER_DAY = 100
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://kmpcl.netlify.app",
+]

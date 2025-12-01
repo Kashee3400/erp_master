@@ -4,9 +4,6 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django_ckeditor_5.fields import CKEditor5Field
-from django.conf import settings
-from django.core.files.base import ContentFile
-import base64
 from decimal import Decimal
 from django.db import models, transaction
 from django.core.validators import MinValueValidator, MinLengthValidator
