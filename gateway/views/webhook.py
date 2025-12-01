@@ -252,13 +252,15 @@ class CheckPaymentStatusView(View, PhonePeClientMixin):
 
             if not merchant_order_id:
                 return JsonResponse(
-                    {"success": False, "error": "merchant_order_id is required"},
+                    {"status": "error", "message": "merchant_order_id is required"},
                     status=400,
                 )
 
             return self._check_status(merchant_order_id)
         except json.JSONDecodeError:
-            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+            return JsonResponse(
+                {"success": "error", "message": "Invalid JSON"}, status=400
+            )
 
     @staticmethod
     def _check_status(merchant_order_id):
@@ -270,7 +272,8 @@ class CheckPaymentStatusView(View, PhonePeClientMixin):
 
             return JsonResponse(
                 {
-                    "success": True,
+                    "status": "success",
+                    "message": "Status checked successfully",
                     "data": {
                         "transaction_id": str(transaction.id),
                         "merchant_order_id": transaction.merchant_order_id,
@@ -294,10 +297,10 @@ class CheckPaymentStatusView(View, PhonePeClientMixin):
         except PaymentTransaction.DoesNotExist:
             logger.warning(f"Transaction not found: {merchant_order_id}")
             return JsonResponse(
-                {"success": False, "error": "Transaction not found"}, status=404
+                {"status": "error", "message": "Transaction not found"}, status=404
             )
         except Exception as e:
             logger.error(f"Status check error: {str(e)}", exc_info=True)
             return JsonResponse(
-                {"success": False, "error": "Internal server error"}, status=500
+                {"status": "error", "message": "Internal server error"}, status=500
             )

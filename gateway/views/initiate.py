@@ -61,7 +61,7 @@ class InitiatePaymentView(View, PhonePeClientMixin):
                 amount, redirect_url, user_identifier, transaction_type
             )
             if errors:
-                return JsonResponse({"success": False, "errors": errors}, status=400)
+                return JsonResponse({"status": "error", "message": errors}, status=400)
 
             # Generate unique merchant order ID
             merchant_order_id = self._generate_merchant_order_id(data)
@@ -78,8 +78,8 @@ class InitiatePaymentView(View, PhonePeClientMixin):
                     logger.warning(f"Invalid model: {data.get('related_model')}")
                     return JsonResponse(
                         {
-                            "success": False,
-                            "error": f"Invalid model type: {data.get('related_model')}",
+                            "status": "error",
+                            "message": f"Invalid model type: {data.get('related_model')}",
                         },
                         status=400,
                     )
@@ -153,10 +153,11 @@ class InitiatePaymentView(View, PhonePeClientMixin):
                 f"Payment initiated: Order ID - {merchant_order_id}, "
                 f"Amount - ₹{amount}, User - {user_identifier}"
             )
-
+            
             return JsonResponse(
                 {
-                    "success": True,
+                    "status": "success",
+                    "message":"Payment initiated",
                     "data": {
                         "transaction_id": str(transaction.id),
                         "merchant_order_id": merchant_order_id,
@@ -172,17 +173,17 @@ class InitiatePaymentView(View, PhonePeClientMixin):
 
         except json.JSONDecodeError:
             logger.error("Invalid JSON in request")
-            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
         except ValidationError as e:
             logger.error(f"Validation error: {str(e)}")
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
         except Exception as e:
             logger.error(f"Payment initiation failed: {str(e)}", exc_info=True)
             return JsonResponse(
                 {
-                    "success": False,
-                    "error": "Payment initiation failed",
-                    "details": str(e),
+                    "status": "error",
+                    "message": "Payment initiation failed",
+                    "errors": str(e),
                 },
                 status=500,
             )
