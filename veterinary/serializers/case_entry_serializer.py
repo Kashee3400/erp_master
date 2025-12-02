@@ -8,9 +8,6 @@ from ..models.models import NonMember, NonMemberCattle, Cattle, CattleStatusLog
 from ..models.case_models import (
     CaseEntry,
     TreatmentCostConfiguration,
-    CasePayment,
-    CasePaymentSummary,
-    PaymentMethod,
 )
 from django.utils.timezone import datetime
 from ..serializers.choices_serializers import SpeciesBreedSerializer
@@ -101,6 +98,7 @@ class CaseEntrySerializer(serializers.ModelSerializer):
     # Nested serializers for detailed information
     cattle_detail = serializers.SerializerMethodField()
     non_member_cattle_detail = serializers.SerializerMethodField()
+    payment_status = serializers.SerializerMethodField()
 
     class Meta:
         model = CaseEntry
@@ -120,12 +118,12 @@ class CaseEntrySerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "sync",
-            # Read-only computed fields
             "member_name",
             "member_mobile",
             "animal_tag",
             "is_member_case",
             "cattle_detail",
+            "payment_status",
             "non_member_cattle_detail",
         ]
         read_only_fields = ["case_no", "calculated_cost", "created_at", "updated_at"]
@@ -134,9 +132,7 @@ class CaseEntrySerializer(serializers.ModelSerializer):
         if obj.cattle:
             breed_data = None
             if getattr(obj.cattle, "breed", None):
-                # Use your existing serializer to serialize the breed
                 breed_data = SpeciesBreedSerializer(obj.cattle.breed).data
-
             return {
                 "id": obj.cattle.id,
                 "tag_number": getattr(obj.cattle, "tag_number", "N/A"),
@@ -153,6 +149,9 @@ class CaseEntrySerializer(serializers.ModelSerializer):
         if obj.non_member_cattle:
             return NonMemberCattleSerializer(obj.non_member_cattle).data
         return None
+
+    def get_payment_status(self, obj: CaseEntry):
+        return obj.get_payment_status()
 
     def validate(self, data):
         """Ensure either cattle or non_member_cattle is provided, but not both"""
@@ -571,111 +570,3 @@ class TreatmentCostConfigurationSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated and not instance.created_by:
             validated_data["created_by"] = request.user
         return super().update(instance, validated_data)
-
-
-# class PaymentMethodSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PaymentMethod
-#         fields = ["id", "method_type", "is_active"]
-
-
-class CasePaymentSerializer(serializers.ModelSerializer):
-    payment_method_display = serializers.CharField(
-        source="get_payment_method_display", read_only=True
-    )
-    status_display = serializers.CharField(
-        source="get_payment_status_display", read_only=True
-    )
-    collected_by_name = serializers.SerializerMethodField()
-    is_overdue = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CasePayment
-        fields = [
-            "id",
-            "case_entry",
-            "payment_method",
-            "payment_method_display",
-            "amount",
-            "payment_status",
-            "status_display",
-            "transaction_id",
-            "payment_date",
-            "due_date",
-            "reference_number",
-            "notes",
-            "retry_count",
-            "is_overdue",
-            "created_at",
-            "gateway_response",
-            "is_reconciled",
-            "is_collected",
-            "collected_by",
-            "collected_by_name",
-        ]
-        read_only_fields = [
-            "id",
-            "transaction_id",
-            "payment_date",
-            "created_at",
-            "retry_count",
-        ]
-
-    def get_collected_by_name(self, obj):
-        if obj.collected_by:
-            return obj.collected_by.get_full_name()
-        return None
-
-    def get_is_overdue(self, obj):
-        return obj.is_overdue()
-
-
-class CasePaymentSummarySerializer(serializers.ModelSerializer):
-    payment_status_display = serializers.CharField(
-        source="get_payment_status_display", read_only=True
-    )
-    warning_message = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CasePaymentSummary
-        fields = [
-            "total_amount",
-            "amount_paid",
-            "amount_due",
-            "payment_status",
-            "payment_status_display",
-            "is_overdue",
-            "warning_message",
-            "last_payment_date",
-        ]
-        read_only_fields = fields
-
-    def get_warning_message(self, obj):
-        return obj.case_entry.get_warning_message()
-
-from ..serializers.choices_serializers import PaymentMethodLiteSerializer
-
-class CaseEntryPaymentSerializer(serializers.ModelSerializer):
-    payment_summary = CasePaymentSummarySerializer(read_only=True)
-    payments = CasePaymentSerializer(many=True, read_only=True)
-
-    active_payment = serializers.SerializerMethodField()
-    payment_method = PaymentMethodLiteSerializer(read_only=True)
-
-    def get_active_payment(self, obj):
-        if hasattr(obj, "active_payment_id") and obj.active_payment_id:
-            payment = obj.payments.filter(id=obj.active_payment_id).first()
-            return CasePaymentSerializer(payment).data if payment else None
-        return None
-
-    class Meta:
-        model = CaseEntry
-        fields = [
-            "case_no",
-            "calculated_cost",
-            "requires_payment",
-            "payment_method",
-            "payment_summary",
-            "payments",
-            "active_payment",
-        ]

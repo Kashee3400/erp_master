@@ -38,7 +38,6 @@ from .views import (
     DiseaseViewset,
     SymptomViewset,
     TreatmentCostViewset,
-    CasePaymentViewSet,
     PaymentMethodViewset,
 )
 
@@ -103,7 +102,6 @@ router.register(r"case-entries", CaseEntryViewSet, basename="case-entry")
 router.register(r"diseases", DiseaseViewset, basename="diseases")
 router.register(r"symptoms", SymptomViewset, basename="symptoms")
 router.register(r"costs", TreatmentCostViewset, basename="costs")
-router.register(r"case-payments", CasePaymentViewSet, basename="case-payments")
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -117,9 +115,6 @@ urlpatterns = [
     path("bulk-sync/", bulk_sync, name="bulk_sync"),
     path("advanced-search/", AdvancedCaseSearchView.as_view(), name="advanced_search"),
 ]
-
-# If you're using a separate app, include these in your main urls.py:
-# path('visits/', include('your_app.urls')),
 
 """
 API Endpoints Documentation:

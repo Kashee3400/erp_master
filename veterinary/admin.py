@@ -12,7 +12,6 @@ from .models.case_models import (
     CaseReceiverLog,
     AnimalDiagnosis,
     AnimalTreatment,
-    CasePayment,
     Cattle,
     TreatmentCostConfiguration,
 )
@@ -22,7 +21,6 @@ from .models.common_models import (
     AICharge,
     CattleCaseType,
     PaymentMethod,
-    TimeSlot,
     CattleCaseStatus,
     OnlinePayment,
 )
@@ -281,33 +279,6 @@ class AnimalTreatmentAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("created_at", "updated_at")
     ordering = ("-created_at",)
-
-
-@admin.register(CasePayment)
-class CasePaymentAdmin(admin.ModelAdmin):
-    list_display = (
-        "case_entry",
-        "payment_method",
-        "amount",
-        "payment_status",
-        "payment_date",
-        "is_reconciled",
-        "is_collected",
-    )
-    list_filter = (
-        "payment_method",
-        "payment_status",
-        "is_reconciled",
-        "is_collected",
-    )
-    search_fields = (
-        "case_entry__case_no",
-        "transaction_id",
-        "collected_by__username",
-        "payment_method__method",
-    )
-    readonly_fields = ("payment_date",)
-    ordering = ("-payment_date",)
 
 
 @admin.register(Cattle)

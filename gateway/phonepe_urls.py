@@ -1,4 +1,6 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
 from .views import (
     InitiatePaymentView,
     CheckPaymentStatusView,
@@ -6,14 +8,25 @@ from .views import (
     RefundStatusView,
     PaymentWebhookView,
     VerifyPaymentView,
+    PaymentTransactionViewSet,
+    MilkBillPaymentCreateView,
 )
 
 app_name = "gateway"
 
+router = DefaultRouter()
+router.register(r"transactions", PaymentTransactionViewSet, basename="transactions")
+
 urlpatterns = [
+    path("api/", include(router.urls)),
     # Payment initiation
     path(
         "api/phonepe/initiate/", InitiatePaymentView.as_view(), name="initiate_payment"
+    ),
+    path(
+        "api/milk-bill/initiate/",
+        MilkBillPaymentCreateView.as_view(),
+        name="milk_bill_payment",
     ),
     # PhonePe calls this webhook (server-to-server)
     path("api/phonepe/webhook/", PaymentWebhookView.as_view(), name="payment_webhook"),

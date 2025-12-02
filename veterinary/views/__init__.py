@@ -19,7 +19,6 @@ from .case_entry_view import (
     quick_visit_registration,
     calculate_cost,
     TreatmentCostViewset,
-    CasePaymentViewSet,
 )
 
 # Celery Views
@@ -118,6 +117,6 @@ __all__ = [
     "DiseaseViewset",
     "SymptomViewset",
     "TreatmentCostViewset",
-    "CasePaymentViewSet",
     "PaymentMethodViewset",
+    "CeleryDashboardAPIView",
 ]

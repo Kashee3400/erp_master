@@ -12,6 +12,9 @@ from veterinary.choices.choices import (
     PaymentStatusChoices,
     PaymentTransactionTypeChoices,
 )
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +100,7 @@ class PaymentTransaction(models.Model):
     )
 
     # User reference (add your user model reference)
-    # user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     user_identifier = models.CharField(
         max_length=255, db_index=True, help_text="User ID or identifier for tracking"
     )

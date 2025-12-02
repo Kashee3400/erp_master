@@ -191,9 +191,9 @@ class PaymentWebhookView(View, PhonePeClientMixin):
 
                     # mark related object
                     if txn.content_object and hasattr(
-                        txn.content_object, "mark_as_paid"
+                        txn.content_object, "mark_as_completed"
                     ):
-                        txn.content_object.mark_as_paid()
+                        txn.content_object.mark_as_completed(transaction_id=order_id)
 
                 # ---- FAILED CASE ----
                 elif state == "FAILED":
@@ -210,7 +210,7 @@ class PaymentWebhookView(View, PhonePeClientMixin):
                     if txn.content_object and hasattr(
                         txn.content_object, "mark_as_failed"
                     ):
-                        txn.content_object.mark_as_failed(reason=reason)
+                        txn.content_object.mark_as_failed()
 
                 # ---- PENDING / UNKNOWN / PROCESSING ----
                 else:

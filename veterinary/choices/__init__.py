@@ -13,6 +13,7 @@ from .choices import (
     PeriodChoices,
     StatusChoices,
     CattleStatusChoices,
+    PaymentStatusChoices,
 )
 
 __all__ = [
@@ -30,4 +31,5 @@ __all__ = [
     PeriodChoices,
     StatusChoices,
     CattleStatusChoices,
+    PaymentStatusChoices
 ]

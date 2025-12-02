@@ -4,7 +4,7 @@ from .managers.case_entry_manager import CaseEntryManager
 from ..choices.choices import *
 from django.db import models
 from django.conf import settings
-import random
+import ulid
 from .common_models import (
     BaseModel,
     User,
@@ -18,8 +18,10 @@ from .stock_models import Symptoms, Disease, Medicine
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from django.core.exceptions import ValidationError
-from decimal import Decimal
+
+from django.contrib.contenttypes.models import ContentType
+from gateway.models import PaymentTransaction
+from django.db.models import Sum
 
 
 class DiagnosisRoute(models.Model):
@@ -295,39 +297,16 @@ class CaseEntry(BaseModel):
         return f"{self.case_no} - {owner} - {created_by}"
 
     def save(self, *args, **kwargs):
-        # Auto-calculate cost before saving
+        if not self.case_no:
+            self.case_no = self._generate_case_no()
+
+        # auto-calc cost
         if self.visit_date:
             self.calculated_cost = self.calculate_treatment_cost()
 
-        if not self.case_no:
-            farmer_code = "UNKNOWN"
-            tag_number = "NA"
-            timestamp = timezone.now().strftime("%Y%m%d-%H%M%S")
-
-            # Handle member cattle
-            if self.cattle and hasattr(self.cattle, "owner") and self.cattle.owner:
-                if hasattr(self.cattle.owner, "member_code"):
-                    farmer_code = self.cattle.owner.member_code[-6:]
-
-                if hasattr(self.cattle, "tag_detail") and self.cattle.tag_detail:
-                    tag_number = getattr(self.cattle.tag_detail, "tag_number", "NA")
-                elif hasattr(self.cattle, "tag_number"):
-                    tag_number = self.cattle.tag_number
-
-            # Handle non-member cattle
-            elif self.non_member_cattle:
-                farmer_code = self.non_member_cattle.non_member.non_member_id[-6:]
-                tag_number = self.non_member_cattle.tag_number
-
-            if tag_number != "NA":
-                self.case_no = f"{farmer_code}-{tag_number}-{timestamp}"
-            else:
-                rand_suffix = random.randint(100, 999)
-                self.case_no = f"{farmer_code}-{tag_number}-{timestamp}-{rand_suffix}"
-
         super().save(*args, **kwargs)
 
-        # Update visit count for non-members
+        # visit count for non-member
         if self.non_member_cattle:
             non_member = self.non_member_cattle.non_member
             non_member.visit_count = CaseEntry.objects.filter(
@@ -335,288 +314,86 @@ class CaseEntry(BaseModel):
             ).count()
             non_member.save(update_fields=["visit_count"])
 
+    def _generate_case_no(self):
+        return f"CASE-{ulid.new().str[:12]}"
+
+    def _get_case_transactions(self):
+        """Return all PaymentTransaction entries linked to this CaseEntry"""
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return PaymentTransaction.objects.filter(
+            content_type=content_type, object_id=self.case_no, is_active=True
+        )
+
     def get_payment_status(self):
-        """Get current payment status"""
-        try:
-            return self.payment_summary.get_display_status()
-        except:
+        """Return PAID / PARTIAL / UNPAID based on PaymentTransaction records."""
+        qs = self._get_case_transactions()
+
+        if not qs.exists():
             return CasePaymentStatusChoices.UNPAID
 
-    def create_initial_payment(self, payment_method, due_date=None):
-        """Create initial payment record for case"""
-        if not self.calculated_cost:
-            raise ValidationError(
-                _("Calculated cost must be set before creating payment")
-            )
-
-        payment = CasePayment.objects.create(
-            case_entry=self,
-            payment_method=payment_method,
-            amount=self.calculated_cost,
-            due_date=due_date,
-            payment_status=PaymentStatusChoices.PENDING,
+        # Sum of successful payments
+        paid_amount = (
+            qs.filter(status=PaymentStatusChoices.COMPLETED).aggregate(
+                total=Sum("amount")
+            )["total"]
+            or 0
         )
 
-        # Initialize payment summary
-        CasePaymentSummary.objects.get_or_create(
-            case_entry=self, defaults={"total_amount": self.calculated_cost}
-        )
+        if paid_amount >= self.total_amount:
+            return CasePaymentStatusChoices.PAID
 
-        return payment
+        if 0 < paid_amount < self.total_amount:
+            return CasePaymentStatusChoices.PARTIAL
+
+        return CasePaymentStatusChoices.UNPAID
 
     def can_complete_case(self):
-        """Check if case can be marked as complete"""
+        """Case can be completed if fully or partially paid (based on your rules)."""
+
         if not self.requires_payment:
             return True
 
-        try:
-            summary = self.payment_summary
-            return summary.payment_status in [
-                CasePaymentStatusChoices.PAID,
-                CasePaymentStatusChoices.PARTIAL,  # Allow completion with partial payment
-            ]
-        except:
-            return False
+        status = self.get_payment_status()
 
-    def get_warning_message(self):
-        """Get warning message about payment status"""
-        try:
-            summary = self.payment_summary
-            if summary.payment_status == CasePaymentStatusChoices.UNPAID:
-                return _("Payment Due: ₹{} pending").format(summary.amount_due)
-            elif summary.payment_status == CasePaymentStatusChoices.PARTIAL:
-                return _("Partial Payment: ₹{} still due").format(summary.amount_due)
-            elif summary.is_overdue:
-                return _("⚠️ OVERDUE: ₹{} overdue").format(summary.amount_due)
-        except:
-            pass
-        return None
-
-
-class CasePayment(models.Model):
-    case_entry = models.ForeignKey(
-        CaseEntry,
-        on_delete=models.CASCADE,
-        related_name="payments",
-        verbose_name=_("Case Entry"),
-        help_text=_("Case associated with this payment."),
-    )
-
-    payment_method = models.ForeignKey(
-        PaymentMethod,
-        on_delete=models.CASCADE,
-        verbose_name=_("Payment Method"),
-        help_text=_("Method used for payment."),
-    )
-
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name=_("Amount"),
-        help_text=_("Amount paid."),
-    )
-
-    payment_date = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Payment Date"),
-        help_text=_("Date and time when the payment was made."),
-    )
-
-    transaction_id = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_("Transaction ID"),
-        help_text=_("Payment gateway reference or manual receipt ID."),
-    )
-
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PaymentStatusChoices.choices,
-        default=PaymentStatusChoices.PENDING,
-        verbose_name=_("Payment Status"),
-        help_text=_("Current status of the payment."),
-    )
-
-    gateway_response = models.JSONField(
-        blank=True,
-        null=True,
-        verbose_name=_("Gateway Response"),
-        help_text=_("Raw payment gateway response data (online payments only)."),
-    )
-
-    is_reconciled = models.BooleanField(
-        default=False,
-        verbose_name=_("Is Reconciled"),
-        help_text=_("Whether this payment is reconciled in accounting."),
-    )
-
-    is_collected = models.BooleanField(
-        default=False,
-        verbose_name=_("Is Cash Collected"),
-        help_text=_("Indicates if cash has been collected for offline payments."),
-    )
-
-    collected_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="collected_payments",
-        verbose_name=_("Collected By"),
-        help_text=_("User who collected the payment (for COD)."),
-    )
-
-    collected_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Collected Date"),
-        help_text=_("Date and time when cash was collected."),
-    )
-
-    due_date = models.DateField(
-        null=True,
-        blank=True,
-        help_text=_("Due date for payment (applicable for milk bill)"),
-    )
-    reference_number = models.CharField(
-        max_length=255, blank=True, help_text=_("Reference number for tracking")
-    )
-    notes = models.TextField(blank=True, help_text=_("Additional notes about payment"))
-    retry_count = models.PositiveIntegerField(
-        default=0, help_text=_("Number of payment retry attempts")
-    )
-    last_retry_at = models.DateTimeField(
-        null=True, blank=True, help_text=_("Last time payment retry was attempted")
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        blank=True,
-        null=True,
-        help_text="Timestamp when the record was created",
-        verbose_name=_("Created At"),
-    )
-
-    def __str__(self):
-        method_name = getattr(
-            getattr(self.payment_method, "online_payment", None), "gateway_name", None
-        ) or getattr(self.payment_method, "method", _("Unknown Method"))
-        return _("Payment: ₹{amount} for Case: {case} via {method} [{status}]").format(
-            amount=self.amount,
-            case=self.case_entry.case_no if self.case_entry else _("N/A"),
-            method=method_name,
-            status=self.get_payment_status_display(),
-        )
-
-    def is_overdue(self):
-        """Check if payment is overdue"""
-        if self.due_date and self.payment_status != PaymentStatusChoices.COMPLETED:
-            return timezone.now().date() > self.due_date
-        return False
-
-    def mark_as_completed(self, transaction_id=None):
-        """Mark payment as completed"""
-        self.payment_status = PaymentStatusChoices.COMPLETED
-        self.amount = self.case_entry.calculated_cost
-        self.payment_date = timezone.now()
-        if transaction_id:
-            self.transaction_id = transaction_id
-        self.save()
-
-    def mark_as_failed(self):
-        """Mark payment as failed"""
-        self.payment_status = PaymentStatusChoices.FAILED
-        self.save()
-
-    class Meta:
-        db_table = "tbl_case_payments"
-        verbose_name = _("Case Payment")
-        verbose_name_plural = _("Case Payments")
-        ordering = ["-payment_date"]
-        indexes = [
-            models.Index(fields=["case_entry"], name="idx_payment_case_entry"),
-            models.Index(fields=["payment_method"], name="idx_payment_method"),
-            models.Index(fields=["payment_status"], name="idx_payment_status"),
-            models.Index(fields=["transaction_id"], name="idx_payment_txnid"),
+        return status in [
+            CasePaymentStatusChoices.PAID,
+            CasePaymentStatusChoices.PARTIAL,
         ]
 
+    def get_warning_message(self):
+        """Return payment warning based on outstanding amount."""
 
-class CasePaymentSummary(BaseModel):
-    """Denormalized summary for quick access to case payment status"""
+        qs = self._get_case_transactions()
 
-    case_entry = models.OneToOneField(
-        CaseEntry,
-        on_delete=models.CASCADE,
-        related_name="payment_summary",
-        primary_key=True,
-    )
-    total_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0, help_text=_("Total case cost")
-    )
-    amount_paid = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        help_text=_("Total amount paid so far"),
-    )
-    amount_due = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        help_text=_("Remaining amount to be paid"),
-    )
-    payment_status = models.CharField(
-        max_length=20,
-        choices=CasePaymentStatusChoices.choices,
-        default=CasePaymentStatusChoices.UNPAID,
-        help_text=_("Overall payment status for the case"),
-    )
-    is_overdue = models.BooleanField(
-        default=False, help_text=_("Whether any payment is overdue")
-    )
-    last_payment_date = models.DateTimeField(
-        null=True, blank=True, help_text=_("Date of last payment")
-    )
-
-    class Meta:
-        verbose_name = _("Case Payment Summary")
-        verbose_name_plural = _("Case Payment Summaries")
-
-    def __str__(self):
-        return f"Payment Summary - {self.case_entry.case_no}"
-
-    def refresh_summary(self):
-        """Recalculate payment summary"""
-        payments = self.case_entry.payments.all()
-
-        completed_payments = payments.filter(
-            payment_status=PaymentStatusChoices.COMPLETED
+        paid_amount = (
+            qs.filter(status=PaymentStatusChoices.SUCCESS).aggregate(
+                total=Sum("amount")
+            )["total"]
+            or 0
         )
 
-        self.amount_paid = sum(p.amount for p in completed_payments) or Decimal("0")
-        self.amount_due = max(self.total_amount - self.amount_paid, Decimal("0"))
+        amount_due = self.total_amount - paid_amount
 
-        # Determine payment status
-        if self.amount_due == 0:
-            self.payment_status = CasePaymentStatusChoices.PAID
-        elif self.amount_paid == 0:
-            self.payment_status = CasePaymentStatusChoices.UNPAID
-        else:
-            self.payment_status = CasePaymentStatusChoices.PARTIAL
+        if amount_due <= 0:
+            return None
 
-        # Check for overdue
-        self.is_overdue = any(p.is_overdue() for p in payments)
-        if self.is_overdue and self.payment_status != CasePaymentStatusChoices.PAID:
-            self.payment_status = CasePaymentStatusChoices.OVERDUE
+        payment_status = self.get_payment_status()
 
-        # Update last payment date
-        if completed_payments.exists():
-            self.last_payment_date = completed_payments.latest(
-                "payment_date"
-            ).payment_date
+        if payment_status == CasePaymentStatusChoices.UNPAID:
+            return _("Payment Due: ₹{} pending").format(amount_due)
 
-        self.save()
+        if payment_status == CasePaymentStatusChoices.PARTIAL:
+            return _("Partial Payment: ₹{} still due").format(amount_due)
+
+        # If you track overdue via dates
+        if (
+            hasattr(self, "due_date")
+            and self.due_date
+            and self.due_date < timezone.now().date()
+        ):
+            return _("⚠️ OVERDUE: ₹{} overdue").format(amount_due)
+
+        return None
 
 
 class CaseReceiverLog(BaseModel):

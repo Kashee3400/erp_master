@@ -10,6 +10,20 @@ from django.core.exceptions import ValidationError
 from phonepe.sdk.pg.payments.v2.models.request.standard_checkout_pay_request import (
     StandardCheckoutPayRequest,
 )
+from rest_framework.views import APIView
+
+from ..serializers import (
+    MilkBillPaymentCreateSerializer,
+    PaymentTransactionDetailSerializer,
+)
+from ..models import PaymentTransaction
+from util.response import ResponseMixin
+from veterinary.choices import PaymentStatusChoices, PaymentMethodChoices
+from rest_framework.permissions import IsAuthenticated
+from django.db import transaction as db_transaction
+from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from phonepe.sdk.pg.common.models.request.meta_info import MetaInfo
 
@@ -153,11 +167,11 @@ class InitiatePaymentView(View, PhonePeClientMixin):
                 f"Payment initiated: Order ID - {merchant_order_id}, "
                 f"Amount - ₹{amount}, User - {user_identifier}"
             )
-            
+
             return JsonResponse(
                 {
                     "status": "success",
-                    "message":"Payment initiated",
+                    "message": "Payment initiated",
                     "data": {
                         "transaction_id": str(transaction.id),
                         "merchant_order_id": merchant_order_id,
@@ -173,7 +187,9 @@ class InitiatePaymentView(View, PhonePeClientMixin):
 
         except json.JSONDecodeError:
             logger.error("Invalid JSON in request")
-            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+            return JsonResponse(
+                {"status": "error", "message": "Invalid JSON"}, status=400
+            )
         except ValidationError as e:
             logger.error(f"Validation error: {str(e)}")
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
@@ -244,3 +260,111 @@ class InitiatePaymentView(View, PhonePeClientMixin):
 
 
 # "transaction_type": "Invalid type. Valid types: PRODUCT_PURCHASE, CASE_ENTRY_FEE, SUBSCRIPTION, SERVICE_FEE, BOOKING, CONSULTATION, OTHER"
+
+
+class MilkBillPaymentCreateView(APIView, ResponseMixin):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = MilkBillPaymentCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Validate amount
+        if data["amount"] <= 0:
+            return self.error_response(
+                message="Amount must be greater than zero",
+                status_code=400,
+            )
+
+        try:
+            with db_transaction.atomic():
+                obj = self._get_related_object(data)
+                transaction = self._create_payment_transaction(request, data, obj)
+
+                logger.info(
+                    f"Milk bill payment created: {transaction.merchant_order_id} "
+                    f"for user {data['user_identifier']}, amount {data['amount']}"
+                )
+
+                serializer = PaymentTransactionDetailSerializer(
+                    transaction, context={"request": request}
+                )
+                return self.success_response(
+                    message="Milk bill payment created and completed successfully",
+                    data=serializer.data,
+                )
+
+        except ValidationError as e:
+            logger.warning(f"Validation error in milk bill payment: {str(e)}")
+            return self.error_response(message=str(e), status_code=400)
+        except Exception as e:
+            logger.error(f"Error creating milk bill payment: {str(e)}", exc_info=True)
+            return self.error_response(
+                message="Failed to create payment",
+                status_code=500,
+            )
+
+    def _get_related_object(self, data):
+        """Retrieve related object if specified."""
+        if not (data.get("related_model") and data.get("related_object_id")):
+            return None
+
+        try:
+            model_name = data["related_model"].lower()
+            content_type = ContentType.objects.get(model=model_name)
+            model_class = content_type.model_class()
+
+            if not model_class:
+                raise ValidationError(f"Invalid model type: {data['related_model']}")
+
+            return model_class.objects.get(id=data["related_object_id"])
+
+        except ContentType.DoesNotExist:
+            raise ValidationError(f"Invalid model type: {data['related_model']}")
+        except model_class.DoesNotExist:
+            raise ValidationError(
+                f"Object not found for {data['related_model']}: {data['related_object_id']}"
+            )
+
+    def _create_payment_transaction(self, request, data, obj):
+        """Create the payment transaction."""
+        transaction_kwargs = {
+            "payment_method_type": PaymentMethodChoices.MILK_BILL,
+            "udf1": data.get("udf1", ""),
+            "udf2": data.get("udf2", ""),
+            "udf3": data.get("udf3", ""),
+            "metadata": data.get("metadata", {}),
+            "status": PaymentStatusChoices.COMPLETED,
+            "status_message": "Milk bill adjusted successfully",
+            "completed_at": timezone.now(),
+            "ip_address": self._get_client_ip(request),
+            "user_agent": request.META.get("HTTP_USER_AGENT", ""),
+            "redirect_url": None,
+        }
+
+        if obj:
+            return PaymentTransaction.create_for_object(
+                obj=obj,
+                amount=data["amount"],
+                user_identifier=data["user_identifier"],
+                transaction_type=data["transaction_type"],
+                **transaction_kwargs,
+            )
+        else:
+            return PaymentTransaction.objects.create(
+                amount=data["amount"],
+                user_identifier=data["user_identifier"],
+                transaction_type=data["transaction_type"],
+                payment_method_type=PaymentMethodChoices.MILK_BILL,
+                merchant_order_id=f"MILK_{uuid4().hex[:10]}",
+                **transaction_kwargs,
+            )
+
+    def _get_client_ip(self, request):
+        """Extract client IP address."""
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded_for:
+            return x_forwarded_for.split(",")[0].strip()
+        return request.META.get("REMOTE_ADDR", "")
