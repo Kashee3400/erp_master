@@ -319,7 +319,7 @@ class MilkBillPaymentCreateView(APIView, ResponseMixin):
             if not model_class:
                 raise ValidationError(f"Invalid model type: {data['related_model']}")
 
-            return model_class.objects.get(id=data["related_object_id"])
+            return model_class.objects.get(pk=data["related_object_id"])
 
         except ContentType.DoesNotExist:
             raise ValidationError(f"Invalid model type: {data['related_model']}")
@@ -341,7 +341,7 @@ class MilkBillPaymentCreateView(APIView, ResponseMixin):
             "completed_at": timezone.now(),
             "ip_address": self._get_client_ip(request),
             "user_agent": request.META.get("HTTP_USER_AGENT", ""),
-            "redirect_url": None,
+            "redirect_url": data.get("redirect_url", "https://tech.kasheemilk.com/"),
         }
 
         if obj:

@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 class MilkBillPaymentCreateSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     user_identifier = serializers.CharField(max_length=255)
+    transaction_type = serializers.CharField(max_length=255)
+    redirect_url = serializers.URLField()
 
     udf1 = serializers.CharField(required=False, allow_blank=True)
     udf2 = serializers.CharField(required=False, allow_blank=True)
@@ -75,7 +77,7 @@ class MilkBillPaymentCreateSerializer(serializers.Serializer):
 
             # Validate object instance
             try:
-                model_class.objects.get(id=related_object_id)
+                model_class.objects.get(pk=related_object_id)
             except (ObjectDoesNotExist, ValueError):
                 raise serializers.ValidationError(
                     {

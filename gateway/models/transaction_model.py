@@ -272,12 +272,12 @@ class PaymentTransaction(models.Model):
 
         # Generate unique merchant order ID
         merchant_order_id = (
-            f"{content_type.model.upper()}_{obj.id}_{uuid.uuid4().hex[:8]}"
+            f"{content_type.model.upper()}_{obj.pk}_{uuid.uuid4().hex[:8]}"
         )
 
         return cls.objects.create(
             content_type=content_type,
-            object_id=obj.id,
+            object_id=obj.pk,
             amount=amount,
             user_identifier=user_identifier,
             transaction_type=transaction_type,

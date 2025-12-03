@@ -297,6 +297,7 @@ class CaseEntry(BaseModel):
         return f"{self.case_no} - {owner} - {created_by}"
 
     def save(self, *args, **kwargs):
+        self.sync = True
         if not self.case_no:
             self.case_no = self._generate_case_no()
 
