@@ -6,11 +6,8 @@ from rest_framework_simplejwt.token_blacklist.models import (
 )
 from erp_app.models import Mpp
 from facilitator.authentication import ApiKeyAuthentication
-from facilitator.models.facilitator_model import AssignedMppToFacilitator
 from facilitator.models.user_profile_model import UserProfile
-from erp_app.models import BusinessHierarchySnapshot
 from ..throttle import OTPThrottle
-from collections import defaultdict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -208,7 +205,7 @@ class VerifyOTPView(generics.GenericAPIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except Exception as e:
-            logger.exception("Unexpected error during OTP verification")
+            logger.exception(f"Unexpected error during OTP verification: {e}")
             return Response(
                 {"status": "error", "message": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

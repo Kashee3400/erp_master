@@ -339,10 +339,10 @@ class CaseEntry(BaseModel):
             or 0
         )
 
-        if paid_amount >= self.total_amount:
+        if paid_amount >= self.calculated_cost:
             return CasePaymentStatusChoices.PAID
 
-        if 0 < paid_amount < self.total_amount:
+        if 0 < paid_amount < self.calculated_cost:
             return CasePaymentStatusChoices.PARTIAL
 
         return CasePaymentStatusChoices.UNPAID
