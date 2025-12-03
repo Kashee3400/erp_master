@@ -25,6 +25,7 @@ from .views import (
     SahayakAppInstalledData,
     NewSahayakDashboardAPI,
     MppIncentiveSummaryAPIView,
+    FacilitatorAppInstalled,
 )
 from erp_app.views import *
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
@@ -117,9 +118,9 @@ urlpatterns = [
         name="sahayak-app-installed-data",
     ),
     path(
-        "api/sahayak-app-installed-data/",
-        SahayakAppInstalledData.as_view(),
-        name="sahayak-app-installed-data",
+        "api/facilitator-app-installed/",
+        FacilitatorAppInstalled.as_view(),
+        name="facilitator-app-installed",
     ),
     path(
         "api/last-5-day-collection/",

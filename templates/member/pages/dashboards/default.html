@@ -2,223 +2,643 @@
 {% load static i18n %}
 
 {% block extrastyle %}
-  <style>
-    table tfoot {
-      position: sticky;
-      bottom: 0;
-      background-color: #f8f9fa; /* Light grey */
-      z-index: 1;
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --danger-gradient: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+    --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --card-hover-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+  }
+
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .modern-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .modern-card:hover {
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+  }
+
+  .card-header-modern {
+    background: var(--primary-gradient);
+    padding: 24px 28px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-header-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .card-header-modern h6 {
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-header-modern h6::before {
+    content: '📱';
+    font-size: 1.5rem;
+  }
+
+  .filters-container {
+    background: white;
+    padding: 24px 28px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .modern-input {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    min-width: 180px;
+  }
+
+  .modern-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
+
+  .toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 20px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .toggle-switch:hover {
+    background: #e2e8f0;
+  }
+
+  .toggle-switch input[type="checkbox"] {
+    width: 50px;
+    height: 26px;
+    appearance: none;
+    background: #cbd5e1;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .toggle-switch input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .toggle-switch input[type="checkbox"]:checked {
+    background: var(--primary-gradient);
+  }
+
+  .toggle-switch input[type="checkbox"]:checked::before {
+    transform: translateX(24px);
+  }
+
+  .toggle-label {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.9rem;
+  }
+
+  .btn-modern {
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-modern:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-primary-modern {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-primary-modern:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .table-container {
+    padding: 28px;
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .modern-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .modern-table thead th {
+    padding: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .modern-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .modern-table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .modern-table tbody td {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    color: #475569;
+    border: none;
+  }
+
+  .modern-table tfoot {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    z-index: 10;
+  }
+
+  .modern-table tfoot td {
+    padding: 16px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+    border-top: 2px solid #cbd5e1;
+  }
+
+  .badge-modern {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+  }
+
+  .badge-success {
+    background: var(--success-gradient);
+    color: white;
+  }
+
+  .badge-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .badge-info {
+    background: var(--info-gradient);
+    color: white;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .stat-icon.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .stat-icon.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+
+  .stat-icon.info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+
+  .stat-icon.warning {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+
+  .stat-content h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1e293b;
+  }
+
+  .stat-content p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 8px;
+    height: 20px;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
     }
-  </style>
-  <!-- DataTables core CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
-  <!-- DataTables Buttons CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* DataTables Custom Styling */
+  .dataTables_wrapper .dataTables_length select,
+  .dataTables_wrapper .dataTables_filter input {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin: 0 8px;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-gradient) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 8px;
+  }
+
+  div.dt-buttons {
+    margin-bottom: 16px;
+  }
+
+  .dt-button {
+    background: var(--primary-gradient) !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 20px !important;
+    border-radius: 8px !important;
+    margin-right: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .dt-button:hover {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  @media (max-width: 768px) {
+    .filters-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-group {
+      width: 100%;
+    }
+
+    .modern-input {
+      width: 100%;
+      min-width: auto;
+    }
+
+    .stats-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
 {% endblock %}
+
 {% block title %}
-  {% trans 'ERP :: Dashboard' %}
+{% trans 'ERP :: App Installation Report' %}
 {% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-lg-12 position-relative z-index-2">
-      <div class="card">
-        <div class="card-header pb-0 p-3">
-          <div class="d-flex justify-content-between">
-            <h6 class="mb-2">{% trans 'Kashee E-Dairy App Installation Report' %}</h6>
-          </div>
+<div class="row">
+  <div class="col-12">
+
+    <!-- Main Report Card -->
+    <div class="modern-card mb-4 fade-in">
+      <div class="card-header-modern">
+        <h6>{% trans 'Kashee E-Dairy App Installation Report' %}</h6>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-container">
+        <div class="filter-group">
+          <label class="filter-label">{% trans 'From Date' %}</label>
+          <input type="date" id="from-date" class="modern-input">
         </div>
 
-        <!-- Loader -->
-        <div id="mcc-loader" class="text-center py-4 d-none">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+        <div class="filter-group">
+          <label class="filter-label">{% trans 'To Date' %}</label>
+          <input type="date" id="to-date" class="modern-input">
         </div>
-        <div class="table-responsive p-4">
-          <table class="table align-items-center table-stripped" id="mcc-data-table">
-            <thead>
-              <tr>
-                <th>MCC Name</th>
-                <th>MCC Code</th>
-                <th>Mpp Name</th>
-                <th>Mpp Code</th>
-                <th>Facilitator Name</th>
-                <th>Total Members</th>
-                <th>No. of Pourers</th>
-                <th>App Installed By Member</th>
-                <th>Installed %</th>
-              </tr>
-            </thead>
-            <tbody id="mcc-table-body"></tbody>
-            <tfoot id="mcc-data-footer"></tfoot>
-          </table>
+
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-collection">
+          <span class="toggle-label">WITH Collection</span>
+        </label>
+
+        <button id="apply-filters" class="btn-modern btn-primary-modern">
+          <span>🔍</span>
+          <span>Apply Filters</span>
+        </button>
+      </div>
+
+      <!-- Stats Cards (shown in WITH mode) -->
+      <div id="stats-section" style="display: none;" class="px-4 pt-4">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon primary">👥</div>
+            <div class="stat-content">
+              <h3 id="stat-total-members">0</h3>
+              <p>Total Members</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon success">📱</div>
+            <div class="stat-content">
+              <h3 id="stat-installed">0</h3>
+              <p>App Installed</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon info">🥛</div>
+            <div class="stat-content">
+              <h3 id="stat-pourers">0</h3>
+              <p>Active Pourers</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon warning">📊</div>
+            <div class="stat-content">
+              <h3 id="stat-percentage">0%</h3>
+              <p>Install Rate</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-12 position-relative z-index-2 mt-5">
-      <div class="card">
-        <div class="card-header pb-0 p-3">
-          <div class="d-flex justify-content-between">
-            <h6 class="mb-2">{% trans 'Sahayak Mitra Installed By MCCs' %}</h6>
-          </div>
-        </div>
 
-        <!-- Loader -->
-        <div id="mcc-loader" class="text-center py-4 d-none">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-        <div class="table-responsive p-4">
-          <table class="table align-items-center table-stripped" id="sahayak-data-table">
-            <thead>
-              <tr>
-                <th>MCC Name</th>
-                <th>MCC Ex Code</th>
-                <th>MPP Name</th>
-                <th>MPP Ex Code</th>
-                <th>Facilitator</th>
-                <th>Installed</th>
-              </tr>
-            </thead>
-            <tbody id="sahayak-table-body"></tbody>
-            <tfoot id="sahayak-data-footer"></tfoot>
-          </table>
-        </div>
+      <!-- WITHOUT COLLECTION TABLE -->
+      <div id="without-collection-section" class="table-container" style="display: none;">
+        <table class="modern-table" id="mcc-table-without">
+          <thead>
+            <tr>
+              <th>MCC Name</th>
+              <th>MCC Code</th>
+              <th>MPP Name</th>
+              <th>MPP Code</th>
+              <th>Facilitator</th>
+              <th>Total Members</th>
+              <th>Installed</th>
+              <th>Install %</th>
+            </tr>
+          </thead>
+          <tbody id="without-body"></tbody>
+          <tfoot id="without-footer"></tfoot>
+        </table>
+      </div>
+
+      <!-- WITH COLLECTION TABLE -->
+      <div id="with-collection-section" class="table-container">
+        <table class="modern-table" id="mcc-table-with">
+          <thead>
+            <tr>
+              <th>MCC Name</th>
+              <th>MCC Code</th>
+              <th>MPP Name</th>
+              <th>MPP Code</th>
+              <th>Facilitator</th>
+              <th>Total Members</th>
+              <th>No. of Pourers</th>
+              <th>Installed</th>
+              <th>Install %</th>
+            </tr>
+          </thead>
+          <tbody id="with-body"></tbody>
+          <tfoot id="with-footer"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sahayak Report Card -->
+    <div class="modern-card fade-in" style="animation-delay: 0.1s;">
+      <div class="card-header-modern">
+        <h6>{% trans 'Sahayak Mitra Installation Report' %}</h6>
+      </div>
+
+      <div class="table-container">
+        <table class="modern-table" id="sahayak-data-table">
+          <thead>
+            <tr>
+              <th>MCC Name</th>
+              <th>MCC Code</th>
+              <th>MPP Name</th>
+              <th>MPP Code</th>
+              <th>Facilitator</th>
+              <th>Installed</th>
+            </tr>
+          </thead>
+          <tbody id="sahayak-table-body"></tbody>
+          <tfoot id="sahayak-data-footer"></tfoot>
+        </table>
+      </div>
+    </div>
+    <!-- Facilitator Installation Report Card -->
+
+    <div class="modern-card fade-in mt-3" style="animation-delay: 0.1s;">
+      <div class="card-header-modern">
+        <h6>{% trans 'Facilitator App Installation Report' %}</h6>
+      </div>
+      <div class="table-container">
+        <table class="modern-table" id="facilitator-table" class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Username (Mobile)</th>
+              <th>Facilitator Name</th>
+              <th>MCC Name</th>
+              <th>MCC Ex Code</th>
+              <th>MPP Names</th>
+              <th>MPP Ex Codes</th>
+              <th>Installed</th>
+              <th>Installed %</th>
+            </tr>
+          </thead>
+
+          <tbody id="facilitator-body">
+            <!-- rows injected by JS -->
+          </tbody>
+
+          <tfoot id="facilitator-footer">
+            <!-- optional footer (summary) -->
+          </tfoot>
+        </table>
       </div>
     </div>
   </div>
+</div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
-  <!-- DataTables JS -->
-  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-  <!-- DataTables Buttons -->
-  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-  <!-- JSZip (for Excel export) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-  <script>
-    function fetchAndRenderData() {
-      const $table = $('#mcc-data-table')
-      const $tbody = $('#mcc-table-body')
-      const $tfoot = $('#mcc-data-footer')
-    
-      $.ajax({
-        url: "{% url 'app-installed-data' %}",
-        type: 'GET',
-        dataType: 'json',
-        beforeSend: function () {
-          $tbody.html('<tr><td colspan="5">Loading...</td></tr>')
-          $tfoot.html('') // Clear footer on reload
-        },
-        success: function (data) {
-          let rows = ''
-          let totalRow = ''
-    
-          data.forEach(function (item) {
-            if (item.is_total) {
-              totalRow = `
-                                                  <tr class="table-secondary fw-bold">
-                                                    <td>Grand Total</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>${item.total_members}</td>
-                                                    <td>${item.no_of_pourers}</td>
-                                                    <td>${item.app_installed_by_member}</td>
-                                                    <td>${item.installed_percentage}%</td>
-                                                  </tr>`
-            } else {
-              rows += `
-                                                  <tr>
-                                                    <td>${item.mcc.name}</td>
-                                                    <td>${item.mcc.mcc_ex_code}</td>
-                                                    <td>${item.mpp.name}</td>
-                                                    <td>${item.mpp.mpp_ex_code}</td>
-                                                    <td>${item.fs_name}</td>
-                                                    <td>${item.total_members}</td>
-                                                    <td>${item.no_of_pourers}</td>
-                                                    <td>${item.app_installed_by_member}</td>
-                                                    <td>${item.installed_percentage}%</td>
-                                                  </tr>`
-            }
-          })
-    
-          $tbody.html(rows)
-          $tfoot.html(totalRow)
-    
-          // Destroy existing DataTable before reinitializing
-          if ($.fn.DataTable.isDataTable($table)) {
-            $table.DataTable().destroy()
-          }
-    
-          $table.DataTable({
-            dom: 'Bfrtip',
-    
-            buttons: ['excel', 'csv'],
-            responsive: true,
-            pageLength: 50
-          })
-        },
-        error: function () {
-          $tbody.html('<tr><td colspan="5">Failed to load data.</td></tr>')
-          $tfoot.html('')
-        }
-      })
-    }
-    function fetchAndSahayakRenderData() {
-      const $table = $('#sahayak-data-table')
-      const $tbody = $('#sahayak-table-body')
-    
-      $.ajax({
-        url: "{% url 'sahayak-app-installed-data' %}",
-        type: 'GET',
-        dataType: 'json',
-        beforeSend: function () {
-          $tbody.html('<tr><td colspan="6">Loading...</td></tr>')
-        },
-        success: function (data) {
-          let rows = ''
-    
-          data.forEach(function (item) {
-            rows += `
-                  <tr>
-                    <td>${item.mcc_name}</td>
-                    <td>${item.mcc_ex_code}</td>
-                    <td>${item.mpp_name}</td>
-                    <td>${item.mpp_ex_code}</td>
-                    <td>${item.fs_name}</td>
-                    <td>${item.installed}</td>
-                  </tr>`
-          })
-    
-          $tbody.html(rows)
-    
-          if ($.fn.DataTable.isDataTable($table)) {
-            $table.DataTable().destroy()
-          }
-    
-          $table.DataTable({
-            dom: 'Bfrtip',
-            buttons: ['excel', 'csv'],
-            responsive: true,
-            pageLength:50,
-          })
-        },
-        error: function () {
-          $tbody.html('<tr><td colspan="6">Failed to load data.</td></tr>')
-        }
-      })
-    }
-    
-    // Fetch data on page load
-    $(document).ready(function () {
-      fetchAndRenderData()
-      fetchAndSahayakRenderData()
-    })
-  </script>
+<script>
+  const mccReportUrl = "{% url 'app-installed-data' %}";
+  const sahayakReportUrl = "{% url 'sahayak-app-installed-data' %}";
+  const facilitatorReportUrl = "{% url 'facilitator-app-installed' %}";
+</script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+<!-- Custom JS -->
+<script src="{% static 'member/assets/js/app-installed.js' %}"></script>
+<script src="{% static 'member/assets/js/app-facilitator.js' %}"></script>
+
 {% endblock %}

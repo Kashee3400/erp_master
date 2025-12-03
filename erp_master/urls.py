@@ -34,9 +34,6 @@ from member.views import (
     SahayakIncentivesCreateView,
 )
 
-# Deep Link Handler (Universal App Links)
-from notifications.views.deep_link_view import DeepLinkRedirectView
-
 # API Documentation (drf-spectacular)
 from drf_spectacular.views import (
     SpectacularAPIView,

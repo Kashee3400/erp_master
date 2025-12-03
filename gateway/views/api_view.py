@@ -149,7 +149,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
         Get payment transactions for a specific content_type + object_id.
 
         Example:
-        GET /api/payments/by_object/?model=caseentry&object_id=123
+        GET /api/transactions/by_object/?model=caseentry&object_id=123
         """
 
         model_name = request.query_params.get("model")
