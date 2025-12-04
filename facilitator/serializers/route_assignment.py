@@ -12,104 +12,198 @@ User = get_user_model()
 
 class BulkLocationAssignmentSerializer(serializers.Serializer):
     """
-    Serializer for bulk location assignment.
-    Takes user and route_code, creates UserLocation records for all MPPs in that route.
+    Serializer for hierarchical bulk location assignment.
+
+    Assignment Levels:
+    - MCC: Requires mcc_code, creates records with only MCC fields
+    - ROUTE: Requires route_code, creates records with MCC + Route fields
+    - MPP: Requires route_code, creates records with MCC + Route + MPP fields
     """
 
     user_id = serializers.IntegerField(
         required=True, help_text="ID of the user to assign locations to"
     )
-    route_code = serializers.CharField(
-        required=True,
-        max_length=10,
-        help_text="Route code to assign (all MPPs under this route will be assigned)",
-    )
+
     assignment_level = serializers.ChoiceField(
         choices=RouteLevelChoice.choices,
-        default=RouteLevelChoice.LEVEL_MPP,
+        required=True,
         help_text="Level at which to assign (mcc, route, or mpp)",
     )
+
+    mcc_code = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=20,
+        help_text="MCC code (required only for MCC level assignment)",
+    )
+
+    route_code = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=20,
+        help_text="Route code (required for ROUTE and MPP level assignments)",
+    )
+    mpp_code = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=20,
+        help_text="Route code (required for ROUTE and MPP level assignments)",
+    )
+
     set_as_primary = serializers.BooleanField(
         default=False, help_text="Set the first location as primary"
     )
+
     remarks = serializers.CharField(
         required=False,
         allow_blank=True,
+        default="",
         help_text="Optional remarks for the assignment",
     )
 
     def validate_user_id(self, value):
         """Validate that the user exists."""
-        try:
-            user = User.objects.get(pk=value)
-            return value
-        except User.DoesNotExist:
+        if not User.objects.filter(pk=value).exists():
             raise serializers.ValidationError(f"User with ID {value} does not exist.")
-
-    def validate_route_code(self, value):
-        """Validate that the route code exists in hierarchy."""
-        if not BusinessHierarchySnapshot.objects.filter(
-            route_code=value, is_default=True
-        ).exists():
-            raise serializers.ValidationError(
-                f"Route code '{value}' does not exist in the business hierarchy."
-            )
         return value
 
     def validate(self, attrs):
-        """Cross-field validation."""
-        user_id = attrs.get("user_id")
-        route_code = attrs.get("route_code")
+        """
+        Cross-field validation based on assignment level.
+        Ensures required fields are provided for each level.
+        """
         assignment_level = attrs.get("assignment_level")
+        mcc_code = attrs.get("mcc_code")
+        route_code = attrs.get("route_code")
+        user_id = attrs.get("user_id")
 
-        # Get hierarchy data for this route
-        hierarchy_records = BusinessHierarchySnapshot.objects.filter(
-            route_code=route_code, is_default=True
-        )
-
-        if not hierarchy_records.exists():
-            raise serializers.ValidationError(
-                {"route_code": f"No active records found for route '{route_code}'"}
-            )
-
-        # Check for existing assignments
-        existing_count = UserLocation.objects.filter(
-            user_id=user_id, route_code=route_code, active=True
-        ).count()
-
-        if existing_count > 0:
-            attrs["existing_count"] = existing_count
-            attrs["warning"] = (
-                f"User already has {existing_count} active location(s) for this route."
-            )
-
-        # Validate level-specific requirements
+        # Level-specific validation
         if assignment_level == RouteLevelChoice.LEVEL_MCC:
-            # For MCC level, we need unique MCC codes
+            if not mcc_code:
+                raise serializers.ValidationError(
+                    {"mcc_code": "MCC code is required for MCC level assignment."}
+                )
+
+            # Validate MCC exists in hierarchy
+            hierarchy_records = BusinessHierarchySnapshot.objects.filter(
+                mcc_code=mcc_code, is_default=True
+            )
+
+            if not hierarchy_records.exists():
+                raise serializers.ValidationError(
+                    {
+                        "mcc_code": f"MCC code '{mcc_code}' does not exist in the business hierarchy."
+                    }
+                )
+
+            # Check for existing assignments
+            existing_count = UserLocation.objects.filter(
+                user_id=user_id,
+                level=RouteLevelChoice.LEVEL_MCC,
+                mcc_code=mcc_code,
+                active=True,
+            ).count()
+
+            attrs["hierarchy_records"] = hierarchy_records
             attrs["hierarchy_count"] = (
                 hierarchy_records.values("mcc_code").distinct().count()
             )
+
         elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
-            # For Route level, we need unique route codes (should be 1)
-            attrs["hierarchy_count"] = 1
-        else:  # MPP level
-            # For MPP level, count unique MPP codes
-            attrs["hierarchy_count"] = (
-                hierarchy_records.values("mpp_code").distinct().count()
+            if not route_code:
+                raise serializers.ValidationError(
+                    {"route_code": "Route code is required for ROUTE level assignment."}
+                )
+
+            # Validate route exists in hierarchy
+            hierarchy_records = BusinessHierarchySnapshot.objects.filter(
+                route_code=route_code, is_default=True
             )
 
-        attrs["hierarchy_records"] = hierarchy_records
+            if not hierarchy_records.exists():
+                raise serializers.ValidationError(
+                    {
+                        "route_code": f"Route code '{route_code}' does not exist in the business hierarchy."
+                    }
+                )
+
+            # Check for existing assignments
+            existing_count = UserLocation.objects.filter(
+                user_id=user_id,
+                level=RouteLevelChoice.LEVEL_ROUTE,
+                route_code=route_code,
+                active=True,
+            ).count()
+
+            attrs["hierarchy_records"] = hierarchy_records
+            attrs["hierarchy_count"] = 1
+
+        elif assignment_level == RouteLevelChoice.LEVEL_MPP:
+            mpp_code = attrs.get("mpp_code")
+
+            if not mpp_code:
+                raise serializers.ValidationError(
+                    {"mpp_code": "MPP code is required for MPP level assignment."}
+                )
+
+            # Fetch hierarchy by mpp_code (full hierarchy)
+            hierarchy_records = BusinessHierarchySnapshot.objects.filter(
+                mpp_code=mpp_code, is_default=True
+            )
+
+            if not hierarchy_records.exists():
+                raise serializers.ValidationError(
+                    {
+                        "mpp_code": f"MPP code '{mpp_code}' does not exist in the business hierarchy."
+                    }
+                )
+            existing_count = UserLocation.objects.filter(
+                user_id=user_id,
+                level=RouteLevelChoice.LEVEL_ROUTE,
+                route_code=route_code,
+                active=True,
+            ).count()
+            # Save SINGLE record, not queryset
+            attrs["hierarchy_record"] = hierarchy_records.first()
+            attrs["hierarchy_count"] = 1
+
+        else:
+            raise serializers.ValidationError(
+                {"assignment_level": f"Invalid assignment level: {assignment_level}"}
+            )
+
+        # Add warning if there are existing assignments
+        if existing_count > 0:
+            attrs["existing_count"] = existing_count
+            attrs["warning"] = (
+                f"User already has {existing_count} active location(s) at this level."
+            )
 
         return attrs
 
     def create(self, validated_data):
         """
-        Create bulk UserLocation records.
+        Create bulk UserLocation records based on assignment level.
         Returns dict with created records and statistics.
         """
-        user_id = validated_data["user_id"]
-        route_code = validated_data["route_code"]
         assignment_level = validated_data["assignment_level"]
+
+        # Route to appropriate handler based on level
+        if assignment_level == RouteLevelChoice.LEVEL_MCC:
+            return self._handle_mcc_assignment(validated_data)
+        elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
+            return self._handle_route_assignment(validated_data)
+        elif assignment_level == RouteLevelChoice.LEVEL_MPP:
+            return self._handle_mpp_assignment(validated_data)
+
+    def _handle_mcc_assignment(self, validated_data):
+        """
+        Handle MCC level assignment.
+        Creates one UserLocation record per unique MCC.
+        Only populates MCC fields, route and MPP fields remain NULL.
+        """
+        user_id = validated_data["user_id"]
+        mcc_code = validated_data["mcc_code"]
         set_as_primary = validated_data["set_as_primary"]
         remarks = validated_data.get("remarks", "")
         hierarchy_records = validated_data["hierarchy_records"]
@@ -121,119 +215,186 @@ class BulkLocationAssignmentSerializer(serializers.Serializer):
         skipped_locations = []
 
         with transaction.atomic():
-            if assignment_level == RouteLevelChoice.LEVEL_MCC:
-                # Create one record per unique MCC
-                unique_mccs = hierarchy_records.values(
-                    "mcc_code", "mcc_name", "mcc_tr_code"
-                ).distinct()
+            # Get unique MCC data from hierarchy
+            unique_mccs = hierarchy_records.values(
+                "mcc_code", "mcc_name", "mcc_tr_code"
+            ).distinct()
 
-                for idx, mcc_data in enumerate(unique_mccs):
-                    is_primary = set_as_primary and idx == 0
-
-                    # Check if already exists
-                    if UserLocation.objects.filter(
-                        user=user,
-                        level=RouteLevelChoice.LEVEL_MCC,
-                        mcc_code=mcc_data["mcc_code"],
-                        active=True,
-                    ).exists():
-                        skipped_locations.append(
-                            {
-                                "mcc_code": mcc_data["mcc_code"],
-                                "reason": "Already exists",
-                            }
-                        )
-                        continue
-
-                    location = UserLocation.objects.create(
-                        user=user,
-                        level=RouteLevelChoice.LEVEL_MCC,
-                        mcc_code=mcc_data["mcc_code"],
-                        mcc_name=mcc_data["mcc_name"],
-                        mcc_tr_code=mcc_data["mcc_tr_code"],
-                        is_primary=is_primary,
-                        assigned_by=assigned_by,
-                        remarks=remarks or f"Bulk assigned from route {route_code}",
-                    )
-                    created_locations.append(location)
-
-            elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
-                # Create one record for the route
-                route_data = hierarchy_records.first()
+            for idx, mcc_data in enumerate(unique_mccs):
+                is_primary = set_as_primary and idx == 0
 
                 # Check if already exists
                 if UserLocation.objects.filter(
                     user=user,
-                    level=RouteLevelChoice.LEVEL_ROUTE,
-                    route_code=route_code,
+                    level=RouteLevelChoice.LEVEL_MCC,
+                    mcc_code=mcc_data["mcc_code"],
                     active=True,
                 ).exists():
                     skipped_locations.append(
-                        {"route_code": route_code, "reason": "Already exists"}
+                        {
+                            "mcc_code": mcc_data["mcc_code"],
+                            "mcc_name": mcc_data.get("mcc_name"),
+                            "reason": "Already exists",
+                        }
                     )
-                else:
-                    location = UserLocation.objects.create(
-                        user=user,
-                        level=RouteLevelChoice.LEVEL_ROUTE,
-                        mcc_code=route_data.mcc_code,
-                        mcc_name=route_data.mcc_name,
-                        mcc_tr_code=route_data.mcc_tr_code,
-                        route_code=route_data.route_code,
-                        route_name=route_data.route_name,
-                        route_ex_code=route_data.route_ex_code,
-                        is_primary=set_as_primary,
-                        assigned_by=assigned_by,
-                        remarks=remarks or f"Bulk assigned from route {route_code}",
-                    )
-                    created_locations.append(location)
+                    continue
 
-            else:  # MPP level
-                # Create one record per MPP
-                for idx, hierarchy in enumerate(hierarchy_records):
-                    is_primary = set_as_primary and idx == 0
-
-                    # Check if already exists
-                    if UserLocation.objects.filter(
-                        user=user,
-                        level=RouteLevelChoice.LEVEL_MPP,
-                        mpp_code=hierarchy.mpp_code,
-                        active=True,
-                    ).exists():
-                        skipped_locations.append(
-                            {
-                                "mpp_code": hierarchy.mpp_code,
-                                "mpp_name": hierarchy.mpp_name,
-                                "reason": "Already exists",
-                            }
-                        )
-                        continue
-
-                    location = UserLocation.objects.create(
-                        user=user,
-                        level=RouteLevelChoice.LEVEL_MPP,
-                        mcc_code=hierarchy.mcc_code,
-                        mcc_name=hierarchy.mcc_name,
-                        mcc_tr_code=hierarchy.mcc_tr_code,
-                        route_code=hierarchy.route_code,
-                        route_name=hierarchy.route_name,
-                        route_ex_code=hierarchy.route_ex_code,
-                        mpp_code=hierarchy.mpp_code,
-                        mpp_name=hierarchy.mpp_name,
-                        mpp_ex_code=hierarchy.mpp_ex_code,
-                        is_primary=is_primary,
-                        assigned_by=assigned_by,
-                        remarks=remarks or f"Bulk assigned from route {route_code}",
-                    )
-                    created_locations.append(location)
+                # Create MCC level assignment (route and MPP fields are NULL)
+                location = UserLocation.objects.create(
+                    user=user,
+                    level=RouteLevelChoice.LEVEL_MCC,
+                    mcc_code=mcc_data["mcc_code"],
+                    mcc_name=mcc_data.get("mcc_name"),
+                    mcc_tr_code=mcc_data.get("mcc_tr_code"),
+                    is_primary=is_primary,
+                    assigned_by=assigned_by,
+                    remarks=remarks
+                    or f"MCC level assignment for {mcc_data['mcc_code']}",
+                )
+                created_locations.append(location)
 
         return {
             "user": user,
-            "route_code": route_code,
-            "assignment_level": assignment_level,
+            "assignment_level": RouteLevelChoice.LEVEL_MCC,
+            "mcc_code": mcc_code,
             "created_count": len(created_locations),
             "skipped_count": len(skipped_locations),
             "created_locations": created_locations,
             "skipped_locations": skipped_locations,
+        }
+
+    def _handle_route_assignment(self, validated_data):
+        """
+        Handle ROUTE level assignment.
+        Creates EXACTLY ONE UserLocation record for the route.
+        Populates MCC + Route fields, MPP fields remain NULL.
+        """
+        user_id = validated_data["user_id"]
+        route_code = validated_data["route_code"]
+        set_as_primary = validated_data["set_as_primary"]
+        remarks = validated_data.get("remarks", "")
+        hierarchy_records = validated_data["hierarchy_records"]
+
+        user = User.objects.get(pk=user_id)
+        assigned_by = self.context["request"].user
+
+        created_locations = []
+        skipped_locations = []
+
+        with transaction.atomic():
+            # Get route data (use first record as they all have same route info)
+            route_data = hierarchy_records.first()
+
+            # Check if already exists
+            if UserLocation.objects.filter(
+                user=user,
+                level=RouteLevelChoice.LEVEL_ROUTE,
+                route_code=route_code,
+                active=True,
+            ).exists():
+                skipped_locations.append(
+                    {
+                        "route_code": route_code,
+                        "route_name": route_data.route_name,
+                        "reason": "Already exists",
+                    }
+                )
+            else:
+                # Create ROUTE level assignment (MPP fields are NULL)
+                location = UserLocation.objects.create(
+                    user=user,
+                    level=RouteLevelChoice.LEVEL_ROUTE,
+                    # MCC fields
+                    mcc_code=route_data.mcc_code,
+                    mcc_name=route_data.mcc_name,
+                    mcc_tr_code=route_data.mcc_tr_code,
+                    # Route fields
+                    route_code=route_data.route_code,
+                    route_name=route_data.route_name,
+                    route_ex_code=route_data.route_ex_code,
+                    # mpp_code, mpp_name, mpp_ex_code remain NULL
+                    is_primary=set_as_primary,
+                    assigned_by=assigned_by,
+                    remarks=remarks or f"Route level assignment for {route_code}",
+                )
+                created_locations.append(location)
+
+        return {
+            "user": user,
+            "assignment_level": RouteLevelChoice.LEVEL_ROUTE,
+            "route_code": route_code,
+            "created_count": len(created_locations),
+            "skipped_count": len(skipped_locations),
+            "created_locations": created_locations,
+            "skipped_locations": skipped_locations,
+        }
+
+    def _handle_mpp_assignment(self, validated_data):
+        """
+        Handle MPP level assignment.
+        Creates ONE UserLocation record for a single MPP.
+        Populates MCC + Route + MPP fields (full hierarchy).
+        """
+        user_id = validated_data["user_id"]
+        mpp_code = validated_data["mpp_code"]  # Use MPP code directly
+        set_as_primary = validated_data["set_as_primary"]
+        remarks = validated_data.get("remarks", "")
+        hierarchy_record = validated_data["hierarchy_record"]
+
+        user = User.objects.get(pk=user_id)
+        assigned_by = self.context["request"].user
+
+        # Check if already exists
+        if UserLocation.objects.filter(
+            user=user,
+            level=RouteLevelChoice.LEVEL_MPP,
+            mpp_code=mpp_code,
+            active=True,
+        ).exists():
+            return {
+                "user": user,
+                "assignment_level": RouteLevelChoice.LEVEL_MPP,
+                "mpp_code": mpp_code,
+                "created_count": 0,
+                "skipped_count": 1,
+                "created_locations": [],
+                "skipped_locations": [
+                    {
+                        "mpp_code": mpp_code,
+                        "reason": "MPP already assigned to this user",
+                    }
+                ],
+            }
+
+        # Create ONE MPP assignment
+        location = UserLocation.objects.create(
+            user=user,
+            level=RouteLevelChoice.LEVEL_MPP,
+            # MCC fields
+            mcc_code=hierarchy_record.mcc_code,
+            mcc_name=hierarchy_record.mcc_name,
+            mcc_tr_code=hierarchy_record.mcc_tr_code,
+            # Route fields
+            route_code=hierarchy_record.route_code,
+            route_name=hierarchy_record.route_name,
+            route_ex_code=hierarchy_record.route_ex_code,
+            # MPP fields
+            mpp_code=hierarchy_record.mpp_code,
+            mpp_name=hierarchy_record.mpp_name,
+            mpp_ex_code=hierarchy_record.mpp_ex_code,
+            is_primary=set_as_primary,
+            assigned_by=assigned_by,
+            remarks=remarks or f"MPP level assignment for MPP {mpp_code}",
+        )
+
+        return {
+            "user": user,
+            "assignment_level": RouteLevelChoice.LEVEL_MPP,
+            "mpp_code": mpp_code,
+            "created_count": 1,
+            "skipped_count": 0,
+            "created_locations": [location],
+            "skipped_locations": [],
         }
 
 

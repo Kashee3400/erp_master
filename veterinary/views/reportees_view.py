@@ -2,7 +2,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from ..serializers.reportees_serializers import ReporteeSerializer, UserProfile
 from django.contrib.auth.models import User
-from util.response import custom_response, StandardResultsSetPagination
+from util.response import StandardResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import BasePermission
@@ -26,6 +26,7 @@ class CanViewOthersReportees(BasePermission):
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+
 
 class TopLevelReporteesView(ListAPIView):
     pagination_class = StandardResultsSetPagination
@@ -54,8 +55,7 @@ class TopLevelReporteesView(ListAPIView):
                 target_profile = user.profile
 
         queryset = (
-            target_profile.reportees
-            .select_related("user")
+            target_profile.reportees.select_related("user")
             .annotate(reportee_count=Count("reportees"))
             .order_by("user__username")
         )

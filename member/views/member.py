@@ -53,9 +53,23 @@ class GenerateOTPView(APIView):
                     {"status": "error", "message": "Invalid phone number format."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            # 🔒 BLOCK DEACTIVATED USERS FROM LOGIN
+            existing_user = User.objects.filter(username=phone_number).first()
+            if existing_user and not existing_user.is_active:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": "Your account has been deactivated. Please contact support.",
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # Check if member exists in ERP (your existing logic)
             members = MemberHierarchyView.objects.using("sarthak_kashee").filter(
                 mobile_no=phone_number, is_default=True, is_active=True
             )
+
             if not members.exists():
                 return Response(
                     {
@@ -69,16 +83,18 @@ class GenerateOTPView(APIView):
                 return Response(
                     {
                         "status": "error",
-                        "message": f"{members.count()} member found with this number",
+                        "message": f"{members.count()} members found with this number",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Delete any existing OTP
+            # Remove any previous OTP
             OTP.objects.filter(phone_number=phone_number).delete()
+
             # Create new OTP entry
             new_otp = OTP.objects.create(phone_number=phone_number)
-            # Send OTP
+
+            # Send OTP SMS
             sent, info = send_sms_api(mobile=phone_number, otp=new_otp)
             if not sent:
                 return Response(
@@ -101,17 +117,79 @@ class GenerateOTPView(APIView):
                 {"status": "error", "message": "Database error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
         except serializers.ValidationError as val_err:
             return Response(
                 {"status": "error", "message": str(val_err)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         except Exception as e:
             logger.exception("Unexpected error while generating OTP")
             return Response(
                 {"status": "error", "message": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class GenerateSahayakOTPView(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [OTPThrottle]
+
+    def post(self, request, *args, **kwargs):
+        phone_number = request.data.get("phone_number")
+
+        if not phone_number:
+            return Response(
+                {"status": "error", "message": "Phone number is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.filter(username=phone_number).first()
+
+        # If user does not exist
+        if not user:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "User does not exist. Please contact support.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # 🔒 BLOCK deactivated users (same as member OTP logic)
+        if not user.is_active:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Your account has been deactivated. Please contact support.",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Delete previous OTPs for this number
+        OTP.objects.filter(phone_number=phone_number).delete()
+
+        # Create new OTP
+        new_otp = OTP.objects.create(phone_number=phone_number)
+
+        # Send SMS
+        sent, info = send_sms_api(mobile=phone_number, otp=new_otp.otp)
+
+        if not sent:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Failed to send OTP. Please try again later.",
+                    "details": info,
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {"status": "success", "message": "OTP sent successfully."},
+            status=status.HTTP_200_OK,
+        )
 
 
 class VerifyOTPView(generics.GenericAPIView):
@@ -210,51 +288,6 @@ class VerifyOTPView(generics.GenericAPIView):
                 {"status": "error", "message": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-
-class GenerateSahayakOTPView(APIView):
-    permission_classes = [AllowAny]
-    throttle_classes = [OTPThrottle]
-
-    def post(self, request, *args, **kwargs):
-        phone_number = request.data.get("phone_number")
-
-        if not phone_number:
-            return Response(
-                {"status": "error", "message": "Phone number is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not User.objects.filter(username=phone_number).exists():
-            return Response(
-                {
-                    "status": "error",
-                    "message": "User does not exist. Please contact support.",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        # Delete previous OTPs for this number
-        OTP.objects.filter(phone_number=phone_number).delete()
-
-        # Create new OTP
-        new_otp = OTP.objects.create(phone_number=phone_number)
-
-        sent, info = send_sms_api(mobile=phone_number, otp=new_otp.otp)
-        if not sent:
-            return Response(
-                {
-                    "status": "error",
-                    "message": "Failed to send OTP. Please try again later.",
-                    "details": info,
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        return Response(
-            {"status": "success", "message": "OTP sent successfully."},
-            status=status.HTTP_200_OK,
-        )
 
 
 class VerifySahayakOTPView(generics.GenericAPIView):
@@ -483,6 +516,7 @@ class ProductRateListView(generics.ListAPIView):
                 message=str(e),
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class MonthListAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -1121,7 +1155,6 @@ class MppViewSet(viewsets.ReadOnlyModelViewSet):
                 "results": serializer.data,
             }
         )
-
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

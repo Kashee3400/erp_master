@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Count, Q
+from django.db.models import Count
 from util.response import custom_response, ResponseMixin
 from ..serializers.route_assignment import *
 from rest_framework.decorators import action
@@ -13,15 +13,42 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class BulkLocationAssignmentView(APIView):
     """
-    API endpoint for bulk assignment of user locations based on route code.
+    API endpoint for bulk assignment of user locations based on hierarchy level.
+
+    Supports three assignment levels:
+    1. MCC Level - Assign user to Market Collection Center
+    2. ROUTE Level - Assign user to a specific route
+    3. MPP Level - Assign user to all MPPs under a route
+
+    Examples:
 
     POST /api/locations/bulk-assign/
+
+    # MCC Level Assignment
     {
         "user_id": 123,
-        "route_code": "R001",
+        "assignment_level": "mcc",
+        "mcc_code": "MCC001",
+        "set_as_primary": true,
+        "remarks": "Regional manager assignment"
+    }
+
+    # ROUTE Level Assignment
+    {
+        "user_id": 456,
+        "assignment_level": "route",
+        "route_code": "RT001",
+        "set_as_primary": true,
+        "remarks": "Route supervisor assignment"
+    }
+
+    # MPP Level Assignment
+    {
+        "user_id": 789,
         "assignment_level": "mpp",
+        "route_code": "RT001",
         "set_as_primary": false,
-        "remarks": "Bulk assignment for new field officer"
+        "remarks": "Field officer assignment"
     }
     """
 
@@ -34,29 +61,28 @@ class BulkLocationAssignmentView(APIView):
 
         if not serializer.is_valid():
             return Response(
-                {"success": False, "errors": serializer.errors},
+                {
+                    "status": "error",
+                    "message": "Location assignment failed",
+                    "errors": serializer.errors,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
             result = serializer.save()
+            assignment_level = result["assignment_level"]
+
+            # Build response based on assignment level
+            response_data = self._build_response_data(result, assignment_level)
+
+            # Generate appropriate success message
+            message = self._generate_success_message(result, assignment_level)
+
             return custom_response(
                 status_text="success",
-                message=f"Successfully processed {result['created_count'] + result['skipped_count']} location(s)",
-                data={
-                    "user_id": result["user"].id,
-                    "username": result["user"].username,
-                    "route_code": result["route_code"],
-                    "assignment_level": result["assignment_level"],
-                    "created_count": result["created_count"],
-                    "skipped_count": result["skipped_count"],
-                    "total_processed": result["created_count"]
-                    + result["skipped_count"],
-                    "created_locations": UserLocationDetailSerializer(
-                        result["created_locations"], many=True
-                    ).data,
-                    "skipped_locations": result["skipped_locations"],
-                },
+                message=message,
+                data=response_data,
                 status_code=status.HTTP_201_CREATED,
             )
 
@@ -67,6 +93,242 @@ class BulkLocationAssignmentView(APIView):
                 message="An error occurred during bulk assignment",
                 errors=str(e),
             )
+
+    def _build_response_data(self, result, assignment_level):
+        """
+        Build response data structure based on assignment level.
+        """
+        base_response = {
+            "user_id": result["user"].id,
+            "username": result["user"].username,
+            "assignment_level": assignment_level,
+            "created_count": result["created_count"],
+            "skipped_count": result["skipped_count"],
+            "total_processed": result["created_count"] + result["skipped_count"],
+        }
+
+        # Add level-specific identifiers
+        if assignment_level == RouteLevelChoice.LEVEL_MCC:
+            base_response["mcc_code"] = result.get("mcc_code")
+            base_response["assignment_type"] = "MCC Level Assignment"
+            base_response["scope"] = "Market Collection Center"
+
+        elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
+            base_response["route_code"] = result.get("route_code")
+            base_response["assignment_type"] = "Route Level Assignment"
+            base_response["scope"] = "Single Route"
+
+        elif assignment_level == RouteLevelChoice.LEVEL_MPP:
+            base_response["route_code"] = result.get("route_code")
+            base_response["assignment_type"] = "MPP Level Assignment"
+            base_response["scope"] = "All MPPs in Route"
+
+        # Add created and skipped locations
+        base_response["created_locations"] = UserLocationDetailSerializer(
+            result["created_locations"], many=True
+        ).data
+        base_response["skipped_locations"] = result["skipped_locations"]
+
+        return base_response
+
+    def _generate_success_message(self, result, assignment_level):
+        """
+        Generate appropriate success message based on assignment level.
+        """
+        created = result["created_count"]
+        skipped = result["skipped_count"]
+        total = created + skipped
+
+        if assignment_level == RouteLevelChoice.LEVEL_MCC:
+            if created == 0 and skipped > 0:
+                return f"No new MCC assignments created. {skipped} location(s) already exist."
+            elif created > 0 and skipped == 0:
+                return f"Successfully assigned user to {created} MCC location(s)."
+            else:
+                return f"Assigned {created} MCC location(s). {skipped} already existed."
+
+        elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
+            if created == 0 and skipped > 0:
+                return "Route assignment already exists for this user."
+            elif created == 1:
+                return "Successfully assigned user to route."
+            else:
+                return f"Route assignment processed."
+
+        elif assignment_level == RouteLevelChoice.LEVEL_MPP:
+            if created == 0 and skipped > 0:
+                return f"No new MPP assignments created. All {skipped} MPP(s) already assigned."
+            elif created > 0 and skipped == 0:
+                return f"Successfully assigned user to {created} MPP location(s) in the route."
+            else:
+                return f"Assigned {created} new MPP(s). {skipped} MPP(s) were already assigned."
+
+        # Fallback message
+        return f"Successfully processed {total} location(s): {created} created, {skipped} skipped."
+
+
+# ============================================================================
+# ALTERNATIVE: Separate view methods for each level (Optional Approach)
+# ============================================================================
+
+
+class BulkLocationAssignmentViewWithSeparateMethods(APIView):
+    """
+    Alternative implementation with separate handler methods for each level.
+    Provides more explicit control over level-specific logic.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = BulkLocationAssignmentSerializer(
+            data=request.data, context={"request": request}
+        )
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Location assignment failed",
+                    "errors": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            result = serializer.save()
+            assignment_level = result["assignment_level"]
+
+            # Route to level-specific response builder
+            if assignment_level == RouteLevelChoice.LEVEL_MCC:
+                return self._mcc_level_response(result)
+            elif assignment_level == RouteLevelChoice.LEVEL_ROUTE:
+                return self._route_level_response(result)
+            elif assignment_level == RouteLevelChoice.LEVEL_MPP:
+                return self._mpp_level_response(result)
+
+        except Exception as e:
+            return custom_response(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status_text="error",
+                message="An error occurred during bulk assignment",
+                errors=str(e),
+            )
+
+    def _mcc_level_response(self, result):
+        """Build response for MCC level assignment."""
+        created = result["created_count"]
+        skipped = result["skipped_count"]
+
+        message = (
+            f"Successfully assigned user to {created} MCC location(s)."
+            if created > 0 and skipped == 0
+            else (
+                f"Assigned {created} MCC location(s). {skipped} already existed."
+                if created > 0
+                else f"No new assignments. All {skipped} MCC location(s) already exist."
+            )
+        )
+
+        return custom_response(
+            status_text="success",
+            message=message,
+            data={
+                "user_id": result["user"].id,
+                "username": result["user"].username,
+                "assignment_level": "mcc",
+                "assignment_type": "MCC Level Assignment",
+                "mcc_code": result.get("mcc_code"),
+                "scope": "Market Collection Center",
+                "created_count": created,
+                "skipped_count": skipped,
+                "total_processed": created + skipped,
+                "created_locations": UserLocationDetailSerializer(
+                    result["created_locations"], many=True
+                ).data,
+                "skipped_locations": result["skipped_locations"],
+                "hierarchy_populated": ["mcc_code", "mcc_name", "mcc_tr_code"],
+                "null_fields": ["route_*", "mpp_*"],
+            },
+            status_code=status.HTTP_201_CREATED,
+        )
+
+    def _route_level_response(self, result):
+        """Build response for ROUTE level assignment."""
+        created = result["created_count"]
+        skipped = result["skipped_count"]
+
+        message = (
+            "Successfully assigned user to route."
+            if created == 1
+            else (
+                "Route assignment already exists."
+                if skipped == 1
+                else "Route assignment processed."
+            )
+        )
+
+        return custom_response(
+            status_text="success",
+            message=message,
+            data={
+                "user_id": result["user"].id,
+                "username": result["user"].username,
+                "assignment_level": "route",
+                "assignment_type": "Route Level Assignment",
+                "route_code": result.get("route_code"),
+                "scope": "Single Route (includes parent MCC)",
+                "created_count": created,
+                "skipped_count": skipped,
+                "total_processed": created + skipped,
+                "created_locations": UserLocationDetailSerializer(
+                    result["created_locations"], many=True
+                ).data,
+                "skipped_locations": result["skipped_locations"],
+                "hierarchy_populated": ["mcc_*", "route_*"],
+                "null_fields": ["mpp_*"],
+            },
+            status_code=status.HTTP_201_CREATED,
+        )
+
+    def _mpp_level_response(self, result):
+        """Build response for MPP level assignment."""
+        created = result["created_count"]
+        skipped = result["skipped_count"]
+
+        message = (
+            f"Successfully assigned user to {created} MPP location(s)."
+            if created > 0 and skipped == 0
+            else (
+                f"Assigned {created} new MPP(s). {skipped} already existed."
+                if created > 0
+                else f"No new assignments. All {skipped} MPP(s) already assigned."
+            )
+        )
+
+        return custom_response(
+            status_text="success",
+            message=message,
+            data={
+                "user_id": result["user"].id,
+                "username": result["user"].username,
+                "assignment_level": "mpp",
+                "assignment_type": "MPP Level Assignment",
+                "route_code": result.get("route_code"),
+                "scope": f"All MPPs in Route {result.get('route_code')}",
+                "created_count": created,
+                "skipped_count": skipped,
+                "total_processed": created + skipped,
+                "mpp_count": created + skipped,
+                "created_locations": UserLocationDetailSerializer(
+                    result["created_locations"], many=True
+                ).data,
+                "skipped_locations": result["skipped_locations"],
+                "hierarchy_populated": ["mcc_*", "route_*", "mpp_*"],
+                "null_fields": [],
+            },
+            status_code=status.HTTP_201_CREATED,
+        )
 
 
 class RoutePreviewView(APIView):

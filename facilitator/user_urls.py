@@ -14,6 +14,7 @@ from .views.auth import UpdateDeviceModuleAPIView
 from .views.route_assignment import (
     BulkDeactivateView,
     BulkLocationAssignmentView,
+    BulkLocationAssignmentViewWithSeparateMethods,
     RoutePreviewView,
     UserLocationsListView,
     UserLocationViewSet,
@@ -48,6 +49,11 @@ urlpatterns = [
         "locations/bulk-assign/",
         BulkLocationAssignmentView.as_view(),
         name="bulk-location-assign",
+    ),
+    path(
+        "locations/bulk-assign-method/",
+        BulkLocationAssignmentViewWithSeparateMethods.as_view(),
+        name="bulk-location-assign-method",
     ),
     # Preview route data before assignment
     path("locations/route-preview/", RoutePreviewView.as_view(), name="route-preview"),
