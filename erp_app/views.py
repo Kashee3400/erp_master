@@ -14,63 +14,63 @@ from .mixins import FastTotalsMixin
 from django.db import connections
 
 
-class MemberByPhoneNumberView(generics.RetrieveAPIView):
-    serializer_class = MemberMasterSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+# class MemberByPhoneNumberView(generics.RetrieveAPIView):
+#     serializer_class = MemberMasterSerializer
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [JWTAuthentication]
 
-    def get_object(self):
-        phone_number = self.request.user.username
-        try:
-            return (
-                MemberMaster.objects.using("sarthak_kashee")
-                .filter(mobile_no=phone_number, is_active=True)
-                .last()
-            )
-        except MemberMaster.DoesNotExist:
-            return None
+#     def get_object(self):
+#         phone_number = self.request.user.username
+#         try:
+#             return (
+#                 MemberMaster.objects.using("sarthak_kashee")
+#                 .filter(mobile_no=phone_number, is_active=True)
+#                 .last()
+#             )
+#         except MemberMaster.DoesNotExist:
+#             return None
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance is None:
-            return Response(
-                {"status": status.HTTP_404_NOT_FOUND, "message": "No Data Found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        # Serialize MemberMaster data
-        member_serializer = self.get_serializer(instance)
-        # Fetch and serialize related MppCollectionAggregation data
-        mpp_aggregations = MppCollectionAggregation.objects.filter(
-            member_code=instance.member_code
-        ).first()
-        response_data = {}
-        if mpp_aggregations:
-            mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
-            mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
-            response_data = member_serializer.data
-            response_data["mcc_code"] = mcc.mcc_ex_code
-            response_data["mcc_name"] = mcc.mcc_name
-            response_data["mcc_tr_code"] = mcc.mcc_code
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         if instance is None:
+#             return Response(
+#                 {"status": status.HTTP_404_NOT_FOUND, "message": "No Data Found"},
+#                 status=status.HTTP_404_NOT_FOUND,
+#             )
+#         # Serialize MemberMaster data
+#         member_serializer = self.get_serializer(instance)
+#         # Fetch and serialize related MppCollectionAggregation data
+#         mpp_aggregations = MppCollectionAggregation.objects.filter(
+#             member_code=instance.member_code
+#         ).first()
+#         response_data = {}
+#         if mpp_aggregations:
+#             mpp = Mpp.objects.filter(mpp_code=mpp_aggregations.mpp_code).first()
+#             mcc = Mcc.objects.filter(mcc_code=mpp_aggregations.mcc_code).first()
+#             response_data = member_serializer.data
+#             response_data["mcc_code"] = mcc.mcc_ex_code
+#             response_data["mcc_name"] = mcc.mcc_name
+#             response_data["mcc_tr_code"] = mcc.mcc_code
 
-            response_data["mpp_name"] = mpp.mpp_name
-            response_data["mpp_code"] = mpp.mpp_ex_code
-            response_data["mpp_tr_code"] = mpp_aggregations.mpp_tr_code
-            response_data["company_code"] = mpp_aggregations.company_code
-            response_data["company_name"] = mpp_aggregations.company_name
-            response_data["member_tr_code"] = mpp_aggregations.member_tr_code
-        billing_member_detail = BillingMemberDetail.objects.filter(
-            member_code=instance.member_code
-        ).first()
-        response_data["bank"] = billing_member_detail.bank_code.bank_name
-        response_data["bank_branch"] = ""
-        response_data["account_no"] = billing_member_detail.acc_no
-        response_data["ifsc"] = billing_member_detail.ifsc
-        response = {
-            "status": status.HTTP_200_OK,
-            "message": "Success",
-            "data": response_data,
-        }
-        return Response(response)
+#             response_data["mpp_name"] = mpp.mpp_name
+#             response_data["mpp_code"] = mpp.mpp_ex_code
+#             response_data["mpp_tr_code"] = mpp_aggregations.mpp_tr_code
+#             response_data["company_code"] = mpp_aggregations.company_code
+#             response_data["company_name"] = mpp_aggregations.company_name
+#             response_data["member_tr_code"] = mpp_aggregations.member_tr_code
+#         billing_member_detail = BillingMemberDetail.objects.filter(
+#             member_code=instance.member_code
+#         ).first()
+#         response_data["bank"] = billing_member_detail.bank_code.bank_name
+#         response_data["bank_branch"] = ""
+#         response_data["account_no"] = billing_member_detail.acc_no
+#         response_data["ifsc"] = billing_member_detail.ifsc
+#         response = {
+#             "status": status.HTTP_200_OK,
+#             "message": "Success",
+#             "data": response_data,
+#         }
+#         return Response(response)
 
 
 class MemberProfileView(generics.RetrieveAPIView):
@@ -82,7 +82,7 @@ class MemberProfileView(generics.RetrieveAPIView):
         user = self.request.user
         phone_number = user.username
         return MemberHierarchyView.objects.filter(
-            mobile_no=phone_number, is_default=True
+            mobile_no=phone_number, is_active=True, is_default=True
         ).last()
 
     def retrieve(self, request, *args, **kwargs):
@@ -686,4 +686,3 @@ class Last5DaysCollectionView(generics.GenericAPIView):
             "morning_shift_qty": round(morning_qty, 2),
             "evening_shift_qty": round(evening_qty, 2),
         }
-

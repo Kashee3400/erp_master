@@ -21,13 +21,13 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
     ViewSet for Payment Transactions with advanced features
 
     Endpoints:
-    - GET /api/payments/ - List all transactions (paginated, filtered, sorted)
-    - GET /api/payments/{id}/ - Get transaction details
-    - GET /api/payments/statistics/ - Get overall statistics
-    - GET /api/payments/status_breakdown/ - Get status breakdown
-    - GET /api/payments/daily_stats/ - Get daily statistics
-    - GET /api/payments/by_object/?model=caseentry&object_id=123
-    - GET /api/payments/export/ - Export transactions to CSV
+    - GET /api/transaction/ - List all transactions (paginated, filtered, sorted)
+    - GET /api/transaction/{id}/ - Get transaction details
+    - GET /api/transaction/statistics/ - Get overall statistics
+    - GET /api/transaction/status_breakdown/ - Get status breakdown
+    - GET /api/transaction/daily_stats/ - Get daily statistics
+    - GET /api/transaction/by_object/?model=caseentry&object_id=123
+    - GET /api/transaction/export/ - Export transactions to CSV
     """
     pagination_class = StandardResultsSetPagination
 
