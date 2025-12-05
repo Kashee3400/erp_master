@@ -5,16 +5,19 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Count, Q, Avg
 from django.utils import timezone
+from decimal import Decimal
 from datetime import timedelta
 from ..models import PaymentTransaction
+from veterinary.choices import PaymentStatusChoices
 from ..serializers import (
     PaymentTransactionDetailSerializer,
     PaymentStatisticsSerializer,
     PaymentTransactionListSerializer,
 )
 from ..filters import PaymentTransactionFilter
-from util.response import ResponseMixin,StandardResultsSetPagination
+from util.response import ResponseMixin, StandardResultsSetPagination
 from django.contrib.contenttypes.models import ContentType
+
 
 class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
     """
@@ -29,6 +32,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
     - GET /api/transaction/by_object/?model=caseentry&object_id=123
     - GET /api/transaction/export/ - Export transactions to CSV
     """
+
     pagination_class = StandardResultsSetPagination
 
     queryset = PaymentTransaction.objects.select_related("content_type").all()
@@ -81,13 +85,25 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
         stats = queryset.aggregate(
             total_transactions=Count("id"),
             total_amount=Sum("amount", default=Decimal("0.00")),
-            successful_transactions=Count("id", filter=Q(status="SUCCESS")),
-            successful_amount=Sum(
-                "amount", filter=Q(status="SUCCESS"), default=Decimal("0.00")
+            successful_transactions=Count(
+                "id", filter=Q(status=PaymentStatusChoices.COMPLETED)
             ),
-            failed_transactions=Count("id", filter=Q(status="FAILED")),
+            successful_amount=Sum(
+                "amount",
+                filter=Q(status=PaymentStatusChoices.COMPLETED),
+                default=Decimal("0.00"),
+            ),
+            failed_transactions=Count(
+                "id", filter=Q(status=PaymentStatusChoices.FAILED)
+            ),
             pending_transactions=Count(
-                "id", filter=Q(status__in=["INITIATED", "PENDING"])
+                "id",
+                filter=Q(
+                    status__in=[
+                        PaymentStatusChoices.INITIATED,
+                        PaymentStatusChoices.PENDING,
+                    ]
+                ),
             ),
             refunded_transactions=Count("id", filter=Q(refund_amount__gt=0)),
             refunded_amount=Sum("refund_amount", default=Decimal("0.00")),
@@ -142,7 +158,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
         return self.success_response(list(breakdown))
 
     # ----------------------------------------------------------
-    
+
     @action(detail=False, methods=["get"], url_path="by_object")
     def get_by_object(self, request):
         """
@@ -158,7 +174,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
         if not model_name or not object_id:
             return self.error_response(
                 message="Both 'model' and 'object_id' parameters are required.",
-                status_code=400
+                status_code=400,
             )
 
         # Validate model exists
@@ -166,26 +182,26 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
             content_type = ContentType.objects.get(model=model_name.lower())
         except ContentType.DoesNotExist:
             return self.error_response(
-                message=f"Invalid model name: '{model_name}'",
-                status_code=400
+                message=f"Invalid model name: '{model_name}'", status_code=400
             )
 
         # Fetch transactions for that object
-        qs = self.get_queryset().filter(
-            content_type=content_type,
-            object_id=object_id
-        ).order_by("-created_at")
+        qs = (
+            self.get_queryset()
+            .filter(content_type=content_type, object_id=object_id)
+            .order_by("-created_at")
+        )
 
         serializer = PaymentTransactionListSerializer(
             qs, many=True, context={"request": request}
         )
 
         return self.success_response(
-            message="Payment transactions fetched successfully.",
-            data=serializer.data
+            message="Payment transactions fetched successfully.", data=serializer.data
         )
+
     # ----------------------------------------------------------
-        
+
     @action(detail=False, methods=["get"])
     def payment_method_breakdown(self, request):
         queryset = self.filter_queryset(self.get_queryset())
@@ -238,7 +254,6 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
         queryset = self.get_queryset().order_by("-created_at")[:limit]
         serializer = self.get_serializer(queryset, many=True)
         return self.success_response(serializer.data)
-
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -295,4 +310,4 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
                     ),
                 ]
             )
-        return response 
+        return response
