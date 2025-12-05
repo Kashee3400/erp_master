@@ -29,3 +29,5 @@ service-account-file.json
 member/model/*
 member/geo_import/*
 member/manager/member_register.py
+
+web.config
