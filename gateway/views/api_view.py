@@ -150,7 +150,9 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
             .annotate(
                 count=Count("id"),
                 total_amount=Sum("amount", default=Decimal("0.00")),
-                successful_count=Count("id", filter=Q(status="SUCCESS")),
+                successful_count=Count(
+                    "id", filter=Q(status=PaymentStatusChoices.COMPLETED)
+                ),
             )
             .order_by("-count")
         )
@@ -211,7 +213,9 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
             .annotate(
                 count=Count("id"),
                 total_amount=Sum("amount", default=Decimal("0.00")),
-                successful_count=Count("id", filter=Q(status="SUCCESS")),
+                successful_count=Count(
+                    "id", filter=Q(status=PaymentStatusChoices.COMPLETED)
+                ),
             )
             .order_by("-count")
         )
@@ -235,9 +239,13 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
             .annotate(
                 count=Count("id"),
                 total_amount=Sum("amount", default=Decimal("0.00")),
-                successful_count=Count("id", filter=Q(status="SUCCESS")),
+                successful_count=Count(
+                    "id", filter=Q(status=PaymentStatusChoices.COMPLETED)
+                ),
                 successful_amount=Sum(
-                    "amount", filter=Q(status="SUCCESS"), default=Decimal("0.00")
+                    "amount",
+                    filter=Q(status=PaymentStatusChoices.COMPLETED),
+                    default=Decimal("0.00"),
                 ),
                 failed_count=Count("id", filter=Q(status="FAILED")),
             )

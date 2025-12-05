@@ -42,7 +42,7 @@ class PaymentTransactionListSerializer(serializers.ModelSerializer):
         colors = {
             "INITIATED": "#FFA500",
             "PENDING": "#FFD700",
-            "SUCCESS": "#28a745",
+            "COMPLETED": "#28a745",
             "FAILED": "#dc3545",
             "EXPIRED": "#6c757d",
             "REFUNDED": "#17a2b8",
@@ -86,7 +86,7 @@ class PaymentTransactionDetailSerializer(serializers.ModelSerializer):
         colors = {
             "INITIATED": "#FFA500",
             "PENDING": "#FFD700",
-            "SUCCESS": "#28a745",
+            "COMPLETED": "#28a745",
             "FAILED": "#dc3545",
             "EXPIRED": "#6c757d",
             "REFUNDED": "#17a2b8",
