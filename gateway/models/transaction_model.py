@@ -13,6 +13,7 @@ from veterinary.choices.choices import (
     PaymentTransactionTypeChoices,
 )
 from django.contrib.auth import get_user_model
+from ulid import ULID
 
 User = get_user_model()
 
@@ -271,10 +272,7 @@ class PaymentTransaction(models.Model):
         content_type = ContentType.objects.get_for_model(obj.__class__)
 
         # Generate unique merchant order ID
-        merchant_order_id = (
-            f"{content_type.model.upper()}_{obj.pk}_{uuid.uuid4().hex[:8]}"
-        )
-
+        merchant_order_id = f"ORD-{ULID()}"
         return cls.objects.create(
             content_type=content_type,
             object_id=obj.pk,
@@ -489,7 +487,10 @@ class PaymentTransaction(models.Model):
     @property
     def is_pending(self):
         """Check if transaction is pending"""
-        return self.status in [PaymentStatusChoices.INITIATED, PaymentStatusChoices.PENDING]
+        return self.status in [
+            PaymentStatusChoices.INITIATED,
+            PaymentStatusChoices.PENDING,
+        ]
 
     @property
     def time_since_creation(self):
