@@ -219,6 +219,7 @@ class CaseEntryListSerializer(serializers.ModelSerializer):
     animal_tag = serializers.CharField(read_only=True)
     is_member_case = serializers.BooleanField(read_only=True)
     case_type = serializers.SerializerMethodField()
+    location_detail = serializers.SerializerMethodField()  # nested
 
     class Meta:
         model = CaseEntry
@@ -235,10 +236,43 @@ class CaseEntryListSerializer(serializers.ModelSerializer):
             "case_type",
             "created_at",
             "is_emergency",
+            "location_detail",
         ]
 
     def get_case_type(self, obj):
         return "Member" if obj.is_member_case else "Non-Member"
+
+    def get_location_detail(self, obj: CaseEntry):
+        qs = obj.get_case_locations
+        snapshot = qs.first()
+
+        if not snapshot:
+            return None
+
+        return {
+            "mcc": {
+                "code": snapshot.mcc_code or "",
+                "tr_code": snapshot.mcc_tr_code or "",
+                "name": snapshot.mcc_name or "",
+            },
+            "bmc": {
+                "code": snapshot.bmc_code or "",
+                "tr_code": snapshot.bmc_tr_code or "",
+                "name": snapshot.bmc_name or "",
+            },
+            "mpp": {
+                "code": snapshot.mpp_code or "",
+                "ex_code": snapshot.mpp_ex_code or "",
+                "tr_code": snapshot.mpp_tr_code or "",
+                "name": snapshot.mpp_name or "",
+                "type": snapshot.mpp_type or "",
+            },
+            "route": {
+                "code": snapshot.route_code or "",
+                "ex_code": snapshot.route_ex_code or "",
+                "name": snapshot.route_name or "",
+            },
+        }
 
 
 from erp_app.models import BusinessHierarchySnapshot
