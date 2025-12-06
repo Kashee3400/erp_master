@@ -1,4 +1,3 @@
-from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from .model.member_register import (
     MemberRegister,
@@ -7,6 +6,16 @@ from .model.member_register import (
     MemberBankAccountHistory,
 )
 from django.utils import timezone
+
+from django.db.models.signals import m2m_changed, post_save, post_delete, pre_delete,pre_save
+from django.contrib.auth.models import User, Group
+from django.dispatch import receiver
+from .menu_model import MenuItem, Role, UserMenuPreference
+from .menu_config import MenuFilterService
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(pre_save, sender=MemberRegister)
@@ -62,3 +71,128 @@ def create_bank_account_history(sender, instance, **kwargs):
             )
         except MemberBankAccount.DoesNotExist:
             pass
+
+
+# ============================================================================
+# User Role/Permission Changes
+# ============================================================================
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def invalidate_menu_on_user_group_change(sender, instance, action, **kwargs):
+    """Invalidate user's menu cache when their groups change"""
+    if action in ["post_add", "post_remove", "post_clear"]:
+        tenant_id = (
+            getattr(instance, "tenant_id", None)
+            if hasattr(instance, "tenant_id")
+            else None
+        )
+        MenuFilterService.invalidate_user_cache(instance.id, tenant_id)
+        logger.info(
+            f"Menu cache invalidated for user {instance.id} due to group change"
+        )
+
+
+@receiver(m2m_changed, sender=User.user_permissions.through)
+def invalidate_menu_on_user_permission_change(sender, instance, action, **kwargs):
+    """Invalidate user's menu cache when their permissions change"""
+    if action in ["post_add", "post_remove", "post_clear"]:
+        tenant_id = (
+            getattr(instance, "tenant_id", None)
+            if hasattr(instance, "tenant_id")
+            else None
+        )
+        MenuFilterService.invalidate_user_cache(instance.id, tenant_id)
+        logger.info(
+            f"Menu cache invalidated for user {instance.id} due to permission change"
+        )
+
+
+@receiver(m2m_changed, sender=Group.permissions.through)
+def invalidate_menu_on_group_permission_change(sender, instance, action, **kwargs):
+    """Invalidate menu cache for all users in a group when group permissions change"""
+    if action in ["post_add", "post_remove", "post_clear"]:
+        user_ids = instance.user_set.values_list("id", flat=True)
+        for user_id in user_ids:
+            MenuFilterService.invalidate_user_cache(user_id)
+        logger.info(
+            f"Menu cache invalidated for {len(user_ids)} users in group {instance.name}"
+        )
+
+
+# ============================================================================
+# Menu Structure Changes
+# ============================================================================
+
+
+@receiver(post_save, sender=MenuItem)
+def invalidate_all_menus_on_item_save(sender, instance, created, **kwargs):
+    """Invalidate all menu caches when menu structure changes"""
+    MenuFilterService.invalidate_all_caches()
+    logger.info(
+        f"All menu caches invalidated due to MenuItem {'creation' if created else 'update'}: {instance.code}"
+    )
+
+
+@receiver(post_delete, sender=MenuItem)
+def invalidate_all_menus_on_item_delete(sender, instance, **kwargs):
+    """Invalidate all menu caches when menu item is deleted"""
+    MenuFilterService.invalidate_all_caches()
+    logger.info(
+        f"All menu caches invalidated due to MenuItem deletion: {instance.code}"
+    )
+
+
+@receiver(m2m_changed, sender=MenuItem.roles.through)
+def invalidate_all_menus_on_item_roles_change(sender, instance, action, **kwargs):
+    """Invalidate all menu caches when menu item roles change"""
+    if action in ["post_add", "post_remove", "post_clear"]:
+        MenuFilterService.invalidate_all_caches()
+        logger.info(
+            f"All menu caches invalidated due to role change on MenuItem: {instance.code}"
+        )
+
+
+@receiver(m2m_changed, sender=MenuItem.required_permissions.through)
+def invalidate_all_menus_on_item_permissions_change(sender, instance, action, **kwargs):
+    """Invalidate all menu caches when menu item permissions change"""
+    if action in ["post_add", "post_remove", "post_clear"]:
+        MenuFilterService.invalidate_all_caches()
+        logger.info(
+            f"All menu caches invalidated due to permission change on MenuItem: {instance.code}"
+        )
+
+
+# ============================================================================
+# Role Changes
+# ============================================================================
+
+
+@receiver(post_save, sender=Role)
+def invalidate_menus_on_role_change(sender, instance, **kwargs):
+    """Invalidate menu caches when role is modified"""
+    if not instance.is_active:
+        # Role deactivated - invalidate all users with this role
+        user_ids = instance.group.user_set.values_list("id", flat=True)
+        for user_id in user_ids:
+            MenuFilterService.invalidate_user_cache(user_id)
+        logger.info(
+            f"Menu caches invalidated for users with deactivated role: {instance.code}"
+        )
+
+
+# ============================================================================
+# User Preference Changes
+# ============================================================================
+
+
+@receiver(post_save, sender=UserMenuPreference)
+@receiver(post_delete, sender=UserMenuPreference)
+def invalidate_menu_on_preference_change(sender, instance, **kwargs):
+    """Invalidate user's menu cache when their preferences change"""
+    tenant_id = (
+        getattr(instance.user, "tenant_id", None)
+        if hasattr(instance.user, "tenant_id")
+        else None
+    )
+    MenuFilterService.invalidate_user_cache(instance.user_id, tenant_id)

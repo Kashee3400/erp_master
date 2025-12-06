@@ -651,7 +651,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
-    lookup_field = "user_id"  # this will appear in URL: /user-profiles/<user_id>/
+    lookup_field = "user_id"
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["department", "user", "is_verified", "designation"]
     search_fields = [
@@ -662,9 +662,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     ]
 
     def get_object(self):
-        queryset = self.get_queryset()
-        user_id = self.kwargs.get(self.lookup_field)
-        return get_object_or_404(queryset, user__id=user_id)
+        user_id = self.kwargs.get("user_id")
+        return get_object_or_404(self.get_queryset(), user__id=user_id)
 
     def retrieve(self, request, *args, **kwargs):
         try:

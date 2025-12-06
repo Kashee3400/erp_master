@@ -2,9 +2,8 @@ from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
 
-
 class MpmsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'mpms'
-    label = 'mpms'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "mpms"
+    label = "mpms"
     verbose_name = _("MPMS")

@@ -1,102 +1,120 @@
-name: Django Windows Deploy (IIS) - Fast Atomic Deploy
+name: Deploy to Windows IIS (Staging)
 
 on:
   push:
     branches:
-      - master
-      
+      - staging
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-
+    runs-on: self-hosted
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Upload repo to Windows server (temp folder)
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: "."
-          target: "E:/production/erp/erp_master_new"
+    - name: Create .env file
+      shell: powershell
+      run: |
+        # We build the .env file dynamically from GitHub Secrets
+        $envContent = @"
+        DB_ENGINE=${{ secrets.DB_ENGINE }}
+        DB_NAME_MPMS=${{ secrets.DB_NAME_MPMS }}
+        DB_NAME_SARTHAK=${{ secrets.DB_NAME_SARTHAK }}
+        DB_USER_SARTHAK=${{ secrets.DB_USER_SARTHAK }}
+        DB_PASSWORD_SARTHAK=${{ secrets.DB_PASSWORD_SARTHAK }}
+        DB_HOST_SARTHAK=${{ secrets.DB_HOST_SARTHAK }}
+        DB_PORT_SARTHAK=${{ secrets.DB_PORT_SARTHAK }}
+        DB_NAME_MEMBER=${{ secrets.DB_NAME_MEMBER }}
+        DB_MEMBER_USER=${{ secrets.DB_MEMBER_USER }}
+        DB_MEMBER_PASS=${{ secrets.DB_MEMBER_PASS }}
+        DB_HOST_MEMBER=${{ secrets.DB_HOST_MEMBER }}
+        DB_PORT_MEMBER=${{ secrets.DB_PORT_MEMBER }}
+        SECRET_KEY_TIMESTAMP='${{ secrets.SECRET_KEY_TIMESTAMP }}'
+        SECRET_KEY='${{ secrets.SECRET_KEY }}'
+        DEBUG=True
+        ALLOWED_HOSTS=localhost,staging.kasheemilk.com,127.0.0.1
+        EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}
+        EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+        EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+        EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}
+        EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
+        DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }}
+        SERVICE_ACCOUNT_PATH=K:\service-account-file.json
+        CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}
+        CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}
+        SUPPORT_TEAM_EMAIL=${{ secrets.SUPPORT_TEAM_EMAIL }}
+        SMS_USERID=${{ secrets.SMS_USERID }}
+        SMS_PASSWORD=${{ secrets.SMS_PASSWORD }}
+        SMS_SENDERID=${{ secrets.SMS_SENDERID }}
+        SMS_DLT_ENTITY_ID=${{ secrets.SMS_DLT_ENTITY_ID }}
+        SMS_DLT_TEMPLATE_ID=${{ secrets.SMS_DLT_TEMPLATE_ID }}
+        SMS_API_URL=${{ secrets.SMS_API_URL }}
+        CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
+        PHONEPE_ENV=${{ secrets.PHONEPE_ENV }}
+        PHONEPE_MERCHANT_ID=${{ secrets.PHONEPE_MERCHANT_ID }}
+        PHONEPE_SALT_KEY=${{ secrets.PHONEPE_SALT_KEY }}
+        PHONEPE_SALT_INDEX=${{ secrets.PHONEPE_SALT_INDEX }}
+        PHONEPE_BASE_URL_SANDBOX=${{ secrets.PHONEPE_BASE_URL_SANDBOX }}
+        PHONEPE_BASE_URL_PROD=${{ secrets.PHONEPE_BASE_URL_PROD }}
+        PHONEPE_REDIRECT_URL=${{ secrets.PHONEPE_REDIRECT_URL }}
+        PHONEPE_CALLBACK_URL=${{ secrets.PHONEPE_CALLBACK_URL }}
+        PHONEPE_CLIENT_ID=${{ secrets.PHONEPE_CLIENT_ID }}
+        PHONEPE_CLIENT_SECRET=${{ secrets.PHONEPE_CLIENT_SECRET }}
+        PHONEPE_CLIENT_VERSION=${{ secrets.PHONEPE_CLIENT_VERSION }}
+        DEEPLINK_SMART_HOST=${{ secrets.DEEPLINK_SMART_HOST }}
+        HOSTED_RESULT_URL=${{ secrets.HOSTED_RESULT_URL }}
+        DEEPLINK_DEFAULT_EXPIRY_DAYS=${{ secrets.DEEPLINK_DEFAULT_EXPIRY_DAYS }}
+        DEEPLINK_CACHE_TIMEOUT=${{ secrets.DEEPLINK_CACHE_TIMEOUT }}
+        DEEPLINK_RATE_LIMIT_ENABLED=${{ secrets.DEEPLINK_RATE_LIMIT_ENABLED }}
+        DEEPLINK_MAX_LINKS_PER_USER_PER_DAY=${{ secrets.DEEPLINK_MAX_LINKS_PER_USER_PER_DAY }}
+        PHONEPE_WEBHOOK_USERNAME=${{ secrets.PHONEPE_WEBHOOK_USERNAME }}
+        PHONEPE_WEBHOOK_PASSWORD=${{ secrets.PHONEPE_WEBHOOK_PASSWORD }}
+        "@
+        
+        # Save to the specific location where the app runs
+        Set-Content -Path "E:\stagings\erp\.env" -Value $envContent
 
-      - name: Deploy on Windows (atomic swap + install deps + migrate + collectstatic)
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          script: |
-            powershell -NoProfile -ExecutionPolicy Bypass -Command "
+    - name: Sync Files to IIS Directory
+      shell: powershell
+      run: |
+        # Use Robocopy to sync the checked out code to the live IIS folder
+        # /MIR mirrors the directory (careful, it deletes files in destination that aren't in source)
+        # /XD excludes directories (like .git or venv if it's inside)
+        try {
+          robocopy . "E:\stagings\erp" /MIR /XD .git .github venv __pycache__ /XF web.config
+        } catch {
+          # Robocopy uses exit codes differently. < 8 is usually success.
+          if ($LASTEXITCODE -ge 8) { throw "Robocopy failed with exit code $LASTEXITCODE" }
+        }
+        Write-Host "File Sync Complete"
 
-            $deployRoot = 'E:\production\erp'
-            $oldPath = Join-Path $deployRoot 'erp_master'
-            $newPath = Join-Path $deployRoot 'erp_master_new'
-            $backupPath = Join-Path $deployRoot 'erp_master_old'
-            $venvPath = Join-Path $deployRoot 'venv'
-            $py = Join-Path $venvPath 'Scripts\python.exe'
-            $pip = Join-Path $venvPath 'Scripts\pip.exe'
+    - name: Install Dependencies
+      shell: powershell
+      run: |
+        cd "E:\stagings\erp"
+        # Activate Virtual Environment (Assumes venv exists at E:\stagings\erp\venv)
+        .\venv\Scripts\Activate.ps1
+        pip install -r requirements.txt
 
-            Write-Host 'Starting atomic deployment...'
+    - name: Collect Static Files
+      shell: powershell
+      run: |
+        cd "E:\stagings\erp"
+        .\venv\Scripts\Activate.ps1
+        python manage.py collectstatic --noinput
 
-            # Ensure new folder exists (uploaded via scp)
-            if (-not (Test-Path $newPath)) {
-              Write-Error 'Upload failed: erp_master_new does not exist!'
-              exit 1
-            }
+    - name: Run Migrations
+      shell: powershell
+      run: |
+        cd "E:\stagings\erp"
+        .\venv\Scripts\Activate.ps1
+        python manage.py migrate
 
-            # Backup old version (optional)
-            if (Test-Path $backupPath) {
-              Remove-Item $backupPath -Recurse -Force -ErrorAction SilentlyContinue
-            }
-            if (Test-Path $oldPath) {
-              Rename-Item -Path $oldPath -NewName 'erp_master_old'
-            }
-
-            # Move new version into place atomically
-            Rename-Item -Path $newPath -NewName 'erp_master'
-
-            # Activate venv (Windows style)
-            if (-not (Test-Path $py)) {
-              Write-Error 'Python not found in venv: ' + $py
-              exit 1
-            }
-
-            Write-Host 'Upgrading pip...'
-            & $py -m pip install --upgrade pip
-
-            # Install/update requirements (faster on existing venv)
-            $req = Join-Path $deployRoot 'erp_master\requirements.txt'
-            if (Test-Path $req) {
-              Write-Host 'Installing dependencies...'
-              & $pip install -r $req
-            } else {
-              Write-Warning 'requirements.txt not found!'
-            }
-
-            # Django commands
-            $manage = Join-Path $deployRoot 'erp_master\manage.py'
-            if (-not (Test-Path $manage)) {
-              Write-Error 'manage.py not found!'
-              exit 1
-            }
-
-            Write-Host 'Running migrations...'
-            & $py $manage migrate --noinput
-
-            Write-Host 'Running collectstatic...'
-            & $py $manage collectstatic --noinput
-
-            Write-Host 'Running optional commands...'
-            try {
-              & $py $manage populate_ticket_categories
-            } catch {
-              Write-Host 'Skipping optional populate_ticket_categories'
-            }
-            Write-Host 'Deployment success — IIS will pick up changes automatically.'
-            "
+    - name: Restart IIS Application Pool
+      shell: powershell
+      run: |
+        # Restart the specific App Pool for staging to reload code
+        Import-Module WebAdministration
+        Restart-WebAppPool -Name "StagingAppPool"

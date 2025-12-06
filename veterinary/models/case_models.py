@@ -18,10 +18,9 @@ from .stock_models import Symptoms, Disease, Medicine
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-
 from django.contrib.contenttypes.models import ContentType
 from gateway.models import PaymentTransaction
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 
 class DiagnosisRoute(models.Model):
@@ -209,6 +208,29 @@ class CaseEntry(BaseModel):
     def is_non_member_case(self):
         """Check if this is a non-member case"""
         return self.non_member_cattle is not None
+
+    @property
+    def get_case_locations(self):
+        # Resolve values
+        mcc_code = (
+            self.cattle.owner.mcc_code
+            if self.is_member_case
+            else self.non_member_cattle.non_member.mcc_code
+        )
+        mpp_code = (
+            self.cattle.owner.mpp_code
+            if self.is_member_case
+            else self.non_member_cattle.non_member.mpp_code
+        )
+
+        from erp_app.models import BusinessHierarchySnapshot
+
+        # OR filter using Q objects
+        location = BusinessHierarchySnapshot.objects.filter(
+            Q(mcc_code=mcc_code) | Q(mpp_code=mpp_code)
+        )
+
+        return location
 
     @property
     def owner_name(self):

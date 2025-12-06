@@ -247,7 +247,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet, ResponseMixin):
                     filter=Q(status=PaymentStatusChoices.COMPLETED),
                     default=Decimal("0.00"),
                 ),
-                failed_count=Count("id", filter=Q(status="FAILED")),
+                failed_count=Count("id", filter=Q(status=PaymentStatusChoices.FAILED)),
             )
             .order_by("day")
         )

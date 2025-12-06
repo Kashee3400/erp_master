@@ -87,18 +87,17 @@ class NonMemberCattleSerializer(serializers.ModelSerializer):
 
 
 class CaseEntrySerializer(serializers.ModelSerializer):
-    """Enhanced CaseEntry serializer to handle both member and non-member cattle"""
+    """Enhanced CaseEntry serializer including nested location details."""
 
-    # Read-only fields for easier API consumption
     member_name = serializers.CharField(read_only=True)
     member_mobile = serializers.CharField(read_only=True)
     animal_tag = serializers.CharField(read_only=True)
     is_member_case = serializers.BooleanField(read_only=True)
 
-    # Nested serializers for detailed information
     cattle_detail = serializers.SerializerMethodField()
     non_member_cattle_detail = serializers.SerializerMethodField()
     payment_status = serializers.SerializerMethodField()
+    location_detail = serializers.SerializerMethodField()  # nested
 
     class Meta:
         model = CaseEntry
@@ -118,6 +117,7 @@ class CaseEntrySerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "sync",
+            # Existing
             "member_name",
             "member_mobile",
             "animal_tag",
@@ -125,14 +125,55 @@ class CaseEntrySerializer(serializers.ModelSerializer):
             "cattle_detail",
             "payment_status",
             "non_member_cattle_detail",
+            # Nested location
+            "location_detail",
         ]
         read_only_fields = ["case_no", "calculated_cost", "created_at", "updated_at"]
 
+    # --------------------------
+    # LOCATION DETAIL METHOD
+    # --------------------------
+    def get_location_detail(self, obj: CaseEntry):
+        qs = obj.get_case_locations
+        snapshot = qs.first()
+
+        if not snapshot:
+            return None
+
+        return {
+            "mcc": {
+                "code": snapshot.mcc_code or "",
+                "tr_code": snapshot.mcc_tr_code or "",
+                "name": snapshot.mcc_name or "",
+            },
+            "bmc": {
+                "code": snapshot.bmc_code or "",
+                "tr_code": snapshot.bmc_tr_code or "",
+                "name": snapshot.bmc_name or "",
+            },
+            "mpp": {
+                "code": snapshot.mpp_code or "",
+                "ex_code": snapshot.mpp_ex_code or "",
+                "tr_code": snapshot.mpp_tr_code or "",
+                "name": snapshot.mpp_name or "",
+                "type": snapshot.mpp_type or "",
+            },
+            "route": {
+                "code": snapshot.route_code or "",
+                "ex_code": snapshot.route_ex_code or "",
+                "name": snapshot.route_name or "",
+            },
+        }
+
+    # --------------------------
+    # OTHER METHODS
+    # --------------------------
     def get_cattle_detail(self, obj):
         if obj.cattle:
             breed_data = None
             if getattr(obj.cattle, "breed", None):
                 breed_data = SpeciesBreedSerializer(obj.cattle.breed).data
+
             return {
                 "id": obj.cattle.id,
                 "tag_number": getattr(obj.cattle, "tag_number", "N/A"),
@@ -154,7 +195,6 @@ class CaseEntrySerializer(serializers.ModelSerializer):
         return obj.get_payment_status()
 
     def validate(self, data):
-        """Ensure either cattle or non_member_cattle is provided, but not both"""
         cattle = data.get("cattle")
         non_member_cattle = data.get("non_member_cattle")
 
