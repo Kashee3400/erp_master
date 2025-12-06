@@ -217,6 +217,48 @@ class CaseEntryViewSet(ResponseMixin, BaseModelViewSet):
             message=_("Cases filtered by MCC/MPP successfully."),
         )
 
+    # -----------------------------------------------------
+    # 📊 Count / Metrics API
+    # -----------------------------------------------------
+    @action(detail=False, methods=["get"], url_path="counts")
+    def get_counts(self, request):
+        """
+        Get the count of cases based on Location (MCC/MPP) and Status.
+
+        Logic:
+        1. If mcc_code/mpp_code provided -> Filter by location.
+        2. If status provided -> Filter by that status.
+        3. If status NOT provided -> Default to 'Pending'.
+        """
+        mcc_code = request.query_params.get("mcc_code")
+        mpp_code = request.query_params.get("mpp_code")
+        # Default to PENDING if no status is explicitly requested
+        status_param = request.query_params.get("status", StatusChoices.PENDING)
+
+        # 1. Start with the base queryset (ensures user permissions are respected)
+        queryset = self.get_queryset()
+
+        # 2. Apply Location Filter (if params exist)
+        # We reuse your existing manager method 'by_mcc_mpp' to keep logic consistent
+        if mcc_code or mpp_code:
+            queryset = queryset.by_mcc_mpp(
+                mcc_code=mcc_code,
+                mpp_code=mpp_code,
+                strict=False,  # Assuming you want loose matching for counts
+            )
+
+        # 3. Apply Status Filter
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+
+        # 4. Get the count (efficient DB count)
+        count = queryset.count()
+
+        return self.success_response(
+            data={"count": count, "status": status_param},
+            message=_("Case count retrieved successfully."),
+        )
+
 
 from rest_framework import serializers
 
